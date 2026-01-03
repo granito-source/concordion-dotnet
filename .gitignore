@@ -1,8 +1,7 @@
-bin
-obj
-*.suo
-*.user
-*.VisualState.xml
-TestResult.xml
-_ReSharper.*
-packages
+.idea/
+.vscode/
+bin/
+obj/
+*.obj
+*.dll
+*.exe
