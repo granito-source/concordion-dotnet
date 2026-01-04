@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.30319</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3F1213FE-BE0D-4EAB-B134-B5E21D6B42CB}</ProjectGuid>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon />
+    <AssemblyKeyContainerName />
+    <AssemblyName>Test</AssemblyName>
+    <AssemblyOriginatorKeyFile />
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Test</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject />
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <OldToolsVersion>0.0</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile />
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile />
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn />
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile />
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile />
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn />
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OGNL\OGNL.csproj">
+      <Name>OGNL</Name>
+      <Project>{02F01FD5-3F40-41BA-900E-EDA004BF43E1}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <Reference Include="nunit.framework">
+      <Name>nunit.framework</Name>
+      <HintPath>..\..\..\NUnit2.2\bin\nunit.framework.dll</HintPath>
+      <AssemblyFolderKey>hklm\dn\nunit.framework</AssemblyFolderKey>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ArithmeticAndLogicalOperatorsTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ArrayCreationTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ArrayElementsTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ClassMethodTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CollectionDirectPropertyTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ConstantTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ConstantTreeTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ContextVariableTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CorrectedObjectNullHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DotNetTestCase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EnumTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IndexAccessTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IndexedPropertyTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IndexerTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InterfaceInheritanceTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LambdaExpressionTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MapCreationTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MemberAccessTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodWithConversionTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NestedMethodTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NullHandlerTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NullStringCatenationTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NumberFormatExceptionTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NumericConversionTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ObjectIndexedPropertyTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ObjectIndexedTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\BaseObjectIndexed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\Bean1.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\Bean2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\Bean3.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\Component.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\CorrectedObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\Indexed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\MyMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\MyMapImpl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\NumberIndexer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\ObjectIndexed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\OtherObjectIndexed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\Root.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\Simple.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\SomeEnum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OgnlTestCase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OperatorTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PrimitiveArrayTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PrimitiveNullHandlingTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PrivateAccessorTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PrivateMemberTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ProjectionSelectionTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyNotFoundTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ProtectedInnerClassTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QuotingTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SetterTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SetterWithConversionTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ShortCircuitingExpressionTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleNavigationChainTreeTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimplePropertyTreeTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StaticsAndConstructorsTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="util\NameFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="util\TestSuite.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent />
+    <PostBuildEvent />
+  </PropertyGroup>
+</Project>
