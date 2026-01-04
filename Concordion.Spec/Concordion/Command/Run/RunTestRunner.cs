@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Concordion.Api;
-using Concordion.Integration;
+﻿using Concordion.Api;
 
-namespace Concordion.Spec.Concordion.Command.Run
-{
-    class RunTestRunner : IRunner
+namespace Concordion.Spec.Concordion.Command.Run;
+
+class RunTestRunner : IRunner {
+    public static Result Result;
+
+    public RunnerResult Execute(object fixture, Resource resource, string href)
     {
-        public static Result Result;
-
-        public RunnerResult Execute(object fixture, Resource resource, string href)
-        {
-		    return new RunnerResult(Result);
-	    }
+        return new RunnerResult(Result);
     }
 }

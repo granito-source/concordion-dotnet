@@ -1,59 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
-using Concordion.Integration;
+﻿using Concordion.Integration;
 using Concordion.Spec.Support;
 
-namespace Concordion.Spec.Concordion.Command.VerifyRows.Results
-{
-    [ConcordionTest]
-    public class MissingRowsTest
+namespace Concordion.Spec.Concordion.Command.VerifyRows.Results;
+
+[ConcordionTest]
+public class MissingRowsTest {
+    private readonly List<Person> people = [];
+
+    public void addPerson(string firstName, string lastName, int birthYear)
     {
-        private List<Person> people = new List<Person>();
+        people.Add(new Person(firstName, lastName, birthYear));
+    }
 
-        public void addPerson(string firstName, string lastName, int birthYear)
-        {
-            people.Add(new Person(firstName, lastName, birthYear));
-        }
+    public string getOutputFragment(string inputFragment)
+    {
+        var document = new TestRig()
+            .WithFixture(this)
+            .ProcessFragment(inputFragment)
+            .GetXDocument();
+        var tables = document.Descendants("table");
 
-        public string getOutputFragment(string inputFragment)
-        {
-            var document = new TestRig()
-                                .WithFixture(this)
-                                .ProcessFragment(inputFragment)
-                                .GetXDocument();
+        // stops loop after first entry, simulating the java code.
+        foreach (var table in tables)
+            return table.ToString().Replace("\u00A0", "&#160;");
 
-            var tables = document.Descendants("table");
+        return string.Empty;
+    }
 
-            foreach (var table in tables)
-            {
-                // stops loop after first entry, simulating the java code.
-                return table.ToString().Replace("\u00A0", "&#160;");
-            }
+    public ICollection<Person> getPeople()
+    {
+        return people;
+    }
 
-            return String.Empty;
-        }
+    public class Person(string firstName, string lastName, int birthYear) {
+        public string firstName = firstName;
 
-        public ICollection<Person> getPeople()
-        {
-            return people;
-        }
+        public string lastName = lastName;
 
-        public class Person
-        {
-
-            public Person(string firstName, string lastName, int birthYear)
-            {
-                this.firstName = firstName;
-                this.lastName = lastName;
-                this.birthYear = birthYear;
-            }
-
-            public string firstName;
-            public string lastName;
-            public int birthYear;
-        }
+        public int birthYear = birthYear;
     }
 }

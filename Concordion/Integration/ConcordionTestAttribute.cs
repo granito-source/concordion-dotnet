@@ -12,32 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 
-namespace Concordion.Integration
-{
-    [AttributeUsage(AttributeTargets.Class)]
-    public class ConcordionTestAttribute : TestFixtureAttribute
-    {
-        public const string AttributeIdentifier = "Concordion.Integration.ConcordionTestAttribute";
+namespace Concordion.Integration;
 
-        public string Name
-        {
-            get;
-            private set;
-        }
+[AttributeUsage(AttributeTargets.Class)]
+public class ConcordionTestAttribute : TestFixtureAttribute {
+    public const string AttributeIdentifier = "Concordion.Integration.ConcordionTestAttribute";
 
-        public string Path
-        {
-            get;
-            private set;
-        }
+    public string? Name { get; private set; }
 
-        public ConcordionTestAttribute()
-        {
-        }
-    }
+    public string? Path { get; private set; }
 }

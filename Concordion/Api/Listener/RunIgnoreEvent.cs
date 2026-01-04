@@ -1,26 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿namespace Concordion.Api.Listener;
 
-namespace Concordion.Api.Listener
+public class RunIgnoreEvent
 {
-    public class RunIgnoreEvent
+    #region Properties
+
+    public Element Element { get; private set; }
+
+    #endregion
+
+    #region Constructors
+
+    public RunIgnoreEvent(Element element)
     {
-        #region Properties
-
-        public Element Element { get; private set; }
-
-        #endregion
-
-        #region Constructors
-
-        public RunIgnoreEvent(Element element)
-        {
-            this.Element = element;
-        }
-
-        #endregion
-
+        Element = element;
     }
+
+    #endregion
 }

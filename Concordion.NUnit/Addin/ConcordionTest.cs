@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using Concordion.Internal;
 using NUnit.Core;
 using Concordion.Api;
@@ -92,8 +89,8 @@ namespace Concordion.NUnit.Addin
             {
                 var errorDetails = concordionResult.ErrorDetails.First();
                 testResult.Error(errorDetails.Exception);
-                testResult.SetResult(testResult.ResultState, 
-                                     resultPath + Environment.NewLine + testResult.Message, 
+                testResult.SetResult(testResult.ResultState,
+                                     resultPath + Environment.NewLine + testResult.Message,
                                      testResult.StackTrace);
             }
             else if (concordionResult.HasFailures)

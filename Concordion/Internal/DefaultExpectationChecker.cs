@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿namespace Concordion.Internal;
 
-namespace Concordion.Internal
+public class DefaultExpectationChecker : AbstractCheckerBase
 {
-    public class DefaultExpectationChecker : AbstractCheckerBase
+    public override bool IsAcceptable(string expected, object actual)
     {
-        public override bool IsAcceptable(string expected, object actual)
-        {
-            return this.Normalize(expected).Equals(this.Normalize(actual));
-        }
+        return Normalize(expected).Equals(Normalize(actual));
     }
 }

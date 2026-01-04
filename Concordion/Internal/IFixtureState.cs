@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿namespace Concordion.Internal;
 
-namespace Concordion.Internal
+interface IFixtureState
 {
-    interface IFixtureState
-    {
-        void AssertIsSatisfied(long successCount, long failureCount, long exceptionCount);
-    }
+    void AssertIsSatisfied(long successCount, long failureCount, long exceptionCount);
 }

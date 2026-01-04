@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Ninject;
-using Ninject.Modules;
-using System.Collections;
-using Concordion.Internal.Commands;
+﻿using Ninject.Modules;
 
-namespace Concordion.Internal
+namespace Concordion.Internal;
+
+class ConcordionModule : NinjectModule
 {
-    class ConcordionModule : NinjectModule
+    public override void Load()
     {
-        public override void Load()
-        {
-            //Bind<IExecuteStrategy>().ToProvider();
-        }
+        //Bind<IExecuteStrategy>().ToProvider();
     }
 }

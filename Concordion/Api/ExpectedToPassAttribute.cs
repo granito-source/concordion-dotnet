@@ -9,18 +9,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Concordion.Api;
 
-namespace Concordion.Api
-{
-    /// <summary>
-    /// Indicates to Concordion that a class is expected to pass all assertions
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
-    public class ExpectedToPassAttribute : Attribute
-    {
-    }
-}
+/// <summary>
+/// Indicates to Concordion that a class is expected to pass all assertions
+/// </summary>
+[AttributeUsage(AttributeTargets.Class)]
+public class ExpectedToPassAttribute : Attribute;

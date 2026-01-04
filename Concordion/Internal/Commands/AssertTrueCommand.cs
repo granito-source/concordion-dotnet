@@ -12,27 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Concordion.Api;
 
-namespace Concordion.Internal.Commands
-{
-    public class AssertTrueCommand : BooleanCommand
-    {
-        protected override void ProcessTrueResult(CommandCall commandCall, IResultRecorder resultRecorder)
-        {
-            resultRecorder.Success();
-            AnnounceSuccess(commandCall.Element);
-        }
+namespace Concordion.Internal.Commands;
 
-        protected override void ProcessFalseResult(CommandCall commandCall, IResultRecorder resultRecorder)
-        {
-            resultRecorder.Failure("expected true but was false", commandCall.Element.ToXml());
-            string expected = commandCall.Element.Text;
-            AnnounceFailure(commandCall.Element, expected, "== false");
-        }
+public class AssertTrueCommand : BooleanCommand
+{
+    protected override void ProcessTrueResult(CommandCall commandCall, IResultRecorder resultRecorder)
+    {
+        resultRecorder.Success();
+        AnnounceSuccess(commandCall.Element);
+    }
+
+    protected override void ProcessFalseResult(CommandCall commandCall, IResultRecorder resultRecorder)
+    {
+        resultRecorder.Failure("expected true but was false", commandCall.Element.ToXml());
+
+        var expected = commandCall.Element.Text;
+
+        AnnounceFailure(commandCall.Element, expected, "== false");
     }
 }

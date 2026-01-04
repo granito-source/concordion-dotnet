@@ -12,34 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Concordion.Api;
 
-namespace Concordion.Internal.Commands
+namespace Concordion.Internal.Commands;
+
+internal class TableExecuteStrategy : IExecuteStrategy
 {
-    internal class TableExecuteStrategy : IExecuteStrategy
+    #region IExecuteStrategy Members
+
+    public void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
     {
-        #region IExecuteStrategy Members
+        var tableSupport = new TableSupport(commandCall);
+        var detailRows = tableSupport.GetDetailRows();
 
-        public void Execute(CommandCall commandCall, global::Concordion.Api.IEvaluator evaluator, global::Concordion.Api.IResultRecorder resultRecorder)
+        foreach (var detailRow in detailRows)
         {
-            TableSupport tableSupport = new TableSupport(commandCall);
-            IList<Row> detailRows = tableSupport.GetDetailRows();
-            foreach (Row detailRow in detailRows) 
+            if (detailRow.GetCells().Count != tableSupport.ColumnCount)
             {
-                if (detailRow.GetCells().Count != tableSupport.ColumnCount) 
-                {
-                    throw new Exception("The <table> 'execute' command only supports rows with an equal number of columns.");
-                }
-
-                commandCall.Element = detailRow.RowElement;
-                tableSupport.CopyCommandCallsTo(detailRow);
-                commandCall.Execute(evaluator, resultRecorder);
+                throw new Exception("The <table> 'execute' command only supports rows with an equal number of columns.");
             }
-        }
 
-        #endregion
+            commandCall.Element = detailRow.RowElement;
+            tableSupport.CopyCommandCallsTo(detailRow);
+            commandCall.Execute(evaluator, resultRecorder);
+        }
     }
+
+    #endregion
 }

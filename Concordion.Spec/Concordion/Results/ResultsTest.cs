@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Concordion.Integration;
+﻿using Concordion.Integration;
 
-namespace Concordion.Spec.Concordion.Results
-{
-    [ConcordionTest]
-    public class ResultsTest
-    {
-    }
-}
+namespace Concordion.Spec.Concordion.Results;
+
+[ConcordionTest]
+public class ResultsTest;

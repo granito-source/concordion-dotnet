@@ -1,12 +1,10 @@
 using Concordion.Api.Extension;
 
-namespace Concordion.Spec.Concordion.Extension.Css
-{
-    public class CssEmbeddedExtension : IConcordionExtension
+namespace Concordion.Spec.Concordion.Extension.Css;
+
+public class CssEmbeddedExtension : IConcordionExtension {
+    public void AddTo(IConcordionExtender concordionExtender)
     {
-        public void AddTo(IConcordionExtender concordionExtender)
-        {
-            concordionExtender.WithEmbeddedCss(CssExtensionTest.TestCss);
-        }
+        concordionExtender.WithEmbeddedCss(CssExtensionTest.TestCss);
     }
 }

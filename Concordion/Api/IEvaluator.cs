@@ -12,43 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Concordion.Api;
 
-namespace Concordion.Api
-{
+/// <summary>
+/// Evaluates OGNL expressions
+/// </summary>
+public interface IEvaluator {
     /// <summary>
-    /// Evaluates OGNL expressions
+    /// Gets the variable.
     /// </summary>
-    public interface IEvaluator
-    {
-        /// <summary>
-        /// Gets the variable.
-        /// </summary>
-        /// <param name="variableName">Name of the variable.</param>
-        /// <returns></returns>
-        object GetVariable(string variableName);
+    /// <param name="variableName">Name of the variable.</param>
+    /// <returns></returns>
+    object? GetVariable(string variableName);
 
-        /// <summary>
-        /// Sets the variable.
-        /// </summary>
-        /// <param name="variableName">Name of the variable.</param>
-        /// <param name="value">The value.</param>
-        void SetVariable(string variableName, object value);
+    /// <summary>
+    /// Sets the variable.
+    /// </summary>
+    /// <param name="variableName">Name of the variable.</param>
+    /// <param name="value">The value.</param>
+    void SetVariable(string variableName, object value);
 
-        /// <summary>
-        /// Evaluates the specified expression.
-        /// </summary>
-        /// <param name="expression">The expression.</param>
-        /// <returns></returns>
-        object Evaluate(string expression);
+    /// <summary>
+    /// Evaluates the specified expression.
+    /// </summary>
+    /// <param name="expression">The expression.</param>
+    /// <returns></returns>
+    object? Evaluate(string expression);
 
-        /// <summary>
-        /// Gets the fixture that concordion uses to evaluate expressions against
-        /// </summary>
-        /// <value>The fixture.</value>
-        object Fixture { get; }
-    }
+    /// <summary>
+    /// Gets the fixture that concordion uses to evaluate expressions against
+    /// </summary>
+    /// <value>The fixture.</value>
+    object? Fixture { get; }
 }

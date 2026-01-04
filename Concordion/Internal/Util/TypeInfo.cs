@@ -12,22 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Concordion.Internal.Util;
 
-namespace Concordion.Internal.Util
+public static class TypeInfo
 {
-    public static class TypeInfo
+    public static T CreateInstance<T>(string assemblyQualifiedName)
     {
-        public static T CreateInstance<T>(string assemblyQualifiedName)
-        {
-            var concordionRunnerType = Type.GetType(assemblyQualifiedName);
-            var concordionRunnerTypeConstructor = concordionRunnerType.GetConstructor(System.Type.EmptyTypes);
-            var concordionRunnerImpl = (T)concordionRunnerTypeConstructor.Invoke(null);
+        var concordionRunnerType = Type.GetType(assemblyQualifiedName);
+        var concordionRunnerTypeConstructor = concordionRunnerType.GetConstructor(Type.EmptyTypes);
+        var concordionRunnerImpl = (T)concordionRunnerTypeConstructor.Invoke(null);
 
-            return concordionRunnerImpl;
-        }
+        return concordionRunnerImpl;
     }
 }

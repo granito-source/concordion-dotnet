@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Core;
+﻿using NUnit.Core;
 
 namespace Concordion.NUnit.Addin
 {

@@ -12,70 +12,71 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
 using System.Xml.Linq;
 using Concordion.Api.Listener;
 using Concordion.Internal.Util;
 
-namespace Concordion.Internal.Listener
+namespace Concordion.Internal.Listener;
+
+public class DocumentStructureImprover : IDocumentParsingListener
 {
-    public class DocumentStructureImprover : IDocumentParsingListener
+    #region Methods
+
+    private bool HasHeadSection(XElement html)
     {
-        #region Methods
-
-        private bool HasHeadSection(XElement html)
-        {
-            return html.Element(XName.Get("head", "")) != null;
-        }
-
-        private void CopyNodesBeforeBodyIntoHead(XElement html, XElement head)
-        {
-            foreach (XElement child in this.NodesBeforeBody(html)) 
-            {
-                child.Remove();
-                head.Add(child);
-            }
-        }
-
-        private IEnumerable<XElement> NodesBeforeBody(XElement html)
-        {
-            List<XElement> nodes = new List<XElement>();
-
-            foreach (XElement child in html.Elements())
-            {
-                if (this.isBodySection(child))
-                {
-                    break;
-                }
-                nodes.Add(child);
-            }
-
-            return nodes;
-        }
-
-        private bool isBodySection(XElement child) 
-        {
-            return child.Name.LocalName == "body";
-        }
-
-        #endregion
-
-        #region IDocumentParsingListener Members
-
-        public void BeforeParsing(XDocument document)
-        {
-            XElement html = document.Root;
-            Check.IsTrue("html".Equals(html.Name.LocalName),
-                    "Only <html> documents are supported (<" + html.Name.LocalName + "> is not)");
-
-            if (!this.HasHeadSection(html))
-            {
-                XElement head = new XElement("head");
-                this.CopyNodesBeforeBodyIntoHead(html, head);
-                html.AddFirst(head);
-            }
-        }
-
-        #endregion
+        return html.Element(XName.Get("head", "")) != null;
     }
+
+    private void CopyNodesBeforeBodyIntoHead(XElement html, XElement head)
+    {
+        foreach (var child in NodesBeforeBody(html))
+        {
+            child.Remove();
+            head.Add(child);
+        }
+    }
+
+    private IEnumerable<XElement> NodesBeforeBody(XElement html)
+    {
+        var nodes = new List<XElement>();
+
+        foreach (var child in html.Elements())
+        {
+            if (isBodySection(child))
+            {
+                break;
+            }
+
+            nodes.Add(child);
+        }
+
+        return nodes;
+    }
+
+    private bool isBodySection(XElement child)
+    {
+        return child.Name.LocalName == "body";
+    }
+
+    #endregion
+
+    #region IDocumentParsingListener Members
+
+    public void BeforeParsing(XDocument document)
+    {
+        var html = document.Root;
+
+        Check.IsTrue("html".Equals(html.Name.LocalName),
+            "Only <html> documents are supported (<" + html.Name.LocalName + "> is not)");
+
+        if (!HasHeadSection(html))
+        {
+            var head = new XElement("head");
+
+            CopyNodesBeforeBodyIntoHead(html, head);
+            html.AddFirst(head);
+        }
+    }
+
+    #endregion
 }

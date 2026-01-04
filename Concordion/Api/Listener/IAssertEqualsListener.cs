@@ -1,11 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿namespace Concordion.Api.Listener;
 
-namespace Concordion.Api.Listener
-{
-    public interface IAssertEqualsListener : IAssertListener
-    {
-    }
-}
+public interface IAssertEqualsListener : IAssertListener;

@@ -12,29 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
-namespace Concordion.Internal
+namespace Concordion.Internal;
+
+public static class StringExtensionMethods
 {
-    public static class StringExtensionMethods
+    public static string RemoveFirst(this string str, string toRemove)
     {
-        public static string RemoveFirst(this string str, string toRemove)
+        if (string.IsNullOrEmpty(toRemove)) return string.Empty;
+        var index = str.IndexOf(toRemove);
+        var builder = new StringBuilder();
+
+        if (index != -1)
         {
-            if (String.IsNullOrEmpty(toRemove)) return String.Empty;
-            var index = str.IndexOf(toRemove);
-            var builder = new StringBuilder();
-
-            if (index != -1)
-            {
-                builder.Append(str.Substring(0, index));
-                builder.Append(str.Substring(index + toRemove.Length));
-                return builder.ToString();
-            }
-
-            return str;
+            builder.Append(str.Substring(0, index));
+            builder.Append(str.Substring(index + toRemove.Length));
+            return builder.ToString();
         }
+
+        return str;
     }
 }

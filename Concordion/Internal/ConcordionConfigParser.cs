@@ -12,106 +12,100 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
 using System.Xml.Linq;
 using Concordion.Api;
 
-namespace Concordion.Internal
+namespace Concordion.Internal;
+
+/// <summary>
+/// Parses the Concordion.config file and stores the results in a <see cref="ConcordionConfig"/> object
+/// </summary>
+public class ConcordionConfigParser
 {
+    #region Properties
+
     /// <summary>
-    /// Parses the Concordion.config file and stores the results in a <see cref="ConcordionConfig"/> object
+    /// Gets or sets the config.
     /// </summary>
-    public class ConcordionConfigParser
+    /// <value>The config.</value>
+    public ConcordionConfig Config
     {
-        #region Properties
+        get;
+        private set;
+    } 
 
-        /// <summary>
-        /// Gets or sets the config.
-        /// </summary>
-        /// <value>The config.</value>
-        public ConcordionConfig Config
+    #endregion
+
+    #region Constructors
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConcordionConfigParser"/> class.
+    /// </summary>
+    /// <param name="config">The config.</param>
+    public ConcordionConfigParser(ConcordionConfig config)
+    {
+        Config = config;
+    } 
+
+    #endregion
+
+    #region Methods
+
+    /// <summary>
+    /// Parses the specified reader.
+    /// </summary>
+    /// <param name="reader">The reader.</param>
+    public void Parse(TextReader reader)
+    {
+        var document = XDocument.Load(reader);
+        LoadConfiguration(document);
+    }
+
+    /// <summary>
+    /// Loads the configuration.
+    /// </summary>
+    /// <param name="document">The document.</param>
+    private void LoadConfiguration(XDocument document)
+    {
+        var configElement = document.Root;
+
+        if (configElement.Name == "Concordion")
         {
-            get;
-            private set;
-        } 
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConcordionConfigParser"/> class.
-        /// </summary>
-        /// <param name="config">The config.</param>
-        public ConcordionConfigParser(ConcordionConfig config)
-        {
-            this.Config = config;
-        } 
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Parses the specified reader.
-        /// </summary>
-        /// <param name="reader">The reader.</param>
-        public void Parse(TextReader reader)
-        {
-            var document = XDocument.Load(reader);
-            LoadConfiguration(document);
+            LoadRunners(configElement);
         }
+    }
 
-        /// <summary>
-        /// Loads the configuration.
-        /// </summary>
-        /// <param name="document">The document.</param>
-        private void LoadConfiguration(XDocument document)
+    /// <summary>
+    /// Loads the runners.
+    /// </summary>
+    /// <param name="element">The element.</param>
+    private void LoadRunners(XElement element)
+    {
+        var runners = element.Element("Runners");
+
+        if (runners != null)
         {
-            var configElement = document.Root;
-
-            if (configElement.Name == "Concordion")
+            foreach (var runner in runners.Elements("Runner"))
             {
-                LoadRunners(configElement);
-            }
-        }
+                var alias = runner.Attribute("alias");
+                var runnerTypeText = runner.Attribute("type");
 
-        /// <summary>
-        /// Loads the runners.
-        /// </summary>
-        /// <param name="element">The element.</param>
-        private void LoadRunners(XElement element)
-        {
-            var runners = element.Element("Runners");
-
-            if (runners != null)
-            {
-                foreach (var runner in runners.Elements("Runner"))
+                if (alias != null && runnerTypeText != null)
                 {
-                    var alias = runner.Attribute("alias");
-                    var runnerTypeText = runner.Attribute("type");
+                    var runnerType = Type.GetType(runnerTypeText.Value);
 
-                    if (alias != null && runnerTypeText != null)
+                    if (runnerType != null)
                     {
-                        var runnerType = Type.GetType(runnerTypeText.Value);
-
-                        if (runnerType != null)
+                        var runnerObject = Activator.CreateInstance(runnerType);
+                        if (runnerObject != null && runnerObject is IRunner)
                         {
-                            var runnerObject = Activator.CreateInstance(runnerType);
-                            if (runnerObject != null && runnerObject is IRunner)
-                            {
-                                Config.Runners.Add(alias.Value, runnerObject as IRunner);
-                            }
+                            Config.Runners.Add(alias.Value, runnerObject as IRunner);
                         }
                     }
                 }
             }
-        } 
+        }
+    } 
 
-        #endregion
-    }
+    #endregion
 }

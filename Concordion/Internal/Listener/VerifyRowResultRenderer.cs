@@ -12,33 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Concordion.Api;
 using Concordion.Api.Listener;
 
-namespace Concordion.Internal.Listener
+namespace Concordion.Internal.Listener;
+
+public class VerifyRowResultRenderer : IVerifyRowsListener
 {
-    public class VerifyRowResultRenderer : IVerifyRowsListener
+    #region IVerifyRowsListener Members
+
+    public void ExpressionEvaluated(ExpressionEvaluatedEvent expressionEvaluatedEvent)
     {
-        #region IVerifyRowsListener Members
-
-        public void ExpressionEvaluated(ExpressionEvaluatedEvent expressionEvaluatedEvent)
-        {
-
-        }
-
-        public void MissingRow(MissingRowEvent missingRowEvent)
-        {
-            Element element = missingRowEvent.RowElement;
-            element.AddStyleClass("missing");
-        }
-
-        public void SurplusRow(SurplusRowEvent surplusRowEvent)
-        {
-            Element element = surplusRowEvent.RowElement;
-            element.AddStyleClass("surplus");
-        }
-
-        #endregion
-
     }
+
+    public void MissingRow(MissingRowEvent missingRowEvent)
+    {
+        var element = missingRowEvent.RowElement;
+
+        element.AddStyleClass("missing");
+    }
+
+    public void SurplusRow(SurplusRowEvent surplusRowEvent)
+    {
+        var element = surplusRowEvent.RowElement;
+
+        element.AddStyleClass("surplus");
+    }
+
+    #endregion
 }

@@ -1,33 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using Concordion.Api;
+﻿/*
+ * Copyright 2026 Alexei Yashkov
+ * Copyright 2010-2015 concordion.org
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 using Concordion.Internal;
-using NUnit.Framework;
 
-namespace Concordion.Test.Internal
-{
-    [TestFixture]
-    public class SpecificationLocatorTest
+namespace Concordion.Test.Internal;
+
+[TestFixture]
+public class SpecificationLocatorTest {
+    [Test]
+    public void ShouldRemoveTestSuffixes()
     {
-        [Test]
-        public void ShouldRemoveTestSuffixes()
-        {
-            var specificationLocator = new ClassNameBasedSpecificationLocator();
-            var resource = specificationLocator.LocateSpecification(this);
-            var path = resource.Path.Replace(Path.DirectorySeparatorChar, '/');
-            Assert.AreEqual("Concordion/Test/Internal/SpecificationLocator.html", path, "path from SpecificationLocator contains 'Test'");
-        }
+        var locator = new ClassNameBasedSpecificationLocator();
+        var resource = locator.LocateSpecification(this);
 
-        [Test]
-        public void ShouldNotRemoreWordTestInBetween()
-        {
-            var specificationLocator = new ClassNameBasedSpecificationLocator();
-            var resource = specificationLocator.LocateSpecification(new DummyContainingTestInNameTest());
-            var path = resource.Path.Replace(Path.DirectorySeparatorChar, '/');
-            Assert.AreEqual("Concordion/Test/Internal/DummyContainingTestInName.html", path, "path from SpecificiationLocator removed 'Test' in the middle");
-        }
+        Assert.That(resource.Path,
+            Is.EqualTo(@"Concordion\Test\Internal\SpecificationLocator.html"));
+    }
+
+    [Test]
+    public void ShouldNotRemoveWordTestInBetween()
+    {
+        var locator = new ClassNameBasedSpecificationLocator();
+        var resource = locator
+            .LocateSpecification(new DummyContainingTestInNameTest());
+
+        Assert.That(resource.Path,
+            Is.EqualTo(@"Concordion\Test\Internal\DummyContainingTestInName.html"));
     }
 }

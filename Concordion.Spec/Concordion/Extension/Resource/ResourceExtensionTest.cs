@@ -1,28 +1,27 @@
 using Concordion.Integration;
 
-namespace Concordion.Spec.Concordion.Extension.Resource
-{
-    [ConcordionTest]
-    public class ResourceExtensionTest : AbstractExtensionTestCase
+namespace Concordion.Spec.Concordion.Extension.Resource;
+
+[ConcordionTest]
+public class ResourceExtensionTest : AbstractExtensionTestCase {
+    public void addResourceExtension()
     {
-        public void addResourceExtension()
-        {
-            Extension = new ResourceExtension();
-        }
+        Extension = new ResourceExtension();
+    }
 
-        public void addDynamicResourceExtension()
-        {
-            Extension = new DynamicResourceExtension();
-        }
+    public void addDynamicResourceExtension()
+    {
+        Extension = new DynamicResourceExtension();
+    }
 
-        protected override void ConfigureTestRig()
-        {
-            TestRig.WithResource(new Api.Resource(ResourceExtension.SourcePath), "0101");
-        }
-    
-        public int getMeaningOfLife()
-        {
-            return 42;
-        }
+    protected override void ConfigureTestRig()
+    {
+        TestRig.WithResource(new Api.Resource(ResourceExtension.SourcePath),
+            "0101");
+    }
+
+    public int getMeaningOfLife()
+    {
+        return 42;
     }
 }

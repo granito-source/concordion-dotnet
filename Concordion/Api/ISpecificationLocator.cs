@@ -12,23 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Concordion.Api;
 
-namespace Concordion.Api
+/// <summary>
+/// Locates specifications for concordion
+/// </summary>
+public interface ISpecificationLocator
 {
     /// <summary>
-    /// Locates specifications for concordion
+    /// Locates the specification.
     /// </summary>
-    public interface ISpecificationLocator
-    {
-        /// <summary>
-        /// Locates the specification.
-        /// </summary>
-        /// <param name="fixture">The fixture.</param>
-        /// <returns>The resource representing where the specification is located, null otherwise.</returns>
-        Resource LocateSpecification(object fixture);
-    }
+    /// <param name="fixture">The fixture.</param>
+    /// <returns>The resource representing where the specification is located, null otherwise.</returns>
+    Resource LocateSpecification(object? fixture);
 }

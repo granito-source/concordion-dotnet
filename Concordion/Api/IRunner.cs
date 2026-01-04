@@ -12,24 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Concordion.Api;
 
-namespace Concordion.Api
+/// <summary>
+/// Runs concordion on a particular specification
+/// </summary>
+public interface IRunner
 {
     /// <summary>
-    /// Runs concordion on a particular specification
+    /// Executes the specified resource.
     /// </summary>
-    public interface IRunner
-    {
-        /// <summary>
-        /// Executes the specified resource.
-        /// </summary>
-        /// <param name="resource">The resource.</param>
-        /// <param name="href">The href.</param>
-        /// <returns>A result indicating how the specification ran.</returns>
-        RunnerResult Execute(object fixture, Resource resource, string href);
-    }
+    /// <param name="fixture">The fixture.</param>
+    /// <param name="resource">The resource.</param>
+    /// <param name="href">The href.</param>
+    /// <returns>A result indicating how the specification ran.</returns>
+    RunnerResult Execute(object fixture, Resource resource, string href);
 }

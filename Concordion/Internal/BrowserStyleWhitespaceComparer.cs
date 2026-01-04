@@ -12,37 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using Concordion.Internal.Util;
 
-namespace Concordion.Internal
+namespace Concordion.Internal;
+
+public class BrowserStyleWhitespaceComparer : IComparer<object>
 {
-    public class BrowserStyleWhitespaceComparer : IComparer<object>
+    private readonly ChainOfExpectationCheckers m_ChainOfCheckers = new ChainOfExpectationCheckers();
+
+    public BrowserStyleWhitespaceComparer()
     {
-        private readonly ChainOfExpectationCheckers m_ChainOfCheckers = new ChainOfExpectationCheckers();
-
-        public BrowserStyleWhitespaceComparer()
-        {
-            this.m_ChainOfCheckers.Add(new DefaultExpectationChecker());
-            this.m_ChainOfCheckers.Add(new BooleanExpectationChecker());
-        }
-
-        #region IComparer<object> Members
-
-        public int Compare(object x, object y)
-        {
-            Check.IsTrue(y is string, "This comparator only supports comparisons with String objects");
-            if (m_ChainOfCheckers.IsAcceptable((string) y, x))
-            {
-                return 0;
-            }
-            return -1;
-        }
-
-        #endregion
+        m_ChainOfCheckers.Add(new DefaultExpectationChecker());
+        m_ChainOfCheckers.Add(new BooleanExpectationChecker());
     }
+
+    #region IComparer<object> Members
+
+    public int Compare(object x, object y)
+    {
+        Check.IsTrue(y is string, "This comparator only supports comparisons with String objects");
+        if (m_ChainOfCheckers.IsAcceptable((string) y, x))
+        {
+            return 0;
+        }
+        return -1;
+    }
+
+    #endregion
 }

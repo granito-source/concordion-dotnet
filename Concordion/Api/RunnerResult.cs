@@ -12,43 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Concordion.Api;
 
-namespace Concordion.Api
+/// <summary>
+/// A class to hold the result of running an <see cref="IRunner"/> object
+/// </summary>
+public class RunnerResult
 {
+    #region Properties
+
     /// <summary>
-    /// A class to hold the result of running an <see cref="IRunner"/> object
+    /// Gets or sets the result.
     /// </summary>
-    public class RunnerResult
+    /// <value>The result.</value>
+    public Result Result
     {
-        #region Properties
-        
-        /// <summary>
-        /// Gets or sets the result.
-        /// </summary>
-        /// <value>The result.</value>
-        public Result Result
-        {
-            get;
-            private set;
-        } 
-
-        #endregion
-
-        #region Constructors
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RunnerResult"/> class.
-        /// </summary>
-        /// <param name="result">The result.</param>
-        public RunnerResult(Result result)
-        {
-            this.Result = result;
-        } 
-
-        #endregion
+        get;
+        private set;
     }
+
+    #endregion
+
+    #region Constructors
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RunnerResult"/> class.
+    /// </summary>
+    /// <param name="result">The result.</param>
+    public RunnerResult(Result result)
+    {
+        Result = result;
+    }
+
+    #endregion
 }

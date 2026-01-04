@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace Concordion.Api.Listener;
 
-namespace Concordion.Api.Listener
+public interface IExecuteListener
 {
-    public interface IExecuteListener
-    {
-        void ExecuteCompleted(ExecuteEvent executeEvent);
-    }
+    void ExecuteCompleted(ExecuteEvent executeEvent);
 }

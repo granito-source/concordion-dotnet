@@ -1,29 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Concordion.Integration;
+﻿using Concordion.Integration;
 using Concordion.Spec.Support;
 
-namespace Concordion.Spec.Concordion.Command.AssertEquals
-{
-    [ConcordionTest]
-    public class ExceptionsTest
-    {
-        string successCount;
+namespace Concordion.Spec.Concordion.Command.AssertEquals;
 
-        public object countsFromExecutingSnippetWithSimulatedEvaluationResult(string snippet, string simulatedResult)
-        {
-            TestRig harness = new TestRig();
-            if (simulatedResult.Equals("(An exception)"))
-            {
-                harness.WithStubbedEvaluationResult(new Exception("simulated exception"));
-            }
-            else
-            {
-                harness.WithStubbedEvaluationResult(simulatedResult);
-            }
-            return harness.ProcessFragment(snippet);
-        }
+[ConcordionTest]
+public class ExceptionsTest {
+    public object countsFromExecutingSnippetWithSimulatedEvaluationResult(
+        string snippet, string simulatedResult)
+    {
+        var harness = new TestRig();
+
+        if (simulatedResult.Equals("(An exception)"))
+            harness.WithStubbedEvaluationResult(new Exception("simulated exception"));
+        else
+            harness.WithStubbedEvaluationResult(simulatedResult);
+
+        return harness.ProcessFragment(snippet);
     }
 }

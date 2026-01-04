@@ -1,64 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Concordion.Api;
-using System.IO;
+﻿using Concordion.Api;
 
-namespace Concordion.Internal
+namespace Concordion.Internal;
+
+public class FileSource : ISource
 {
-    public class FileSource : ISource
+    #region Properties
+
+    private string BaseDirectory
     {
-        #region Properties
-
-        private string BaseDirectory
-        {
-            get;
-            set;
-        }
-
-        #endregion
-
-        #region Constructors
-
-        public FileSource(string baseDirectory)
-        {
-            this.BaseDirectory = Path.GetFullPath(baseDirectory);
-        }
-
-        #endregion
-
-        #region ISource Members
-
-        public TextReader CreateReader(Resource resource)
-        {
-            return new StreamReader(new FileStream(ExistingFilePath(resource), FileMode.Open));
-        }
-
-        public bool CanFind(Resource resource)
-        {
-            return ExistingFilePath(resource) != null;
-        }
-
-        #endregion
-
-        #region private methods
-
-        private string ExistingFilePath(Resource resource)
-        {
-            var filePath = Path.Combine(BaseDirectory, resource.Path);
-            if (File.Exists(filePath))
-            {
-                return filePath;
-            }
-            filePath = Path.Combine(BaseDirectory, resource.ReducedPath);
-            if (File.Exists(filePath))
-            {
-                return filePath;
-            }
-            return null;
-        }
-
-        #endregion
+        get;
+        set;
     }
+
+    #endregion
+
+    #region Constructors
+
+    public FileSource(string baseDirectory)
+    {
+        BaseDirectory = Path.GetFullPath(baseDirectory);
+    }
+
+    #endregion
+
+    #region ISource Members
+
+    public TextReader CreateReader(Resource resource)
+    {
+        return new StreamReader(new FileStream(ExistingFilePath(resource), FileMode.Open));
+    }
+
+    public bool CanFind(Resource resource)
+    {
+        return ExistingFilePath(resource) != null;
+    }
+
+    #endregion
+
+    #region private methods
+
+    private string ExistingFilePath(Resource resource)
+    {
+        var filePath = Path.Combine(BaseDirectory, resource.Path);
+        if (File.Exists(filePath))
+        {
+            return filePath;
+        }
+        filePath = Path.Combine(BaseDirectory, resource.ReducedPath);
+        if (File.Exists(filePath))
+        {
+            return filePath;
+        }
+        return null;
+    }
+
+    #endregion
 }

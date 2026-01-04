@@ -12,30 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Concordion.Api;
 
-namespace Concordion.Internal
+namespace Concordion.Internal;
+
+public class XmlSpecification : ISpecification
 {
-    public class XmlSpecification : ISpecification
+    private CommandCall RootCommandNode
     {
-        private CommandCall RootCommandNode
-        {
-            get;
-            set;
-        }
+        get;
+        set;
+    }
 
-        public XmlSpecification(CommandCall rootCommandNode)
-        {
-            RootCommandNode = rootCommandNode;
-        }
+    public XmlSpecification(CommandCall rootCommandNode)
+    {
+        RootCommandNode = rootCommandNode;
+    }
 
-        public void Process(IEvaluator evaluator, IResultRecorder resultRecorder)
-        {
-            RootCommandNode.Execute(evaluator, resultRecorder);
-        }
+    public void Process(IEvaluator evaluator, IResultRecorder resultRecorder)
+    {
+        RootCommandNode.Execute(evaluator, resultRecorder);
     }
 }

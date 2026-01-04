@@ -12,33 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
+namespace Concordion.Api;
 
-namespace Concordion.Api
+/// <summary>
+/// Represents the source for specifications (aka The BaseInputDirectory)
+/// </summary>
+public interface ISource
 {
     /// <summary>
-    /// Represents the source for specifications (aka The BaseInputDirectory)
+    /// Creates the reader.
     /// </summary>
-    public interface ISource
-    {
-        /// <summary>
-        /// Creates the reader.
-        /// </summary>
-        /// <param name="resource">The resource.</param>
-        /// <returns></returns>
-        TextReader CreateReader(Resource resource);
+    /// <param name="resource">The resource.</param>
+    /// <returns></returns>
+    TextReader CreateReader(Resource resource);
 
-        /// <summary>
-        /// Determines whether this instance can find the specified resource.
-        /// </summary>
-        /// <param name="resource">The resource.</param>
-        /// <returns>
-        /// 	<c>true</c> if this instance can find the specified resource; otherwise, <c>false</c>.
-        /// </returns>
-        bool CanFind(Resource resource);
-    }
+    /// <summary>
+    /// Determines whether this instance can find the specified resource.
+    /// </summary>
+    /// <param name="resource">The resource.</param>
+    /// <returns>
+    /// 	<c>true</c> if this instance can find the specified resource; otherwise, <c>false</c>.
+    /// </returns>
+    bool CanFind(Resource resource);
 }

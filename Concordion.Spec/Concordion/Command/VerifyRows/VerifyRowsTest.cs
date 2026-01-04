@@ -1,66 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Concordion.Internal.Util;
-using Concordion.Api;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Concordion.Integration;
+using Concordion.Internal.Util;
 using Concordion.Spec.Support;
 
-namespace Concordion.Spec.Concordion.Command.VerifyRows
-{
-    [ConcordionTest]
-    public class VerifyRowsTest
+namespace Concordion.Spec.Concordion.Command.VerifyRows;
+
+[ConcordionTest]
+public class VerifyRowsTest {
+    public ICollection<string> usernames = new List<string>();
+
+    public string processFragment(string fragment, string csv)
     {
-        public ICollection<string> usernames = new List<string>();
+        usernames = csvToCollection(csv);
 
-        public string processFragment(string fragment, string csv)
-        {
-            usernames = csvToCollection(csv);
-            XDocument document = new TestRig()
-                .WithFixture(this)
-                .ProcessFragment(fragment)
-                .GetXDocument();
+        var document = new TestRig()
+            .WithFixture(this)
+            .ProcessFragment(fragment)
+            .GetXDocument();
+        var result = string.Empty;
+        var table = document.Descendants("table").ToList()[0];
+        var rows = table.Elements("tr").ToList();
 
-            var result = String.Empty;
+        for (var index = 1; index < rows.Count; index++) {
+            var row = rows.ToArray()[index];
 
-            var table = document.Descendants("table").ToList()[0];
-            var rows = table.Elements("tr");
+            if (!string.IsNullOrEmpty(result))
+                result += ", ";
 
-            for (int index = 1; index < rows.Count(); index++)
-            {
-                var row = rows.ToArray()[index];
-                if (!String.IsNullOrEmpty(result))
-                {
-                    result += ", ";
-                }
-                result += categorize(row);
-            }
-
-            return result;
+            result += categorize(row);
         }
 
-        private string categorize(XElement row)
-        {
-            var cssClass = row.Attribute("class");
-            if (cssClass == null)
-            {
-                var cell = row.Element("td");
-                cssClass = cell.Attribute("class");
-            }
-            Check.NotNull(cssClass, "cssClass is null");
-            return cssClass.Value.ToUpper();
+        return result;
+    }
+
+    private string categorize(XElement row)
+    {
+        var cssClass = row.Attribute("class");
+
+        if (cssClass == null) {
+            var cell = row.Element("td");
+
+            cssClass = cell?.Attribute("class");
         }
 
-        private static ICollection<string> csvToCollection(string csv) 
-        {
-            ICollection<string> c = new List<string>();
-            foreach (string s in csv.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)) 
-            {
-                c.Add(s);
-            }
-            return c;
-        }
+        Check.NotNull(cssClass, "cssClass is null");
+
+        return cssClass!.Value.ToUpper();
+    }
+
+    private static ICollection<string> csvToCollection(string csv)
+    {
+        var c = new List<string>();
+
+        foreach (var s in csv.Split([',', ' '],
+            StringSplitOptions.RemoveEmptyEntries))
+            c.Add(s);
+
+        return c;
     }
 }

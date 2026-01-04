@@ -1,31 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Concordion.Integration;
+﻿using Concordion.Integration;
 using Concordion.Spec.Support;
 
-namespace Concordion.Spec.Concordion.Command.AssertEquals.NonString
-{
-    [ConcordionTest]
-    public class VoidResultTest
+namespace Concordion.Spec.Concordion.Command.AssertEquals.NonString;
+
+[ConcordionTest]
+public class VoidResultTest {
+    public string process(string snippet)
     {
-        public string process(string snippet)
-        {
-            ProcessingResult r = new TestRig()
-                                        .WithFixture(this)
-                                        .ProcessFragment(snippet);
+        var r = new TestRig()
+            .WithFixture(this)
+            .ProcessFragment(snippet);
 
-            if (r.ExceptionCount != 0)
-            {
-                return "exception";
-            }
+        return r.ExceptionCount != 0 ? "exception" :
+            r.SuccessOrFailureInWords();
+    }
 
-            return r.SuccessOrFailureInWords();
-        }
-
-        public void myVoidMethod()
-        {
-        }
+    public void myVoidMethod()
+    {
     }
 }

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
-namespace Concordion.Api.Listener
+namespace Concordion.Api.Listener;
+
+public interface IDocumentParsingListener
 {
-    public interface IDocumentParsingListener
-    {
-        void BeforeParsing(XDocument document);
-    }
+    void BeforeParsing(XDocument document);
 }

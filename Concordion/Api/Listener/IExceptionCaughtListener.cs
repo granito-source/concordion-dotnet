@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿namespace Concordion.Api.Listener;
 
-namespace Concordion.Api.Listener
+public interface IExceptionCaughtListener
 {
-    public interface IExceptionCaughtListener
-    {
-        void ExceptionCaught(ExceptionCaughtEvent caughtEvent);
-    }
+    void ExceptionCaught(ExceptionCaughtEvent caughtEvent);
 }

@@ -12,26 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Concordion.Api;
 
-namespace Concordion.Api
+/// <summary>
+///
+/// </summary>
+public interface IContext : IResultRecorder, IEvaluator
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IContext : IResultRecorder, IEvaluator
-    {
-        Resource Resource { get; }
-        Element Element { get; }
-        string Expression { get; }
-        object EvaluateExpression();
-        void ProcessChildCommandsSequentially();
-        bool HasChildCommands();
-        void SetupChildCommands();
-        void ExecuteChildCommands();
-        void VerifyChildCommands();
-    }
+    Resource Resource { get; }
+
+    Element Element { get; }
+
+    string Expression { get; }
+
+    object EvaluateExpression();
+
+    void ProcessChildCommandsSequentially();
+
+    bool HasChildCommands();
+
+    void SetupChildCommands();
+
+    void ExecuteChildCommands();
+
+    void VerifyChildCommands();
 }

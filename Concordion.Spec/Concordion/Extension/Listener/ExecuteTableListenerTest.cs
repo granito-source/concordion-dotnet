@@ -1,30 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Globalization;
 using Concordion.Integration;
 
-namespace Concordion.Spec.Concordion.Extension.Listener
-{
-    [ConcordionTest]
-    public class ExecuteTableListenerTest : AbstractExtensionTestCase
+namespace Concordion.Spec.Concordion.Extension.Listener;
+
+[ConcordionTest]
+public class ExecuteTableListenerTest : AbstractExtensionTestCase {
+    public void addLoggingExtension()
     {
-        public void addLoggingExtension()
-        {
-            Extension = new LoggingExtension(LogWriter);
-        }
+        Extension = new LoggingExtension(LogWriter);
+    }
 
-        public string sqrt(string num)
-        {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            return Math.Sqrt(Convert.ToDouble(num)).ToString("N1");
-        }
+    public string sqrt(string num)
+    {
+        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-        public string generateUsername(string fullName)
-        {
-            return fullName.Replace(" ", "").ToLower();
-        }
+        return Math.Sqrt(Convert.ToDouble(num)).ToString("N1");
+    }
+
+    public string generateUsername(string fullName)
+    {
+        return fullName.Replace(" ", "").ToLower();
     }
 }

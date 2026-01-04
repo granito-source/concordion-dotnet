@@ -12,23 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Concordion.Api;
 
-namespace Concordion.Api
+/// <summary>
+/// Parses and stores the specification at the location identified by the Resource object
+/// </summary>
+public interface ISpecificationReader
 {
     /// <summary>
-    /// Parses and stores the specification at the location identified by the Resource object
+    /// Reads the specification.
     /// </summary>
-    public interface ISpecificationReader
-    {
-        /// <summary>
-        /// Reads the specification.
-        /// </summary>
-        /// <param name="resource">The resource.</param>
-        /// <returns></returns>
-        ISpecification ReadSpecification(Resource resource);
-    }
+    /// <param name="resource">The resource.</param>
+    /// <returns></returns>
+    ISpecification ReadSpecification(Resource resource);
 }

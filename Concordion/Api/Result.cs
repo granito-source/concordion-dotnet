@@ -12,36 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Concordion.Api;
 
-namespace Concordion.Api
+/// <summary>
+///
+/// </summary>
+public enum Result
 {
     /// <summary>
-    /// 
+    /// Indicates a specification assertion was successful
     /// </summary>
-    public enum Result
-    {
-        /// <summary>
-        /// Indicates a specification assertion was successful
-        /// </summary>
-        Success,
+    Success,
 
-        /// <summary>
-        /// Indicates a specification assertion was a failure
-        /// </summary>
-        Failure,
+    /// <summary>
+    /// Indicates a specification assertion was a failure
+    /// </summary>
+    Failure,
 
-        /// <summary>
-        /// Indicates a specification assertion had an exception
-        /// </summary>
-        Exception,
+    /// <summary>
+    /// Indicates a specification assertion had an exception
+    /// </summary>
+    Exception,
 
-        /// <summary>
-        /// Indicates a specification assertion was ignored
-        /// </summary>
-        Ignored
-    }
+    /// <summary>
+    /// Indicates a specification assertion was ignored
+    /// </summary>
+    Ignored
 }

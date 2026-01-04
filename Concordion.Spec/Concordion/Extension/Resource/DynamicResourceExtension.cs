@@ -1,31 +1,31 @@
-using System;
-using System.IO;
 using Concordion.Api;
 using Concordion.Api.Extension;
 using Concordion.Api.Listener;
 
-namespace Concordion.Spec.Concordion.Extension.Resource
-{
-    public class DynamicResourceExtension : IConcordionExtension, IConcordionBuildListener
+namespace Concordion.Spec.Concordion.Extension.Resource;
+
+public class DynamicResourceExtension : IConcordionExtension, IConcordionBuildListener {
+    public static readonly string SourcePath = "/test/concordion/o.png";
+
+    private ITarget? m_Target;
+
+    public void AddTo(IConcordionExtender concordionExtender)
     {
-        public static readonly String SourcePath = "/test/concordion/o.png";
-        private ITarget m_Target;
+        concordionExtender.WithBuildListener(this);
+    }
 
-        public void AddTo(IConcordionExtender concordionExtender)
-        {
-            concordionExtender.WithBuildListener(this);
-        }
+    public void ConcordionBuilt(ConcordionBuildEvent buildEvent)
+    {
+        m_Target = buildEvent.Target;
 
-        public void ConcordionBuilt(ConcordionBuildEvent buildEvent)
-        {
-            this.m_Target = buildEvent.Target;
-        
-            this.CreateResourceInTarget();  // NOTE: normally this would be done during specification processing - eg in an AssertEqualsListener
-        }
+        // NOTE: normally this would be done during specification
+        // processing, e.g. in an AssertEqualsListener
+        CreateResourceInTarget();
+    }
 
-        private void CreateResourceInTarget()
-        {
-            this.m_Target.CopyTo(new global::Concordion.Api.Resource("/resource/my.txt"), new StringReader("success"));
-        }
+    private void CreateResourceInTarget()
+    {
+        m_Target?.CopyTo(new Api.Resource("/resource/my.txt"),
+            new StringReader("success"));
     }
 }

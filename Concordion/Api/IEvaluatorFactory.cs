@@ -12,23 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Concordion.Api;
 
-namespace Concordion.Api
+/// <summary>
+/// Creates <see cref="IEvaluator"/> objects
+/// </summary>
+public interface IEvaluatorFactory
 {
     /// <summary>
-    /// Creates <see cref="IEvaluator"/ objects>
+    /// Creates the evaluator.
     /// </summary>
-    public interface IEvaluatorFactory
-    {
-        /// <summary>
-        /// Creates the evaluator.
-        /// </summary>
-        /// <param name="fixture">The fixture.</param>
-        /// <returns></returns>
-        IEvaluator CreateEvaluator(object fixture);
-    }
+    /// <param name="fixture">The fixture.</param>
+    /// <returns></returns>
+    IEvaluator CreateEvaluator(object? fixture);
 }

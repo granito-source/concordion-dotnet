@@ -12,14 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Concordion.Internal.Util;
 
-namespace Concordion.Internal.Util
-{
-    public class Announcer<T>
-    {
-    }
-}
+public class Announcer<T>;

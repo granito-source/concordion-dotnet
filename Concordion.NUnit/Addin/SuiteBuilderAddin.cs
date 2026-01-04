@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Concordion.Integration;
+﻿using Concordion.Integration;
 using NUnit.Core;
 using NUnit.Core.Extensibility;
 

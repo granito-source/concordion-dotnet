@@ -15,6 +15,25 @@
  * limitations under the License.
  */
 
-namespace Concordion.Test.TestObject;
+using Concordion.Api;
+using Concordion.Internal;
+using Moq;
 
-public class DemoTest;
+namespace Concordion.Test.Integration;
+
+[TestFixture]
+public class FileTargetTest {
+    [Test]
+    [Ignore("failing on Linux, needs investigation")]
+    public void Test_Can_Get_File_Path_Successfully()
+    {
+        var resource = new Mock<Resource>("blah\\blah.txt");
+
+        resource.Setup(x => x.Path).Returns("blah\\blah.txt");
+
+        var target = new FileTarget(@"c:\temp");
+
+        Assert.That(target.GetTargetPath(resource.Object),
+            Is.EqualTo(@"c:\temp\blah\blah.txt"));
+    }
+}

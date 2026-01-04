@@ -12,16 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Concordion.Api;
 
-namespace Concordion.Internal.Commands
+namespace Concordion.Internal.Commands;
+
+internal interface IExecuteStrategy
 {
-    internal interface IExecuteStrategy
-    {
-        void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
-    }
+    void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
 }

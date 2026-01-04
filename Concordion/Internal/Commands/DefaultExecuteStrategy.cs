@@ -12,35 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Concordion.Api;
 
-namespace Concordion.Internal.Commands
+namespace Concordion.Internal.Commands;
+
+internal class DefaultExecuteStrategy : IExecuteStrategy
 {
-    internal class DefaultExecuteStrategy : IExecuteStrategy
+    private readonly ExecuteCommand m_ExecuteCommand;
+
+    public DefaultExecuteStrategy(ExecuteCommand executeCommand)
     {
-        private readonly ExecuteCommand m_ExecuteCommand;
-
-        public DefaultExecuteStrategy(ExecuteCommand executeCommand)
-        {
-            this.m_ExecuteCommand = executeCommand;
-        }
-
-        #region IExecuteStrategy Members
-
-        public void Execute(CommandCall commandCall, global::Concordion.Api.IEvaluator evaluator, global::Concordion.Api.IResultRecorder resultRecorder)
-        {
-            CommandCallList childCommands = commandCall.Children;
-
-            childCommands.SetUp(evaluator, resultRecorder);
-            evaluator.Evaluate(commandCall.Expression);
-            childCommands.Execute(evaluator, resultRecorder);
-            m_ExecuteCommand.AnnounceExecuteCompleted(commandCall.Element);
-            childCommands.Verify(evaluator, resultRecorder);
-        }
-
-        #endregion
+        m_ExecuteCommand = executeCommand;
     }
+
+    #region IExecuteStrategy Members
+
+    public void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    {
+        var childCommands = commandCall.Children;
+
+        childCommands.SetUp(evaluator, resultRecorder);
+        evaluator.Evaluate(commandCall.Expression);
+        childCommands.Execute(evaluator, resultRecorder);
+        m_ExecuteCommand.AnnounceExecuteCompleted(commandCall.Element);
+        childCommands.Verify(evaluator, resultRecorder);
+    }
+
+    #endregion
 }

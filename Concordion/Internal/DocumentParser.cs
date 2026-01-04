@@ -12,110 +12,105 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Concordion.Api;
 using System.Xml.Linq;
+using Concordion.Api;
 using Concordion.Api.Listener;
 using Concordion.Internal.Util;
 
-namespace Concordion.Internal
+namespace Concordion.Internal;
+
+public class DocumentParser
 {
-    public class DocumentParser
+    private readonly List<IDocumentParsingListener> m_Listeners = new List<IDocumentParsingListener>();
+
+    #region Properties
+
+    private ICommandFactory CommandFactory
     {
-        private readonly List<IDocumentParsingListener> m_Listeners = new List<IDocumentParsingListener>();
+        get;
+        set;
+    }
 
-        #region Properties
+    #endregion
 
-        private ICommandFactory CommandFactory
+    #region Constructors
+
+    public DocumentParser(ICommandFactory commandFactory)
+    {
+        CommandFactory = commandFactory;
+    }
+
+    #endregion
+
+    #region Methods
+
+    public void AddDocumentParsingListener(IDocumentParsingListener listener)
+    {
+        m_Listeners.Add(listener);
+    }
+
+    public void RemoveDocumentParsingListener(IDocumentParsingListener listener)
+    {
+        m_Listeners.Remove(listener);
+    }
+
+    private void AnnounceBeforeParsing(XDocument document)
+    {
+        foreach (var listener in m_Listeners)
         {
-            get;
-            set;
+            listener.BeforeParsing(document);
         }
+    }
 
-        #endregion
+    public ISpecification Parse(XDocument document, Resource resource)
+    {
+        AnnounceBeforeParsing(document);
+        var rootElement = document.Root;
+        var rootCommandCall = new CommandCall(CreateSpecificationCommand(), new Element(rootElement), "", resource);
+        GenerateCommandCallTree(rootElement, rootCommandCall, resource);
+        return new XmlSpecification(rootCommandCall);
+    }
 
-        #region Constructors
+    private ICommand CreateSpecificationCommand()
+    {
+        var specCmd = CreateCommand("", "specification");
+        return specCmd;
+    }
 
-        public DocumentParser(ICommandFactory commandFactory)
+    private ICommand CreateCommand(string namespaceURI, string commandName)
+    {
+        return CommandFactory.CreateCommand(namespaceURI, commandName);
+    }
+
+    private void GenerateCommandCallTree(XElement element, CommandCall parentCommandCall, Resource resource)
+    {
+        var isCommandAssigned = false;
+
+        foreach (var attribute in element.Attributes())
         {
-            CommandFactory = commandFactory;
-        }
+            var namespaceURI = attribute.Name.Namespace.NamespaceName;
 
-        #endregion
-
-        #region Methods
-
-        public void AddDocumentParsingListener(IDocumentParsingListener listener)
-        {
-            m_Listeners.Add(listener);
-        }
-
-        public void RemoveDocumentParsingListener(IDocumentParsingListener listener)
-        {
-            m_Listeners.Remove(listener);
-        }
-
-        private void AnnounceBeforeParsing(XDocument document)
-        {
-            foreach (var listener in m_Listeners)
+            if (!attribute.IsNamespaceDeclaration && !string.IsNullOrEmpty(namespaceURI))
             {
-                listener.BeforeParsing(document);
-            }
-        }
-
-        public ISpecification Parse(XDocument document, Resource resource)
-        {
-            AnnounceBeforeParsing(document);
-            XElement rootElement = document.Root;
-            CommandCall rootCommandCall = new CommandCall(CreateSpecificationCommand(), new Element(rootElement), "", resource);
-            GenerateCommandCallTree(rootElement, rootCommandCall, resource);
-            return new XmlSpecification(rootCommandCall);
-        }
-
-        private ICommand CreateSpecificationCommand()
-        {
-            ICommand specCmd = CreateCommand("", "specification");
-            return specCmd;
-        }
-
-        private ICommand CreateCommand(string namespaceURI, string commandName)
-        {
-            return CommandFactory.CreateCommand(namespaceURI, commandName);
-        }
-
-        private void GenerateCommandCallTree(XElement element, CommandCall parentCommandCall, Resource resource)
-        {
-            bool isCommandAssigned = false;
-
-            foreach (XAttribute attribute in element.Attributes())
-            {
-                string namespaceURI = attribute.Name.Namespace.NamespaceName;
-
-                if (!attribute.IsNamespaceDeclaration && !String.IsNullOrEmpty(namespaceURI))
+                var commandName = attribute.Name.LocalName;
+                var command = CreateCommand(namespaceURI, commandName);
+                if (command != null)
                 {
-                    string commandName = attribute.Name.LocalName;
-                    ICommand command = CreateCommand(namespaceURI, commandName);
-                    if (command != null)
-                    {
-                        Check.IsFalse(isCommandAssigned, "Multiple commands per element is currently not supported.");
-                        isCommandAssigned = true;
-                        String expression = attribute.Value;
-                        CommandCall commandCall = new CommandCall(command, new Element(element), expression, resource);
-                        parentCommandCall.AddChild(commandCall);
-                        parentCommandCall = commandCall;
-                    }
+                    Check.IsFalse(isCommandAssigned, "Multiple commands per element is currently not supported.");
+                    isCommandAssigned = true;
+                    var expression = attribute.Value;
+                    var commandCall = new CommandCall(command, new Element(element), expression, resource);
+                    parentCommandCall.AddChild(commandCall);
+                    parentCommandCall = commandCall;
                 }
             }
-
-            foreach (XElement child in element.Elements())
-            {
-                GenerateCommandCallTree(child, parentCommandCall, resource);
-            }
         }
 
-        #endregion
+        foreach (var child in element.Elements())
+        {
+            GenerateCommandCallTree(child, parentCommandCall, resource);
+        }
     }
+
+    #endregion
 }

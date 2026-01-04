@@ -14,28 +14,26 @@
 
 using Concordion.Api.Listener;
 
-namespace Concordion.Internal.Listener
+namespace Concordion.Internal.Listener;
+
+public class RunResultRenderer : ExceptionRenderer, IRunListener
 {
-    public class RunResultRenderer : ExceptionRenderer, IRunListener
+    #region IRunListener Members
+
+    public void SuccessReported(RunSuccessEvent runSuccessEvent)
     {
-        #region IRunListener Members
-
-        public void SuccessReported(RunSuccessEvent runSuccessEvent)
-        {
-            runSuccessEvent.Element.AddStyleClass("success").AppendNonBreakingSpaceIfBlank();
-        }
-
-        public void FailureReported(RunFailureEvent runFailureEvent)
-        {
-            runFailureEvent.Element.AddStyleClass("failure").AppendNonBreakingSpaceIfBlank();
-        }
-
-        public void IgnoredReported(RunIgnoreEvent runIgnoreEvent)
-        {
-            runIgnoreEvent.Element.AddStyleClass("ignored").AppendNonBreakingSpaceIfBlank();
-        }
-
-        #endregion
-
+        runSuccessEvent.Element.AddStyleClass("success").AppendNonBreakingSpaceIfBlank();
     }
+
+    public void FailureReported(RunFailureEvent runFailureEvent)
+    {
+        runFailureEvent.Element.AddStyleClass("failure").AppendNonBreakingSpaceIfBlank();
+    }
+
+    public void IgnoredReported(RunIgnoreEvent runIgnoreEvent)
+    {
+        runIgnoreEvent.Element.AddStyleClass("ignored").AppendNonBreakingSpaceIfBlank();
+    }
+
+    #endregion
 }

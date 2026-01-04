@@ -12,44 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Concordion.Api;
 
-namespace Concordion.Api
+/// <summary>
+/// Records the results of running a specification and indicates whether or not the specification passed or failed
+/// </summary>
+public interface IResultRecorder
 {
     /// <summary>
-    /// Records the results of running a specification and indicates whether or not the specification passed or failed
+    /// Records the specified result.
     /// </summary>
-    public interface IResultRecorder
-    {
-        /// <summary>
-        /// Records the specified result.
-        /// </summary>
-        /// <param name="result">The result.</param>
-        void Record(Result result);
+    /// <param name="result">The result.</param>
+    void Record(Result result);
 
-        /// <summary>
-        /// Indicate a successfull assert.
-        /// </summary>
-        void Success();
+    /// <summary>
+    /// Indicate a successful assert.
+    /// </summary>
+    void Success();
 
-        /// <summary>
-        /// Indicate a failing assert.
-        /// </summary>
-        /// <param name="message">The message to display.</param>
-        /// <param name="stackTrace">Stack trace giving the location of the failure</param>
-        void Failure(string message, string stackTrace);
+    /// <summary>
+    /// Indicate a failing assert.
+    /// </summary>
+    /// <param name="message">The message to display.</param>
+    /// <param name="stackTrace">Stack trace giving the location of the failure</param>
+    void Failure(string message, string stackTrace);
 
-        /// <summary>
-        /// Indicate an unhandled exception during test execution.
-        /// </summary>
-        /// <param name="exception">The occured exception.</param>
-        void Error(Exception exception);
+    /// <summary>
+    /// Indicate an unhandled exception during test execution.
+    /// </summary>
+    /// <param name="exception">The occured exception.</param>
+    void Error(Exception exception);
 
-        void Ignore();
+    void Ignore();
 
-        void AddResultDetails(List<ResultDetails> resultDetails);
-    }
+    void AddResultDetails(List<ResultDetails> resultDetails);
 }

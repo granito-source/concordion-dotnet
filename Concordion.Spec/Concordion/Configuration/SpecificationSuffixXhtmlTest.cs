@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Concordion.Api.Extension;
-using Concordion.Integration;
-using Concordion.Spec.Concordion.Extension;
+﻿using Concordion.Integration;
 
-namespace Concordion.Spec.Concordion.Configuration
-{
-    [ConcordionTest]
-    public class SpecificationSuffixXhtmlTest
+namespace Concordion.Spec.Concordion.Configuration;
+
+[ConcordionTest]
+public class SpecificationSuffixXhtmlTest {
+    public bool HasBeenProcessed()
     {
-        public bool HasBeenProcessed()
-        {
-            return true;
-        }
+        return true;
     }
 }

@@ -12,40 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using Concordion.Api;
 
-namespace Concordion.Internal
+namespace Concordion.Internal;
+
+public class ClassNameBasedSpecificationLocator : ISpecificationLocator
 {
-    public class ClassNameBasedSpecificationLocator : ISpecificationLocator
+    #region ISpecificationLocator Members
+
+    private string m_SpecificationSuffix;
+
+    public ClassNameBasedSpecificationLocator() : this("html") { }
+
+    public ClassNameBasedSpecificationLocator(string mSpecificationSuffix)
     {
-        #region ISpecificationLocator Members
-
-        private string m_SpecificationSuffix;
-
-        public ClassNameBasedSpecificationLocator() : this("html") { }
-
-        public ClassNameBasedSpecificationLocator(string mSpecificationSuffix)
-        {
-            this.m_SpecificationSuffix = mSpecificationSuffix;
-        }
-
-        public Resource LocateSpecification(object fixture)
-        {
-            var fixtureName = fixture.GetType().ToString();
-            fixtureName = fixtureName.Replace(".", "\\");
-
-            //Add Test und Fixture -> Case Sensitive 
-            fixtureName = Regex.Replace(fixtureName, "(Fixture|Test)$", "");
-            //Suffix from Concordion.Specification.config
-            var path = fixtureName + "." + m_SpecificationSuffix;
-            return new Resource(path, fixture.GetType().Assembly.GetName().Name);
-        }
-
-        #endregion
+        m_SpecificationSuffix = mSpecificationSuffix;
     }
+
+    public Resource LocateSpecification(object fixture)
+    {
+        var fixtureName = fixture.GetType().ToString();
+        fixtureName = fixtureName.Replace(".", "\\");
+
+        //Add Test und Fixture -> Case Sensitive 
+        fixtureName = Regex.Replace(fixtureName, "(Fixture|Test)$", "");
+        //Suffix from Concordion.Specification.config
+        var path = fixtureName + "." + m_SpecificationSuffix;
+        return new Resource(path, fixture.GetType().Assembly.GetName().Name);
+    }
+
+    #endregion
 }

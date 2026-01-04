@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿namespace Concordion.Internal;
 
-namespace Concordion.Internal
+public interface IExpectationChecker
 {
-    public interface IExpectationChecker
-    {
-        bool IsAcceptable(string expected, object actual);
-    }
+    bool IsAcceptable(string expected, object actual);
 }

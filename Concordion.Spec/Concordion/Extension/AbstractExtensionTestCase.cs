@@ -1,62 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using Concordion.Api;
-using Concordion.Api.Extension;
+﻿using Concordion.Api.Extension;
 using Concordion.Spec.Support;
 
-namespace Concordion.Spec.Concordion.Extension
-{
-    public class AbstractExtensionTestCase
+namespace Concordion.Spec.Concordion.Extension;
+
+public class AbstractExtensionTestCase {
+    protected IConcordionExtension Extension { get; set; }
+
+    protected TestRig? TestRig { get; set; }
+
+    protected ProcessingResult? ProcessingResult { get; set; }
+
+    public TextWriter LogWriter { get; set; } = new StringWriter();
+
+    public void processAnything()
     {
-        #region Fields
+        process("<p>anything..</p>");
+    }
 
-        protected IConcordionExtension Extension { get; set; }
+    public void process(string fragment)
+    {
+        TestRig = new TestRig();
+        ConfigureTestRig();
+        ProcessingResult = TestRig.WithFixture(this)
+            .WithExtension(Extension)
+            .ProcessFragment(fragment);
+    }
 
-        protected TestRig TestRig { get; set; }
+    protected virtual void ConfigureTestRig()
+    {
+    }
 
-        protected ProcessingResult ProcessingResult { get; set; }
+    public List<string> getEventLog()
+    {
+        LogWriter.Flush();
 
-        public TextWriter LogWriter { get; set; }
+        var loggedEvents = LogWriter
+            .ToString()
+            .Split([LogWriter.NewLine], StringSplitOptions.None);
+        var eventLog = loggedEvents.ToList();
 
-        #endregion
+        eventLog.Remove("");
 
-        public AbstractExtensionTestCase()
-        {
-            this.LogWriter = new StringWriter();
-        }
+        return eventLog;
+    }
 
-        public void processAnything()
-        {
-            process("<p>anything..</p>");
-        }
-    
-        public void process(String fragment)
-        {
-            TestRig = new TestRig();
-            this.ConfigureTestRig();
-            ProcessingResult = TestRig.WithFixture(this)
-              .WithExtension(this.Extension)
-              .ProcessFragment(fragment);
-        }
-
-        protected virtual void ConfigureTestRig()
-        {
-        }
-
-        public List<string> getEventLog()
-        {
-            LogWriter.Flush();
-            var loggedEvents = LogWriter.ToString().Split(new[] {LogWriter.NewLine}, StringSplitOptions.None);
-            var eventLog = loggedEvents.ToList();
-            eventLog.Remove("");
-            return eventLog;
-        }
-
-        public bool isAvailable(string resourcePath) {
-            return TestRig.HasCopiedResource(new global::Concordion.Api.Resource(resourcePath));
-        }
+    public bool isAvailable(string resourcePath)
+    {
+        return TestRig.HasCopiedResource(new Api.Resource(resourcePath));
     }
 }

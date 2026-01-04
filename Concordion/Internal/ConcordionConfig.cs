@@ -12,78 +12,72 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
-using System.IO;
 using Concordion.Api;
 
-namespace Concordion.Internal
+namespace Concordion.Internal;
+
+/// <summary>
+/// 
+/// </summary>
+public class ConcordionConfig
 {
+    #region Properties
+        
     /// <summary>
-    /// 
+    /// Gets or sets the runners.
     /// </summary>
-    public class ConcordionConfig
+    /// <value>The runners.</value>
+    public Dictionary<string, IRunner> Runners
     {
-        #region Properties
+        get;
+        set;
+    } 
+
+    #endregion
+
+    #region Constructors
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConcordionConfig"/> class.
+    /// </summary>
+    public ConcordionConfig()
+    {
+        Runners = new Dictionary<string, IRunner>();
+    } 
+
+    #endregion
+
+    #region Methods
         
-        /// <summary>
-        /// Gets or sets the runners.
-        /// </summary>
-        /// <value>The runners.</value>
-        public Dictionary<string, IRunner> Runners
+    /// <summary>
+    /// Loads this instance.
+    /// </summary>
+    public ConcordionConfig Load()
+    {
+        var assemblyCodebase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
+        if (assemblyCodebase.IsFile)
         {
-            get;
-            set;
-        } 
+            var defaultConfigFile = Path.GetDirectoryName(assemblyCodebase.LocalPath) + @"\Concordion.config";
+            Load(defaultConfigFile);
+        }
+        return this;
+    }
 
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConcordionConfig"/> class.
-        /// </summary>
-        public ConcordionConfig()
+    /// <summary>
+    /// Loads the specified config path.
+    /// </summary>
+    /// <param name="configPath">The config path.</param>
+    public ConcordionConfig Load(string configPath)
+    {
+        if (File.Exists(configPath))
         {
-            Runners = new Dictionary<string, IRunner>();
-        } 
-
-        #endregion
-
-        #region Methods
-        
-        /// <summary>
-        /// Loads this instance.
-        /// </summary>
-        public ConcordionConfig Load()
-        {
-            var assemblyCodebase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
-            if (assemblyCodebase.IsFile)
-            {
-                var defaultConfigFile = Path.GetDirectoryName(assemblyCodebase.LocalPath) + @"\Concordion.config";
-                Load(defaultConfigFile);
-            }
-            return this;
+            var parser = new ConcordionConfigParser(this);
+            parser.Parse(new StreamReader(configPath));
         }
 
-        /// <summary>
-        /// Loads the specified config path.
-        /// </summary>
-        /// <param name="configPath">The config path.</param>
-        public ConcordionConfig Load(string configPath)
-        {
-            if (File.Exists(configPath))
-            {
-                var parser = new ConcordionConfigParser(this);
-                parser.Parse(new StreamReader(configPath));
-            }
+        return this;
+    } 
 
-            return this;
-        } 
-
-        #endregion
-    }
+    #endregion
 }

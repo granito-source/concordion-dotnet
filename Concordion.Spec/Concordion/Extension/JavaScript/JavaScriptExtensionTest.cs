@@ -1,38 +1,35 @@
-using System;
-using Concordion.Api;
 using Concordion.Integration;
 
-namespace Concordion.Spec.Concordion.Extension.JavaScript
-{
-    [ConcordionTest]
-    public class JavaScriptExtensionTest : AbstractExtensionTestCase
+namespace Concordion.Spec.Concordion.Extension.JavaScript;
+
+[ConcordionTest]
+public class JavaScriptExtensionTest : AbstractExtensionTestCase {
+    public const string SourcePath = "/test/concordion/my.js";
+
+    public const string TestJs = "/* My test JS */";
+
+    public void addLinkedJavaScriptExtension()
     {
-        public static readonly String SourcePath = "/test/concordion/my.js";
-        public static readonly String TestJs = "/* My test JS */";
+        Extension = new JavaScriptLinkedExtension();
+    }
 
-        public void addLinkedJavaScriptExtension()
-        {
-            this.Extension = new JavaScriptLinkedExtension();
-        }
+    public void addEmbeddedJavaScriptExtension()
+    {
+        Extension = new JavaScriptEmbeddedExtension();
+    }
 
-        public void addEmbeddedJavaScriptExtension()
-        {
-            this.Extension = new JavaScriptEmbeddedExtension();
-        }
+    protected override void ConfigureTestRig()
+    {
+        TestRig.WithResource(new Api.Resource(SourcePath), TestJs);
+    }
 
-        protected override void ConfigureTestRig()
-        {
-            this.TestRig.WithResource(new global::Concordion.Api.Resource(SourcePath), TestJs);
-        }
-    
-        public bool hasJavaScriptDeclaration(string cssFilename)
-        {
-            return this.ProcessingResult.HasJavaScriptDeclaration(cssFilename);
-        }
+    public bool hasJavaScriptDeclaration(string cssFilename)
+    {
+        return ProcessingResult.HasJavaScriptDeclaration(cssFilename);
+    }
 
-        public bool hasEmbeddedTestJavaScript()
-        {
-            return this.ProcessingResult.HasEmbeddedJavaScript(TestJs);
-        }
+    public bool hasEmbeddedTestJavaScript()
+    {
+        return ProcessingResult.HasEmbeddedJavaScript(TestJs);
     }
 }

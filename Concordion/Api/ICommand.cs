@@ -12,41 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Concordion.Internal;
 
-namespace Concordion.Api
+namespace Concordion.Api;
+
+/// <summary>
+/// Represents a concordion command from the specification
+/// </summary>
+public interface ICommand
 {
     /// <summary>
-    /// Represents a concordion command from the specification
+    /// Setups the specified command call.
     /// </summary>
-    public interface ICommand
-    {
-        /// <summary>
-        /// Setups the specified command call.
-        /// </summary>
-        /// <param name="commandCall">The command call.</param>
-        /// <param name="evaluator">The evaluator.</param>
-        /// <param name="resultRecorder">The result recorder.</param>
-        void Setup(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
+    /// <param name="commandCall">The command call.</param>
+    /// <param name="evaluator">The evaluator.</param>
+    /// <param name="resultRecorder">The result recorder.</param>
+    void Setup(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
 
-        /// <summary>
-        /// Executes the specified command call.
-        /// </summary>
-        /// <param name="commandCall">The command call.</param>
-        /// <param name="evaluator">The evaluator.</param>
-        /// <param name="resultRecorder">The result recorder.</param>
-        void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
+    /// <summary>
+    /// Executes the specified command call.
+    /// </summary>
+    /// <param name="commandCall">The command call.</param>
+    /// <param name="evaluator">The evaluator.</param>
+    /// <param name="resultRecorder">The result recorder.</param>
+    void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
 
-        /// <summary>
-        /// Verifies the specified command call.
-        /// </summary>
-        /// <param name="commandCall">The command call.</param>
-        /// <param name="evaluator">The evaluator.</param>
-        /// <param name="resultRecorder">The result recorder.</param>
-        void Verify(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
-    }
+    /// <summary>
+    /// Verifies the specified command call.
+    /// </summary>
+    /// <param name="commandCall">The command call.</param>
+    /// <param name="evaluator">The evaluator.</param>
+    /// <param name="resultRecorder">The result recorder.</param>
+    void Verify(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
 }

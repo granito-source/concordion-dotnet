@@ -12,23 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Concordion.Api;
 
-namespace Concordion.Internal
+namespace Concordion.Internal;
+
+public class SimpleEvaluatorFactory : IEvaluatorFactory
 {
-    public class SimpleEvaluatorFactory : IEvaluatorFactory
+    #region IEvaluatorFactory Members
+
+    public IEvaluator CreateEvaluator(object fixture)
     {
-        #region IEvaluatorFactory Members
-
-        public IEvaluator CreateEvaluator(object fixture)
-        {
-            return new SimpleEvaluator(fixture);
-        }
-
-        #endregion
+        return new SimpleEvaluator(fixture);
     }
+
+    #endregion
 }

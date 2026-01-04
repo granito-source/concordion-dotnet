@@ -1,12 +1,11 @@
 using Concordion.Api.Extension;
 
-namespace Concordion.Spec.Concordion.Extension.JavaScript
-{
-    public class JavaScriptEmbeddedExtension : IConcordionExtension
+namespace Concordion.Spec.Concordion.Extension.JavaScript;
+
+public class JavaScriptEmbeddedExtension : IConcordionExtension {
+    public void AddTo(IConcordionExtender concordionExtender)
     {
-        public void AddTo(IConcordionExtender concordionExtender)
-        {
-            concordionExtender.WithEmbeddedJavaScript(JavaScriptExtensionTest.TestJs);
-        }
+        concordionExtender.WithEmbeddedJavaScript(
+            JavaScriptExtensionTest.TestJs);
     }
 }

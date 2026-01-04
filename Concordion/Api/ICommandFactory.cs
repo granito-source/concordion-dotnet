@@ -12,24 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Concordion.Api;
 
-namespace Concordion.Api
+/// <summary>
+/// A factory to create command objects
+/// </summary>
+public interface ICommandFactory
 {
     /// <summary>
-    /// A factory to create command objects
+    /// Creates the command.
     /// </summary>
-    public interface ICommandFactory
-    {
-        /// <summary>
-        /// Creates the command.
-        /// </summary>
-        /// <param name="namespaceUri">The namespace URI.</param>
-        /// <param name="commandName">Name of the command.</param>
-        /// <returns></returns>
-        ICommand CreateCommand(string namespaceUri, string commandName);
-    }
+    /// <param name="namespaceUri">The namespace URI.</param>
+    /// <param name="commandName">Name of the command.</param>
+    /// <returns></returns>
+    ICommand CreateCommand(string namespaceUri, string commandName);
 }

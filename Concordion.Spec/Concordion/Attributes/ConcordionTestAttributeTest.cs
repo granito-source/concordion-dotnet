@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Concordion.Integration;
+﻿using Concordion.Integration;
 
-namespace Concordion.Spec.Concordion.Attributes
-{
-    [ConcordionTest]
-    public class ConcordionTestAttributeTest
+namespace Concordion.Spec.Concordion.Attributes;
+
+[ConcordionTest]
+public class ConcordionTestAttributeTest {
+    public bool HasBeenProcessed()
     {
-        public bool HasBeenProcessed()
-        {
-            return true;
-        }
+        return true;
     }
 }

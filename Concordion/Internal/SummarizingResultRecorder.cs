@@ -12,196 +12,191 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Concordion.Api;
-using System.IO;
 
-namespace Concordion.Internal
+namespace Concordion.Internal;
+
+public class SummarizingResultRecorder : IResultRecorder, IResultSummary
 {
-    public class SummarizingResultRecorder : IResultRecorder, IResultSummary
+    #region Properties
+
+    private List<ResultDetails> RecordedDetailedResults
     {
-        #region Properties
-
-        private List<ResultDetails> RecordedDetailedResults
-        {
-            get;
-            set;
-        }
-
-        #endregion
-
-        #region Constructors
-
-        public SummarizingResultRecorder()
-        {
-            RecordedDetailedResults = new List<ResultDetails>();
-        }
-
-        #endregion
-
-        #region Methods
-
-        private IFixtureState DetermineFixtureState(object fixture)
-        {
-            var attributes = fixture.GetType().GetCustomAttributes(false);
-            
-            if (attributes.Contains(typeof(UnimplementedAttribute)))
-            {
-                return new UnimplementedFixtureState();
-            }
-            else if (attributes.Contains(typeof(ExpectedToFailAttribute)))
-            {
-                return new ExpectedToFailFixtureState();
-            }
-
-            return new ExpectedToPassFixtureState();
-        }
-
-        #endregion
-
-        #region IResultRecorder Members
-
-        public void Record(Result result)
-        {
-            RecordedDetailedResults.Add(new ResultDetails(result));
-        }
-
-        public void Success()
-        {
-            RecordedDetailedResults.Add(new ResultDetails(Result.Success));
-        }
-
-        public void Failure(string message, string stackTrace)
-        {
-            RecordedDetailedResults.Add(new ResultDetails(Result.Failure, message, stackTrace));
-        }
-
-        public void Error(Exception exception)
-        {
-            RecordedDetailedResults.Add(new ResultDetails(Result.Exception, exception));
-        }
-
-        public void Ignore()
-        {
-            RecordedDetailedResults.Add(new ResultDetails(Result.Ignored));
-        }
-
-        public void AddResultDetails(List<ResultDetails> resultDetails)
-        {
-            RecordedDetailedResults.AddRange(resultDetails);
-        }
-
-        #endregion
-
-        #region IResultSummary Members
-
-        /// <summary>
-        /// Gets the success count.
-        /// </summary>
-        /// <value>The success count.</value>
-        public long SuccessCount
-        {
-            get { return this.RecordedDetailedResults.LongCount(resultDetails => resultDetails.IsSuccess); }
-        }
-
-        /// <summary>
-        /// Gets the failure count.
-        /// </summary>
-        /// <value>The failure count.</value>
-        public long FailureCount
-        {
-            get { return this.RecordedDetailedResults.LongCount(resultDetails => resultDetails.IsFailure); }
-        }
-
-        /// <summary>
-        /// Gets the exception count.
-        /// </summary>
-        /// <value>The exception count.</value>
-        public long ExceptionCount
-        {
-            get { return this.RecordedDetailedResults.LongCount(resultDetails => resultDetails.IsError); }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance has exceptions.
-        /// </summary>
-        /// <value>
-        /// 	<c>true</c> if this instance has exceptions; otherwise, <c>false</c>.
-        /// </value>
-        public bool HasExceptions
-        {
-            get
-            {
-                return ExceptionCount > 0;
-            }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance has failures.
-        /// </summary>
-        /// <value>
-        /// 	<c>true</c> if this instance has failures; otherwise, <c>false</c>.
-        /// </value>
-        public bool HasFailures
-        {
-            get
-            {
-                return FailureCount > 0;
-            }
-        }
-
-        /// <summary>
-        /// Asserts the is satisfied.
-        /// </summary>
-        [Obsolete]
-        public void AssertIsSatisfied()
-        {
-        }
-
-        /// <summary>
-        /// Asserts the specification is satisfied.
-        /// </summary>
-        /// <param name="fixture">The fixture.</param>
-        public void AssertIsSatisfied(object fixture)
-        {
-            var state = DetermineFixtureState(fixture);
-            state.AssertIsSatisfied(this.SuccessCount, this.FailureCount, this.ExceptionCount);
-        }
-
-        /// <summary>
-        /// Prints the results.
-        /// </summary>
-        /// <param name="writer">The writer.</param>
-        /// <param name="fixture">The fixture.</param>
-        public void Print(TextWriter writer, object fixture)
-        {
-            writer.Write("Successes: {0}, Failures: {1}", SuccessCount, FailureCount);
-            if (HasExceptions)
-            {
-                writer.Write(", Exceptions: {0}", ExceptionCount);
-            }
-            writer.WriteLine();
-            writer.Flush();
-        }
-
-        public List<ResultDetails> FailureDetails
-        {
-            get
-            {
-                return this.RecordedDetailedResults.Where(resultDetails => resultDetails.IsFailure).ToList();
-            }
-        }
-
-        public List<ResultDetails> ErrorDetails
-        {
-            get
-            {
-                return this.RecordedDetailedResults.Where(resultDetails => resultDetails.IsError).ToList();
-            }
-        }
-
-        #endregion
+        get;
+        set;
     }
+
+    #endregion
+
+    #region Constructors
+
+    public SummarizingResultRecorder()
+    {
+        RecordedDetailedResults = new List<ResultDetails>();
+    }
+
+    #endregion
+
+    #region Methods
+
+    private IFixtureState DetermineFixtureState(object fixture)
+    {
+        var attributes = fixture.GetType().GetCustomAttributes(false);
+            
+        if (attributes.Contains(typeof(UnimplementedAttribute)))
+        {
+            return new UnimplementedFixtureState();
+        }
+        else if (attributes.Contains(typeof(ExpectedToFailAttribute)))
+        {
+            return new ExpectedToFailFixtureState();
+        }
+
+        return new ExpectedToPassFixtureState();
+    }
+
+    #endregion
+
+    #region IResultRecorder Members
+
+    public void Record(Result result)
+    {
+        RecordedDetailedResults.Add(new ResultDetails(result));
+    }
+
+    public void Success()
+    {
+        RecordedDetailedResults.Add(new ResultDetails(Result.Success));
+    }
+
+    public void Failure(string message, string stackTrace)
+    {
+        RecordedDetailedResults.Add(new ResultDetails(Result.Failure, message, stackTrace));
+    }
+
+    public void Error(Exception exception)
+    {
+        RecordedDetailedResults.Add(new ResultDetails(Result.Exception, exception));
+    }
+
+    public void Ignore()
+    {
+        RecordedDetailedResults.Add(new ResultDetails(Result.Ignored));
+    }
+
+    public void AddResultDetails(List<ResultDetails> resultDetails)
+    {
+        RecordedDetailedResults.AddRange(resultDetails);
+    }
+
+    #endregion
+
+    #region IResultSummary Members
+
+    /// <summary>
+    /// Gets the success count.
+    /// </summary>
+    /// <value>The success count.</value>
+    public long SuccessCount
+    {
+        get { return RecordedDetailedResults.LongCount(resultDetails => resultDetails.IsSuccess); }
+    }
+
+    /// <summary>
+    /// Gets the failure count.
+    /// </summary>
+    /// <value>The failure count.</value>
+    public long FailureCount
+    {
+        get { return RecordedDetailedResults.LongCount(resultDetails => resultDetails.IsFailure); }
+    }
+
+    /// <summary>
+    /// Gets the exception count.
+    /// </summary>
+    /// <value>The exception count.</value>
+    public long ExceptionCount
+    {
+        get { return RecordedDetailedResults.LongCount(resultDetails => resultDetails.IsError); }
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether this instance has exceptions.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance has exceptions; otherwise, <c>false</c>.
+    /// </value>
+    public bool HasExceptions
+    {
+        get
+        {
+            return ExceptionCount > 0;
+        }
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether this instance has failures.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance has failures; otherwise, <c>false</c>.
+    /// </value>
+    public bool HasFailures
+    {
+        get
+        {
+            return FailureCount > 0;
+        }
+    }
+
+    /// <summary>
+    /// Asserts the is satisfied.
+    /// </summary>
+    [Obsolete]
+    public void AssertIsSatisfied()
+    {
+    }
+
+    /// <summary>
+    /// Asserts the specification is satisfied.
+    /// </summary>
+    /// <param name="fixture">The fixture.</param>
+    public void AssertIsSatisfied(object fixture)
+    {
+        var state = DetermineFixtureState(fixture);
+        state.AssertIsSatisfied(SuccessCount, FailureCount, ExceptionCount);
+    }
+
+    /// <summary>
+    /// Prints the results.
+    /// </summary>
+    /// <param name="writer">The writer.</param>
+    /// <param name="fixture">The fixture.</param>
+    public void Print(TextWriter writer, object fixture)
+    {
+        writer.Write("Successes: {0}, Failures: {1}", SuccessCount, FailureCount);
+        if (HasExceptions)
+        {
+            writer.Write(", Exceptions: {0}", ExceptionCount);
+        }
+        writer.WriteLine();
+        writer.Flush();
+    }
+
+    public List<ResultDetails> FailureDetails
+    {
+        get
+        {
+            return RecordedDetailedResults.Where(resultDetails => resultDetails.IsFailure).ToList();
+        }
+    }
+
+    public List<ResultDetails> ErrorDetails
+    {
+        get
+        {
+            return RecordedDetailedResults.Where(resultDetails => resultDetails.IsError).ToList();
+        }
+    }
+
+    #endregion
 }

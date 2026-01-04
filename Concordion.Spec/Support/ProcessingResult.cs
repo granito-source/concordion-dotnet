@@ -1,138 +1,110 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Concordion.Api;
+﻿using System.Text;
 using System.Xml.Linq;
+using Concordion.Api;
 using Concordion.Api.Listener;
 
-namespace Concordion.Spec.Support
-{
-    public class ProcessingResult
+namespace Concordion.Spec.Support;
+
+public class ProcessingResult(IResultSummary resultSummary,
+    EventRecorder eventRecorder, string documentXml) {
+    public long SuccessCount {
+        get { return resultSummary.SuccessCount; }
+    }
+
+    public long FailureCount {
+        get { return resultSummary.FailureCount; }
+    }
+
+    public long ExceptionCount {
+        get { return resultSummary.ExceptionCount; }
+    }
+
+    public bool HasFailures {
+        get { return FailureCount + ExceptionCount != 0; }
+    }
+
+    public bool IsSuccess {
+        get { return !HasFailures; }
+    }
+
+    public string SuccessOrFailureInWords()
     {
-        private readonly IResultSummary resultSummary;
-        private readonly EventRecorder eventRecorder;
-        private readonly string documentXML;
+        return HasFailures ? "FAILURE" : "SUCCESS";
+    }
 
-        public long SuccessCount
-        {
-            get
-            {
-                return this.resultSummary.SuccessCount;
-            }
+    public XElement? GetOutputFragment()
+    {
+        foreach (var descendant in GetXDocument().Root.Descendants("fragment"))
+            return descendant;
+
+        return null;
+    }
+
+    public string GetOutputFragmentXML()
+    {
+        var fragment = GetOutputFragment();
+        var xmlFragmentBuilder = new StringBuilder();
+
+        foreach (var child in fragment.Elements()) {
+            //xmlFragmentBuilder.Append(child.ToString(SaveOptions.DisableFormatting).Replace(" xmlns:concordion=\"http://www.concordion.org/2007/concordion\"", String.Empty));
+            xmlFragmentBuilder.Append(child.ToString()
+                .Replace(" xmlns:concordion=\"http://www.concordion.org/2007/concordion\"", string.Empty));
         }
 
-        public long FailureCount
-        {
-            get
-            {
-                return this.resultSummary.FailureCount;
-            }
-        }
+        return xmlFragmentBuilder.ToString();
+    }
 
-        public long ExceptionCount
-        {
-            get
-            {
-                return this.resultSummary.ExceptionCount;
-            }
-        }
+    public XDocument GetXDocument()
+    {
+        return XDocument.Parse(documentXml);
+    }
 
-        public bool HasFailures
-        {
-            get
-            {
-                return this.FailureCount + this.ExceptionCount != 0;
-            }
-        }
+    public AssertFailureEvent? GetLastAssertEqualsFailureEvent()
+    {
+        return eventRecorder.GetLast(typeof(AssertFailureEvent))
+            as AssertFailureEvent;
+    }
 
-        public bool IsSuccess
-        {
-            get
-            {
-                return !this.HasFailures;
-            }
-        }
+    public Element GetRootElement()
+    {
+        return new Element(GetXDocument().Root);
+    }
 
-        public ProcessingResult(IResultSummary resultSummary, EventRecorder eventRecorder, string documentXML) 
-        {
-            this.resultSummary = resultSummary;
-            this.eventRecorder = eventRecorder;
-            this.documentXML = documentXML;
-        }
+    public bool HasCssDeclaration(string cssFilename)
+    {
+        var head = GetRootElement().GetFirstChildElement("head");
 
-        public string SuccessOrFailureInWords()
-        {
-            return this.HasFailures ? "FAILURE" : "SUCCESS";
-        }
+        return head.GetChildElements("link").Any(link =>
+            string.Equals("text/css", link.GetAttributeValue("type")) &&
+            string.Equals("stylesheet", link.GetAttributeValue("rel")) &&
+            string.Equals(cssFilename, link.GetAttributeValue("href")));
+    }
 
-        public XElement GetOutputFragment()
-        {
-            foreach (var descendant in this.GetXDocument().Root.Descendants("fragment"))
-            {
-                return descendant;
-            }
-            return null;
-        }
+    public bool HasEmbeddedCss(string css)
+    {
+        var head = GetRootElement().GetFirstChildElement("head");
 
-        public string GetOutputFragmentXML()
-        {
-            var fragment = this.GetOutputFragment();
-            var xmlFragmentBuilder = new StringBuilder();
-            foreach (var child in fragment.Elements())
-            {
-                //xmlFragmentBuilder.Append(child.ToString(SaveOptions.DisableFormatting).Replace(" xmlns:concordion=\"http://www.concordion.org/2007/concordion\"", String.Empty));
-                xmlFragmentBuilder.Append(child.ToString().Replace(" xmlns:concordion=\"http://www.concordion.org/2007/concordion\"", String.Empty));
-            }
+        return head.GetChildElements("style")
+            .Any(style => style.Text.Contains(css));
+    }
 
-            return xmlFragmentBuilder.ToString();
-        }
+    public bool HasJavaScriptDeclaration(string cssFilename)
+    {
+        var head = GetRootElement().GetFirstChildElement("head");
 
-        public XDocument GetXDocument()
-        {
-            return XDocument.Parse(this.documentXML);
-        }
+        return head.GetChildElements("script")
+            .Any(script =>
+                string.Equals("text/javascript", script.GetAttributeValue("type")) &&
+                string.Equals(cssFilename, script.GetAttributeValue("src")));
+    }
 
-        public AssertFailureEvent GetLastAssertEqualsFailureEvent()
-        {
-            return this.eventRecorder.GetLast(typeof(AssertFailureEvent)) as AssertFailureEvent;
-        }
+    public bool HasEmbeddedJavaScript(string javaScript)
+    {
+        var head = GetRootElement().GetFirstChildElement("head");
 
-        public Element GetRootElement()
-        {
-            return new Element(this.GetXDocument().Root);
-        }
-
-        public bool HasCssDeclaration(string cssFilename)
-        {
-            var head = this.GetRootElement().GetFirstChildElement("head");
-            return head.GetChildElements("link").Any(
-                link =>
-                    string.Equals("text/css", link.GetAttributeValue("type")) &&
-                    string.Equals("stylesheet", link.GetAttributeValue("rel")) &&
-                    string.Equals(cssFilename, link.GetAttributeValue("href")));
-        }
-
-        public bool HasEmbeddedCss(string css)
-        {
-            var head = this.GetRootElement().GetFirstChildElement("head");
-            return head.GetChildElements("style").Any(style => style.Text.Contains(css));
-        }
-
-        public bool HasJavaScriptDeclaration(string cssFilename) {
-            var head = this.GetRootElement().GetFirstChildElement("head");
-            return head.GetChildElements("script").Any(
-                script => 
-                    string.Equals("text/javascript", script.GetAttributeValue("type")) && 
-                    string.Equals(cssFilename, script.GetAttributeValue("src")));
-        }
-
-        public bool HasEmbeddedJavaScript(string javaScript) {
-            var head = this.GetRootElement().GetFirstChildElement("head");
-            return head.GetChildElements("script").Any(
-                script => 
-                    string.Equals("text/javascript", (string) script.GetAttributeValue("type")) && 
-                    script.Text.Contains(javaScript));
-        }
+        return head.GetChildElements("script")
+            .Any(script =>
+                string.Equals("text/javascript", script.GetAttributeValue("type")) &&
+                script.Text.Contains(javaScript));
     }
 }

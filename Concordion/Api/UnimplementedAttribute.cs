@@ -9,18 +9,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Concordion.Api;
 
-namespace Concordion.Api
-{
-    /// <summary>
-    /// Indicates to Concordion if a Class is not yet implemented and should have no assertions
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
-    public class UnimplementedAttribute : Attribute
-    {
-    }
-}
+/// <summary>
+/// Indicates to Concordion if a Class is not yet implemented and should have no assertions
+/// </summary>
+[AttributeUsage(AttributeTargets.Class)]
+public class UnimplementedAttribute : Attribute;

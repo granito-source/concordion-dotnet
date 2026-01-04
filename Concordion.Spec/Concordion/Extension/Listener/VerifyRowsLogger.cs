@@ -1,40 +1,34 @@
-using System.IO;
 using Concordion.Api.Listener;
 
-namespace Concordion.Spec.Concordion.Extension.Listener
-{
-    public class VerifyRowsLogger : IVerifyRowsListener
+namespace Concordion.Spec.Concordion.Extension.Listener;
+
+public class VerifyRowsLogger : IVerifyRowsListener {
+    private readonly TextWriter m_LogWriter;
+
+    public VerifyRowsLogger(TextWriter logWriter)
     {
-        #region Fields
+        m_LogWriter = logWriter;
+    }
 
-        private readonly TextWriter m_LogWriter;
+    public void ExpressionEvaluated(
+        ExpressionEvaluatedEvent expressionEvaluatedEvent)
+    {
+        m_LogWriter.WriteLine("Evaluated '{0}'",
+            expressionEvaluatedEvent
+                .Element
+                .GetAttributeValue("verifyRows",
+                    HtmlFramework.NAMESPACE_CONCORDION_2007));
+    }
 
-        #endregion
+    public void MissingRow(MissingRowEvent missingRowEvent)
+    {
+        m_LogWriter.WriteLine("Missing Row '{0}'",
+            missingRowEvent.RowElement.Text);
+    }
 
-        #region IVerifyRowsListener Members
-
-        public VerifyRowsLogger(TextWriter logWriter)
-        {
-            this.m_LogWriter = logWriter;
-        }
-
-        public void ExpressionEvaluated(ExpressionEvaluatedEvent expressionEvaluatedEvent)
-        {
-            this.m_LogWriter.WriteLine("Evaluated '{0}'",
-                                  expressionEvaluatedEvent.Element.GetAttributeValue("verifyRows", HtmlFramework.NAMESPACE_CONCORDION_2007));
-        }
-
-        public void MissingRow(MissingRowEvent missingRowEvent)
-        {
-            this.m_LogWriter.WriteLine("Missing Row '{0}'", missingRowEvent.RowElement.Text);
-        }
-
-        public void SurplusRow(SurplusRowEvent surplusRowEvent)
-        {
-            this.m_LogWriter.WriteLine("Surplus Row '{0}'", surplusRowEvent.RowElement.Text);
-        }
-
-        #endregion
-
+    public void SurplusRow(SurplusRowEvent surplusRowEvent)
+    {
+        m_LogWriter.WriteLine("Surplus Row '{0}'",
+            surplusRowEvent.RowElement.Text);
     }
 }

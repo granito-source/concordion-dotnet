@@ -12,35 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.Serialization;
 
-namespace Concordion.Internal
+namespace Concordion.Internal;
+
+[Serializable]
+public class ConcordionAssertionException : Exception
 {
-    [Serializable]
-    public class ConcordionAssertionException : Exception
+    public ConcordionAssertionException()
+        : base()
     {
-        public ConcordionAssertionException()
-            : base()
-        {
-        }
+    }
 
-        public ConcordionAssertionException(string message)
-            : base(message)
-        {
-        }
+    public ConcordionAssertionException(string message)
+        : base(message)
+    {
+    }
 
-        public ConcordionAssertionException(string message, Exception inner)
-            : base(message, inner)
-        {
-        }
+    public ConcordionAssertionException(string message, Exception inner)
+        : base(message, inner)
+    {
+    }
 
-        public ConcordionAssertionException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+    public ConcordionAssertionException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    {
     }
 }

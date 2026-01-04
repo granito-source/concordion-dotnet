@@ -12,65 +12,60 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Concordion.Api;
 using Concordion.Api.Listener;
 
-namespace Concordion.Internal.Commands
+namespace Concordion.Internal.Commands;
+
+public class ExecuteCommand : ICommand
 {
-    public class ExecuteCommand : ICommand
+    private readonly List<IExecuteListener> m_Listeners = new List<IExecuteListener>();
+
+    public void AddExecuteListener(IExecuteListener listener)
     {
-        private readonly List<IExecuteListener> m_Listeners = new List<IExecuteListener>();
-
-        public void AddExecuteListener(IExecuteListener listener)
-        {
-            m_Listeners.Add(listener);
-        }
-
-        public void RemoveExecuteListener(IExecuteListener listener)
-        {
-            m_Listeners.Remove(listener);
-        }
-
-        public void AnnounceExecuteCompleted(Element element)
-        {
-            foreach (var listener in m_Listeners)
-            {
-                listener.ExecuteCompleted(new ExecuteEvent(element));
-            }
-        }
-
-        #region ICommand Members
-
-        public void Setup(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
-        {
-        }
-
-        public void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
-        {
-            IExecuteStrategy strategy;
-            if (commandCall.Element.IsNamed("table"))
-            {
-                strategy = new TableExecuteStrategy();
-            }
-            else if (commandCall.Element.IsNamed("ol") || commandCall.Element.IsNamed("ul"))
-            {
-                strategy = new ListExecuteStrategy();
-            }
-            else
-            {
-                strategy = new DefaultExecuteStrategy(this);
-            }
-            strategy.Execute(commandCall, evaluator, resultRecorder);
-        }
-
-        public void Verify(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
-        {
-        }
-
-        #endregion
+        m_Listeners.Add(listener);
     }
+
+    public void RemoveExecuteListener(IExecuteListener listener)
+    {
+        m_Listeners.Remove(listener);
+    }
+
+    public void AnnounceExecuteCompleted(Element element)
+    {
+        foreach (var listener in m_Listeners)
+        {
+            listener.ExecuteCompleted(new ExecuteEvent(element));
+        }
+    }
+
+    #region ICommand Members
+
+    public void Setup(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    {
+    }
+
+    public void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    {
+        IExecuteStrategy strategy;
+        if (commandCall.Element.IsNamed("table"))
+        {
+            strategy = new TableExecuteStrategy();
+        }
+        else if (commandCall.Element.IsNamed("ol") || commandCall.Element.IsNamed("ul"))
+        {
+            strategy = new ListExecuteStrategy();
+        }
+        else
+        {
+            strategy = new DefaultExecuteStrategy(this);
+        }
+        strategy.Execute(commandCall, evaluator, resultRecorder);
+    }
+
+    public void Verify(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    {
+    }
+
+    #endregion
 }

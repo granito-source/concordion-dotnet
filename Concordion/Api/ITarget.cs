@@ -12,48 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
+namespace Concordion.Api;
 
-namespace Concordion.Api
+/// <summary>
+/// The destination area of all specifications (aka The BaseOutput Directory)
+/// </summary>
+public interface ITarget
 {
     /// <summary>
-    /// The destination area of all specifications (aka The BaseOutput Directory)
+    /// Writes the specified resource.
     /// </summary>
-    public interface ITarget
-    {
-        /// <summary>
-        /// Writes the specified resource.
-        /// </summary>
-        /// <param name="resource">The resource.</param>
-        /// <param name="source">The source.</param>
-        void Write(Resource resource, string source);
+    /// <param name="resource">The resource.</param>
+    /// <param name="source">The source.</param>
+    void Write(Resource resource, string source);
 
-        /// <summary>
-        /// Writes the specified resource.
-        /// </summary>
-        /// <param name="resource">The resource.</param>
-        /// <param name="image">The image.</param>
-        void Write(Resource resource, System.Drawing.Bitmap image);
+    /// <summary>
+    /// Writes the specified resource.
+    /// </summary>
+    /// <param name="resource">The resource.</param>
+    /// <param name="image">The image.</param>
+    void Write(Resource resource, System.Drawing.Bitmap image);
 
-        /// <summary>
-        /// Copies to.
-        /// </summary>
-        /// <param name="resource">The resource.</param>
-        /// <param name="destination">The destination.</param>
-        void CopyTo(Resource resource, string destination);
+    /// <summary>
+    /// Copies to.
+    /// </summary>
+    /// <param name="resource">The resource.</param>
+    /// <param name="destination">The destination.</param>
+    void CopyTo(Resource resource, string destination);
 
-        void CopyTo(Resource resource, TextReader inputReader);
+    void CopyTo(Resource resource, TextReader inputReader);
 
-        /// <summary>
-        /// Deletes the specified resource.
-        /// </summary>
-        /// <param name="resource">The resource.</param>
-        void Delete(Resource resource);
+    /// <summary>
+    /// Deletes the specified resource.
+    /// </summary>
+    /// <param name="resource">The resource.</param>
+    void Delete(Resource resource);
 
-        string ResolvedPathFor(Resource resource);
-    }
+    string ResolvedPathFor(Resource resource);
 }

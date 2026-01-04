@@ -12,78 +12,73 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Concordion.Api;
 
-namespace Concordion.Internal
+namespace Concordion.Internal;
+
+public class Row
 {
-    public class Row
+    #region Properties
+
+    public Element RowElement
     {
-        #region Properties
+        get;
+        private set;
+    }
 
-        public Element RowElement
+    public bool IsHeaderRow
+    {
+        get
         {
-            get;
-            private set;
-        }
-
-        public bool IsHeaderRow
-        {
-            get
-            {
-                foreach (var cell in RowElement.GetChildElements())
-                {
-                    if (cell.IsNamed("td")) return false;
-                }
-                return true;
-            }
-        }
-
-        #endregion
-
-        #region Constructors
-
-        public Row(Element element)
-        {
-            RowElement = element;
-        }
-
-        #endregion
-
-        #region Methods
-
-        public IList<Element> GetCells()
-        {
-            var cells = new List<Element>();
-            foreach (var childElement in RowElement.GetChildElements())
-            {
-                if (childElement.IsNamed("td") || childElement.IsNamed("th")) 
-                {
-                    cells.Add(childElement);
-                }
-            }
-            return cells;
-        }
-
-        public int GetIndexOfCell(Element element)
-        {
-            int index = 0;
             foreach (var cell in RowElement.GetChildElements())
             {
-                if (element.Text == cell.Text)
-                {
-                    return index;
-                }
-                index++;
+                if (cell.IsNamed("td")) return false;
             }
+            return true;
+        }
+    }
 
-            return -1;
+    #endregion
+
+    #region Constructors
+
+    public Row(Element element)
+    {
+        RowElement = element;
+    }
+
+    #endregion
+
+    #region Methods
+
+    public IList<Element> GetCells()
+    {
+        var cells = new List<Element>();
+        foreach (var childElement in RowElement.GetChildElements())
+        {
+            if (childElement.IsNamed("td") || childElement.IsNamed("th")) 
+            {
+                cells.Add(childElement);
+            }
+        }
+        return cells;
+    }
+
+    public int GetIndexOfCell(Element element)
+    {
+        var index = 0;
+        foreach (var cell in RowElement.GetChildElements())
+        {
+            if (element.Text == cell.Text)
+            {
+                return index;
+            }
+            index++;
         }
 
-        #endregion
-
+        return -1;
     }
+
+    #endregion
+
 }

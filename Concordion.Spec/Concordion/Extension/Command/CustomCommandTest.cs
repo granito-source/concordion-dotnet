@@ -1,19 +1,16 @@
-using System.Collections.Generic;
 using Concordion.Integration;
 
-namespace Concordion.Spec.Concordion.Extension.Command
-{
-    [ConcordionTest]
-    public class CustomCommandTest : AbstractExtensionTestCase
-    {
-        public void addCommandExtension()
-        {
-            this.Extension = new CommandExtension(LogWriter);
-        }
+namespace Concordion.Spec.Concordion.Extension.Command;
 
-        public List<string> getOutput()
-        {
-            return this.getEventLog();
-        }
+[ConcordionTest]
+public class CustomCommandTest : AbstractExtensionTestCase {
+    public void addCommandExtension()
+    {
+        Extension = new CommandExtension(LogWriter);
+    }
+
+    public List<string> getOutput()
+    {
+        return getEventLog();
     }
 }

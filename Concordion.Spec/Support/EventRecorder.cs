@@ -1,46 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Concordion.Api.Listener;
+﻿using Concordion.Api.Listener;
 
-namespace Concordion.Spec.Support
-{
-    public class EventRecorder : IAssertEqualsListener, IExceptionCaughtListener
+namespace Concordion.Spec.Support;
+
+public class EventRecorder : IAssertEqualsListener, IExceptionCaughtListener {
+    private readonly List<object> m_Events;
+
+    public EventRecorder()
     {
-        private readonly List<Object> m_Events;
+        m_Events = [];
+    }
 
-        public EventRecorder()
-	    {
-            this.m_Events = new List<Object>();
-	    }
+    public object? GetLast(Type eventType)
+    {
+        object? lastMatch = null;
 
-        public Object GetLast(Type eventType)
-        {
-            Object lastMatch = null;
-            foreach (var anEvent in this.m_Events.Where(eventType.IsInstanceOfType))
-            {
-                lastMatch = anEvent;
-            }
-            return lastMatch;
-        }
+        foreach (var anEvent in m_Events.Where(eventType.IsInstanceOfType))
+            lastMatch = anEvent;
 
-        public void ExceptionCaught(ExceptionCaughtEvent caughtEvent)
-        {
-            this.m_Events.Add(caughtEvent);
-        }
+        return lastMatch;
+    }
 
-        #region IAssertEqualsListener Members
+    public void ExceptionCaught(ExceptionCaughtEvent caughtEvent)
+    {
+        m_Events.Add(caughtEvent);
+    }
 
-        public void SuccessReported(AssertSuccessEvent successEvent)
-        {
-            this.m_Events.Add(successEvent);
-        }
+    public void SuccessReported(AssertSuccessEvent successEvent)
+    {
+        m_Events.Add(successEvent);
+    }
 
-        public void FailureReported(AssertFailureEvent failureEvent)
-        {
-            this.m_Events.Add(failureEvent);
-        }
-
-        #endregion
+    public void FailureReported(AssertFailureEvent failureEvent)
+    {
+        m_Events.Add(failureEvent);
     }
 }

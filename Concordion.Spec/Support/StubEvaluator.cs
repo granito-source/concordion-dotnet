@@ -1,52 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Concordion.Api;
+﻿using Concordion.Api;
 
-namespace Concordion.Spec.Support
-{
-    public class StubEvaluator : IEvaluator, IEvaluatorFactory
+namespace Concordion.Spec.Support;
+
+public class StubEvaluator(object? fixture) : IEvaluator, IEvaluatorFactory {
+    private object? evaluationResult;
+
+    public IEvaluator CreateEvaluator(object? fixture)
     {
-        private object evaluationResult = null;
+        return this;
+    }
 
-        public StubEvaluator(object fixture)
-        {
-            this.Fixture = fixture;
-        }
+    public object? Evaluate(string expression)
+    {
+        if (evaluationResult is Exception exception)
+            throw exception;
 
-        public IEvaluator CreateEvaluator(object fixture)
-        {
-            return this;
-        }
+        return evaluationResult;
+    }
 
-        public object Evaluate(string expression) 
-        {
-            if (this.evaluationResult is Exception) 
-            {
-                throw (Exception) this.evaluationResult;
-            }
-            return this.evaluationResult;
-        }
+    public object? GetVariable(string variableName)
+    {
+        return null;
+    }
 
-        public object GetVariable(string variableName)
-        {
-            return null;
-        }
+    public void SetVariable(string variableName, object value)
+    {
+    }
 
-        public void SetVariable(string variableName, object value)
-        {
-        }
+    public object? Fixture { get; } = fixture;
 
-        public object Fixture
-        {
-            get;
-            private set;
-        }
+    public IEvaluatorFactory withStubbedResult(object? result)
+    {
+        evaluationResult = result;
 
-        public IEvaluatorFactory withStubbedResult(object evaluationResult)
-        {
-            this.evaluationResult = evaluationResult;
-            return this;
-        }
+        return this;
     }
 }

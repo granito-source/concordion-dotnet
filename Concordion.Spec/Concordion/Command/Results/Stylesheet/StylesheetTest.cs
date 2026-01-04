@@ -1,55 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Concordion.Integration;
 using Concordion.Spec.Support;
 
-namespace Concordion.Spec.Concordion.Command.Results.Stylesheet
-{
-    [ConcordionTest]
-    public class StylesheetTest
+namespace Concordion.Spec.Concordion.Command.Results.Stylesheet;
+
+[ConcordionTest]
+public class StylesheetTest {
+    private XElement? outputDocument;
+
+    public void processDocument(string html)
     {
-        private XElement outputDocument;
+        outputDocument = new TestRig()
+            .Process(html)
+            .GetXDocument()
+            .Root;
+    }
 
-        public void processDocument(string html)
-        {
-            outputDocument = new TestRig()
-                .Process(html)
-                .GetXDocument()
-                .Root;
-        }
+    public string getRelativePosition(string outer, string target, string sibling)
+    {
+        var outerElement = outputDocument?.Element(outer);
+        var targetIndex = indexOfFirstChildWithName(outerElement, target);
+        var siblingIndex = indexOfFirstChildWithName(outerElement, sibling);
 
-        public String getRelativePosition(string outer, string target, string sibling)
-        {
-            var outerElement = outputDocument.Element(outer);
+        return targetIndex > siblingIndex ? "after" : "before";
+    }
 
-            int targetIndex = indexOfFirstChildWithName(outerElement, target);
-            int siblingIndex = indexOfFirstChildWithName(outerElement, sibling);
+    private int indexOfFirstChildWithName(XElement? element, string name)
+    {
+        var index = 0;
 
-            return targetIndex > siblingIndex ? "after" : "before";
-        }
-
-        private int indexOfFirstChildWithName(XElement element, string name) 
-        {
-            int index = 0;
-            foreach (var e in element.Elements()) 
-            {
-                if (e.Name.LocalName.Equals(name)) 
-                {
+        if (element != null)
+            foreach (var e in element.Elements()) {
+                if (e.Name.LocalName.Equals(name))
                     return index;
-                }
+
                 index++;
             }
-            throw new Exception("No child <" + name + "> found.");
-        }
 
-        public bool elementTextContains(string elementName, string s1, string s2)
-        {
-            var element = outputDocument.Document.Root.Descendants(elementName).ToArray()[0];
-            string text = element.Value;
-            return text.Contains(s1) && text.Contains(s2);
-        }
+        throw new Exception("No child <" + name + "> found.");
+    }
+
+    public bool elementTextContains(string elementName, string s1, string s2)
+    {
+        var element = outputDocument?
+            .Document?
+            .Root?
+            .Descendants(elementName).ToArray()[0];
+        var text = element?.Value;
+
+        return text != null && text.Contains(s1) && text.Contains(s2);
     }
 }

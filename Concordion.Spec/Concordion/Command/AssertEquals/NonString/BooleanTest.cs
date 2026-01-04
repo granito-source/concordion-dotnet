@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Concordion.Integration;
 using Concordion.Spec.Support;
 
-namespace Concordion.Spec.Concordion.Command.AssertEquals.NonString
-{
-    [ConcordionTest]
-    public class BooleanTest
+namespace Concordion.Spec.Concordion.Command.AssertEquals.NonString;
+
+[ConcordionTest]
+public class BooleanTest {
+    public string OutcomeOfPerformingAssertEquals(string fragment,
+        bool boolValue, string boolString)
     {
-        public string OutcomeOfPerformingAssertEquals(string fragment, bool boolValue, string boolString)
-        {
-            return new TestRig()
-                .WithStubbedEvaluationResult(boolValue)
-                .ProcessFragment(Regex.Replace(fragment, "\\(some boolean string\\)", boolString))
-                .SuccessOrFailureInWords();
-        }
+        return new TestRig()
+            .WithStubbedEvaluationResult(boolValue)
+            .ProcessFragment(Regex.Replace(fragment,
+                "\\(some boolean string\\)", boolString))
+            .SuccessOrFailureInWords();
     }
 }

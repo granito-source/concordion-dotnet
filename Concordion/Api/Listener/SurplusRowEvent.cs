@@ -1,26 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿namespace Concordion.Api.Listener;
 
-namespace Concordion.Api.Listener
+public class SurplusRowEvent
 {
-    public class SurplusRowEvent
+    #region Properties
+
+    public Element RowElement { get; private set; }
+
+    #endregion
+
+    #region Constructors
+
+    public SurplusRowEvent(Element rowElement)
     {
-        #region Properties
-
-        public Element RowElement { get; private set; }
-
-        #endregion
-
-        #region Constructors
-
-        public SurplusRowEvent(Element rowElement)
-        {
-            this.RowElement = rowElement;
-        }
-
-        #endregion
-
+        RowElement = rowElement;
     }
+
+    #endregion
 }
