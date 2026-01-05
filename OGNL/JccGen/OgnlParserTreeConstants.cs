@@ -97,7 +97,7 @@ public abstract class OgnlParserTreeConstants : OgnlParserConstants {
 
     public static int JJTSELECTLAST = 46;
 
-    public static string[] jjtNodeName = {
+    public static string[] jjtNodeName = [
         "void",
         "Sequence",
         "Assign",
@@ -144,6 +144,6 @@ public abstract class OgnlParserTreeConstants : OgnlParserConstants {
         "Project",
         "Select",
         "SelectFirst",
-        "SelectLast",
-    };
+        "SelectLast"
+    ];
 }

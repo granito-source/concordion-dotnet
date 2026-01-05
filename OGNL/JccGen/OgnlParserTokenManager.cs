@@ -759,30 +759,30 @@ public class OgnlParserTokenManager : OgnlParserConstants {
         jjCheckNAdd(jjnextStates[start + 1]);
     }
 
-    static long[] jjbitVec0 = {
+    static long[] jjbitVec0 = [
         0x1ff00000fffffffeL, unchecked((long)0xffffffffffffc000L), 0xffffffffL, 0x600000000000000L
-    };
+    ];
 
-    static long[] jjbitVec2 = {
+    static long[] jjbitVec2 = [
         0x0L, 0x0L, 0x0L, unchecked((long)0xff7fffffff7fffffL)
-    };
+    ];
 
-    static long[] jjbitVec3 = {
+    static long[] jjbitVec3 = [
         0x0L, unchecked((long)0xffffffffffffffffL), unchecked((long)0xffffffffffffffffL),
         unchecked((long)0xffffffffffffffffL)
-    };
+    ];
 
-    static long[] jjbitVec4 = {
+    static long[] jjbitVec4 = [
         unchecked((long)0xffffffffffffffffL), unchecked((long)0xffffffffffffffffL), 0xffffL, 0x0L
-    };
+    ];
 
-    static long[] jjbitVec5 = {
+    static long[] jjbitVec5 = [
         unchecked((long)0xffffffffffffffffL), unchecked((long)0xffffffffffffffffL), 0x0L, 0x0L
-    };
+    ];
 
-    static long[] jjbitVec6 = {
+    static long[] jjbitVec6 = [
         (long)0x3fffffffffffL, 0x0L, 0x0L, 0x0L
-    };
+    ];
 
     private int jjMoveNfa_0(int startState, int curPos)
     {
@@ -1124,14 +1124,14 @@ public class OgnlParserTokenManager : OgnlParserConstants {
         }
     }
 
-    static long[] jjbitVec7 = {
+    static long[] jjbitVec7 = [
         unchecked((long)0xfffffffffffffffeL), unchecked((long)0xffffffffffffffffL),
         unchecked((long)0xffffffffffffffffL), unchecked((long)0xffffffffffffffffL)
-    };
+    ];
 
-    static long[] jjbitVec8 = {
+    static long[] jjbitVec8 = [
         0x0L, 0x0L, unchecked((long)0xffffffffffffffffL), unchecked((long)0xffffffffffffffffL)
-    };
+    ];
 
     private int jjMoveNfa_2(int startState, int curPos)
     {
@@ -1558,10 +1558,10 @@ public class OgnlParserTokenManager : OgnlParserConstants {
         }
     }
 
-    static int[] jjnextStates = {
+    static int[] jjnextStates = [
         15, 16, 18, 19, 22, 13, 24, 25, 7, 9, 10, 13, 17, 10, 13, 11,
-        12, 20, 21, 1, 2, 3,
-    };
+        12, 20, 21, 1, 2, 3
+    ];
 
     private static bool jjCanMove_0(int hiByte, int i1, int i2, long l1, long l2)
     {
@@ -1597,7 +1597,7 @@ public class OgnlParserTokenManager : OgnlParserConstants {
         }
     }
 
-    public static string[] jjstrLiteralImages = {
+    public static string[] jjstrLiteralImages = [
         /* // TODO: string escape.
          "", "\54", "\75", "\77", "\72", "\174\174", "\157\162", "\46\46",
         "\141\156\144", "\174", "\142\157\162", "\136", "\170\157\162", "\46", "\142\141\156\144",
@@ -1619,34 +1619,34 @@ public class OgnlParserTokenManager : OgnlParserConstants {
         "\x6e\x75\x6c\x6c", "\x23\x74\x68\x69\x73", "\x23\x72\x6f\x6f\x74", "\x23", "\x5b", "\x5d", "\x7b", "\x7d",
         "\x40", "\x6e\x65\x77", "\x24", null, null, null, null, null, null, null, null,
         null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null,
-    };
+        null, null, null, null, null
+    ];
 
-    public static string[] lexStateNames = {
+    public static string[] lexStateNames = [
         "DEFAULT",
         "WithinCharLiteral",
         "WithinBackCharLiteral",
-        "WithinStringLiteral",
-    };
+        "WithinStringLiteral"
+    ];
 
-    public static int[] jjnewLexState = {
+    public static int[] jjnewLexState = [
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 2, 1, 3, -1, -1, 0, -1,
-        -1, 0, -1, -1, 0, -1, -1, -1, -1, -1, -1,
-    };
+        -1, 0, -1, -1, 0, -1, -1, -1, -1, -1, -1
+    ];
 
-    static long[] jjtoToken = {
-        0x7ffffffffffffffL, 0x39209L,
-    };
+    static long[] jjtoToken = [
+        0x7ffffffffffffffL, 0x39209L
+    ];
 
-    static long[] jjtoSkip = {
-        unchecked((long)0xf800000000000000L), 0x0L,
-    };
+    static long[] jjtoSkip = [
+        unchecked((long)0xf800000000000000L), 0x0L
+    ];
 
-    static long[] jjtoMore = {
-        0x0L, 0x6df0L,
-    };
+    static long[] jjtoMore = [
+        0x0L, 0x6df0L
+    ];
 
     protected JavaCharStream input_stream;
 

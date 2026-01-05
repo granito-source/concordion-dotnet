@@ -40,8 +40,8 @@ namespace OGNL;
 ///@author Luke Blanshard (blanshlu@netscape.net)
 ///@author Drew Davidson (drew@ognl.org)
 public class ListPropertyAccessor : ObjectPropertyAccessor {
-    public override object? getProperty(IDictionary context,
-        object target, object? name)
+    public override object? getProperty(OgnlContext context,
+        object target, object name)
     {
         var list = (IList)target;
 
@@ -82,8 +82,8 @@ public class ListPropertyAccessor : ObjectPropertyAccessor {
         throw new NoSuchPropertyException(target, name);
     }
 
-    public override void setProperty(IDictionary context, object target,
-        object name, object value)
+    public override void setProperty(OgnlContext context, object target,
+        object name, object? value)
     {
         if (name is string) {
             base.setProperty(context, target, name, value);

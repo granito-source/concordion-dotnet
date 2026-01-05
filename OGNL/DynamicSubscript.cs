@@ -68,13 +68,13 @@ public class DynamicSubscript {
     /// </summary>
     public const int ALL = 3;
 
-    public static DynamicSubscript first = new DynamicSubscript(FIRST);
+    public static DynamicSubscript first = new(FIRST);
 
-    public static DynamicSubscript mid = new DynamicSubscript(MID);
+    public static DynamicSubscript mid = new(MID);
 
-    public static DynamicSubscript last = new DynamicSubscript(LAST);
+    public static DynamicSubscript last = new(LAST);
 
-    public static DynamicSubscript all = new DynamicSubscript(ALL);
+    public static DynamicSubscript all = new(ALL);
 
     int flag;
 

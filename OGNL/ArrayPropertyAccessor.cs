@@ -1,5 +1,3 @@
-using System.Collections;
-
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,122 +29,125 @@ using System.Collections;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace OGNL;
 
-///<summary>
-///Implementation of PropertyAccessor that uses numbers and dynamic subscripts as
-///properties to index into Java arrays.
-///</summary>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///
-public class ArrayPropertyAccessor : ObjectPropertyAccessor
+/// <summary>
+/// Implementation of PropertyAccessor that uses numbers and dynamic
+/// subscripts as properties to index into arrays.
+/// </summary>
+/// @author Luke Blanshard (blanshlu@netscape.net)
+/// @author Drew Davidson (drew@ognl.org)
+public class ArrayPropertyAccessor : ObjectPropertyAccessor {
+    private static object? getElement(Array array, int index)
+    {
+        return index >= 0 ? array.GetValue(index) : null;
+    }
 
-// This is here to make javadoc show this class as an implementor
-{
+    private static void setElement(Array array, int index, object? value)
+    {
+        if (index >= 0)
+            array.SetValue(value, index);
+    }
+
+    [return: NotNullIfNotNull("value")]
+    private static object? convert(OgnlContext context, Array target,
+        object name, object? value)
+    {
+        if (value == null)
+            return null;
+
+        return context
+            .getTypeConverter()
+            .convertValue(context, target, null, name.ToString(), value,
+                target.GetType().GetElementType()!);
+    }
+
     /// <summary>
     /// Specific property is: length.
     /// </summary>
     /// <returns></returns>
-    public override object? getProperty(IDictionary context,
-        object target, object? name)
+    public override object? getProperty(OgnlContext context,
+        object target, object name)
     {
-        object? result = null;
+        var array = (Array)target;
 
-        if (name is string) {
-            if (name.Equals("length")) {
-                result = ((Array)target).GetLength(0);
-            } else {
-                result = base.getProperty(context, target, name);
-            }
-        } else {
-            var index = name;
+        switch (name) {
+            case string:
+                return name.Equals("length") ? array.GetLength(0) :
+                    base.getProperty(context, target, name);
+            case DynamicSubscript dynamic:
+                var len = array.GetLength(0);
 
-            if (index is DynamicSubscript) {
-                var len = ((Array)target).GetLength(0);
-
-                switch (((DynamicSubscript)index).getFlag()) {
+                switch (dynamic.getFlag()) {
                     case DynamicSubscript.ALL:
-                        result = Array.CreateInstance(target.GetType().GetElementType(), len);
-                        Array.Copy((Array)target, 0, (Array)result, 0, len);
+                        var copy = Array.CreateInstance(
+                            array.GetType().GetElementType()!, len);
 
-                        break;
+                        Array.Copy(array, 0, copy, 0, len);
+
+                        return copy;
                     case DynamicSubscript.FIRST:
-                        index = ((len > 0) ? 0 : -1);
-
-                        break;
+                        return getElement(array, len > 0 ? 0 : -1);
                     case DynamicSubscript.MID:
-                        index = ((len > 0) ? (len / 2) : -1);
-
-                        break;
+                        return getElement(array, len > 0 ? len / 2 : -1);
                     case DynamicSubscript.LAST:
-                        index = ((len > 0) ? (len - 1) : -1);
-
-                        break;
+                        return getElement(array, len > 0 ? len - 1 : -1);
                 }
-            }
 
-            if (result == null) {
-                if (index is ValueType) {
-                    var i = Convert.ToInt32(index);
-
-                    result = (i >= 0) ? ((Array)target).GetValue(i) : null;
-                } else {
-                    throw new NoSuchPropertyException(target, index);
-                }
-            }
+                break;
+            case ValueType:
+                return getElement(array, Convert.ToInt32(name));
         }
 
-        return result;
+        throw new NoSuchPropertyException(target, name);
     }
 
-    public override void setProperty(IDictionary context, object target,
-        object name, object value)
+    public override void setProperty(OgnlContext context, object target,
+        object name, object? value)
     {
-        var index = name;
-        var isNumber = (index is ValueType);
+        var array = (Array)target;
 
-        if (isNumber || (index is DynamicSubscript)) {
-            var converter = ((OgnlContext)context).getTypeConverter();
-            object convertedValue;
+        switch (name) {
+            case string:
+                base.setProperty(context, target, name, value);
 
-            convertedValue = converter.convertValue(context, target, null, name.ToString(), value,
-                target.GetType().GetElementType());
+                break;
+            case DynamicSubscript dynamic:
+                var converted = convert(context, array, name, value);
+                var len = array.GetLength(0);
 
-            if (isNumber) {
-                var i = Convert.ToInt32(index);
-
-                if (i >= 0) {
-                    ((Array)target).SetValue(convertedValue, i);
-                }
-            } else {
-                var len = ((Array)target).GetLength(0);
-
-                switch (((DynamicSubscript)index).getFlag()) {
+                switch (dynamic.getFlag()) {
                     case DynamicSubscript.ALL:
-                        Array.Copy((Array)target, 0, (Array)convertedValue, 0, len);
+                        if (converted == null)
+                            throw new OgnlException("source array is null");
 
-                        return;
+                        Array.Copy((Array)converted, 0, array, 0, len);
+
+                        break;
                     case DynamicSubscript.FIRST:
-                        index = ((len > 0) ? 0 : -1);
+                        setElement(array, len > 0 ? 0 : -1, converted);
 
                         break;
                     case DynamicSubscript.MID:
-                        index = ((len > 0) ? (len / 2) : -1);
+                        setElement(array, len > 0 ? len / 2 : -1, converted);
 
                         break;
                     case DynamicSubscript.LAST:
-                        index = ((len > 0) ? (len - 1) : -1);
+                        setElement(array, len > 0 ? len - 1 : -1, converted);
 
                         break;
                 }
-            }
-        } else {
-            if (name is string) {
-                base.setProperty(context, target, name, value);
-            } else {
-                throw new NoSuchPropertyException(target, index);
-            }
+
+                break;
+            case ValueType:
+                setElement(array, Convert.ToInt32(name),
+                    convert(context, array, name, value));
+
+                break;
         }
+
+        throw new NoSuchPropertyException(target, name);
     }
 }

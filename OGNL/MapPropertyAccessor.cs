@@ -41,12 +41,12 @@ namespace OGNL;
 ///@author Drew Davidson (drew@ognl.org)
 ///
 public class MapPropertyAccessor : PropertyAccessor {
-    public object? getProperty(IDictionary context, object target,
-        object? name)
+    public object? getProperty(OgnlContext context, object target,
+        object name)
     {
         object? result;
         var map = (IDictionary)target;
-        var currentNode = ((OgnlContext)context).getCurrentNode().jjtGetParent();
+        var currentNode = context.getCurrentNode().jjtGetParent();
         var indexedAccess = false;
 
         if (currentNode == null) {
@@ -85,9 +85,10 @@ public class MapPropertyAccessor : PropertyAccessor {
         return result;
     }
 
-    public void setProperty(IDictionary context, object target, object name, object value) // throws OgnlException
+    public void setProperty(OgnlContext context, object target, object name, object? value)
     {
         var map = (IDictionary)target;
+
         map[name] = value;
     }
 }

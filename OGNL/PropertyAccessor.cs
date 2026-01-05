@@ -64,7 +64,7 @@ public interface PropertyAccessor {
     ///@return        the current value of the given property in the given object
     ///@exception OgnlException if there is an error locating the property in the given object
     ///
-    object? getProperty(IDictionary context, object target, object? name);
+    object? getProperty(OgnlContext context, object target, object name);
 
     ///<summary>
     ///Sets the value of the property of the given name in the given target object.
@@ -74,6 +74,6 @@ public interface PropertyAccessor {
     ///@param value   the new value for the property
     ///@exception OgnlException if there is an error setting the property in the given object
     ///
-    void setProperty(IDictionary context, object target, object name,
-        object value);
+    void setProperty(OgnlContext context, object target, object name,
+        object? value);
 }

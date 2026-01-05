@@ -45,7 +45,7 @@ public abstract class OgnlParserConstants {
 
     public const int WithinStringLiteral = 3;
 
-    public static string[] tokenImage = new string[] {
+    public static string[] tokenImage = [
         "<EOF>",
         "\",\"",
         "\"=\"",
@@ -131,6 +131,6 @@ public abstract class OgnlParserConstants {
         "<DEC_FLT>",
         "<DEC_DIGITS>",
         "<EXPONENT>",
-        "<FLT_SUFF>",
-    };
+        "<FLT_SUFF>"
+    ];
 }

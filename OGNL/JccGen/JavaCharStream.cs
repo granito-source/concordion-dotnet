@@ -160,7 +160,7 @@ public class JavaCharStream {
                 bufcolumn[bufpos] = column;
             }
 
-            throw e;
+            throw;
         }
     }
 

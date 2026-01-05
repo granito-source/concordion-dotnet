@@ -223,11 +223,11 @@ public abstract class SimpleNode(int i) : Node {
             } catch (OgnlException ex) {
                 evalException = ex;
 
-                throw ex;
+                throw;
             } catch (Exception ex) {
                 evalException = ex;
 
-                throw ex;
+                throw;
             } finally {
                 var eval = context.popEvaluation();
 
@@ -269,11 +269,11 @@ public abstract class SimpleNode(int i) : Node {
                 evalException = ex;
                 ex.setEvaluation(evaluation);
 
-                throw ex;
+                throw;
             } catch (Exception ex) {
                 evalException = ex;
 
-                throw ex;
+                throw;
             } finally {
                 var eval = context.popEvaluation();
 

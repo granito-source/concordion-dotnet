@@ -51,8 +51,8 @@ public class EnumerationPropertyAccessor : ObjectPropertyAccessor {
     /// <param name="target"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public override object? getProperty(IDictionary context,
-        object target, object? name)
+    public override object? getProperty(OgnlContext context,
+        object target, object name)
     {
         object? result;
         var e = (IEnumerator)target;
@@ -76,8 +76,8 @@ public class EnumerationPropertyAccessor : ObjectPropertyAccessor {
         return result;
     }
 
-    public override void setProperty(IDictionary context, object target,
-        object name, object value)
+    public override void setProperty(OgnlContext context, object target,
+        object name, object? value)
     {
         throw new ArgumentException("can't set property " + name +
             " on Enumeration");

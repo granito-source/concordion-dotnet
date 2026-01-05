@@ -9,7 +9,7 @@ namespace OGNL.JccGen;
  * syntax trees (ASTs) that can then be interpreted by the getValue and setValue methods.
  */
 public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jjtree)*/
-    protected JJTOgnlParserState jjtree = new JJTOgnlParserState();
+    protected JJTOgnlParserState jjtree = new();
 
     /**
      * This is the top-level construct of OGNL.
@@ -70,7 +70,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                 }
 
                 {
-                    if (true) throw jjte001;
+                    if (true) throw;
                 }
             } finally {
                 if (jjtc001) {
@@ -112,7 +112,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                     }
 
                     {
-                        if (true) throw jjte001;
+                        if (true) throw;
                     }
                 } finally {
                     if (jjtc001) {
@@ -162,7 +162,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                     }
 
                     {
-                        if (true) throw jjte001;
+                        if (true) throw;
                     }
                 } finally {
                     if (jjtc001) {
@@ -237,7 +237,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                 }
 
                 {
-                    if (true) throw jjte001;
+                    if (true) throw;
                 }
             } finally {
                 if (jjtc001) {
@@ -306,7 +306,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                 }
 
                 {
-                    if (true) throw jjte001;
+                    if (true) throw;
                 }
             } finally {
                 if (jjtc001) {
@@ -375,7 +375,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                 }
 
                 {
-                    if (true) throw jjte001;
+                    if (true) throw;
                 }
             } finally {
                 if (jjtc001) {
@@ -444,7 +444,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                 }
 
                 {
-                    if (true) throw jjte001;
+                    if (true) throw;
                 }
             } finally {
                 if (jjtc001) {
@@ -513,7 +513,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                 }
 
                 {
-                    if (true) throw jjte001;
+                    if (true) throw;
                 }
             } finally {
                 if (jjtc001) {
@@ -587,7 +587,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte001;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc001) {
@@ -638,7 +638,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte002;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc002) {
@@ -726,7 +726,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte001;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc001) {
@@ -777,7 +777,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte002;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc002) {
@@ -828,7 +828,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte003;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc003) {
@@ -879,7 +879,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte004;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc004) {
@@ -914,7 +914,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte005;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc005) {
@@ -950,7 +950,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte006;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc006) {
@@ -1034,7 +1034,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte001;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc001) {
@@ -1085,7 +1085,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte002;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc002) {
@@ -1136,7 +1136,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte003;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc003) {
@@ -1200,7 +1200,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte001;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc001) {
@@ -1235,7 +1235,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte002;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc002) {
@@ -1300,7 +1300,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte001;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc001) {
@@ -1335,7 +1335,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte002;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc002) {
@@ -1370,7 +1370,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte003;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc003) {
@@ -1422,7 +1422,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                     }
 
                     {
-                        if (true) throw jjte001;
+                        if (true) throw;
                     }
                 } finally {
                     if (jjtc001) {
@@ -1462,7 +1462,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                     }
 
                     {
-                        if (true) throw jjte002;
+                        if (true) throw;
                     }
                 } finally {
                     if (jjtc002) {
@@ -1513,7 +1513,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                     }
 
                     {
-                        if (true) throw jjte003;
+                        if (true) throw;
                     }
                 } finally {
                     if (jjtc003) {
@@ -1697,7 +1697,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte001;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc001) {
@@ -1732,7 +1732,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                         }
 
                         {
-                            if (true) throw jjte002;
+                            if (true) throw;
                         }
                     } finally {
                         if (jjtc002) {
@@ -2054,7 +2054,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                                             }
 
                                             {
-                                                if (true) throw jjte009;
+                                                if (true) throw;
                                             }
                                         } finally {
                                             if (jjtc009) {
@@ -2162,7 +2162,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                                                 }
 
                                                 {
-                                                    if (true) throw jjte010;
+                                                    if (true) throw;
                                                 }
                                             } finally {
                                                 if (jjtc010) {
@@ -2225,7 +2225,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
             }
 
             {
-                if (true) throw jjte001;
+                if (true) throw;
             }
         } finally {
             if (jjtc001) {
@@ -2479,7 +2479,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
                     }
 
                     {
-                        if (true) throw jjte001;
+                        if (true) throw;
                     }
                 } finally {
                     if (jjtc001) {
@@ -2523,7 +2523,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
             }
 
             {
-                if (true) throw jjte000;
+                if (true) throw;
             }
         } finally {
             if (jjtc000) {
@@ -2649,7 +2649,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
             }
 
             {
-                if (true) throw jjte000;
+                if (true) throw;
             }
         } finally {
             if (jjtc000) {
@@ -2745,7 +2745,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
             }
 
             {
-                if (true) throw jjte000;
+                if (true) throw;
             }
         } finally {
             if (jjtc000) {
@@ -2787,7 +2787,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
             }
 
             {
-                if (true) throw jjte000;
+                if (true) throw;
             }
         } finally {
             if (jjtc000) {
@@ -2845,7 +2845,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
             }
 
             {
-                if (true) throw jjte000;
+                if (true) throw;
             }
         } finally {
             if (jjtc000) {
@@ -2888,7 +2888,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
             }
 
             {
-                if (true) throw jjte000;
+                if (true) throw;
             }
         } finally {
             if (jjtc000) {
@@ -2931,7 +2931,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
             }
 
             {
-                if (true) throw jjte000;
+                if (true) throw;
             }
         } finally {
             if (jjtc000) {
@@ -3003,7 +3003,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
             }
 
             {
-                if (true) throw jjte000;
+                if (true) throw;
             }
         } finally {
             if (jjtc000) {
@@ -3853,33 +3853,33 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
 
     private static void jj_la1_0()
     {
-        f_jj_la1_0 = new uint[] {
+        f_jj_la1_0 = [
             0x2, 0x4, 0x8, 0x60, 0x60, 0x180, 0x180, 0x600, 0x600, 0x1800, 0x1800, 0x6000, 0x6000, 0x78000, 0x18000,
             0x60000, 0x78000, 0x1ff80000, 0x180000, 0x600000, 0x1800000, 0x6000000, 0x1ff80000, 0xe0000000, 0x60000000,
             0x80000000, 0x0, 0xe0000000, 0x0, 0x0, 0x0, 0x0, 0x10000000, 0x0, 0x0, 0x10000010, 0x0, 0x0, 0x0, 0x0, 0x0,
             0x0, 0x0, 0x2, 0x10000010, 0x0, 0x2, 0x10000010, 0x0, 0x0, 0x0, 0x10, 0x0, 0x0, 0x0, 0x2, 0x10000010, 0x2,
-            0x10000010, 0x2, 0x10000010, 0x2, 0x10000010, 0x0,
-        };
+            0x10000010, 0x2, 0x10000010, 0x2, 0x10000010, 0x0
+        ];
     }
 
     private static void jj_la1_1()
     {
-        f_jj_la1_1 = new uint[] {
+        f_jj_la1_1 = [
             0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
             0x0, 0x0, 0x7, 0x0, 0x1, 0x6, 0x7, 0x18, 0x18, 0xe0, 0xe0, 0x200, 0x800, 0x400, 0x35fd318, 0x101800, 0x0,
             0x400000, 0x401000, 0x101800, 0x0, 0x0, 0x0, 0x35fd318, 0x1000000, 0x0, 0x35fd318, 0x1c000, 0x1000000,
-            0x501000, 0x0, 0x0, 0x0, 0x800, 0x0, 0x35fd318, 0x0, 0x35fd318, 0x0, 0x35fd318, 0x0, 0x35fd318, 0x100000,
-        };
+            0x501000, 0x0, 0x0, 0x0, 0x800, 0x0, 0x35fd318, 0x0, 0x35fd318, 0x0, 0x35fd318, 0x0, 0x35fd318, 0x100000
+        ];
     }
 
     private static void jj_la1_2()
     {
-        f_jj_la1_2 = new uint[] {
+        f_jj_la1_2 = [
             0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
             0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x39209, 0x8, 0x1, 0x0, 0x1, 0x8,
             0x39200, 0x1, 0x0, 0x39209, 0x0, 0x0, 0x39209, 0x39200, 0x0, 0x9, 0x0, 0x1, 0x1, 0x0, 0x0, 0x39209, 0x0,
-            0x39209, 0x0, 0x39209, 0x0, 0x39209, 0x8,
-        };
+            0x39209, 0x0, 0x39209, 0x0, 0x39209, 0x8
+        ];
     }
 
     private JJCalls[] jj_2_rtns = new JJCalls[16];
@@ -3990,7 +3990,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
     private class LookaheadSuccess : Exception {
     }
 
-    private LookaheadSuccess jj_ls = new LookaheadSuccess();
+    private LookaheadSuccess jj_ls = new();
 
     private bool jj_scan_token(int kind)
     {
@@ -4055,7 +4055,7 @@ public class OgnlParser /*@bgen(jjtree)*/ : OgnlParserTreeConstants { /*@bgen(jj
             return (f_jj_ntk = jj_nt.kind);
     }
 
-    private ArrayList jj_expentries = new ArrayList();
+    private ArrayList jj_expentries = new();
 
     private int[] jj_expentry;
 

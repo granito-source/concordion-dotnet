@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
-//	Copyright (c) 1998-2004, Drew Davidson ,  Luke Blanshard and Foxcoming
+//	Copyright (c) 1998-2004, Drew Davidson, Luke Blanshard and Foxcoming
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //	Redistribution and use in source and binary forms, with or without
@@ -29,187 +30,102 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using System.Collections;
+using System.Text.RegularExpressions;
 using OGNL.JccGen;
 
 namespace OGNL;
 
-/// <summary>
-///Implementation of PropertyAccessor that uses reflection on the target object's class to
-///find a field or a pair of set/get methods with the given property name.
-///</summary>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///
-public class ObjectPropertyAccessor : PropertyAccessor {
-    ///<summary>
-    /// Returns OgnlRuntime.NotFound if the property does not exist.
-    ///</summary>
-    public object getPossibleProperty(IDictionary context, object target,
-        string name)
-    {
-        object result;
-        var ognlContext = (OgnlContext)context;
+public partial class ObjectPropertyAccessor : PropertyAccessor {
+    [GeneratedRegex("^[a-zA-Z_][a-zA-Z0-9_]*$")]
+    private static partial Regex nameRegex();
 
+    private static object? tryGettingProperty(OgnlContext context,
+        object target, string name)
+    {
         try {
-            if ((result = OgnlRuntime.getMethodValue(ognlContext, target, name, true)) == OgnlRuntime.NotFound) {
-                result = OgnlRuntime.getFieldValue(ognlContext, target, name, true);
-            }
+            var result = OgnlRuntime.getMethodValue(context, target,
+                name, true);
+
+            if (result == OgnlRuntime.NotFound)
+                result = OgnlRuntime.getFieldValue(context, target,
+                    name, true);
+
+            return result == OgnlRuntime.NotFound ?
+                throw new NoSuchPropertyException(target, name) :
+                result;
         } catch (OgnlException) {
             throw;
         } catch (Exception ex) {
             throw new OgnlException(name, ex);
         }
-
-        return result;
     }
 
-    ///<summary>
-    /// Returns OgnlRuntime.NotFound if the property does not exist.
-    ///</summary>
-    public object? setPossibleProperty(IDictionary context, object target,
-        string name, object value)
-    {
-        object? result = null;
-        var ognlContext = (OgnlContext)context;
-
-        try {
-            if (!OgnlRuntime.setMethodValue(ognlContext, target, name, value, true)) {
-                result = OgnlRuntime.setFieldValue(ognlContext, target, name, value) ? null : OgnlRuntime.NotFound;
-            }
-        } catch (OgnlException) {
-            throw;
-        } catch (Exception ex) {
-            throw new OgnlException(name, ex);
-        }
-
-        return result;
-    }
-
-    public bool hasGetProperty(OgnlContext context, object target,
-        object oname)
+    private static void trySettingProperty(OgnlContext context,
+        object target, string name, object? value)
     {
         try {
-            return OgnlRuntime.hasGetProperty(context, target, oname);
-        } catch (Exception ex) {
-            throw new OgnlException("checking if " + target +
-                                    " has gettable property " + oname, ex);
-        }
-    }
-
-    public bool hasGetProperty(IDictionary context, object target,
-        object oname)
-    {
-        return hasGetProperty((OgnlContext)context, target, oname);
-    }
-
-    public bool hasSetProperty(OgnlContext context, object target,
-        object oname)
-    {
-        try {
-            return OgnlRuntime.hasSetProperty(context, target, oname);
-        } catch (Exception ex) {
-            throw new OgnlException("checking if " + target +
-                                    " has settable property " + oname, ex);
-        }
-    }
-
-    public bool hasSetProperty(IDictionary context, object target,
-        object oname)
-    {
-        return hasSetProperty((OgnlContext)context, target, oname);
-    }
-
-    public virtual object? getProperty(IDictionary context, object target,
-        object? oname)
-    {
-        object result;
-        var currentNode = ((OgnlContext)context).getCurrentNode();
-        var indexedAccess = false;
-
-        if (currentNode == null) {
-            throw new OgnlException("node is null for '" + oname + "'");
-        }
-
-        if (!(currentNode is ASTProperty)) {
-            currentNode = currentNode.jjtGetParent();
-        }
-
-        if (currentNode is ASTProperty) {
-            indexedAccess = ((ASTProperty)currentNode).isIndexedAccess();
-        }
-
-        if (oname is string && isPropertyName((string)oname) &&
-            (!indexedAccess ||
-             !OgnlRuntime.hasSetIndexer((OgnlContext)context, target, target.GetType(), 1))) {
-            result = javaGetProperty(oname, context, target);
-        } else {
-            result = OgnlRuntime.getIndxerValue((OgnlContext)context, target, oname, [oname]);
-        }
-
-        return result;
-    }
-
-    object javaGetProperty(object oname, IDictionary context, object target)
-    {
-        object result;
-        var name = oname.ToString();
-
-        if ((result = getPossibleProperty(context, target, name)) == OgnlRuntime.NotFound) {
-            throw new NoSuchPropertyException(target, name);
-        }
-
-        return result;
-    }
-
-    // Check Property Name .
-    bool isPropertyName(string? name)
-    {
-        var result = name != null && name.Length > 1 &&
-                     ((name[0] >= 'a' && name[0] <= 'z') ||
-                      (name[0] >= 'A' && name[0] <= 'Z') ||
-                      (name[0] == '_'));
-
-        if (!result) {
-            for (var i = 1; i < name.Length; i++) {
-                result = (name[0] >= 'a' && name[0] <= 'z') ||
-                         (name[0] >= 'A' && name[0] <= 'Z') ||
-                         (name[0] >= '0' && name[0] <= '9') ||
-                         name[0] == '_';
-
-                if (!result)
-                    break;
-            }
-        }
-
-        return result;
-    }
-
-    public virtual void setProperty(IDictionary context, object target,
-        object oname, object value)
-    {
-        var name = oname.ToString();
-        var currentNode = ((OgnlContext)context).getCurrentNode();
-        var indexedAccess = false;
-
-        if (currentNode == null) {
-            throw new OgnlException("node is null for '" + oname + "'");
-        }
-
-        if (!(currentNode is ASTProperty)) {
-            currentNode = currentNode.jjtGetParent();
-        }
-
-        if (currentNode is ASTProperty) {
-            indexedAccess = ((ASTProperty)currentNode).isIndexedAccess();
-        }
-
-        if (!indexedAccess || !OgnlRuntime.hasSetIndexer((OgnlContext)context, target, target.GetType(), 1)) {
-            if (setPossibleProperty(context, target, name, value) == OgnlRuntime.NotFound) {
+            if (!OgnlRuntime.setMethodValue(context, target, name, value, true) &&
+                !OgnlRuntime.setFieldValue(context, target, name, value))
                 throw new NoSuchPropertyException(target, name);
-            }
-        } else {
-            OgnlRuntime.setIndxerValue((OgnlContext)context, target, oname, value, [oname]);
+        } catch (OgnlException) {
+            throw;
+        } catch (Exception ex) {
+            throw new OgnlException(name, ex);
         }
+    }
+
+    private static string fromObjectName(object name)
+    {
+        var plainName = name.ToString();
+
+        return plainName ?? throw new OgnlException("property name is null");
+    }
+
+    private static bool isPropertyName(string? name)
+    {
+        return name != null && nameRegex().IsMatch(name);
+    }
+
+    public virtual object? getProperty(OgnlContext context, object target,
+        object name)
+    {
+        var currentNode = context.getCurrentNode();
+
+        if (currentNode == null)
+            throw new OgnlException("node is null for '" + name + "'");
+
+        if (currentNode is not ASTProperty)
+            currentNode = currentNode.jjtGetParent();
+
+        var indexed = currentNode is ASTProperty astProperty &&
+            astProperty.isIndexedAccess() &&
+            OgnlRuntime.hasSetIndexer(context, target, target.GetType(), 1);
+
+        if (!indexed && name is string plainName && isPropertyName(plainName))
+            return tryGettingProperty(context, target, plainName);
+
+        return OgnlRuntime.getIndxerValue(context, target, name, [name]);
+    }
+
+    public virtual void setProperty(OgnlContext context, object target,
+        object name, object? value)
+    {
+        var plainName = fromObjectName(name);
+        var currentNode = context.getCurrentNode();
+
+        if (currentNode == null)
+            throw new OgnlException("node is null for '" + name + "'");
+
+        if (currentNode is not ASTProperty)
+            currentNode = currentNode.jjtGetParent();
+
+        var indexed = currentNode is ASTProperty astProperty &&
+            astProperty.isIndexedAccess() &&
+            OgnlRuntime.hasSetIndexer(context, target, target.GetType(), 1);
+
+        if (indexed)
+            OgnlRuntime.setIndxerValue(context, target, name, value, [name]);
+        else
+            trySettingProperty(context, target, plainName, value);
     }
 }

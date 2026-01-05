@@ -29,8 +29,6 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using System.Collections;
-
 namespace OGNL;
 
 /// <summary>
@@ -41,26 +39,25 @@ namespace OGNL;
 ///@author Drew Davidson (drew@ognl.org)
 ///
 public class ObjectMethodAccessor : MethodAccessor {
-    public object callStaticMethod(IDictionary context, Type targetClass,
+    public object callStaticMethod(OgnlContext context, Type targetClass,
         string methodName, object[] args)
     {
         var methods = OgnlRuntime.getMethods(targetClass, methodName, true);
 
-        return OgnlRuntime.callAppropriateMethod((OgnlContext)context,
-            targetClass, null, methodName, null, methods, args);
+        return OgnlRuntime.callAppropriateMethod(context, targetClass,
+            null, methodName, null, methods, args);
     }
 
-    public object callMethod(IDictionary context, object? target,
+    public object callMethod(OgnlContext context, object target,
         string methodName, object[] args)
     {
-        var targetClass = target?.GetType();
+        var targetClass = target.GetType();
         var methods = OgnlRuntime.getMethods(targetClass, methodName, false);
 
-        if (methods == null || methods.Count == 0) {
+        if (methods == null || methods.Count == 0)
             methods = OgnlRuntime.getMethods(targetClass, methodName, true);
-        }
 
-        return OgnlRuntime.callAppropriateMethod((OgnlContext)context,
-            target, target, methodName, null, methods, args);
+        return OgnlRuntime.callAppropriateMethod(context, target, target,
+            methodName, null, methods, args);
     }
 }
