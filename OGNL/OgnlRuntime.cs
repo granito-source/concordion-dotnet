@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Reflection;
 using System.Text;
-using OGNL.Java;
 
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson ,  Luke Blanshard and Foxcoming

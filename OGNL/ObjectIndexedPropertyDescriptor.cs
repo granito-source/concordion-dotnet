@@ -30,7 +30,6 @@
 //--------------------------------------------------------------------------
 
 using System.Reflection;
-using OGNL.Java;
 
 namespace OGNL;
 
@@ -94,5 +93,5 @@ namespace OGNL;
 ///@author Luke Blanshard (blanshlu@netscape.net)
 ///@author Drew Davidson (drew@ognl.org)
 ///
-public class ObjectIndexedPropertyDescriptor(PropertyInfo p) :
-    IndexedPropertyDescriptor(p);
+public class ObjectIndexedPropertyDescriptor(PropertyInfo propertyInfo) :
+    IndexedPropertyDescriptor(propertyInfo);

@@ -1,13 +1,9 @@
-namespace OGNL.Java;
+namespace OGNL;
 
 /// <summary>
 /// Introspector
 /// </summary>
-public class Introspector {
-    private Introspector()
-    {
-    }
-
+public static class Introspector {
     /// <summary>
     /// Include int indexer.
     /// </summary>
@@ -19,19 +15,16 @@ public class Introspector {
         var pda = new PropertyDescriptor[ps.Length];
         var count = 0;
 
-        for (var i = 0; i < ps.Length; i++) {
-            var p = ps[i];
-            PropertyDescriptor pd = null;
+        foreach (var p in ps) {
+            PropertyDescriptor pd;
             var ips = p.GetIndexParameters();
 
-            if (ips == null || ips.Length <= 0)
+            if (ips.Length <= 0)
                 pd = new PropertyDescriptor(p);
             else if (ips.Length > 1)
                 // TODO: not support multidimensional indexer.
                 continue;
-            else
-                // check int indexer.
-            if (ips[0].ParameterType != typeof(int))
+            else if (ips[0].ParameterType != typeof(int))
                 pd = new ObjectIndexedPropertyDescriptor(p);
             else
                 pd = new IndexedPropertyDescriptor(p);
