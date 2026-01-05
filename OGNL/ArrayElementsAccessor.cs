@@ -1,5 +1,3 @@
-using System ;
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,25 +29,24 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///Implementation of IElementsAccessor that returns an iterator over a Array.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class ArrayElementsAccessor : IElementsAccessor
-	{
-		/// <summary>
-		/// Just return Array.GetEnumerator.
-		/// </summary>
-		/// <param name="target">The Array</param>
-		/// <returns>Enumerator</returns>
-		public IEnumerator getElements (object target)
-		{
-			return ((Array) target).GetEnumerator () ;
-		}
+using System.Collections;
 
-	}
+namespace OGNL;
+
+///<summary>
+///Implementation of IElementsAccessor that returns an iterator over a Array.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class ArrayElementsAccessor : IElementsAccessor {
+    /// <summary>
+    /// Just return Array.GetEnumerator.
+    /// </summary>
+    /// <param name="target">The Array</param>
+    /// <returns>Enumerator</returns>
+    public IEnumerator getElements(object target)
+    {
+        return ((Array)target).GetEnumerator();
+    }
 }

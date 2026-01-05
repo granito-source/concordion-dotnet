@@ -1,4 +1,3 @@
-using System ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,132 +29,87 @@ using System ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///Superclass for OGNL exceptions, incorporating an optional encapsulated exception.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class OgnlException : Exception
-	{
-		///
-		///The root evaluation of the expression when the exception was thrown
-		///
-		Evaluation evaluation ;
+namespace OGNL;
 
-		////
-		////Why this exception was thrown.
-		////@serial
-		////
-		Exception reason ;
+///<summary>
+///Superclass for OGNL exceptions, incorporating an optional encapsulated exception.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class OgnlException : Exception {
+    ///
+    ///The root evaluation of the expression when the exception was thrown
+    ///
+    Evaluation? evaluation;
 
-		/// <summary>
-		/// Constructs an OgnlException with no message or encapsulated exception.
-		/// </summary>
-		public OgnlException () : this (null, null)
-		{
-		}
+    ////
+    ////Why this exception was thrown.
+    ////@serial
+    ////
+    Exception? reason;
 
-		///<summary>
-		///Constructs an OgnlException with the given message but no encapsulated exception.
-		///</summary>
-		///<param name="msg">the exception's detail message</param>
-		///
-		public OgnlException (string msg) : this (msg, null)
-		{
-		}
+    /// <summary>
+    /// Constructs an OgnlException with no message or encapsulated exception.
+    /// </summary>
+    public OgnlException() : this(null, null)
+    {
+    }
 
-		///<summary>
-		///Constructs an OgnlException with the given message and encapsulated exception.
-		///</summary>
-		///<param name="msg"> the exception's detail message</param>    
-		///<param name="reason">the encapsulated exception</param>  
-		///
-		public OgnlException (string msg, Exception reason) : base (msg)
-		{
-			this.reason = reason ;
-		}
+    ///<summary>
+    ///Constructs an OgnlException with the given message but no encapsulated exception.
+    ///</summary>
+    ///<param name="msg">the exception's detail message</param>
+    ///
+    public OgnlException(string msg) : this(msg, null)
+    {
+    }
 
-		///
-		///Returns the encapsulated exception, or null if there is none.
-		///@return the encapsulated exception
-		///
-		public Exception getReason ()
-		{
-			return reason ;
-		}
+    ///<summary>
+    ///Constructs an OgnlException with the given message and encapsulated exception.
+    ///</summary>
+    ///<param name="msg"> the exception's detail message</param>
+    ///<param name="reason">the encapsulated exception</param>
+    ///
+    public OgnlException(string? msg, Exception? reason) : base(msg)
+    {
+        this.reason = reason;
+    }
 
-		/// <summary>
-		/// Returns the Evaluation that was the root evaluation when the exception was
-		/// thrown.
-		///</summary>
-		public Evaluation getEvaluation ()
-		{
-			return evaluation ;
-		}
+    ///
+    ///Returns the encapsulated exception, or null if there is none.
+    ///@return the encapsulated exception
+    ///
+    public Exception? getReason()
+    {
+        return reason;
+    }
 
-		///<summary>
-		/// Sets the Evaluation that was current when this exception was thrown.
-		///</summary>
-		public void setEvaluation (Evaluation value)
-		{
-			evaluation = value ;
-		}
+    /// <summary>
+    /// Returns the Evaluation that was the root evaluation when the exception was
+    /// thrown.
+    ///</summary>
+    public Evaluation? getEvaluation()
+    {
+        return evaluation;
+    }
 
-		///</summary>
-		///Returns a string representation of this exception.
-		///<summary>
-		public override string ToString ()
-		{
-			if (reason == null)
-				return base.ToString () ;
-			return base.ToString () + " [" + reason + "]" ;
-		}
+    ///<summary>
+    /// Sets the Evaluation that was current when this exception was thrown.
+    ///</summary>
+    public void setEvaluation(Evaluation value)
+    {
+        evaluation = value;
+    }
 
-		// IGNORED CODE.
-		//      /**
-		//       * Prints the stack trace for this (and possibly the encapsulated) exception on
-		//       * System.err.
-		//       */
-		//    public void printStackTrace()
-		//    {
-		//        printStackTrace( System.err );
-		//    }
-		//
-		//      /**
-		//       * Prints the stack trace for this (and possibly the encapsulated) exception on the
-		//       * given print stream.
-		//       */
-		//    public void printStackTrace(java.io.PrintStream s)
-		//    {
-		//	synchronized (s)
-		//          {
-		//            base.printStackTrace(s);
-		//            if ( reason != null ) {
-		//                s.println(  "/-- Encapsulated exception ------------\\" );
-		//                reason.printStackTrace(s);
-		//                s.println( "\\--------------------------------------/" );
-		//            }
-		//          }
-		//    }
-		//
-		//      /**
-		//       * Prints the stack trace for this (and possibly the encapsulated) exception on the
-		//       * given print writer.
-		//       */
-		//    public void printStackTrace(java.io.PrintWriter s)
-		//    {
-		//	synchronized (s)
-		//          {
-		//            base.printStackTrace(s);
-		//            if ( reason != null ) {
-		//                s.println(  "/-- Encapsulated exception ------------\\" );
-		//                reason.printStackTrace(s);
-		//                s.println( "\\--------------------------------------/" );
-		//            }
-		//          }
-		//    }
-	}
+    ///<summary>
+    ///Returns a string representation of this exception.
+    ///</summary>
+    public override string ToString()
+    {
+        if (reason == null)
+            return base.ToString();
+
+        return base.ToString() + " [" + reason + "]";
+    }
 }

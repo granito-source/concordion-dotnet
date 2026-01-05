@@ -1,5 +1,3 @@
-using System ;
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,26 +29,26 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///This interface defines an object that will resolve a class from a string
-	///and a ognl context table.
-	///</summary>
-	///<remarks>
-	///In C#, Assamblly(DLL) is basic unit of Classes.
-	///</remarks>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public interface ClassResolver
-	{
-		/// <summary>
-		/// Resolve Class Type by class name.
-		/// </summary>
-		/// <param name="className"></param>
-		/// <param name="context">OgnlContext</param>
-		/// <returns></returns>
-		Type classForName (string className, IDictionary context) ;
-	}
+using System.Collections;
+
+namespace OGNL;
+
+///<summary>
+///This interface defines an object that will resolve a class from a string
+///and a ognl context table.
+///</summary>
+///<remarks>
+///In C#, Assamblly(DLL) is basic unit of Classes.
+///</remarks>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public interface ClassResolver {
+    /// <summary>
+    /// Resolve Class Type by class name.
+    /// </summary>
+    /// <param name="className"></param>
+    /// <param name="context">OgnlContext</param>
+    /// <returns></returns>
+    Type classForName(string className, IDictionary context);
 }

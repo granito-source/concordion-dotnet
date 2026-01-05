@@ -1,6 +1,3 @@
-using System ;
-using System.Collections ;
-using System.Reflection ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -32,45 +29,44 @@ using System.Reflection ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///Default type conversion. Converts among numeric types and also strings.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class DefaultTypeConverter : TypeConverter
-	{
-		public DefaultTypeConverter ()
-		{
-		}
+using System.Collections;
+using System.Reflection;
 
-		/// <summary>
-		/// Use <see cref="OgnlOps.convertValue"/>.
-		/// </summary>
-		/// <param name="context"></param>
-		/// <param name="value"></param>
-		/// <param name="toType"></param>
-		/// <returns></returns>
-		public virtual object convertValue (IDictionary context, object value, Type toType)
-		{
-			return OgnlOps.convertValue (value, toType) ;
-		}
+namespace OGNL;
 
-		/// <summary>
-		/// A overload version.
-		/// </summary>
-		/// <param name="context"></param>
-		/// <param name="target"></param>
-		/// <param name="member"></param>
-		/// <param name="propertyName"></param>
-		/// <param name="value"></param>
-		/// <param name="toType"></param>
-		/// <returns></returns>
-		public virtual object convertValue (IDictionary context, object target, MemberInfo member, string propertyName, object value, Type toType)
-		{
-			return convertValue (context, value, toType) ;
-		}
-	}
+///<summary>
+///Default type conversion. Converts among numeric types and also strings.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class DefaultTypeConverter : TypeConverter {
+    /// <summary>
+    /// Use <see cref="OgnlOps.convertValue"/>.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="value"></param>
+    /// <param name="toType"></param>
+    /// <returns></returns>
+    public virtual object convertValue(IDictionary context, object value,
+        Type toType)
+    {
+        return OgnlOps.convertValue(value, toType);
+    }
+
+    /// <summary>
+    /// A overload version.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="target"></param>
+    /// <param name="member"></param>
+    /// <param name="propertyName"></param>
+    /// <param name="value"></param>
+    /// <param name="toType"></param>
+    /// <returns></returns>
+    public virtual object convertValue(IDictionary context, object target,
+        MemberInfo member, string propertyName, object value, Type toType)
+    {
+        return convertValue(context, value, toType);
+    }
 }

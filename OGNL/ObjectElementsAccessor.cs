@@ -1,4 +1,3 @@
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,60 +29,54 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///Implementation of ElementsAccessor that returns a single-element iterator, containing
-	///the original target object.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class ObjectElementsAccessor : IElementsAccessor
-	{
-		public IEnumerator getElements (object target)
-		{
-			return new ObjectEnumerator (target) ;
-		}
+using System.Collections;
 
-		class ObjectEnumerator : IEnumerator
-		{
-			bool seen = false ;
-			object obj ;
+namespace OGNL;
 
-			#region IEnumerator ≥…‘±
+///<summary>
+///Implementation of ElementsAccessor that returns a single-element iterator, containing
+///the original target object.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class ObjectElementsAccessor : IElementsAccessor {
+    public IEnumerator getElements(object target)
+    {
+        return new ObjectEnumerator(target);
+    }
 
-			public ObjectEnumerator (object obj)
-			{
-				this.obj = obj ;
-			}
+    class ObjectEnumerator : IEnumerator {
+        bool seen = false;
 
-			public void Reset ()
-			{
-				seen = false ;
-			}
+        object obj;
 
-			public object Current
-			{
-				get
-				{
-					object result = null ;
+        public ObjectEnumerator(object obj)
+        {
+            this.obj = obj;
+        }
 
-					if (!seen)
-					{
-						result = obj ;
-						seen = true ;
-					}
-					return result ;
-				}
-			}
+        public void Reset()
+        {
+            seen = false;
+        }
 
-			public bool MoveNext ()
-			{
-				return !seen ;
-			}
+        public object? Current {
+            get {
+                object? result = null;
 
-			#endregion
-		}
-	}
+                if (!seen) {
+                    result = obj;
+                    seen = true;
+                }
+
+                return result;
+            }
+        }
+
+        public bool MoveNext()
+        {
+            return !seen;
+        }
+    }
 }

@@ -1,5 +1,3 @@
-using System.Collections ;
-using System.Reflection ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,33 +29,37 @@ using System.Reflection ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///This interface provides a hook for preparing for accessing members
-	///of objects.  The Java2 version of this method can allow access
-	///to otherwise inaccessable members, such as private fields.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///@version 15 October 1999
-	///
-	public interface MemberAccess
-	{
-		/// <summary>
-		///    Sets the member up for accessibility
-		/// </summary>
-		object setup (IDictionary context, object target, MemberInfo member, string propertyName) ;
+using System.Collections;
+using System.Reflection;
 
-		/// <summary>
-		/// Restores the member from the previous setup call.
-		/// </summary>
-		void restore (IDictionary context, object target, MemberInfo member, string propertyName, object state) ;
+namespace OGNL;
 
-		/// <summary>
-		///  Returns true if the given member is accessible or can be made accessible
-		/// by this object.
-		/// </summary>
-		bool isAccessible (IDictionary context, object target, MemberInfo member, string propertyName) ;
-	}
+///<summary>
+///This interface provides a hook for preparing for accessing members
+///of objects.  The Java2 version of this method can allow access
+///to otherwise inaccessable members, such as private fields.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///@version 15 October 1999
+///
+public interface MemberAccess {
+    /// <summary>
+    ///    Sets the member up for accessibility
+    /// </summary>
+    object? setup(IDictionary context, object target, MemberInfo member,
+        string propertyName);
+
+    /// <summary>
+    /// Restores the member from the previous setup call.
+    /// </summary>
+    void restore(IDictionary context, object target, MemberInfo member,
+        string propertyName, object? state);
+
+    /// <summary>
+    ///  Returns true if the given member is accessible or can be made accessible
+    /// by this object.
+    /// </summary>
+    bool isAccessible(IDictionary context, object target,
+        MemberInfo member, string propertyName);
 }

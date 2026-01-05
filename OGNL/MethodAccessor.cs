@@ -1,5 +1,3 @@
-using System ;
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,40 +29,42 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///This interface defines methods for callinig methods in a target object.
-	///Methods are broken up into static and instance methods for convenience.
-	///indexes into the target object, which must be an array.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public interface MethodAccessor
-	{
-		///<summary>
-		/// Calls the static method named with the arguments given on the class given.
-		/// </summary>
-		/// <param name="context">expression context in which the method should be called</param>
-		/// <param name="targetClass">the object in which the method exists</param> 
-		/// <param name="methodName">  the name of the method</param>
-		/// <param name="args">        the arguments to the method</param>
-		/// <returns>result of calling the method</returns>                                             
-		/// <exception href="MethodFailedException"> if there is an error calling the method</exception>  
-		/// 
-		object callStaticMethod (IDictionary context, Type targetClass, string methodName, object[] args) ; // throws MethodFailedException;
+using System.Collections;
 
-		///<summary>
-		/// Calls the method named with the arguments given.
-		/// </summary> 
-		/// <param name="context">expression context in which the method should be called</param>
-		/// <param name="target">the object in which the method exists</param>
-		/// <param name="methodName">the name of the method</param>
-		/// <param name="args">the arguments to the method</param>
-		/// <returns>result of calling the method</returns>
-		/// <exception href="MethodFailedException"> if there is an error calling the method</exception>
-		/// 
-		object callMethod (IDictionary context, object target, string methodName, object[] args) ; // throws MethodFailedException;
-	}
+namespace OGNL;
+
+///<summary>
+///This interface defines methods for callinig methods in a target object.
+///Methods are broken up into static and instance methods for convenience.
+///indexes into the target object, which must be an array.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public interface MethodAccessor {
+    ///<summary>
+    /// Calls the static method named with the arguments given on the class given.
+    /// </summary>
+    /// <param name="context">expression context in which the method should be called</param>
+    /// <param name="targetClass">the object in which the method exists</param>
+    /// <param name="methodName">  the name of the method</param>
+    /// <param name="args">        the arguments to the method</param>
+    /// <returns>result of calling the method</returns>
+    /// <exception href="MethodFailedException"> if there is an error calling the method</exception>
+    ///
+    object callStaticMethod(IDictionary context, Type targetClass,
+        string methodName, object[] args);
+
+    ///<summary>
+    /// Calls the method named with the arguments given.
+    /// </summary>
+    /// <param name="context">expression context in which the method should be called</param>
+    /// <param name="target">the object in which the method exists</param>
+    /// <param name="methodName">the name of the method</param>
+    /// <param name="args">the arguments to the method</param>
+    /// <returns>result of calling the method</returns>
+    /// <exception href="MethodFailedException"> if there is an error calling the method</exception>
+    ///
+    object callMethod(IDictionary context, object target,
+        string methodName, object[] args);
 }

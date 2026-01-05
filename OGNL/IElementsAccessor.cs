@@ -1,4 +1,3 @@
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,31 +29,31 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	/// <summary>
-	///	This interface defines a method for getting the "elements" of an object, which means
-	///	any objects that naturally would be considered to be contained by the object.  So for a
-	///	collection, you would expect this method to return all the objects in that collection;
-	///	while for an ordinary object you would expect this method to return just that object.
-	///	</summary>
-	///	<remarks>
-	/// An implementation of this interface will often require that its target objects all
-	/// be of some particular type. 
-	/// <para>For example, the <see href="MapElementsAccessor"/> class requires that
-	/// its targets all implement the <see href="IDictionary"/> interface.</para>
-	/// </remarks>																																																							* @author Luke Blanshard (blanshlu@netscape.net)
-	/// author: Drew Davidson (drew@ognl.org)
-	/// 
-	public interface IElementsAccessor
-	{
-		///<summary> 	
-		///Returns an iterator over the elements of the given target object.
-		///</summary>
-		/// <param name="target">the object to get the elements of</param>
-		///<returns>an iterator over the elements of the given object</returns>
-		///<exception cref="OgnlException">if there is an error getting the given object's elements</exception>
-		///
-		IEnumerator getElements (object target) ; // throws OgnlException;
-	}
+using System.Collections;
+
+namespace OGNL;
+
+/// <summary>
+///	This interface defines a method for getting the "elements" of an object, which means
+///	any objects that naturally would be considered to be contained by the object.  So for a
+///	collection, you would expect this method to return all the objects in that collection;
+///	while for an ordinary object you would expect this method to return just that object.
+///	</summary>
+///	<remarks>
+/// An implementation of this interface will often require that its target objects all
+/// be of some particular type.
+/// <para>For example, the <see href="MapElementsAccessor"/> class requires that
+/// its targets all implement the <see href="IDictionary"/> interface.</para>
+/// </remarks>																																																							* @author Luke Blanshard (blanshlu@netscape.net)
+/// author: Drew Davidson (drew@ognl.org)
+///
+public interface IElementsAccessor {
+    ///<summary>
+    ///Returns an iterator over the elements of the given target object.
+    ///</summary>
+    /// <param name="target">the object to get the elements of</param>
+    ///<returns>an iterator over the elements of the given object</returns>
+    ///<exception cref="OgnlException">if there is an error getting the given object's elements</exception>
+    ///
+    IEnumerator getElements(object target);
 }

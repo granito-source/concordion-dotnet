@@ -1,4 +1,3 @@
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -29,8 +28,10 @@ using System.Collections ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace ognl 
-{
+
+using System.Collections;
+
+namespace OGNL;
 
 ///<summary>
 ///This interface defines methods for setting and getting a property from a target object.
@@ -54,26 +55,25 @@ namespace ognl
 ///@author Luke Blanshard (blanshlu@netscape.net)
 ///@author Drew Davidson (drew@ognl.org)
 ///
-public interface PropertyAccessor
-{
-      ///<summary>
-      ///Extracts and returns the property of the given name from the given target object.
-      ///</summary>
-      ///@param target  the object to get the property from
-      ///@param name    the name of the property to get
-      ///@return        the current value of the given property in the given object
-      ///@exception OgnlException if there is an error locating the property in the given object
-      ///
-    object getProperty( IDictionary context, object target, object name ) ;// throws OgnlException;
+public interface PropertyAccessor {
+    ///<summary>
+    ///Extracts and returns the property of the given name from the given target object.
+    ///</summary>
+    ///@param target  the object to get the property from
+    ///@param name    the name of the property to get
+    ///@return        the current value of the given property in the given object
+    ///@exception OgnlException if there is an error locating the property in the given object
+    ///
+    object? getProperty(IDictionary context, object target, object? name);
 
-      ///<summary>
-      ///Sets the value of the property of the given name in the given target object.
-      ///</summary>
-      ///@param target  the object to set the property in
-      ///@param name    the name of the property to set
-      ///@param value   the new value for the property
-      ///@exception OgnlException if there is an error setting the property in the given object
-      ///
-    void setProperty( IDictionary context, object target, object name, object value ) ;// throws OgnlException;
-}
+    ///<summary>
+    ///Sets the value of the property of the given name in the given target object.
+    ///</summary>
+    ///@param target  the object to set the property in
+    ///@param name    the name of the property to set
+    ///@param value   the new value for the property
+    ///@exception OgnlException if there is an error setting the property in the given object
+    ///
+    void setProperty(IDictionary context, object target, object name,
+        object value);
 }

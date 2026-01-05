@@ -1,4 +1,3 @@
-using System ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,40 +29,28 @@ using System ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///Exception thrown if a property is attempted to be extracted from an object that does
-	///not have such a property.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class NoSuchPropertyException : OgnlException
-	{
-		object target ;
-		object name ;
+namespace OGNL;
 
-		public NoSuchPropertyException (object target, object name, Exception reason) :
-			base (((target is Type) ? target.ToString () : target.GetType ().Name) + "." + name, reason)
-		{
-			this.target = target ;
-			this.name = name ;
-		}
+///<summary>
+///Exception thrown if a property is attempted to be extracted from an object that does
+///not have such a property.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class NoSuchPropertyException(object target, object name, Exception? reason) :
+    OgnlException((target is Type ? target.ToString() : target.GetType().Name) + "." + name, reason) {
+    public NoSuchPropertyException(object target, object name) : this(target, name, null)
+    {
+    }
 
-		public NoSuchPropertyException (object target, object name) : this (target, name, null)
-		{
-			;
-		}
+    public object getTarget()
+    {
+        return target;
+    }
 
-		public object getTarget ()
-		{
-			return target ;
-		}
-
-		public object getName ()
-		{
-			return name ;
-		}
-	}
+    public object getName()
+    {
+        return name;
+    }
 }

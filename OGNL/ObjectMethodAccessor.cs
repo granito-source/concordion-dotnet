@@ -1,5 +1,3 @@
-using System ;
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,8 +28,11 @@ using System.Collections ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace ognl 
-{
+
+using System.Collections;
+
+namespace OGNL;
+
 /// <summary>
 ///Implementation of PropertyAccessor that uses reflection on the target object's class to
 ///find a field or a pair of set/get methods with the given property name.
@@ -39,27 +40,27 @@ namespace ognl
 ///@author Luke Blanshard (blanshlu@netscape.net)
 ///@author Drew Davidson (drew@ognl.org)
 ///
-public class ObjectMethodAccessor : MethodAccessor
-{
-	/* MethodAccessor interface */
-    public object callStaticMethod( IDictionary context, Type targetClass, string methodName, object[] args ) // throws MethodFailedException
+public class ObjectMethodAccessor : MethodAccessor {
+    public object callStaticMethod(IDictionary context, Type targetClass,
+        string methodName, object[] args)
     {
-        IList        methods = OgnlRuntime.getMethods(targetClass, methodName, true);
+        var methods = OgnlRuntime.getMethods(targetClass, methodName, true);
 
-        return OgnlRuntime.callAppropriateMethod( (OgnlContext)context, targetClass, null, methodName, null, methods, args );
+        return OgnlRuntime.callAppropriateMethod((OgnlContext)context,
+            targetClass, null, methodName, null, methods, args);
     }
 
-    public object callMethod( IDictionary context, object target, string methodName, object[] args ) // throws MethodFailedException
+    public object callMethod(IDictionary context, object? target,
+        string methodName, object[] args)
     {
-        Type       targetClass = (target == null) ? null : target.GetType();
-        object      source = target;
-        IList        methods = OgnlRuntime.getMethods(targetClass, methodName, false);
+        var targetClass = target?.GetType();
+        var methods = OgnlRuntime.getMethods(targetClass, methodName, false);
 
-        if ((methods == null) || (methods.Count == 0)) {
+        if (methods == null || methods.Count == 0) {
             methods = OgnlRuntime.getMethods(targetClass, methodName, true);
-            source = targetClass;
         }
-        return OgnlRuntime.callAppropriateMethod( (OgnlContext)context, target, target, methodName, null, methods, args );
+
+        return OgnlRuntime.callAppropriateMethod((OgnlContext)context,
+            target, target, methodName, null, methods, args);
     }
-}
 }

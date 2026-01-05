@@ -1,4 +1,3 @@
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,27 +29,27 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	/// <summary>
-	///Implementation of NullHandler that returns null in all cases,
-	///so that NullPointerException will be thrown by the caller.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class ObjectNullHandler : NullHandler
-	{
-		/* NullHandler interface */
+using System.Collections;
 
-		public object nullMethodResult (IDictionary context, object target, string methodName, object[] args)
-		{
-			return null ;
-		}
+namespace OGNL;
 
-		public object nullPropertyValue (IDictionary context, object target, object property)
-		{
-			return null ;
-		}
-	}
+/// <summary>
+///Implementation of NullHandler that returns null in all cases,
+///so that NullPointerException will be thrown by the caller.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class ObjectNullHandler : NullHandler {
+    public object? nullMethodResult(IDictionary context, object target,
+        string methodName, object[] args)
+    {
+        return null;
+    }
+
+    public object? nullPropertyValue(IDictionary context, object target,
+        object property)
+    {
+        return null;
+    }
 }

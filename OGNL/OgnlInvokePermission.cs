@@ -29,35 +29,34 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	/// <summary>
-	///BasicPermission subclass that defines a permission token for invoking
-	///methods within OGNL.  This does not override any methods (except
-	///constructors) and does not implement actions.  
-	///</summary>
-	///<remarks>
-	///It is similar in spirit
-	///to the java.lang.reflect.ReflectPermission class in that it
-	///guards access to methods.
-	///</remarks>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class OgnlInvokePermission // : BasicPermission
-	{
-		string name ;
-		string actions ;
+ namespace OGNL;
 
-		public OgnlInvokePermission (string name)
-		{
-			this.name = name ;
-		}
+ /// <summary>
+ ///BasicPermission subclass that defines a permission token for invoking
+ ///methods within OGNL.  This does not override any methods (except
+ ///constructors) and does not implement actions.  
+ ///</summary>
+ ///<remarks>
+ ///It is similar in spirit
+ ///to the java.lang.reflect.ReflectPermission class in that it
+ ///guards access to methods.
+ ///</remarks>
+ ///@author Luke Blanshard (blanshlu@netscape.net)
+ ///@author Drew Davidson (drew@ognl.org)
+ ///
+ public class OgnlInvokePermission // : BasicPermission
+ {
+     string name ;
+     string actions ;
 
-		public OgnlInvokePermission (string name, string actions)
-		{
-			this.name = name ;
-			this.actions = actions ;
-		}
-	}
-}
+     public OgnlInvokePermission (string name)
+     {
+         this.name = name ;
+     }
+
+     public OgnlInvokePermission (string name, string actions)
+     {
+         this.name = name ;
+         this.actions = actions ;
+     }
+ }

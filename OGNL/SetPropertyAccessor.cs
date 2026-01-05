@@ -1,4 +1,5 @@
-using System.Collections ;
+using System.Collections;
+
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,52 +31,51 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
+namespace OGNL;
+
+///<summary>
+///Implementation of <see href="PropertyAccessor"/> that uses numbers and dynamic subscripts as
+///properties to index into ICollection.
+///</summary>
+/// <remarks></remarks>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+public class SetPropertyAccessor : ObjectPropertyAccessor
+    , PropertyAccessor // This is here to make javadoc show this class as an implementor
 {
-	///<summary>
-	///Implementation of <see href="PropertyAccessor"/> that uses numbers and dynamic subscripts as
-	///properties to index into ICollection.
-	///</summary>
-	/// <remarks></remarks>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	public class SetPropertyAccessor : ObjectPropertyAccessor
-		, PropertyAccessor // This is here to make javadoc show this class as an implementor
-	{
-		public override object getProperty (IDictionary context, object target, object name) // throws OgnlException
-		{
-			ICollection set = (ICollection) target ;
+    public override object? getProperty(IDictionary context, object target, object? name) // throws OgnlException
+    {
+        var set = (ICollection) target ;
 
-			if (name is string)
-			{
-				object result ;
+        if (name is string)
+        {
+            object result ;
 
-				if (name.Equals ("size"))
-				{
-					result = set.Count ;
-				}
-				else
-				{
-					if (name.Equals ("iterator"))
-					{
-						result = set.GetEnumerator () ;
-					}
-					else
-					{
-						if (name.Equals ("isEmpty"))
-						{
-							result = set.Count == 0 ; // ? Boolean.TRUE : Boolean.FALSE;
-						}
-						else
-						{
-							result = base.getProperty (context, target, name) ;
-						}
-					}
-				}
-				return result ;
-			}
+            if (name.Equals ("size"))
+            {
+                result = set.Count ;
+            }
+            else
+            {
+                if (name.Equals ("iterator"))
+                {
+                    result = set.GetEnumerator () ;
+                }
+                else
+                {
+                    if (name.Equals ("isEmpty"))
+                    {
+                        result = set.Count == 0 ; // ? Boolean.TRUE : Boolean.FALSE;
+                    }
+                    else
+                    {
+                        result = base.getProperty (context, target, name) ;
+                    }
+                }
+            }
+            return result ;
+        }
 
-			throw new NoSuchPropertyException (target, name) ;
-		}
-	}
+        throw new NoSuchPropertyException (target, name) ;
+    }
 }

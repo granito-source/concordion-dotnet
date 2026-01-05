@@ -1,4 +1,3 @@
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,25 +29,25 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///Implementation of the IElementsAccessor interface for Enumerators, which returns an
-	///iterator that passes its calls through to the target IEnumerator.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class EnumerationElementsAccessor : IElementsAccessor
-	{
-		/// <summary>
-		/// Just cast as an IEnumerator.
-		/// </summary>
-		/// <param name="target"></param>
-		/// <returns></returns>
-		public IEnumerator getElements (object target)
-		{
-			return (IEnumerator) target ;
-		}
-	}
+using System.Collections;
+
+namespace OGNL;
+
+///<summary>
+///Implementation of the IElementsAccessor interface for Enumerators, which returns an
+///iterator that passes its calls through to the target IEnumerator.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class EnumerationElementsAccessor : IElementsAccessor {
+    /// <summary>
+    /// Just cast as an IEnumerator.
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    public IEnumerator getElements(object target)
+    {
+        return (IEnumerator)target;
+    }
 }

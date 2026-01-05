@@ -1,5 +1,3 @@
-using System ;
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,8 +28,11 @@ using System.Collections ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace ognl 
-{
+
+using System.Collections;
+
+namespace OGNL;
+
 ///<summary>
 ///Implementation of PropertyAccessor that provides "property" reference to
 ///"nextElement" (aliases to "next" also) and "hasMoreElements" (also aliased
@@ -40,44 +41,45 @@ namespace ognl
 ///@author Luke Blanshard (blanshlu@netscape.net)
 ///@author Drew Davidson (drew@ognl.org)
 ///
-public class EnumerationPropertyAccessor : ObjectPropertyAccessor , PropertyAccessor 
-	// This is here to make javadoc show this class as an implementor
-{
-	/// <summary>
-	/// When you call to "next" or "nextElement", 
-	/// a MoveNext () will be call first to avoid Execption.
-	/// So, DO NOT CALL THE "hasNext".
-	/// </summary>
-	/// <param name="context"></param>
-	/// <param name="target"></param>
-	/// <param name="name"></param>
-	/// <returns></returns>
-    public override object getProperty( IDictionary context, object target, object name ) // throws OgnlException
+public class EnumerationPropertyAccessor : ObjectPropertyAccessor {
+    /// <summary>
+    /// When you call to "next" or "nextElement",
+    /// a MoveNext () will be call first to avoid Execption.
+    /// So, DO NOT CALL THE "hasNext".
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="target"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public override object? getProperty(IDictionary context,
+        object target, object? name)
     {
-        object      result;
-        IEnumerator e = (IEnumerator) target;
+        object? result;
+        var e = (IEnumerator)target;
 
-        if ( name is string ) {
+        if (name is string) {
             if (name.Equals("next") || name.Equals("nextElement")) {
-				// todo: try to move next first??
-				e.MoveNext () ;
+                // todo: try to move next first??
+                e.MoveNext();
                 result = e.Current;
             } else {
                 if (name.Equals("hasNext") || name.Equals("hasMoreElements")) {
-                    result = e.MoveNext() ; // ? Boolean.TRUE : Boolean.FALSE;
+                    result = e.MoveNext(); // ? Boolean.TRUE : Boolean.FALSE;
                 } else {
-                    result = base.getProperty( context, target, name );
+                    result = base.getProperty(context, target, name);
                 }
             }
         } else {
             result = base.getProperty(context, target, name);
         }
+
         return result;
     }
 
-    public override void setProperty( IDictionary context, object target, object name, object value ) // throws OgnlException
+    public override void setProperty(IDictionary context, object target,
+        object name, object value)
     {
-        throw new ArgumentException( "can't set property " + name + " on Enumeration" );
+        throw new ArgumentException("can't set property " + name +
+            " on Enumeration");
     }
-}
 }

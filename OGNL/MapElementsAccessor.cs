@@ -1,4 +1,3 @@
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,25 +29,24 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///Implementation of ElementsAccessor that returns an iterator over the map's values.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class MapElementsAccessor : IElementsAccessor
-	{
-		/// <summary>
-		/// Just return IDictionary.Values.GetEnumerator.
-		/// </summary>
-		/// <param name="target"></param>
-		/// <returns></returns>
-		public IEnumerator getElements (object target)
-		{
-			return ((IDictionary) target).Values.GetEnumerator () ;
-			// return new IteratorEnumeration( ((IDictionary)target).values().iterator() );
-		}
-	}
+using System.Collections;
+
+namespace OGNL;
+
+///<summary>
+///Implementation of ElementsAccessor that returns an iterator over the map's values.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class MapElementsAccessor : IElementsAccessor {
+    /// <summary>
+    /// Just return IDictionary.Values.GetEnumerator.
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    public IEnumerator getElements(object target)
+    {
+        return ((IDictionary)target).Values.GetEnumerator();
+    }
 }

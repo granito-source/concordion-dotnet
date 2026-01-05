@@ -1,4 +1,3 @@
-using System ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,20 +29,13 @@ using System ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///Exception thrown if a method or constructor call fails.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class MethodFailedException : OgnlException
-	{
-		public MethodFailedException (object source, string name, Exception reason)
-			: base ("Method \"" + name + "\" failed for object " + source, reason)
-		{
-			;
-		}
-	}
-}
+namespace OGNL;
+
+///<summary>
+///Exception thrown if a method or constructor call fails.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class MethodFailedException(object source, string name, Exception reason) :
+    OgnlException("Method \"" + name + "\" failed for object " + source, reason);

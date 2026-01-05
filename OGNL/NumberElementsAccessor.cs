@@ -1,5 +1,3 @@
-using System ;
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,54 +29,53 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	/// <summary>
-	///Implementation of IElementsAccessor that returns an IEnumerator over integers from 0 up to
-	///the given target.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class NumberElementsAccessor : NumericTypes, IElementsAccessor
-	{
-		public IEnumerator getElements (object target)
-		{
-			return new NumberEnumerator (target) ;
-		}
+using System.Collections;
 
-		class NumberEnumerator : IEnumerator
-		{
-			int type ;
-			long next = 0 ;
-			long finish ;
+namespace OGNL;
 
-			public NumberEnumerator (object target)
-			{
-				type = OgnlOps.getNumericType (target) ;
-				finish = OgnlOps.longValue (target) ;
-			}
+/// <summary>
+///Implementation of IElementsAccessor that returns an IEnumerator over integers from 0 up to
+///the given target.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class NumberElementsAccessor : NumericTypes, IElementsAccessor {
+    public IEnumerator getElements(object target)
+    {
+        return new NumberEnumerator(target);
+    }
 
-			public bool MoveNext ()
-			{
-				return next < finish ;
-				;
-			}
+    class NumberEnumerator : IEnumerator {
+        int type;
 
-			public void Reset ()
-			{
-				next = 0 ;
-			}
+        long next = 0;
 
-			public object Current
-			{
-				get
-				{
-					if (next >= finish)
-						throw new ArgumentOutOfRangeException () ;
-					return OgnlOps.newInteger (type, next++) ;
-				}
-			}
-		}
-	}
+        long finish;
+
+        public NumberEnumerator(object target)
+        {
+            type = OgnlOps.getNumericType(target);
+            finish = OgnlOps.longValue(target);
+        }
+
+        public bool MoveNext()
+        {
+            return next < finish;
+        }
+
+        public void Reset()
+        {
+            next = 0;
+        }
+
+        public object Current {
+            get {
+                if (next >= finish)
+                    throw new ArgumentOutOfRangeException();
+
+                return OgnlOps.newInteger(type, next++);
+            }
+        }
+    }
 }

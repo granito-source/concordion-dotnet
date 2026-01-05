@@ -1,5 +1,3 @@
-using System ;
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,228 +29,222 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	public sealed class ObjectArrayPool : object
-	{
-		Hashtable pools = new Hashtable (23) ;
+using System.Collections;
 
-		public class SizePool : object
-		{
-			IList arrays = new ArrayList () ;
-			int arraySize ;
-			int size ;
-			int created = 0 ;
-			int recovered = 0 ;
-			int recycled = 0 ;
+namespace OGNL;
 
-			public SizePool (int arraySize) : this (arraySize, 0)
-			{
-				;
-			}
+public sealed class ObjectArrayPool : object {
+    Hashtable pools = new(23);
 
-			public SizePool (int arraySize, int initialSize)
-			{
-				this.arraySize = arraySize ;
-				for (int i = 0; i < initialSize; i++)
-				{
-					arrays.Add (new object[arraySize]) ;
-				}
-				created = size = initialSize ;
-			}
+    public class SizePool : object {
+        IList arrays = new ArrayList();
 
-			public int getArraySize ()
-			{
-				return arraySize ;
-			}
+        int arraySize;
 
-			public object[] create ()
-			{
-				object[] result ;
+        int size;
 
-				if (size > 0)
-				{
-					result = (object[]) arrays [size - 1] ;
-					arrays.Remove (size - 1) ;
-					size-- ;
-					recovered++ ;
-				}
-				else
-				{
-					result = new object[arraySize] ;
-					created++ ;
-				}
-				return result ;
-			}
+        int created = 0;
 
-			public void recycle (object[] value)
-			{
-				lock (this)
-				{
-					if (value != null)
-					{
-						if (value.Length != arraySize)
-						{
-							throw new ArgumentException ("recycled array size " + value.Length + " inappropriate for pool array size " + arraySize) ;
-						}
-						// Array.Fill(value, null);
-						for (int i = 0; i < value.Length; i++)
-						{
-							value [i] = null ;
-						}
+        int recovered = 0;
 
-						arrays.Add (value) ;
-						size++ ;
-						recycled++ ;
-					}
-					else
-					{
-						throw new ArgumentException ("cannot recycle null object") ;
-					}
-				}
-			}
+        int recycled = 0;
 
-			/// <summary>
-			/// Returns the number of items in the pool
-			/// </summary>
-			public int getSize ()
-			{
-				return size ;
-			}
+        public SizePool(int arraySize) : this(arraySize, 0)
+        {
+        }
 
-			///<summary>
-			/// Returns the number of items this pool has created since
-			/// it's construction.
-			///</summary>
-			public int getCreatedCount ()
-			{
-				return created ;
-			}
+        public SizePool(int arraySize, int initialSize)
+        {
+            this.arraySize = arraySize;
 
-			///<summary>
-			/// Returns the number of items this pool has recovered from
-			/// the pool since its construction.
-			///</summary>
-			public int getRecoveredCount ()
-			{
-				return recovered ;
-			}
+            for (var i = 0; i < initialSize; i++) {
+                arrays.Add(new object[arraySize]);
+            }
 
-			///<summary>
-			/// Returns the number of items this pool has recycled since
-			/// it's construction.
-			///</summary>
-			public int getRecycledCount ()
-			{
-				return recycled ;
-			}
-		}
+            created = size = initialSize;
+        }
 
-		public ObjectArrayPool ()
-		{
-		}
+        public int getArraySize()
+        {
+            return arraySize;
+        }
 
-		public Hashtable getSizePools ()
-		{
-			return pools ;
-		}
+        public object[] create()
+        {
+            object[]? result;
 
-		public SizePool getSizePool (int arraySize)
-		{
-			lock (this)
-			{
-				SizePool result = (SizePool) pools [arraySize] ;
+            if (size > 0) {
+                result = (object[]?)arrays[size - 1];
+                arrays.Remove(size - 1);
+                size--;
+                recovered++;
+            } else {
+                result = new object[arraySize];
+                created++;
+            }
 
-				if (result == null)
-				{
-					pools [arraySize] = (result = new SizePool (arraySize)) ;
-				}
-				return result ;
-			}
-		}
+            return result;
+        }
 
-		public object[] create (int arraySize)
-		{
-			lock (this)
-			{
-				return getSizePool (arraySize).create () ;
-			}
-		}
+        public void recycle(object?[]? value)
+        {
+            lock (this) {
+                if (value != null) {
+                    if (value.Length != arraySize) {
+                        throw new ArgumentException("recycled array size " + value.Length +
+                                                    " inappropriate for pool array size " + arraySize);
+                    }
 
-		public object[] create (object singleton)
-		{
-			lock (this)
-			{
-				object[] result = create (1) ;
+                    // Array.Fill(value, null);
+                    for (var i = 0; i < value.Length; i++) {
+                        value[i] = null;
+                    }
 
-				result [0] = singleton ;
-				return result ;
-			}
-		}
+                    arrays.Add(value);
+                    size++;
+                    recycled++;
+                } else {
+                    throw new ArgumentException("cannot recycle null object");
+                }
+            }
+        }
 
-		public object[] create (object object1, object object2)
-		{
-			lock (this)
-			{
-				object[] result = create (2) ;
+        /// <summary>
+        /// Returns the number of items in the pool
+        /// </summary>
+        public int getSize()
+        {
+            return size;
+        }
 
-				result [0] = object1 ;
-				result [1] = object2 ;
-				return result ;
-			}
-		}
+        ///<summary>
+        /// Returns the number of items this pool has created since
+        /// it's construction.
+        ///</summary>
+        public int getCreatedCount()
+        {
+            return created;
+        }
 
-		public object[] create (object object1, object object2, object object3)
-		{
-			lock (this)
-			{
-				object[] result = create (3) ;
+        ///<summary>
+        /// Returns the number of items this pool has recovered from
+        /// the pool since its construction.
+        ///</summary>
+        public int getRecoveredCount()
+        {
+            return recovered;
+        }
 
-				result [0] = object1 ;
-				result [1] = object2 ;
-				result [2] = object3 ;
-				return result ;
-			}
-		}
+        ///<summary>
+        /// Returns the number of items this pool has recycled since
+        /// it's construction.
+        ///</summary>
+        public int getRecycledCount()
+        {
+            return recycled;
+        }
+    }
 
-		public object[] create (object object1, object object2, object object3, object object4)
-		{
-			lock (this)
-			{
-				object[] result = create (4) ;
+    public ObjectArrayPool()
+    {
+    }
 
-				result [0] = object1 ;
-				result [1] = object2 ;
-				result [2] = object3 ;
-				result [3] = object4 ;
-				return result ;
-			}
-		}
+    public Hashtable getSizePools()
+    {
+        return pools;
+    }
 
-		public object[] create (object object1, object object2, object object3, object object4, object object5)
-		{
-			lock (this)
-			{
-				object[] result = create (5) ;
+    public SizePool getSizePool(int arraySize)
+    {
+        lock (this) {
+            var result = (SizePool?)pools[arraySize];
 
-				result [0] = object1 ;
-				result [1] = object2 ;
-				result [2] = object3 ;
-				result [3] = object4 ;
-				result [4] = object5 ;
-				return result ;
-			}
-		}
+            if (result == null) {
+                pools[arraySize] = (result = new SizePool(arraySize));
+            }
 
-		public void recycle (object[] value)
-		{
-			lock (this)
-			{
-				if (value != null)
-				{
-					getSizePool (value.Length).recycle (value) ;
-				}
-			}
-		}
-	}
+            return result;
+        }
+    }
+
+    public object[] create(int arraySize)
+    {
+        lock (this) {
+            return getSizePool(arraySize).create();
+        }
+    }
+
+    public object[] create(object singleton)
+    {
+        lock (this) {
+            var result = create(1);
+
+            result[0] = singleton;
+
+            return result;
+        }
+    }
+
+    public object[] create(object object1, object object2)
+    {
+        lock (this) {
+            var result = create(2);
+
+            result[0] = object1;
+            result[1] = object2;
+
+            return result;
+        }
+    }
+
+    public object[] create(object object1, object object2, object object3)
+    {
+        lock (this) {
+            var result = create(3);
+
+            result[0] = object1;
+            result[1] = object2;
+            result[2] = object3;
+
+            return result;
+        }
+    }
+
+    public object[] create(object object1, object object2, object object3, object object4)
+    {
+        lock (this) {
+            var result = create(4);
+
+            result[0] = object1;
+            result[1] = object2;
+            result[2] = object3;
+            result[3] = object4;
+
+            return result;
+        }
+    }
+
+    public object[] create(object object1, object object2, object object3, object object4, object object5)
+    {
+        lock (this) {
+            var result = create(5);
+
+            result[0] = object1;
+            result[1] = object2;
+            result[2] = object3;
+            result[3] = object4;
+            result[4] = object5;
+
+            return result;
+        }
+    }
+
+    public void recycle(object[]? value)
+    {
+        lock (this) {
+            if (value != null) {
+                getSizePool(value.Length).recycle(value);
+            }
+        }
+    }
 }

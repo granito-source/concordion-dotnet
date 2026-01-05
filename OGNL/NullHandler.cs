@@ -1,4 +1,3 @@
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,27 +29,29 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///Interface for handling null results from Chains.
-	///object has the opportunity to substitute an object for the
-	///null and continue.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public interface NullHandler
-	{
-		/// <summary>
-		/// Method called on target returned null.
-		/// </summary>
-		object nullMethodResult (IDictionary context, object target, string methodName, object[] args) ;
+using System.Collections;
 
-		/// <summary>
-		/// Property in target evaluated to null.  Property can be a constant
-		/// string property name or a DynamicSubscript.
-		/// </summary>
-		object nullPropertyValue (IDictionary context, object target, object property) ;
-	}
+namespace OGNL;
+
+///<summary>
+///Interface for handling null results from Chains.
+///object has the opportunity to substitute an object for the
+///null and continue.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public interface NullHandler {
+    /// <summary>
+    /// Method called on target returned null.
+    /// </summary>
+    object? nullMethodResult(IDictionary context, object target,
+        string methodName, object[] args);
+
+    /// <summary>
+    /// Property in target evaluated to null.  Property can be a constant
+    /// string property name or a DynamicSubscript.
+    /// </summary>
+    object? nullPropertyValue(IDictionary context, object target,
+        object property);
 }

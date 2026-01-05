@@ -1,4 +1,5 @@
-using System.Collections ;
+using System.Collections;
+
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,26 +31,23 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///Implementation of the IElementsAccessor interface for Iterators, which simply returns
-	///the target iterator itself.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class IteratorElementsAccessor : IElementsAccessor
-	{
-		/// <summary>
-		/// There is no Iterator in C#, use IEnumerator instead.
-		/// </summary>
-		/// <param name="target"></param>
-		/// <returns></returns>
-		public IEnumerator getElements (object target)
-		{
-			// return new IteratorEnumeration( (Iterator)target );
-			return (IEnumerator) target ;
-		}
-	}
+namespace OGNL;
+
+///<summary>
+///Implementation of the IElementsAccessor interface for Iterators, which simply returns
+///the target iterator itself.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class IteratorElementsAccessor : IElementsAccessor {
+    /// <summary>
+    /// There is no Iterator in C#, use IEnumerator instead.
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    public IEnumerator getElements(object target)
+    {
+        return (IEnumerator)target;
+    }
 }

@@ -1,4 +1,3 @@
-using System ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,20 +29,13 @@ using System ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary> 
-	///Exception thrown if a malformed OGNL expression is encountered.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class ExpressionSyntaxException : OgnlException
-	{
-		public ExpressionSyntaxException (string expression, Exception reason)
-			: base ("Malformed OGNL expression: " + expression, reason)
-		{
-			;
-		}
-	}
-}
+namespace OGNL;
+
+///<summary>
+///Exception thrown if a malformed OGNL expression is encountered.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class ExpressionSyntaxException(string expression, Exception reason) :
+    OgnlException("Malformed OGNL expression: " + expression, reason);

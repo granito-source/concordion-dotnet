@@ -1,4 +1,4 @@
- //--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
 //
@@ -29,22 +29,17 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///Exception thrown if an OGNL expression is evaluated in the wrong context; the usual
-	///case is when an expression that does not end in a property reference is passed to
-	///<code>setValue</code>.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class InappropriateExpressionException : OgnlException
-	{
-		public InappropriateExpressionException (Node tree)
-			: base ("Inappropriate OGNL expression: " + tree)
-		{
-			;
-		}
-	}
-}
+using OGNL.JccGen;
+
+namespace OGNL;
+
+///<summary>
+///Exception thrown if an OGNL expression is evaluated in the wrong context; the usual
+///case is when an expression that does not end in a property reference is passed to
+///<code>setValue</code>.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class InappropriateExpressionException(Node tree) :
+    OgnlException("Inappropriate OGNL expression: " + tree);

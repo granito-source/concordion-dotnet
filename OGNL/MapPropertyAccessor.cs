@@ -1,4 +1,3 @@
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,74 +29,65 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///
-	///Implementation of PropertyAccessor that sets and gets properties by storing and looking
-	///up values in Maps.
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class MapPropertyAccessor : PropertyAccessor
-	{
-		public object getProperty (IDictionary context, object target, object name) // throws OgnlException
-		{
-			object result ;
-			IDictionary map = (IDictionary) target ;
-			Node currentNode = ((OgnlContext) context).getCurrentNode ().jjtGetParent () ;
-			bool indexedAccess = false ;
+using System.Collections;
+using OGNL.JccGen;
 
-			if (currentNode == null)
-			{
-				throw new OgnlException ("node is null for '" + name + "'") ;
-			}
-			if (!(currentNode is ASTProperty))
-			{
-				currentNode = currentNode.jjtGetParent () ;
-			}
-			if (currentNode is ASTProperty)
-			{
-				indexedAccess = ((ASTProperty) currentNode).isIndexedAccess () ;
-			}
-			if ((name is string) && !indexedAccess)
-			{
-				if (name.Equals ("size"))
-				{
-					result = map.Count ;
-				}
-				else if (name.Equals ("keys"))
-				{
-					result = map.Keys ;
-				}
-				else if (name.Equals ("values"))
-				{
-					result = map.Values ;
-				}
-				else if (name.Equals ("isEmpty"))
-				{
-					result = map.Count == 0 ; //  ? Boolean.TRUE : Boolean.FALSE;
-				}
-				else
-				{
-					// TODO: Map.property is map [property]?
-					result = map [name] ;
-				}
+namespace OGNL;
 
-			}
-			else
-			{
-				// return null for key null.
-				if (name == null)
-					return null ;
-				result = map [name] ;
-			}
-			return result ;
-		}
+///
+///Implementation of PropertyAccessor that sets and gets properties by storing and looking
+///up values in Maps.
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class MapPropertyAccessor : PropertyAccessor {
+    public object? getProperty(IDictionary context, object target,
+        object? name)
+    {
+        object? result;
+        var map = (IDictionary)target;
+        var currentNode = ((OgnlContext)context).getCurrentNode().jjtGetParent();
+        var indexedAccess = false;
 
-		public void setProperty (IDictionary context, object target, object name, object value) // throws OgnlException
-		{
-			IDictionary map = (IDictionary) target ;
-			map [name] = value ;
-		}
-	}
+        if (currentNode == null) {
+            throw new OgnlException("node is null for '" + name + "'");
+        }
+
+        if (!(currentNode is ASTProperty)) {
+            currentNode = currentNode.jjtGetParent();
+        }
+
+        if (currentNode is ASTProperty) {
+            indexedAccess = ((ASTProperty)currentNode).isIndexedAccess();
+        }
+
+        if ((name is string) && !indexedAccess) {
+            if (name.Equals("size")) {
+                result = map.Count;
+            } else if (name.Equals("keys")) {
+                result = map.Keys;
+            } else if (name.Equals("values")) {
+                result = map.Values;
+            } else if (name.Equals("isEmpty")) {
+                result = map.Count == 0; //  ? Boolean.TRUE : Boolean.FALSE;
+            } else {
+                // TODO: Map.property is map [property]?
+                result = map[name];
+            }
+        } else {
+            // return null for key null.
+            if (name == null)
+                return null;
+
+            result = map[name];
+        }
+
+        return result;
+    }
+
+    public void setProperty(IDictionary context, object target, object name, object value) // throws OgnlException
+    {
+        var map = (IDictionary)target;
+        map[name] = value;
+    }
 }

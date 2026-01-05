@@ -1,4 +1,3 @@
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,25 +29,26 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///Implementation of ElementsAccessor that returns a collection's iterator.
-	///</summary>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class CollectionElementsAccessor : IElementsAccessor
-	{
-		/// <summary>
-		/// Just return ICollection.GetEnumerator().
-		/// </summary>
-		/// <param name="target"></param>
-		/// <returns></returns>
-		public IEnumerator getElements (object target)
-		{
-			return ((ICollection) target).GetEnumerator () ;
-			// return new IteratorEnumeration( ((Collection)target).iterator() );
-		}
-	}
+using System.Collections;
+
+namespace OGNL;
+
+///<summary>
+///Implementation of ElementsAccessor that returns a collection's iterator.
+///</summary>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class CollectionElementsAccessor : IElementsAccessor {
+    /// <summary>
+    /// Just return ICollection.GetEnumerator().
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    public IEnumerator getElements(object target)
+    {
+        return ((ICollection)target).GetEnumerator();
+
+        // return new IteratorEnumeration( ((Collection)target).iterator() );
+    }
 }

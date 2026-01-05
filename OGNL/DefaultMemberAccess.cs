@@ -1,5 +1,3 @@
-using System.Collections ;
-using System.Reflection ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,131 +29,94 @@ using System.Reflection ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///This class provides methods for setting up and restoring
-	///access in a Field.  Java 2 provides access utilities for setting
-	///and getting fields that are non-public.  This object provides
-	///coarse-grained access controls to allow access to private, protected
-	///and package protected members.  This will apply to all classes
-	///and members.
-	///</summary>
-	///<remarks>
-	///Dynamic member access permission is not a part of plan.
-	///</remarks>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///@version 15 October 1999
-	///
-	public class DefaultMemberAccess : MemberAccess
-	{
-		public bool allowPrivateAccess = false ;
-		public bool allowProtectedAccess = false ;
-		public bool allowPackageProtectedAccess = false ;
+using System.Collections;
+using System.Reflection;
 
-		/*===================================================================
-		Constructors
-	  ===================================================================*/
+namespace OGNL;
 
-		public DefaultMemberAccess (bool allowAllAccess) : this (allowAllAccess, allowAllAccess, allowAllAccess)
-		{
-		}
+///<summary>
+///This class provides methods for setting up and restoring
+///access in a Field.  Java 2 provides access utilities for setting
+///and getting fields that are non-public.  This object provides
+///coarse-grained access controls to allow access to private, protected
+///and package protected members.  This will apply to all classes
+///and members.
+///</summary>
+///<remarks>
+///Dynamic member access permission is not a part of plan.
+///</remarks>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///@version 15 October 1999
+///
+public class DefaultMemberAccess : MemberAccess {
+    public bool allowPrivateAccess = false;
 
-		public DefaultMemberAccess (bool allowPrivateAccess, bool allowProtectedAccess, bool allowPackageProtectedAccess)
-		{
-			this.allowPrivateAccess = allowPrivateAccess ;
-			this.allowProtectedAccess = allowProtectedAccess ;
-			this.allowPackageProtectedAccess = allowPackageProtectedAccess ;
-		}
+    public bool allowProtectedAccess = false;
 
-		/*===================================================================
-		Public methods
-	  ===================================================================*/
+    public bool allowPackageProtectedAccess = false;
 
-		public bool getAllowPrivateAccess ()
-		{
-			return allowPrivateAccess ;
-		}
+    public DefaultMemberAccess(bool allowAllAccess) :
+        this(allowAllAccess, allowAllAccess, allowAllAccess)
+    {
+    }
 
-		public void setAllowPrivateAccess (bool value)
-		{
-			allowPrivateAccess = value ;
-		}
+    public DefaultMemberAccess(bool allowPrivateAccess,
+        bool allowProtectedAccess, bool allowPackageProtectedAccess)
+    {
+        this.allowPrivateAccess = allowPrivateAccess;
+        this.allowProtectedAccess = allowProtectedAccess;
+        this.allowPackageProtectedAccess = allowPackageProtectedAccess;
+    }
 
-		public bool getAllowProtectedAccess ()
-		{
-			return allowProtectedAccess ;
-		}
+    public bool getAllowPrivateAccess()
+    {
+        return allowPrivateAccess;
+    }
 
-		public void setAllowProtectedAccess (bool value)
-		{
-			allowProtectedAccess = value ;
-		}
+    public void setAllowPrivateAccess(bool value)
+    {
+        allowPrivateAccess = value;
+    }
 
-		public bool getAllowPackageProtectedAccess ()
-		{
-			return allowPackageProtectedAccess ;
-		}
+    public bool getAllowProtectedAccess()
+    {
+        return allowProtectedAccess;
+    }
 
-		public void setAllowPackageProtectedAccess (bool value)
-		{
-			allowPackageProtectedAccess = value ;
-		}
+    public void setAllowProtectedAccess(bool value)
+    {
+        allowProtectedAccess = value;
+    }
 
-		/*===================================================================
-		MemberAccess interface
-	  ===================================================================*/
+    public bool getAllowPackageProtectedAccess()
+    {
+        return allowPackageProtectedAccess;
+    }
 
-		public object setup (IDictionary context, object target, MemberInfo member, string propertyName)
-		{
-			object result = null ;
+    public void setAllowPackageProtectedAccess(bool value)
+    {
+        allowPackageProtectedAccess = value;
+    }
 
-			if (isAccessible (context, target, member, propertyName))
-			{
-				/*// AccessibleObject    accessible = (AccessibleObject)member;
+    public object? setup(IDictionary context, object target,
+        MemberInfo member, string propertyName)
+    {
+        return null;
+    }
 
-            if (!accessible.isAccessible()) {
-                result = true ;
-                accessible.setAccessible(true);
-            }
-			*/
-			}
-			return result ;
-		}
+    public void restore(IDictionary context, object target,
+        MemberInfo member, string propertyName, object? state)
+    {
+    }
 
-		public void restore (IDictionary context, object target, MemberInfo member, string propertyName, object state)
-		{
-			if (state != null)
-			{
-				// ((AccessibleObject)member).setAccessible(((Boolean)state).booleanValue());
-			}
-		}
-
-		///
-		/// Returns true if the given member is accessible or can be made accessible
-		/// by this object.
-		///
-		public virtual bool isAccessible (IDictionary context, object target, MemberInfo member, string propertyName)
-		{
-			/* // todo: check accessible
-		int         modifiers = member.getModifiers();
-	    bool     result = Modifier.isPublic(modifiers);
-
-	    if (!result) {
-	        if (Modifier.isPrivate(modifiers)) {
-	            result = getAllowPrivateAccess();
-	        } else {
-	            if (Modifier.isProtected(modifiers)) {
-	                result = getAllowProtectedAccess();
-	            } else {
-	                result = getAllowPackageProtectedAccess();
-	            }
-	        }
-	    }
-		return result;
-		*/
-			return true ;
-		}
-	}
+    ///
+    /// Returns true if the given member is accessible or can be made accessible
+    /// by this object.
+    ///
+    public virtual bool isAccessible(IDictionary context, object target,
+        MemberInfo member, string propertyName)
+    {
+        return true;
+    }
 }

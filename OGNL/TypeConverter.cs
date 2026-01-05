@@ -1,6 +1,6 @@
-using System ;
-using System.Collections ;
-using System.Reflection ;
+using System.Collections;
+using System.Reflection;
+
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,8 +31,7 @@ using System.Reflection ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace ognl 
-{
+namespace OGNL;
 
 ///
 ///Interface for accessing the type conversion facilities within a context.
@@ -54,7 +53,5 @@ public interface TypeConverter
     ///@return Converted value of type toType or TypeConverter.NoConversionPossible to indicate that the
     ///        conversion was not possible.
     ///
-    object convertValue(IDictionary context, object target, MemberInfo member, string propertyName, object value, Type toType);
+    object convertValue(IDictionary context, object target, MemberInfo? member, string? propertyName, object value, Type toType);
 }
-}
-

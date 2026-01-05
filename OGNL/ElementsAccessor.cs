@@ -1,4 +1,3 @@
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -29,8 +28,10 @@ using System.Collections ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace ognl 
-{
+
+using System.Collections;
+
+namespace OGNL;
 
 /**
  * This interface defines a method for getting the "elements" of an object, which means
@@ -44,14 +45,12 @@ namespace ognl
  * @author Luke Blanshard (blanshlu@netscape.net)
  * @author Drew Davidson (drew@ognl.org)
  */
-public interface ElementsAccessor
-{
-      /**
-       * Returns an iterator over the elements of the given target object.
-       * @param target  the object to get the elements of
-       * @return        an iterator over the elements of the given object
-       * @exception OgnlException if there is an error getting the given object's elements
-       */
-    IEnumerator getElements( object target ) ; // throws OgnlException;
-}
+public interface ElementsAccessor {
+    /**
+     * Returns an iterator over the elements of the given target object.
+     * @param target  the object to get the elements of
+     * @return        an iterator over the elements of the given object
+     * @exception OgnlException if there is an error getting the given object's elements
+     */
+    IEnumerator getElements(object target); // throws OgnlException;
 }

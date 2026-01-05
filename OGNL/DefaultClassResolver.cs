@@ -1,5 +1,3 @@
-using System ;
-using System.Collections ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson ,  Luke Blanshard and Foxcoming
 //  All rights reserved.
@@ -31,77 +29,74 @@ using System.Collections ;
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-namespace ognl
-{
-	///<summary>
-	///Default class resolution.  Uses Type.GetType() to look up classes by name.
-	///It also looks in the "System" package if the class named does not give
-	///a package specifier, allowing easier usage of these classes.
-	///</summary>
-	///<remarks>
-	///You can specify Full assamblly class name as parameter. Under constraint of OGNL syntax, 
-	///the full name in following form: <c>AssambllyName.namespace.className</c>.
-	///</remarks>
-	///@author Luke Blanshard (blanshlu@netscape.net)
-	///@author Drew Davidson (drew@ognl.org)
-	///
-	public class DefaultClassResolver : ClassResolver
-	{
-		IDictionary classes = new Hashtable (101) ;
+using System.Collections;
 
-		static string[] DEFAULT_DLL_NAMES =
-			{
-				"System", // System.dll
-			} ;
+namespace OGNL;
 
-		public DefaultClassResolver ()
-		{
-		}
+///<summary>
+///Default class resolution.  Uses Type.GetType() to look up classes by name.
+///It also looks in the "System" package if the class named does not give
+///a package specifier, allowing easier usage of these classes.
+///</summary>
+///<remarks>
+///You can specify Full assamblly class name as parameter. Under constraint of OGNL syntax,
+///the full name in following form: <c>AssambllyName.namespace.className</c>.
+///</remarks>
+///@author Luke Blanshard (blanshlu@netscape.net)
+///@author Drew Davidson (drew@ognl.org)
+///
+public class DefaultClassResolver : ClassResolver {
+    IDictionary classes = new Hashtable(101);
 
-		public Type classForName (string className, IDictionary context) // throws ClassNotFoundException
-		{
-			Type result = null ;
+    static readonly string[] DEFAULT_DLL_NAMES = [
+        "System" // System.dll
+    ];
 
-			if ((result = (Type) classes [className]) == null)
-			{
-				result = Type.GetType (className) ;
-				if (result == null)
-				{
-					int index = className.IndexOf ('.') ;
-					if (index <= 0)
-					{
-						// TODO; Use System instead of java.lang
-						result = Type.GetType ("System." + className) ;
-						classes ["System." + className] = result ;
-					}
-					else
-						// try to resolve with AssemblyQualifiedName 
-						if (index < className.Length - 1)
-						{
-							string assemblyName = className.Substring (0, index) ;
-							string clsName = className.Substring (index + 1) ;
-							result = Type.GetType (clsName + "," + assemblyName) ;
-						}
+    public DefaultClassResolver()
+    {
+    }
 
-					// use default DLL Names 
-					if (result == null)
-					{
-						for (int i = 0; i < DEFAULT_DLL_NAMES.Length; i++)
-						{
-							string assemblyName = DEFAULT_DLL_NAMES [i] ;
-							result = Type.GetType (className + "," + assemblyName) ;
-							if (result != null)
-								break ;
-						}
+    public Type classForName(string className, IDictionary context)
+    {
+        Type? result;
 
-					}
+        if ((result = (Type)classes[className]) == null) {
+            result = Type.GetType(className);
 
-				}
-				if (result == null)
-					throw new ArgumentException ("This Class [" + className + "] Not Found.", "className") ;
-				classes [className] = result ;
-			}
-			return result ;
-		}
-	}
+            if (result == null) {
+                var index = className.IndexOf('.');
+
+                if (index <= 0) {
+                    // TODO; Use System instead of java.lang
+                    result = Type.GetType("System." + className);
+                    classes["System." + className] = result;
+                } else
+
+                    // try to resolve with AssemblyQualifiedName
+                if (index < className.Length - 1) {
+                    var assemblyName = className.Substring(0, index);
+                    var clsName = className.Substring(index + 1);
+                    result = Type.GetType(clsName + "," + assemblyName);
+                }
+
+                // use default DLL Names
+                if (result == null) {
+                    for (var i = 0; i < DEFAULT_DLL_NAMES.Length; i++) {
+                        var assemblyName = DEFAULT_DLL_NAMES[i];
+                        result = Type.GetType(className + "," + assemblyName);
+
+                        if (result != null)
+                            break;
+                    }
+                }
+            }
+
+            if (result == null)
+                throw new ArgumentException("This Class [" + className + "] Not Found.", "className");
+
+            classes[className] = result;
+        }
+
+        return result;
+    }
 }

@@ -1,6 +1,3 @@
-using System.Collections ;
-
-using ognl ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,28 +28,33 @@ using ognl ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace ognl 
-{
 
-public sealed class EvaluationPool : object
-{
-    private IList        evaluations = new ArrayList();
-    private int         size = 0;
-    private int         created = 0;
-    private int         recovered = 0;
-    private int         recycled = 0;
+using System.Collections;
+using OGNL.JccGen;
+
+namespace OGNL;
+
+public sealed class EvaluationPool : object {
+    private readonly ArrayList evaluations = new();
+
+    private int size = 0;
+
+    private int created = 0;
+
+    private int recovered = 0;
+
+    private int recycled = 0;
 
     public EvaluationPool() : this(0)
     {
-        ;
     }
 
     public EvaluationPool(int initialSize)
     {
-       
-        for (int i = 0; i < initialSize; i++) {
+        for (var i = 0; i < initialSize; i++) {
             evaluations.Add(new Evaluation(null, null));
         }
+
         created = size = initialSize;
     }
 
@@ -73,49 +75,44 @@ public sealed class EvaluationPool : object
     ///
     public Evaluation create(SimpleNode node, object source, bool setOperation)
     {
-		lock (this)
-		{
-			Evaluation          result;
+        lock (this) {
+            Evaluation result;
 
-			if (size > 0) 
-			{
-				result = (Evaluation) evaluations [size - 1] ; 
-				evaluations.RemoveAt(size - 1);
-				result.init(node, source, setOperation);
-				size--;
-				recovered++;
-			} 
-			else 
-			{
-				result = new Evaluation(node, source, setOperation);
-				created++;
-			}
-			return result;
-		}
+            if (size > 0) {
+                result = (Evaluation)evaluations[size - 1];
+                evaluations.RemoveAt(size - 1);
+                result.init(node, source, setOperation);
+                size--;
+                recovered++;
+            } else {
+                result = new Evaluation(node, source, setOperation);
+                created++;
+            }
+
+            return result;
+        }
     }
 
     ///
     /// Recycles an Evaluation
     ///
-    public void recycle(Evaluation value)
+    public void recycle(Evaluation? value)
     {
-		lock (this)
-		{
-			if (value != null) 
-			{
-				value.reset();
-				evaluations.Add(value);
-				size++;
-				recycled++;
-			}
-		}
+        lock (this) {
+            if (value != null) {
+                value.reset();
+                evaluations.Add(value);
+                size++;
+                recycled++;
+            }
+        }
     }
 
     ///
     /// Recycles an of Evaluation and all of it's siblings
     /// and children.
     ///
-    public void recycleAll(Evaluation value)
+    public void recycleAll(Evaluation? value)
     {
         if (value != null) {
             recycleAll(value.getNext());
@@ -127,11 +124,11 @@ public sealed class EvaluationPool : object
     ///
     /// Recycles a List of Evaluation objects
     ///
-    public void recycleAll(IList value)
+    public void recycleAll(IList? value)
     {
         if (value != null) {
             for (int i = 0, icount = value.Count; i < icount; i++) {
-                recycle((Evaluation)value [i]);
+                recycle((Evaluation)value[i]);
             }
         }
     }
@@ -170,5 +167,4 @@ public sealed class EvaluationPool : object
     {
         return recycled;
     }
-}
 }
