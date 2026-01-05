@@ -15,24 +15,16 @@
 using System.Data;
 using Concordion.Api;
 using Concordion.Internal.Util;
+using OGNL;
 
 namespace Concordion.Internal;
 
-public class OgnlEvaluator : IEvaluator
-{
+public class OgnlEvaluator : IEvaluator {
     #region Properties
 
-    public object Fixture
-    {
-        get;
-        private set;
-    }
+    public object Fixture { get; }
 
-    // private OgnlContext OgnlContext
-    // {
-    //     get;
-    //     set;
-    // }
+    private OgnlContext OgnlContext { get; }
 
     #endregion
 
@@ -41,7 +33,7 @@ public class OgnlEvaluator : IEvaluator
     public OgnlEvaluator(object fixture)
     {
         Fixture = fixture;
-        // OgnlContext = new OgnlContext();
+        OgnlContext = new OgnlContext();
     }
 
     #endregion
@@ -50,19 +42,24 @@ public class OgnlEvaluator : IEvaluator
 
     private void AssertStartsWithHash(string expression)
     {
-        if (!expression.StartsWith("#"))
-        {
-            throw new InvalidExpressionException("Variable for concordion:set must start"
-                                                 + " with '#'\n (i.e. change concordion:set=\"" + expression + "\" to concordion:set=\"#" + expression + "\".");
+        if (!expression.StartsWith("#")) {
+            throw new InvalidExpressionException(
+                "Variable for concordion:set must start" +
+                " with '#'\n (i.e. change concordion:set=\"" +
+                expression +
+                "\" to concordion:set=\"#" + expression + "\".");
         }
     }
 
     private void PutVariable(string rawVariableName, object value)
     {
-        Check.IsFalse(rawVariableName.StartsWith("#"), "Variable name passed to evaluator should not start with #");
-        Check.IsTrue(!rawVariableName.Equals("in"), "'%s' is a reserved word and cannot be used for variables names", rawVariableName);
+        Check.IsFalse(rawVariableName.StartsWith("#"),
+            "Variable name passed to evaluator should not start with #");
+        Check.IsTrue(!rawVariableName.Equals("in"),
+            "'%s' is a reserved word and cannot be used for variables names",
+            rawVariableName);
 
-        // OgnlContext[rawVariableName] = value;
+        OgnlContext[rawVariableName] = value;
     }
 
     #endregion
@@ -75,33 +72,28 @@ public class OgnlEvaluator : IEvaluator
 
         var rawVariableName = expression[1..];
 
-        // return OgnlContext[rawVariableName];
-        return "<unimplemented>";
+        return OgnlContext[rawVariableName];
     }
 
     public virtual void SetVariable(string expression, object value)
     {
         AssertStartsWithHash(expression);
 
-        if (expression.Contains("="))
-        {
+        if (expression.Contains("=")) {
             Evaluate(expression);
-        }
-        else
-        {
+        } else {
             var rawVariable = expression.Substring(1);
 
             PutVariable(rawVariable, value);
         }
     }
 
-    public virtual object Evaluate(string expression)
+    public virtual object? Evaluate(string expression)
     {
         Check.NotNull(Fixture, "Root object is null");
         Check.NotNull(expression, "Expression to evaluate cannot be null");
 
-        // return Ognl.getValue(expression, OgnlContext, Fixture);
-        return "<unimplemented>";
+        return Ognl.getValue(expression, OgnlContext, Fixture);
     }
 
     #endregion

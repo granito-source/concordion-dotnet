@@ -16,30 +16,18 @@ using System.Text.RegularExpressions;
 
 namespace Concordion.Internal;
 
-public class SimpleEvaluator : OgnlEvaluator
-{
+public class SimpleEvaluator(object fixture) : OgnlEvaluator(fixture) {
     #region Fields
 
     private static readonly string METHOD_NAME_PATTERN = "[a-z][a-zA-Z0-9_]*";
+
     private static readonly string PROPERTY_NAME_PATTERN = "[a-z][a-zA-Z0-9_]*";
+
     private static readonly string STRING_PATTERN = "'[^']+'";
+
     private static readonly string LHS_VARIABLE_PATTERN = "#" + METHOD_NAME_PATTERN;
+
     private static readonly string RHS_VARIABLE_PATTERN = "(" + LHS_VARIABLE_PATTERN + "|#TEXT|#HREF|#LEVEL)";
-
-    #endregion
-
-    #region Properties
-
-
-
-    #endregion
-
-    #region Constructor
-        
-    public SimpleEvaluator(object fixture)
-        : base(fixture)
-    {
-    } 
 
     #endregion
 
@@ -47,16 +35,17 @@ public class SimpleEvaluator : OgnlEvaluator
 
     private void ValidateEvaluationExpression(string expression)
     {
-        var METHOD_CALL_PARAMS = METHOD_NAME_PATTERN + " *\\( *" + RHS_VARIABLE_PATTERN + "(, *" + RHS_VARIABLE_PATTERN + " *)*\\)";
+        var METHOD_CALL_PARAMS = METHOD_NAME_PATTERN + " *\\( *" + RHS_VARIABLE_PATTERN + "(, *" +
+                                 RHS_VARIABLE_PATTERN + " *)*\\)";
         var METHOD_CALL_NO_PARAMS = METHOD_NAME_PATTERN + " *\\( *\\)";
         var TERNARY_STRING_RESULT = " \\? " + STRING_PATTERN + " : " + STRING_PATTERN;
-            
+
         var regexPatterns = new List<string>();
         regexPatterns.Add(PROPERTY_NAME_PATTERN);
         regexPatterns.Add(METHOD_CALL_NO_PARAMS);
         regexPatterns.Add(METHOD_CALL_PARAMS);
         regexPatterns.Add(RHS_VARIABLE_PATTERN);
-        regexPatterns.Add(LHS_VARIABLE_PATTERN + "(\\." + PROPERTY_NAME_PATTERN +  ")+");
+        regexPatterns.Add(LHS_VARIABLE_PATTERN + "(\\." + PROPERTY_NAME_PATTERN + ")+");
         regexPatterns.Add(LHS_VARIABLE_PATTERN + " *= *" + PROPERTY_NAME_PATTERN);
         regexPatterns.Add(LHS_VARIABLE_PATTERN + " *= *" + METHOD_CALL_NO_PARAMS);
         regexPatterns.Add(LHS_VARIABLE_PATTERN + " *= *" + METHOD_CALL_PARAMS);
@@ -66,13 +55,11 @@ public class SimpleEvaluator : OgnlEvaluator
         regexPatterns.Add(METHOD_CALL_PARAMS + TERNARY_STRING_RESULT);
         regexPatterns.Add(LHS_VARIABLE_PATTERN + "\\." + METHOD_CALL_NO_PARAMS);
         regexPatterns.Add(LHS_VARIABLE_PATTERN + "\\." + METHOD_CALL_PARAMS);
-            
+
         expression = expression.Trim();
 
-        foreach (var regexPattern in regexPatterns) 
-        {
-            if (Regex.IsMatch(expression, regexPattern)) 
-            {
+        foreach (var regexPattern in regexPatterns) {
+            if (Regex.IsMatch(expression, regexPattern)) {
                 return;
             }
         }
@@ -83,18 +70,18 @@ public class SimpleEvaluator : OgnlEvaluator
     private void ValidateSetVariableExpression(string expression)
     {
         var regexPatterns = new List<string>();
+
         regexPatterns.Add(RHS_VARIABLE_PATTERN);
         regexPatterns.Add(LHS_VARIABLE_PATTERN + "\\." + PROPERTY_NAME_PATTERN);
         regexPatterns.Add(LHS_VARIABLE_PATTERN + " *= *" + PROPERTY_NAME_PATTERN);
         regexPatterns.Add(LHS_VARIABLE_PATTERN + " *= *" + METHOD_NAME_PATTERN + " *\\( *\\)");
-        regexPatterns.Add(LHS_VARIABLE_PATTERN + " *= *" + METHOD_NAME_PATTERN + " *\\( *" + RHS_VARIABLE_PATTERN + "(, *" + RHS_VARIABLE_PATTERN + " *)*\\)");
+        regexPatterns.Add(LHS_VARIABLE_PATTERN + " *= *" + METHOD_NAME_PATTERN + " *\\( *" + RHS_VARIABLE_PATTERN +
+                          "(, *" + RHS_VARIABLE_PATTERN + " *)*\\)");
 
         expression = expression.Trim();
 
-        foreach (var regexPattern in regexPatterns)
-        {
-            if (Regex.IsMatch(expression, regexPattern))
-            {
+        foreach (var regexPattern in regexPatterns) {
+            if (Regex.IsMatch(expression, regexPattern)) {
                 return;
             }
         }
@@ -106,9 +93,10 @@ public class SimpleEvaluator : OgnlEvaluator
 
     #region Override Methods
 
-    public override object  Evaluate(string expression)
+    public override object Evaluate(string expression)
     {
         ValidateEvaluationExpression(expression);
+
         return base.Evaluate(expression);
     }
 
@@ -117,7 +105,6 @@ public class SimpleEvaluator : OgnlEvaluator
         ValidateSetVariableExpression(expression);
         base.SetVariable(expression, value);
     }
-
 
     #endregion
 }
