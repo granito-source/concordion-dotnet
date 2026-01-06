@@ -80,5 +80,5 @@ public interface Node {
      * Sets the given value in the given target as appropriate for this node within the
      * given context.
      */
-    void setValue(OgnlContext context, object target, object value);
+    void setValue(OgnlContext context, object target, object? value);
 }

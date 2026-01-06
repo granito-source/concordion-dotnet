@@ -518,7 +518,7 @@ public static class Ognl {
     ///@// throws OgnlException if there is a pathological environmental problem
     ///
     public static void setValue(Node tree, IDictionary context,
-        object root, object value)
+        object root, object? value)
     {
         var ognlContext = addDefaultContext(root, context);
 
@@ -539,7 +539,7 @@ public static class Ognl {
     ///@// throws OgnlException if there is a pathological environmental problem
     ///
     public static void setValue(string expression, IDictionary context,
-        object root, object value)
+        object root, object? value)
     {
         setValue(parseExpression(expression), context, root, value);
     }
@@ -556,7 +556,7 @@ public static class Ognl {
     ///@// throws InappropriateExpressionException if the expression can't be used in this context
     ///@// throws OgnlException if there is a pathological environmental problem
     ///
-    public static void setValue(Node tree, object root, object value)
+    public static void setValue(Node tree, object root, object? value)
     {
         setValue(tree, createDefaultContext(root), root, value);
     }
@@ -576,7 +576,7 @@ public static class Ognl {
     ///@// throws InappropriateExpressionException if the expression can't be used in this context
     ///@// throws OgnlException if there is a pathological environmental problem
     ///
-    public static void setValue(string expression, object root, object value)
+    public static void setValue(string expression, object root, object? value)
     {
         setValue(parseExpression(expression), root, value);
     }

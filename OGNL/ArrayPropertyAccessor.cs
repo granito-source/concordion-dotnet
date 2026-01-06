@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //	Redistribution and use in source and binary forms, with or without
@@ -40,17 +41,6 @@ namespace OGNL;
 /// @author Luke Blanshard (blanshlu@netscape.net)
 /// @author Drew Davidson (drew@ognl.org)
 public class ArrayPropertyAccessor : ObjectPropertyAccessor {
-    private static object? getElement(Array array, int index)
-    {
-        return index >= 0 ? array.GetValue(index) : null;
-    }
-
-    private static void setElement(Array array, int index, object? value)
-    {
-        if (index >= 0)
-            array.SetValue(value, index);
-    }
-
     [return: NotNullIfNotNull("value")]
     private static object? convert(OgnlContext context, Array target,
         object name, object? value)
@@ -89,16 +79,16 @@ public class ArrayPropertyAccessor : ObjectPropertyAccessor {
 
                         return copy;
                     case DynamicSubscript.FIRST:
-                        return getElement(array, len > 0 ? 0 : -1);
+                        return array.GetValue(len > 0 ? 0 : -1);
                     case DynamicSubscript.MID:
-                        return getElement(array, len > 0 ? len / 2 : -1);
+                        return array.GetValue(len > 0 ? len / 2 : -1);
                     case DynamicSubscript.LAST:
-                        return getElement(array, len > 0 ? len - 1 : -1);
+                        return array.GetValue(len > 0 ? len - 1 : -1);
                 }
 
                 break;
             case ValueType:
-                return getElement(array, Convert.ToInt32(name));
+                return array.GetValue(Convert.ToInt32(name));
         }
 
         throw new NoSuchPropertyException(target, name);
@@ -113,39 +103,45 @@ public class ArrayPropertyAccessor : ObjectPropertyAccessor {
             case string:
                 base.setProperty(context, target, name, value);
 
-                break;
+                return;
             case DynamicSubscript dynamic:
-                var converted = convert(context, array, name, value);
                 var len = array.GetLength(0);
 
                 switch (dynamic.getFlag()) {
                     case DynamicSubscript.ALL:
-                        if (converted == null)
-                            throw new OgnlException("source array is null");
+                        if (value is not Array source)
+                            throw new OgnlException("value is not an array");
 
-                        Array.Copy((Array)converted, 0, array, 0, len);
+                        Array.Copy(source, 0, array, 0,
+                            int.Min(len, source.GetLength(0)));
 
                         break;
                     case DynamicSubscript.FIRST:
-                        setElement(array, len > 0 ? 0 : -1, converted);
+                        array.SetValue(
+                            convert(context, array, name, value),
+                            len > 0 ? 0 : -1);
 
                         break;
                     case DynamicSubscript.MID:
-                        setElement(array, len > 0 ? len / 2 : -1, converted);
+                        array.SetValue(
+                            convert(context, array, name, value),
+                            len > 0 ? len / 2 : -1);
 
                         break;
                     case DynamicSubscript.LAST:
-                        setElement(array, len > 0 ? len - 1 : -1, converted);
+                        array.SetValue(
+                            convert(context, array, name, value),
+                            len > 0 ? len - 1 : -1);
 
                         break;
                 }
 
-                break;
+                return;
             case ValueType:
-                setElement(array, Convert.ToInt32(name),
-                    convert(context, array, name, value));
+                array.SetValue(convert(context, array, name, value),
+                    Convert.ToInt32(name));
 
-                break;
+                return;
         }
 
         throw new NoSuchPropertyException(target, name);

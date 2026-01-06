@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson ,  Luke Blanshard and Foxcoming
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -97,8 +98,7 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 result = object1 != null && object2 != null && object1.Equals(object2);
             }
         }
@@ -115,15 +115,15 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
         this.name = name;
     }
 
-    public OgnlTestCase(string name, object root, string expressionString, object expectedResult, object setValue,
-        object expectedAfterSetResult)
+    public OgnlTestCase(string name, object? root, string expressionString, object? expectedResult, object? setValue,
+        object? expectedAfterSetResult)
         : this(name, root, expressionString, expectedResult, setValue)
     {
         hasExpectedAfterSetResult = true;
         this.expectedAfterSetResult = expectedAfterSetResult;
     }
 
-    public OgnlTestCase(string name, object root, string expressionString, object expectedResult, object setValue)
+    public OgnlTestCase(string name, object? root, string expressionString, object? expectedResult, object? setValue)
         : this(name, root, expressionString, expectedResult)
     {
         ;
@@ -131,7 +131,7 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
         this.setValue = setValue;
     }
 
-    public OgnlTestCase(string name, object root, string expressionString, object expectedResult)
+    public OgnlTestCase(string name, object? root, string expressionString, object? expectedResult)
         : this(name)
     {
         this.root = root;

@@ -1,5 +1,3 @@
-using System.Collections;
-
 //--------------------------------------------------------------------------
 //	Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,6 +28,9 @@ using System.Collections;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Collections;
+
 namespace OGNL.Test.Objects;
 
 public class Root {
@@ -69,17 +70,11 @@ public class Root {
 
     public int six = 6;
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
     public static int getStaticInt()
     {
         return STATIC_INT;
     }
 
-    /*===================================================================
-        Constructors
-      ===================================================================*/
     public Root()
     {
         list = new object?[] { null, this, array };
@@ -93,10 +88,6 @@ public class Root {
         foreach (var k in map.Keys)
             myMap.Add(k, map[k]);
     }
-
-    /*===================================================================
-        Private methods
-      ===================================================================*/
 
     private bool isPrivateAccessorBooleanValue()
     {
@@ -118,9 +109,6 @@ public class Root {
         privateAccessorIntValue = value;
     }
 
-    /*===================================================================
-        Protected methods
-      ===================================================================*/
     protected int getPrivateAccessorIntValue2()
     {
         return privateAccessorIntValue2;
@@ -131,9 +119,6 @@ public class Root {
         privateAccessorIntValue2 = value;
     }
 
-    /*===================================================================
-        Package protected methods
-      ===================================================================*/
     int getPrivateAccessorIntValue3()
     {
         return privateAccessorIntValue3;
@@ -144,9 +129,6 @@ public class Root {
         privateAccessorIntValue3 = value;
     }
 
-    /*===================================================================
-        Public methods
-      ===================================================================*/
     public int[] getArray()
     {
         return array;

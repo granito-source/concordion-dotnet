@@ -254,7 +254,7 @@ public abstract class SimpleNode(int i) : Node {
     protected abstract object? getValueBody(OgnlContext context,
         object source);
 
-    public void setValue(OgnlContext context, object target, object value)
+    public void setValue(OgnlContext context, object target, object? value)
     {
         if (context.getTraceEvaluations()) {
             var pool = OgnlRuntime.getEvaluationPool();
