@@ -48,7 +48,5 @@ public class CollectionElementsAccessor : IElementsAccessor {
     public IEnumerator getElements(object target)
     {
         return ((ICollection)target).GetEnumerator();
-
-        // return new IteratorEnumeration( ((Collection)target).iterator() );
     }
 }

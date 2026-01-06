@@ -53,5 +53,6 @@ public interface TypeConverter
     ///@return Converted value of type toType or TypeConverter.NoConversionPossible to indicate that the
     ///        conversion was not possible.
     ///
-    object convertValue(IDictionary context, object target, MemberInfo? member, string? propertyName, object value, Type toType);
+    object convertValue(IDictionary context, object target,
+        MemberInfo? member, string? propertyName, object value, Type toType);
 }

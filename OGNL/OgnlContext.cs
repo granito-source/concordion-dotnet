@@ -71,31 +71,29 @@ public class OgnlContext : IDictionary {
 
     public static MemberAccess DEFAULT_MEMBER_ACCESS = new DefaultMemberAccess(false);
 
-    static IDictionary RESERVED_KEYS = new Hashtable(11);
+    private object? root;
 
-    object root;
+    private object? currentObject;
 
-    object currentObject;
+    private Node? currentNode;
 
-    Node currentNode;
+    private bool traceEvaluations = DEFAULT_TRACE_EVALUATIONS;
 
-    bool traceEvaluations = DEFAULT_TRACE_EVALUATIONS;
+    private Evaluation? rootEvaluation;
 
-    Evaluation rootEvaluation;
+    private Evaluation? currentEvaluation;
 
-    Evaluation currentEvaluation;
+    private Evaluation? lastEvaluation;
 
-    Evaluation lastEvaluation;
+    private bool keepLastEvaluation = DEFAULT_KEEP_LAST_EVALUATION;
 
-    bool keepLastEvaluation = DEFAULT_KEEP_LAST_EVALUATION;
+    private readonly IDictionary values = new Hashtable(23);
 
-    IDictionary values = new Hashtable(23);
+    private ClassResolver classResolver = DEFAULT_CLASS_RESOLVER;
 
-    ClassResolver classResolver = DEFAULT_CLASS_RESOLVER;
+    private TypeConverter typeConverter = DEFAULT_TYPE_CONVERTER;
 
-    TypeConverter typeConverter = DEFAULT_TYPE_CONVERTER;
-
-    MemberAccess memberAccess = DEFAULT_MEMBER_ACCESS;
+    private MemberAccess memberAccess = DEFAULT_MEMBER_ACCESS;
 
     ///
     ///Constructs a new OgnlContext with the default class resolver, type converter and
@@ -110,19 +108,17 @@ public class OgnlContext : IDictionary {
     /// member access.  If any of these parameters is null the default will be used.
     /// </summary>
     ///
-    public OgnlContext(ClassResolver classResolver, TypeConverter typeConverter, MemberAccess memberAccess)
+    public OgnlContext(ClassResolver? classResolver,
+        TypeConverter? typeConverter, MemberAccess? memberAccess)
     {
-        if (classResolver != null) {
+        if (classResolver != null)
             this.classResolver = classResolver;
-        }
 
-        if (typeConverter != null) {
+        if (typeConverter != null)
             this.typeConverter = typeConverter;
-        }
 
-        if (memberAccess != null) {
+        if (memberAccess != null)
             this.memberAccess = memberAccess;
-        }
     }
 
     public OgnlContext(IDictionary values)
@@ -130,9 +126,10 @@ public class OgnlContext : IDictionary {
         this.values = values;
     }
 
-    public OgnlContext(ClassResolver classResolver, TypeConverter typeConverter, MemberAccess memberAccess,
-        IDictionary values)
-        : this(classResolver, typeConverter, memberAccess)
+    public OgnlContext(ClassResolver? classResolver,
+        TypeConverter? typeConverter, MemberAccess? memberAccess,
+        IDictionary values) :
+        this(classResolver, typeConverter, memberAccess)
     {
         this.values = values;
     }
@@ -149,10 +146,6 @@ public class OgnlContext : IDictionary {
 
     public void setClassResolver(ClassResolver value)
     {
-        if (value == null) {
-            throw new ArgumentException("cannot set ClassResolver to null");
-        }
-
         classResolver = value;
     }
 
@@ -163,10 +156,6 @@ public class OgnlContext : IDictionary {
 
     public void setTypeConverter(TypeConverter value)
     {
-        if (value == null) {
-            throw new ArgumentException("cannot set TypeConverter to null");
-        }
-
         typeConverter = value;
     }
 
@@ -177,10 +166,6 @@ public class OgnlContext : IDictionary {
 
     public void setMemberAccess(MemberAccess value)
     {
-        if (value == null) {
-            throw new ArgumentException("cannot set MemberAccess to null");
-        }
-
         memberAccess = value;
     }
 
@@ -189,12 +174,12 @@ public class OgnlContext : IDictionary {
         return memberAccess;
     }
 
-    public void setRoot(object value)
+    public void setRoot(object? value)
     {
         root = value;
     }
 
-    public object getRoot()
+    public object? getRoot()
     {
         return root;
     }
@@ -209,12 +194,12 @@ public class OgnlContext : IDictionary {
         traceEvaluations = value;
     }
 
-    public Evaluation getLastEvaluation()
+    public Evaluation? getLastEvaluation()
     {
         return lastEvaluation;
     }
 
-    public void setLastEvaluation(Evaluation value)
+    public void setLastEvaluation(Evaluation? value)
     {
         lastEvaluation = value;
     }
@@ -252,22 +237,22 @@ public class OgnlContext : IDictionary {
         keepLastEvaluation = value;
     }
 
-    public void setCurrentObject(object value)
+    public void setCurrentObject(object? value)
     {
         currentObject = value;
     }
 
-    public object getCurrentObject()
+    public object? getCurrentObject()
     {
         return currentObject;
     }
 
-    public void setCurrentNode(Node value)
+    public void setCurrentNode(Node? value)
     {
         currentNode = value;
     }
 
-    public Node getCurrentNode()
+    public Node? getCurrentNode()
     {
         return currentNode;
     }
@@ -276,12 +261,12 @@ public class OgnlContext : IDictionary {
     /// Gets the current Evaluation from the top of the stack.
     /// This is the Evaluation that is in process of evaluating.
     ///
-    public Evaluation getCurrentEvaluation()
+    public Evaluation? getCurrentEvaluation()
     {
         return currentEvaluation;
     }
 
-    public void setCurrentEvaluation(Evaluation value)
+    public void setCurrentEvaluation(Evaluation? value)
     {
         currentEvaluation = value;
     }
@@ -292,12 +277,12 @@ public class OgnlContext : IDictionary {
     /// the root expression and the source is the root
     /// source object.
     ///</summary>
-    public Evaluation getRootEvaluation()
+    public Evaluation? getRootEvaluation()
     {
         return rootEvaluation;
     }
 
-    public void setRootEvaluation(Evaluation value)
+    public void setRootEvaluation(Evaluation? value)
     {
         rootEvaluation = value;
     }
@@ -307,16 +292,15 @@ public class OgnlContext : IDictionary {
     /// zero or a negative number as a relative reference back up the evaluation
     /// stack.  Therefore getEvaluation(0) returns the current Evaluation.
     ///</summary>
-    public Evaluation getEvaluation(int relativeIndex)
+    public Evaluation? getEvaluation(int relativeIndex)
     {
-        Evaluation result = null;
+        Evaluation? result = null;
 
         if (relativeIndex <= 0) {
             result = currentEvaluation;
 
-            while ((++relativeIndex < 0) && (result != null)) {
+            while (++relativeIndex < 0 && result != null)
                 result = result.getParent();
-            }
         }
 
         return result;
@@ -329,11 +313,10 @@ public class OgnlContext : IDictionary {
     ///</summary>
     public void pushEvaluation(Evaluation value)
     {
-        if (currentEvaluation != null) {
+        if (currentEvaluation != null)
             currentEvaluation.addChild(value);
-        } else {
+        else
             setRootEvaluation(value);
-        }
 
         setCurrentEvaluation(value);
     }
@@ -342,12 +325,11 @@ public class OgnlContext : IDictionary {
     /// Pops the current Evaluation off of the top of the stack.
     /// This is done after a node has completed its evaluation.
     ///</summary>
-    public Evaluation popEvaluation()
+    public Evaluation? popEvaluation()
     {
-        Evaluation result;
+        var result = currentEvaluation;
 
-        result = currentEvaluation;
-        setCurrentEvaluation(result.getParent());
+        setCurrentEvaluation(result?.getParent());
 
         if (currentEvaluation == null) {
             setLastEvaluation(getKeepLastEvaluation() ? result : null);
@@ -358,9 +340,7 @@ public class OgnlContext : IDictionary {
         return result;
     }
 
-    /*================= IDictionatry interface =================*/
-
-    public override bool Equals(object o)
+    public override bool Equals(object? o)
     {
         return values.Equals(o);
     }
@@ -375,26 +355,20 @@ public class OgnlContext : IDictionary {
         values.CopyTo(array, index);
     }
 
-    public int Count {
-        get { return values.Count; }
-    }
+    public int Count => values.Count;
 
-    public object SyncRoot {
-        get { return values.SyncRoot; }
-    }
+    public object SyncRoot => values.SyncRoot;
 
-    public bool IsSynchronized {
-        get { return values.IsSynchronized; }
-    }
+    public bool IsSynchronized => values.IsSynchronized;
 
     public bool Contains(object key)
     {
         return values.Contains(key);
     }
 
-    public void Add(object key, object value)
+    public void Add(object key, object? value)
     {
-        this[key] = value;
+        values.Add(key, value);
     }
 
     public void Clear()
@@ -409,7 +383,6 @@ public class OgnlContext : IDictionary {
         setClassResolver(DEFAULT_CLASS_RESOLVER);
         setTypeConverter(DEFAULT_TYPE_CONVERTER);
         setMemberAccess(DEFAULT_MEMBER_ACCESS);
-        ;
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -424,161 +397,101 @@ public class OgnlContext : IDictionary {
 
     public void Remove(object key)
     {
-        object result;
+        if (key.Equals(CONTEXT_CONTEXT_KEY))
+            throw new ArgumentException("can't remove " +
+                CONTEXT_CONTEXT_KEY + " from context");
 
-        if (RESERVED_KEYS.Contains(key)) {
-            if (key.Equals(THIS_CONTEXT_KEY)) {
-                result = getCurrentObject();
-                setCurrentObject(null);
-            } else {
-                if (key.Equals(ROOT_CONTEXT_KEY)) {
-                    result = getRoot();
-                    setRoot(null);
-                } else {
-                    if (key.Equals(CONTEXT_CONTEXT_KEY)) {
-                        throw new ArgumentException("can't remove " + CONTEXT_CONTEXT_KEY + " from context");
-                    } else {
-                        if (key.Equals(TRACE_EVALUATIONS_CONTEXT_KEY)) {
-                            throw new ArgumentException("can't remove " + TRACE_EVALUATIONS_CONTEXT_KEY +
-                                                        " from context");
-                        } else {
-                            if (key.Equals(LAST_EVALUATION_CONTEXT_KEY)) {
-                                result = lastEvaluation;
-                                setLastEvaluation(null);
-                            } else {
-                                if (key.Equals(KEEP_LAST_EVALUATION_CONTEXT_KEY)) {
-                                    throw new ArgumentException("can't remove " + KEEP_LAST_EVALUATION_CONTEXT_KEY +
-                                                                " from context");
-                                } else {
-                                    if (key.Equals(CLASS_RESOLVER_CONTEXT_KEY)) {
-                                        result = getClassResolver();
-                                        setClassResolver(null);
-                                    } else {
-                                        if (key.Equals(TYPE_CONVERTER_CONTEXT_KEY)) {
-                                            result = getTypeConverter();
-                                            setTypeConverter(null);
-                                        } else {
-                                            if (key.Equals(MEMBER_ACCESS_CONTEXT_KEY)) {
-                                                result = getMemberAccess();
-                                                setMemberAccess(null);
-                                            } else {
-                                                throw new ArgumentException("unknown reserved key '" + key + "'");
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            // result =
+        if (key.Equals(TRACE_EVALUATIONS_CONTEXT_KEY))
+            throw new ArgumentException("can't remove " +
+                TRACE_EVALUATIONS_CONTEXT_KEY + " from context");
+
+        if (key.Equals(KEEP_LAST_EVALUATION_CONTEXT_KEY))
+            throw new ArgumentException("can't remove " +
+                KEEP_LAST_EVALUATION_CONTEXT_KEY + " from context");
+
+        if (key.Equals(THIS_CONTEXT_KEY))
+            setCurrentObject(null);
+        else if (key.Equals(ROOT_CONTEXT_KEY))
+            setRoot(null);
+        else if (key.Equals(LAST_EVALUATION_CONTEXT_KEY))
+            setLastEvaluation(null);
+        else if (key.Equals(CLASS_RESOLVER_CONTEXT_KEY))
+            setClassResolver(null);
+        else if (key.Equals(TYPE_CONVERTER_CONTEXT_KEY))
+            setTypeConverter(null);
+        else if (key.Equals(MEMBER_ACCESS_CONTEXT_KEY))
+            setMemberAccess(null);
+        else
             values.Remove(key);
-        }
-
-        return; // result;
     }
 
-    public ICollection Keys {
-        get { return values.Keys; }
-    }
+    public ICollection Keys => values.Keys;
 
-    public ICollection Values {
-        get { return values.Values; }
-    }
+    public ICollection Values => values.Values;
 
-    public bool IsReadOnly {
-        get { return values.IsReadOnly; }
-    }
+    public bool IsReadOnly => values.IsReadOnly;
 
-    public bool IsFixedSize {
-        get { return values.IsFixedSize; }
-    }
+    public bool IsFixedSize => values.IsFixedSize;
 
-    public object this[object key] {
+    public object? this[object key] {
         get {
-            if (RESERVED_KEYS.Contains(key)) {
-                if (key.Equals(THIS_CONTEXT_KEY)) {
-                    return getCurrentObject();
-                }
+            if (key.Equals(THIS_CONTEXT_KEY))
+                return getCurrentObject();
 
-                if (key.Equals(ROOT_CONTEXT_KEY)) {
-                    return getRoot();
-                }
+            if (key.Equals(ROOT_CONTEXT_KEY))
+                return getRoot();
 
-                if (key.Equals(CONTEXT_CONTEXT_KEY)) {
-                    return this;
-                }
+            if (key.Equals(CONTEXT_CONTEXT_KEY))
+                return this;
 
-                if (key.Equals(TRACE_EVALUATIONS_CONTEXT_KEY)) {
-                    return getTraceEvaluations();
-                }
+            if (key.Equals(TRACE_EVALUATIONS_CONTEXT_KEY))
+                return getTraceEvaluations();
 
-                if (key.Equals(LAST_EVALUATION_CONTEXT_KEY)) {
-                    return getLastEvaluation();
-                }
+            if (key.Equals(LAST_EVALUATION_CONTEXT_KEY))
+                return getLastEvaluation();
 
-                if (key.Equals(KEEP_LAST_EVALUATION_CONTEXT_KEY)) {
-                    return getKeepLastEvaluation();
-                }
+            if (key.Equals(KEEP_LAST_EVALUATION_CONTEXT_KEY))
+                return getKeepLastEvaluation();
 
-                if (key.Equals(CLASS_RESOLVER_CONTEXT_KEY)) {
-                    return getClassResolver();
-                }
+            if (key.Equals(CLASS_RESOLVER_CONTEXT_KEY))
+                return getClassResolver();
 
-                if (key.Equals(TYPE_CONVERTER_CONTEXT_KEY)) {
-                    return getTypeConverter();
-                }
+            if (key.Equals(TYPE_CONVERTER_CONTEXT_KEY))
+                return getTypeConverter();
 
-                if (!key.Equals(MEMBER_ACCESS_CONTEXT_KEY)) {
-                    throw new ArgumentException("unknown reserved key '" + key + "'");
-                }
-
+            if (key.Equals(MEMBER_ACCESS_CONTEXT_KEY))
                 return getMemberAccess();
-            }
 
             return values[key];
         }
 
         set {
-            if (RESERVED_KEYS.Contains(key)) {
-                if (key.Equals(THIS_CONTEXT_KEY)) {
-                    getCurrentObject();
-                    setCurrentObject(value);
-                } else if (key.Equals(ROOT_CONTEXT_KEY)) {
-                    getRoot();
-                    setRoot(value);
+            if (key.Equals(THIS_CONTEXT_KEY))
+                setCurrentObject(value);
+            else if (key.Equals(ROOT_CONTEXT_KEY))
+                setRoot(value);
+            else {
+                if (key.Equals(CONTEXT_CONTEXT_KEY))
+                    throw new ArgumentException("can't change " + CONTEXT_CONTEXT_KEY + " in context");
+
+                if (key.Equals(TRACE_EVALUATIONS_CONTEXT_KEY))
+                    setTraceEvaluations(OgnlOps.booleanValue(value));
+                else if (key.Equals(LAST_EVALUATION_CONTEXT_KEY))
+                    setLastEvaluation((Evaluation?)value);
+                else if (key.Equals(KEEP_LAST_EVALUATION_CONTEXT_KEY)) {
+                    setKeepLastEvaluation(OgnlOps.booleanValue(value));
+                } else if (key.Equals(CLASS_RESOLVER_CONTEXT_KEY)) {
+                    setClassResolver((ClassResolver)value);
+                } else if (key.Equals(TYPE_CONVERTER_CONTEXT_KEY)) {
+                    setTypeConverter((TypeConverter)value);
                 } else {
-                    if (key.Equals(CONTEXT_CONTEXT_KEY)) {
-                        throw new ArgumentException("can't change " + CONTEXT_CONTEXT_KEY + " in context");
+                    if (!key.Equals(MEMBER_ACCESS_CONTEXT_KEY)) {
+                        throw new ArgumentException("unknown reserved key '" + key + "'");
                     }
 
-                    if (key.Equals(TRACE_EVALUATIONS_CONTEXT_KEY)) {
-                        getTraceEvaluations();
-                        setTraceEvaluations(OgnlOps.booleanValue(value));
-                    } else if (key.Equals(LAST_EVALUATION_CONTEXT_KEY)) {
-                        getLastEvaluation();
-                        lastEvaluation = (Evaluation)value;
-                    } else if (key.Equals(KEEP_LAST_EVALUATION_CONTEXT_KEY)) {
-                        getKeepLastEvaluation();
-                        setKeepLastEvaluation(OgnlOps.booleanValue(value));
-                    } else if (key.Equals(CLASS_RESOLVER_CONTEXT_KEY)) {
-                        getClassResolver();
-                        setClassResolver((ClassResolver)value);
-                    } else if (key.Equals(TYPE_CONVERTER_CONTEXT_KEY)) {
-                        getTypeConverter();
-                        setTypeConverter((TypeConverter)value);
-                    } else {
-                        if (!key.Equals(MEMBER_ACCESS_CONTEXT_KEY)) {
-                            throw new ArgumentException("unknown reserved key '" + key + "'");
-                        }
-
-                        getMemberAccess();
-                        setMemberAccess((MemberAccess)value);
-                    }
+                    setMemberAccess((MemberAccess)value);
                 }
-            } else {
+
                 var flag = false;
 
                 foreach (var obj2 in values.Keys) {

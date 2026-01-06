@@ -41,30 +41,20 @@ namespace OGNL;
 ///@author Luke Blanshard (blanshlu@netscape.net)
 ///@author Drew Davidson (drew@ognl.org)
 public class SetPropertyAccessor : ObjectPropertyAccessor {
-    public override object? getProperty(OgnlContext context, object target, object name)
+    public override object? getProperty(OgnlContext context,
+        object target, object name)
     {
-        var set = (ICollection)target;
+        var collection = (ICollection)target;
 
-        if (name is string) {
-            object? result;
+        if (name.Equals("size"))
+            return collection.Count;
 
-            if (name.Equals("size")) {
-                result = set.Count;
-            } else {
-                if (name.Equals("iterator")) {
-                    result = set.GetEnumerator();
-                } else {
-                    if (name.Equals("isEmpty")) {
-                        result = set.Count == 0; // ? Boolean.TRUE : Boolean.FALSE;
-                    } else {
-                        result = base.getProperty(context, target, name);
-                    }
-                }
-            }
+        if (name.Equals("iterator"))
+            return collection.GetEnumerator();
 
-            return result;
-        }
+        if (name.Equals("isEmpty"))
+            return collection.Count == 0;
 
-        throw new NoSuchPropertyException(target, name);
+        return base.getProperty(context, target, name);
     }
 }

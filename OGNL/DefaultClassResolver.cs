@@ -52,10 +52,6 @@ public class DefaultClassResolver : ClassResolver {
         "System" // System.dll
     ];
 
-    public DefaultClassResolver()
-    {
-    }
-
     public Type classForName(string className, IDictionary context)
     {
         Type? result;
