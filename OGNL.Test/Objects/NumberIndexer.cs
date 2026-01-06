@@ -7,7 +7,7 @@ namespace OGNL.Test.Objects;
 /// </summary>
 public class NumberIndexer
 {
-    private Hashtable map = new Hashtable() ;
+    private Hashtable map = new() ;
     private NumberIndexer _index ;
 
     public NumberIndexer ()

@@ -40,7 +40,7 @@ namespace OGNL.Test;
  */
 public class CompilingPropertyAccessor : ObjectPropertyAccessor
 {
-    private static NameFactory                  NAME_FACTORY = new NameFactory("ognl.PropertyAccessor", "v");
+    private static NameFactory                  NAME_FACTORY = new("ognl.PropertyAccessor", "v");
     private static Getter                       NotFoundGetter = new Getter() /*{ public object get(OgnlContext context, object target, string propertyName) { return null; } }*/;
     private static Getter                       DefaultGetter = new Getter() /*{
                                                 public object get(OgnlContext context, object target, string propertyName)
@@ -56,7 +56,7 @@ public class CompilingPropertyAccessor : ObjectPropertyAccessor
     private static IDictionary                          loaders = new Hashtable();
 
     /*private static java.util.IdentityHashMap    PRIMITIVE_WRAPPER_CLASSES = new IdentityHashMap();*/
-    private Hashtable           seenGetMethods = new Hashtable();
+    private Hashtable           seenGetMethods = new();
 
     static CompilingPropertyAccessor ()
     {
@@ -91,12 +91,12 @@ public class CompilingPropertyAccessor : ObjectPropertyAccessor
 
     public static Getter generateGetter(OgnlContext context, string code) // throws OgnlException
     {
-        string                  className = NAME_FACTORY.getNewClassName();
+        var                  className = NAME_FACTORY.getNewClassName();
 
         try
         {
             ClassPool               pool = (ClassPool)pools [(context.getClassResolver())];
-            EnhancedClassLoader     loader = (EnhancedClassLoader)loaders [(context.getClassResolver())];
+            var     loader = (EnhancedClassLoader)loaders [(context.getClassResolver())];
             CtClass                 newClass;
             CtClass                 ognlContextClass;
             CtClass                 objectClass;
@@ -139,7 +139,7 @@ public class CompilingPropertyAccessor : ObjectPropertyAccessor
     private Getter getGetter(OgnlContext context, object target, string propertyName) // throws OgnlException
     {
         Getter      result;
-        Type       targetClass = target.GetType();
+        var       targetClass = target.GetType();
         IDictionary         propertyMap;
 
         if ((propertyMap = (IDictionary)seenGetMethods.get(targetClass)) == null) 
@@ -151,7 +151,7 @@ public class CompilingPropertyAccessor : ObjectPropertyAccessor
         {
             try 
             {
-                MethodInfo      method = OgnlRuntime.getGetMethod(context, targetClass, propertyName);
+                var      method = OgnlRuntime.getGetMethod(context, targetClass, propertyName);
 
                 if (method != null) 
                 {
@@ -210,11 +210,11 @@ public class CompilingPropertyAccessor : ObjectPropertyAccessor
     public object getPossibleProperty( IDictionary context, object target, string name) // throws OgnlException
     {
         object          result;
-        OgnlContext     ognlContext = (OgnlContext)context;
+        var     ognlContext = (OgnlContext)context;
 
         if (context [("_compile")] != null) 
         {
-            Getter        getter = getGetter(ognlContext, target, name);
+            var        getter = getGetter(ognlContext, target, name);
 
             if (getter != NotFoundGetter) 
             {

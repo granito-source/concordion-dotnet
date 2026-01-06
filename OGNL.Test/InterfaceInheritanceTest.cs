@@ -35,37 +35,37 @@ namespace OGNL.Test;
 
 public class InterfaceInheritanceTest : OgnlTestCase
 {
-    private static Root             ROOT = new Root();
+    private static Root             ROOT = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Interface inheritence test
-        new object [] { ROOT, "MyMap", ROOT.getMyMap() },
-        new object [] { ROOT, "MyMap.test", ROOT },
-        new object [] { ROOT.getMyMap(), "list", ROOT.getList() },
-        new object [] { ROOT, "MyMap.array[0]", (ROOT.getArray()[0]) },
-        new object [] { ROOT, "MyMap.list[1]", ROOT.getList() [(1)] },
-        new object [] { ROOT, "MyMap[^]", (99) },
-        new object [] { ROOT, "MyMap[$]", null },
-        new object [] { ROOT.getMyMap(), "array[$]", (ROOT.getArray()[ROOT.getArray().Length-1]) },
-        new object [] { ROOT, "[\"MyMap\"]", ROOT.getMyMap() },
-        new object [] { ROOT, "MyMap[null]", null },
-        new object [] { ROOT, "MyMap[#x = null]", null },
-        new object [] { ROOT, "MyMap.(null,test)", ROOT },
+        [ROOT, "MyMap", ROOT.getMyMap()],
+        [ROOT, "MyMap.test", ROOT],
+        [ROOT.getMyMap(), "list", ROOT.getList()],
+        [ROOT, "MyMap.array[0]", (ROOT.getArray()[0])],
+        [ROOT, "MyMap.list[1]", ROOT.getList() [(1)]],
+        [ROOT, "MyMap[^]", (99)],
+        [ROOT, "MyMap[$]", null],
+        [ROOT.getMyMap(), "array[$]", (ROOT.getArray()[ROOT.getArray().Length-1])],
+        [ROOT, "[\"MyMap\"]", ROOT.getMyMap()],
+        [ROOT, "MyMap[null]", null],
+        [ROOT, "MyMap[#x = null]", null],
+        [ROOT, "MyMap.(null,test)", ROOT],
         /* // Key null is Not allowed in .Net.
         new object [] { ROOT, "MyMap[null] = 25", (25) },
         new object [] { ROOT, "MyMap[null]", (25), (50), (50) },*/
-        new object [] { ROOT, "MyMap[0] = 25", (25) },
-        new object [] { ROOT, "MyMap[0]", (25), (50), (50) },
-    };
+        [ROOT, "MyMap[0] = 25", (25)],
+        [ROOT, "MyMap[0]", (25), (50), (50)]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

@@ -35,41 +35,41 @@ namespace OGNL.Test;
 
 public class PropertyTest : OgnlTestCase
 {
-    private static Root             ROOT = new Root();
+    private static Root             ROOT = new();
 
-    private static object[][]       TESTS = {
-        new object [] { ROOT, "Map", ROOT.getMap() },
-        new object [] { ROOT, "Map.test", ROOT },
-        new object [] { ROOT, "Map[\"test\"]", ROOT },
-        new object [] { ROOT, "Map[\"te\" + \"st\"]", ROOT },
-        new object [] { ROOT, "Map[(\"s\" + \"i\") + \"ze\"]", ROOT.getMap() [(Root.SIZE_STRING)] },
-        new object [] { ROOT, "Map[\"size\"]", ROOT.getMap() [(Root.SIZE_STRING)] },
-        new object [] { ROOT, "Map[@Test.org.ognl.test.objects.Root@SIZE_STRING]", ROOT.getMap()[(Root.SIZE_STRING)] },
-        new object [] { ROOT.getMap(), "list", ROOT.getList() },
-        new object [] { ROOT, "Map.array[0]", (ROOT.getArray()[0]) },
-        new object [] { ROOT, "Map.list[1]", ROOT.getList() [1] },
-        new object [] { ROOT, "Map[^]", (99) },
-        new object [] { ROOT, "Map[$]", null },
-        new object [] { ROOT.getMap(), "array[$]", (ROOT.getArray()[ROOT.getArray().Length-1]) },
-        new object [] { ROOT, "[\"Map\"]", ROOT.getMap() },
-        new object [] { ROOT.getArray(), "length", (ROOT.getArray().Length) },
-        new object [] { ROOT, "getMap().list[|]", ROOT.getList()[(ROOT.getList().Count/2)] },
-        new object [] { ROOT, "Map.(array[2] + size).ToString()", (ROOT.getArray()[2] + ROOT.getMap().Count).ToString () },
-        new object [] { ROOT, "Map.(#this)", ROOT.getMap() },
-        new object [] { ROOT, "Map.(#this != null ? #this['size'] : null)", ROOT.getMap() [(Root.SIZE_STRING)] },
-        new object [] { ROOT, "Map[^].(#this == null ? 'empty' : #this)", (99) },
-        new object [] { ROOT, "Map[$].(#this == null ? 'empty' : #this)", "empty" },
-        new object [] { ROOT, "Map[$].(#root == null ? 'empty' : #root)", ROOT }
-    };
+    private static object[][]       TESTS = [
+        [ROOT, "Map", ROOT.getMap()],
+        [ROOT, "Map.test", ROOT],
+        [ROOT, "Map[\"test\"]", ROOT],
+        [ROOT, "Map[\"te\" + \"st\"]", ROOT],
+        [ROOT, "Map[(\"s\" + \"i\") + \"ze\"]", ROOT.getMap() [(Root.SIZE_STRING)]],
+        [ROOT, "Map[\"size\"]", ROOT.getMap() [(Root.SIZE_STRING)]],
+        [ROOT, "Map[@Test.org.ognl.test.objects.Root@SIZE_STRING]", ROOT.getMap()[(Root.SIZE_STRING)]],
+        [ROOT.getMap(), "list", ROOT.getList()],
+        [ROOT, "Map.array[0]", (ROOT.getArray()[0])],
+        [ROOT, "Map.list[1]", ROOT.getList() [1]],
+        [ROOT, "Map[^]", (99)],
+        [ROOT, "Map[$]", null],
+        [ROOT.getMap(), "array[$]", (ROOT.getArray()[ROOT.getArray().Length-1])],
+        [ROOT, "[\"Map\"]", ROOT.getMap()],
+        [ROOT.getArray(), "length", (ROOT.getArray().Length)],
+        [ROOT, "getMap().list[|]", ROOT.getList()[(ROOT.getList().Count/2)]],
+        [ROOT, "Map.(array[2] + size).ToString()", (ROOT.getArray()[2] + ROOT.getMap().Count).ToString ()],
+        [ROOT, "Map.(#this)", ROOT.getMap()],
+        [ROOT, "Map.(#this != null ? #this['size'] : null)", ROOT.getMap() [(Root.SIZE_STRING)]],
+        [ROOT, "Map[^].(#this == null ? 'empty' : #this)", (99)],
+        [ROOT, "Map[$].(#this == null ? 'empty' : #this)", "empty"],
+        [ROOT, "Map[$].(#root == null ? 'empty' : #root)", ROOT]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             result.addTest(new PropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
         }

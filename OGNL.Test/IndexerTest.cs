@@ -36,41 +36,41 @@ namespace OGNL.Test;
 
 public class IndexerTest : OgnlTestCase
 {
-    private static NumberIndexer          INDEXED = new NumberIndexer();
+    private static NumberIndexer          INDEXED = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Indexed properties
-        new object [] { INDEXED, "[0]", INDEXED [0] },                                 /* gets this [0] */
-        new object [] { INDEXED, "[\"0\"]", null },                           /* return null */
-        new object [] { INDEXED.Index , "[1]", INDEXED.Index[1] },                     /* 1 */
-        new object [] { INDEXED, "Index[0]", "0" },                      /* 0 */
-        new object [] { INDEXED, "[\"index\"][1]", "1" },                      /* 0 */
-        new object [] { INDEXED, "Index[0, \"1\"]", 1 },                      /* convert */
+        [INDEXED, "[0]", INDEXED [0]],                                 /* gets this [0] */
+        [INDEXED, "[\"0\"]", null],                           /* return null */
+        [INDEXED.Index , "[1]", INDEXED.Index[1]],                     /* 1 */
+        [INDEXED, "Index[0]", "0"],                      /* 0 */
+        [INDEXED, "[\"index\"][1]", "1"],                      /* 0 */
+        [INDEXED, "Index[0, \"1\"]", 1],                      /* convert */
         // this [index1 , index2] ;
-        new object [] { INDEXED, "[0, 0]", 0 },                      /* map [0] */
-        new object [] { INDEXED, "[0, 1]", 1 },                      /* map [1] */
-        new object [] { INDEXED, "[0, 2]", 2 },                      /* map [2] */
-        new object [] { INDEXED, "[1, 1]", 2 },                      /* map [2] */
-        new object [] { INDEXED, "[2, 1]", 3 },                      /* map [3] */						
-        new object [] { INDEXED, "[2, 1]", 3 , 5 , 5},                      /* map [3] */						
-        new object [] { INDEXED, "[2, 1]", 5 , 10 , 10 },                      /* map [3] */						
-        new object [] { INDEXED, "Index[0, 0]", 0 },                      /* map [0] */
-        new object [] { INDEXED, "Index[0, 1]", 1 },                      /* map [1] */
-        new object [] { INDEXED, "Index[0, 2]", 2 },                      /* map [2] */
-        new object [] { INDEXED, "Index[1, 1]", 2 },                      /* map [2] */
-        new object [] { INDEXED, "Index[2, 1]", 3 },                      /* map [3] */						
-        new object [] { INDEXED, "Index[2, 1]", 3 , 5 , 5},                      /* map [3] */						
-        new object [] { INDEXED, "Index[2, 1]", 5 , 10 , 10 },                      /* map [3] */						
-    };
+        [INDEXED, "[0, 0]", 0],                      /* map [0] */
+        [INDEXED, "[0, 1]", 1],                      /* map [1] */
+        [INDEXED, "[0, 2]", 2],                      /* map [2] */
+        [INDEXED, "[1, 1]", 2],                      /* map [2] */
+        [INDEXED, "[2, 1]", 3],                      /* map [3] */
+        [INDEXED, "[2, 1]", 3 , 5 , 5],                      /* map [3] */
+        [INDEXED, "[2, 1]", 5 , 10 , 10],                      /* map [3] */
+        [INDEXED, "Index[0, 0]", 0],                      /* map [0] */
+        [INDEXED, "Index[0, 1]", 1],                      /* map [1] */
+        [INDEXED, "Index[0, 2]", 2],                      /* map [2] */
+        [INDEXED, "Index[1, 1]", 2],                      /* map [2] */
+        [INDEXED, "Index[2, 1]", 3],                      /* map [3] */
+        [INDEXED, "Index[2, 1]", 3 , 5 , 5],                      /* map [3] */
+        [INDEXED, "Index[2, 1]", 5 , 10 , 10] /* map [3] */
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

@@ -36,29 +36,29 @@ public class ConstantTreeTest : OgnlTestCase
 {
     public static int               nonFinalStaticVariable = 15;
 
-    private static object[][]       TESTS = {
-        new object [] { "true", true },
-        new object [] { "55", true },
-        new object [] { "@Byte@MinValue", true },
-        new object [] { "@Test.org.ognl.test.ConstantTreeTest@nonFinalStaticVariable", false },
-        new object [] { "@Test.org.ognl.test.ConstantTreeTest@nonFinalStaticVariable + 10", false },
-        new object [] { "55 + 24 + @Byte@MaxValue", true },
-        new object [] { "name", false },
-        new object [] { "name[i]", false },
-        new object [] { "name[i].property", false },
-        new object [] { "name.{? foo }", false },
-        new object [] { "name.{ foo }", false },
-        new object [] { "name.{ 25 }", false }
-    };
+    private static object[][]       TESTS = [
+        ["true", true],
+        ["55", true],
+        ["@Byte@MinValue", true],
+        ["@Test.org.ognl.test.ConstantTreeTest@nonFinalStaticVariable", false],
+        ["@Test.org.ognl.test.ConstantTreeTest@nonFinalStaticVariable + 10", false],
+        ["55 + 24 + @Byte@MaxValue", true],
+        ["name", false],
+        ["name[i]", false],
+        ["name[i].property", false],
+        ["name.{? foo }", false],
+        ["name.{ foo }", false],
+        ["name.{ 25 }", false]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             result.addTest(new ConstantTreeTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null, (string)TESTS[i][0], TESTS[i][1]));
         }
@@ -71,7 +71,7 @@ public class ConstantTreeTest : OgnlTestCase
     protected internal override void runTest() // throws OgnlException
     {
         setUp () ;
-        NUnit.Framework.Assert.IsTrue(Ognl.isConstant(getExpression(), context) == ((bool)getExpectedResult()));
+        Assert.IsTrue(Ognl.isConstant(getExpression(), context) == ((bool)getExpectedResult()));
     }
 
     /*===================================================================

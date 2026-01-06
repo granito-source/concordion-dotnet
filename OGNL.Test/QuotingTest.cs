@@ -34,22 +34,22 @@ namespace OGNL.Test;
 
 public class QuotingTest : OgnlTestCase
 {
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Quoting
-        new object [] { null, "`c`", ('c') },
-        new object [] { null, "'s'", ('s') },
-        new object [] { null, "'string'", "string" },
-        new object [] { null, "\"string\"", "string" },
-    };
+        [null, "`c`", ('c')],
+        [null, "'s'", ('s')],
+        [null, "'string'", "string"],
+        [null, "\"string\"", "string"]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

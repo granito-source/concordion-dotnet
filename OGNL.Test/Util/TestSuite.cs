@@ -3,7 +3,7 @@ using System.Collections;
 namespace OGNL.Test.Util;
 
 /// <summary>
-/// TestSuite ��ժҪ˵����
+/// TestSuite[ ��ժҪ˵����]
 /// </summary>
 public class TestSuite
 {

@@ -33,69 +33,60 @@ using OGNL.Test.Util;
 //--------------------------------------------------------------------------
 namespace OGNL.Test;
 
-public class StaticsAndConstructorsTest : OgnlTestCase
-{
-    private static Root             ROOT = new Root();
+public class StaticsAndConstructorsTest : OgnlTestCase {
+    private static readonly Root Root = new();
 
-    private static object[][]       TESTS = {
-        new object [] { "@System.Type@GetType(\"object\")", typeof (object) },
-        new object [] { "@System.Int32@MaxValue", int.MaxValue },
-        new object [] { "@@Max(3,4)", (4) },
-        new object [] { "new System.Text.StringBuilder().Append(55).ToString()", "55" },
-        new object [] { "Type", ROOT.GetType() },
-        new object [] { "@Test.org.ognl.test.objects.Root@class.Type", ROOT.GetType ().GetType () },
-        new object [] { "Type.GetType()", ROOT.GetType().GetType () },
-        new object [] { "@Test.org.ognl.test.objects.Root@class.GetType()", ROOT.GetType().GetType() },
-        new object [] { "@Test.org.ognl.test.objects.Root@class.Name", ROOT.GetType().Name},
-        new object [] { "Type.GetElementType()", ROOT.GetType().GetElementType () },
-        new object [] { "Type.ElementType", ROOT.GetType().GetElementType() },
-        new object [] { "Type.Type", ROOT.GetType().GetType() },
-        new object [] { "getStaticInt()", (Root.getStaticInt()) },
-        new object [] { "@Test.org.ognl.test.objects.Root@getStaticInt()", (Root.getStaticInt()) },
-    };
+    private static readonly object[][] Tests = [
+        ["@System.Type@GetType(\"object\")", typeof(object)],
+        ["@System.Int32@MaxValue", int.MaxValue],
+        ["@@Max(3,4)", 4],
+        ["new System.Text.StringBuilder().Append(55).ToString()", "55"],
+        ["Type", Root.GetType()],
+        ["@Test.org.ognl.test.objects.Root@class.Type", Root.GetType().GetType()],
+        ["Type.GetType()", Root.GetType().GetType()],
+        ["@Test.org.ognl.test.objects.Root@class.GetType()", Root.GetType().GetType()],
+        ["@Test.org.ognl.test.objects.Root@class.Name", Root.GetType().Name],
+        ["Type.GetElementType()", Root.GetType().GetElementType()],
+        ["Type.ElementType", Root.GetType().GetElementType()],
+        ["Type.Type", Root.GetType().GetType()],
+        ["getStaticInt()", Root.getStaticInt()],
+        ["@Test.org.ognl.test.objects.Root@getStaticInt()", Root.getStaticInt()]
+    ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
-        {
-            result.addTest(new StaticsAndConstructorsTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", ROOT, (string)TESTS[i][0], TESTS[i][1]));
+        for (var i = 0; i < Tests.Length; i++) {
+            result.addTest(new StaticsAndConstructorsTest((string)Tests[i][0] + " (" + Tests[i][1] + ")", Root,
+                (string)Tests[i][0], Tests[i][1]));
         }
+
         return result;
     }
 
-    /*===================================================================
-        Constructors
-      ===================================================================*/
     public StaticsAndConstructorsTest()
     {
-	   
     }
 
     public StaticsAndConstructorsTest(string name) : base(name)
     {
-	    
     }
 
-    public StaticsAndConstructorsTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+    public StaticsAndConstructorsTest(string name, object root, string expressionString, object expectedResult,
+        object setValue, object expectedAfterSetResult)
         : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        
     }
 
-    public StaticsAndConstructorsTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        :base(name, root, expressionString, expectedResult, setValue)
+    public StaticsAndConstructorsTest(string name, object root, string expressionString, object expectedResult,
+        object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
     {
-        
     }
 
     public StaticsAndConstructorsTest(string name, object root, string expressionString, object expectedResult)
         : base(name, root, expressionString, expectedResult)
     {
-        
     }
 }

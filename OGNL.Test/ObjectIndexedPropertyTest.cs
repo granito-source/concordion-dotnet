@@ -35,28 +35,29 @@ namespace OGNL.Test;
 
 public class ObjectIndexedPropertyTest : OgnlTestCase
 {
-    private static ObjectIndexed    OBJECT_INDEXED = new ObjectIndexed();
+    private static ObjectIndexed    OBJECT_INDEXED = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Arbitrary indexed properties
-        new object [] { OBJECT_INDEXED, "Item[\"bar\"]", "baz" },                                 /* get non-indexed property through attributes Map */
-        new object [] { OBJECT_INDEXED, "Item[\"foo\"]", "bar" },                                  /* get indexed property */
-        new object [] { OBJECT_INDEXED, "Item[\"bar\"]", "baz", "newValue", "newValue" },          /* set indexed property */
-        new object [] { OBJECT_INDEXED, "Item[\"bar\"]", "newValue" },                             /* get indexed property back to confirm */
-        new object [] { OBJECT_INDEXED, "Item[\"bar\"]", "newValue" },                            /* get property back through Map to confirm */
-        new object [] { OBJECT_INDEXED, "Item[\"other\"].Item[\"bar\"]", "baz" },             /* get indexed property from indexed, then through other */
-        new object [] { OBJECT_INDEXED, "Item[\"other\"].Item[\"bar\"]", "baz" },            /* get property back through Map to confirm */
-        new object [] { OBJECT_INDEXED, "Item[$]", typeof (OgnlException) },                          /* illegal DynamicSubscript access to object indexed property */
-    };
+        [OBJECT_INDEXED, "Item[\"bar\"]", "baz"],                                 /* get non-indexed property through attributes Map */
+        [OBJECT_INDEXED, "Item[\"foo\"]", "bar"],                                  /* get indexed property */
+        [OBJECT_INDEXED, "Item[\"bar\"]", "baz", "newValue", "newValue"],          /* set indexed property */
+        [OBJECT_INDEXED, "Item[\"bar\"]", "newValue"],                             /* get indexed property back to confirm */
+        [OBJECT_INDEXED, "Item[\"bar\"]", "newValue"],                            /* get property back through Map to confirm */
+        [OBJECT_INDEXED, "Item[\"other\"].Item[\"bar\"]", "baz"],             /* get indexed property from indexed, then through other */
+        [OBJECT_INDEXED, "Item[\"other\"].Item[\"bar\"]", "baz"],            /* get property back through Map to confirm */
+        [OBJECT_INDEXED, "Item[$]", typeof (OgnlException)
+        ] /* illegal DynamicSubscript access to object indexed property */
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

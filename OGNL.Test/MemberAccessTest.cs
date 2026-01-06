@@ -37,24 +37,24 @@ namespace OGNL.Test;
 
 public class MemberAccessTest : OgnlTestCase
 {
-    private static Simple           ROOT = new Simple();
-    private static object[][]       TESTS = {
+    private static Simple           ROOT = new();
+    private static object[][]       TESTS = [
         // new object [] { "@Runtime@getRuntime()", typeof (OgnlException) },
         // new object [] { "@System.AppDomain@GetCurrentThreadId()", AppDomain.GetCurrentThreadId () },
-        new object [] { "bigIntValue", typeof (OgnlException) },
-        new object [] { "bigIntValue", typeof (OgnlException), (25), typeof (OgnlException) },
-        new object [] { "getBigIntValue()", typeof (OgnlException) },
-        new object [] { "StringValue", ROOT.getStringValue() },
-    };
+        ["bigIntValue", typeof (OgnlException)],
+        ["bigIntValue", typeof (OgnlException), (25), typeof (OgnlException)],
+        ["getBigIntValue()", typeof (OgnlException)],
+        ["StringValue", ROOT.getStringValue()]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             result.addTest(new MemberAccessTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", ROOT, (string)TESTS[i][0], TESTS[i][1]));
         }

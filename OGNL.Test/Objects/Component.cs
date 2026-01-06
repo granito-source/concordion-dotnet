@@ -32,8 +32,8 @@ namespace OGNL.Test.Objects;
 
 public class Component
 {
-    private URLStorage          toDisplay = new URLStorage();
-    private Page                page = new Page();
+    private URLStorage          toDisplay = new();
+    private Page                page = new();
 
     public class URLStorage 
     {

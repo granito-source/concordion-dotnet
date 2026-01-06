@@ -35,11 +35,11 @@ namespace OGNL.Test;
 
 public class PropertyNotFoundTest : OgnlTestCase
 {
-    private static Blah       BLAH = new Blah();
+    private static Blah       BLAH = new();
 
-    private static object[][]       TESTS = {
-        new object [] { BLAH, "webwork.token.name", typeof (OgnlException), "W value", typeof (OgnlException) },
-    };
+    private static object[][]       TESTS = [
+        [BLAH, "webwork.token.name", typeof (OgnlException), "W value", typeof (OgnlException)]
+    ];
 
     /*===================================================================
         Public static classes
@@ -90,9 +90,9 @@ public class PropertyNotFoundTest : OgnlTestCase
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

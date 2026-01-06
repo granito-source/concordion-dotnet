@@ -36,22 +36,22 @@ namespace OGNL.Test;
 public class ContextVariableTest : OgnlTestCase
 {
     private static object           ROOT = new Simple();
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Naming and referring to names
-        new object [] { "#root", ROOT }, // Special root reference
-        new object [] { "#this", ROOT }, // Special this reference
-        new object [] { "#f=5, #s=6, #f + #s", 11 },
-        new object [] { "#six=(#five=5, 6), #five + #six", 11 }, // Dynamic scoping
-    };
+        ["#root", ROOT], // Special root reference
+        ["#this", ROOT], // Special this reference
+        ["#f=5, #s=6, #f + #s", 11],
+        ["#six=(#five=5, 6), #five + #six", 11] // Dynamic scoping
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             result.addTest(new ContextVariableTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", ROOT, (string)TESTS[i][0], TESTS[i][1]));
         }

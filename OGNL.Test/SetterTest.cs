@@ -36,40 +36,40 @@ namespace OGNL.Test;
 
 public class SetterTest : OgnlTestCase
 {
-    private static Root             ROOT = new Root();
+    private static Root             ROOT = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Setting values
-        new object [] { ROOT.getMap(), "newValue", null, (101) },
-        new object [] { ROOT, "SettableList[0]", "foo", "quux" },     /* absolute indexes */
-        new object [] { ROOT, "SettableList[0]", "quux" },
-        new object [] { ROOT, "SettableList[2]", "baz", "quux" },
-        new object [] { ROOT, "SettableList[2]", "quux" },
-        new object [] { ROOT, "SettableList[$]", "quux", "oompa" },   /* special indexes */
-        new object [] { ROOT, "SettableList[$]", "oompa" },
-        new object [] { ROOT, "SettableList[^]", "quux", "oompa" },
-        new object [] { ROOT, "SettableList[^]", "oompa" },
-        new object [] { ROOT, "SettableList[|]", "bar", "oompa" },
-        new object [] { ROOT, "SettableList[|]", "oompa" },
-        new object [] { ROOT, "Map.newValue", (101), (555) },
-        new object [] { ROOT, "Map", ROOT.getMap(), new Hashtable (), typeof (NoSuchPropertyException) },
-        new object [] { ROOT.getMap(), "newValue2 || Add(\"newValue2\",987), newValue2", (987), (1002) },
-        new object [] { ROOT, "Map.(someMissingKey || newValue)", (555), (666) },
-        new object [] { ROOT.getMap(), "newValue || someMissingKey", (666), (666) }, // no setting happens!
-        new object [] { ROOT, "Map.(newValue && aKey)", null, (54321) },
-        new object [] { ROOT, "Map.(someMissingKey && newValue)", null, null }, // again, no setting
-        new object [] { null, "0", (0), null, typeof (InappropriateExpressionException) }, // illegal for setting, no property
-        new object [] { ROOT, "Map[0]=\"Map.newValue\", Map[0](#this)", (666), (888) },
-    };
+        [ROOT.getMap(), "newValue", null, (101)],
+        [ROOT, "SettableList[0]", "foo", "quux"],     /* absolute indexes */
+        [ROOT, "SettableList[0]", "quux"],
+        [ROOT, "SettableList[2]", "baz", "quux"],
+        [ROOT, "SettableList[2]", "quux"],
+        [ROOT, "SettableList[$]", "quux", "oompa"],   /* special indexes */
+        [ROOT, "SettableList[$]", "oompa"],
+        [ROOT, "SettableList[^]", "quux", "oompa"],
+        [ROOT, "SettableList[^]", "oompa"],
+        [ROOT, "SettableList[|]", "bar", "oompa"],
+        [ROOT, "SettableList[|]", "oompa"],
+        [ROOT, "Map.newValue", (101), (555)],
+        [ROOT, "Map", ROOT.getMap(), new Hashtable (), typeof (NoSuchPropertyException)],
+        [ROOT.getMap(), "newValue2 || Add(\"newValue2\",987), newValue2", (987), (1002)],
+        [ROOT, "Map.(someMissingKey || newValue)", (555), (666)],
+        [ROOT.getMap(), "newValue || someMissingKey", (666), (666)], // no setting happens!
+        [ROOT, "Map.(newValue && aKey)", null, (54321)],
+        [ROOT, "Map.(someMissingKey && newValue)", null, null], // again, no setting
+        [null, "0", (0), null, typeof (InappropriateExpressionException)], // illegal for setting, no property
+        [ROOT, "Map[0]=\"Map.newValue\", Map[0](#this)", (666), (888)]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++)
+        for (var i = 0; i < TESTS.Length; i++)
         {
             if (TESTS[i].Length == 3)
             {

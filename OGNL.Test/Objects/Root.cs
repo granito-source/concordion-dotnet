@@ -37,7 +37,7 @@ public class Root
     public const string      SIZE_STRING = "size";
     public const int         STATIC_INT = 23;
 
-    private int[]                   array = { 1, 2, 3, 4 };
+    private int[]                   array = [1, 2, 3, 4];
     private IDictionary                     map = new Hashtable(23);
     private MyMap                   myMap = new MyMapImpl();
     private IList                    list ;

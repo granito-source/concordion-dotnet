@@ -32,7 +32,7 @@ namespace OGNL.Test.Objects;
 
 public class Bean2 
 {
-    private Bean3       bean3 = new Bean3();
+    private Bean3       bean3 = new();
 
     public Bean3 getBean3()
     {

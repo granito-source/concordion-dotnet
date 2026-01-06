@@ -35,26 +35,27 @@ namespace OGNL.Test;
 
 public class ProjectionSelectionTest : OgnlTestCase
 {
-    private static Root             ROOT = new Root();
+    private static Root             ROOT = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Projection, selection
-        new object [] { ROOT, "Array.{Type}", Util.asList(new Type[]{typeof (int),typeof (int),typeof (int),typeof (int)}) },
-        new object [] { ROOT, "Map.array.{? #this > 2 }", Util.asList(new int[]{(3), (4)}) },
-        new object [] { ROOT, "Map.array.{^ #this > 2 }", Util.asList(new int[]{(3)}) },
-        new object [] { ROOT, "Map.array.{$ #this > 2 }", Util.asList(new int[]{(4)}) },
-        new object [] { ROOT, "Map.array[*].{?true} instanceof System.Collections.ICollection", true },
+        [ROOT, "Array.{Type}", Util.asList(new Type[]{typeof (int),typeof (int),typeof (int),typeof (int)})],
+        [ROOT, "Map.array.{? #this > 2 }", Util.asList(new int[]{(3), (4)})],
+        [ROOT, "Map.array.{^ #this > 2 }", Util.asList(new int[]{(3)})],
+        [ROOT, "Map.array.{$ #this > 2 }", Util.asList(new int[]{(4)})],
+        [ROOT, "Map.array[*].{?true} instanceof System.Collections.ICollection", true]
+
         // { null, "#fact=1, 30H.{? #fact = #fact * (#this+1), false }, #fact", 265252859812191058636308480000000L },
-    };
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             result.addTest(new ProjectionSelectionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
         }

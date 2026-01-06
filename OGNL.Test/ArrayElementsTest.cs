@@ -1,8 +1,3 @@
-using System.Collections;
-using System.Reflection;
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -33,120 +28,100 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Collections;
+using System.Reflection;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
+
 namespace OGNL.Test;
 
-public class ArrayElementsTest : OgnlTestCase
-{
-    private static string[]         STRING_ARRAY = new string[] { "hello", "world" };
-    private static int[]            INT_ARRAY = new int[] { 10, 20 };
-    private static Root             ROOT = new Root();
+public class ArrayElementsTest : OgnlTestCase {
+    private static readonly string[] StringArray = ["hello", "world"];
 
-    private static object[][]       TESTS = new object[][]{
+    private static readonly int[] IntArray = [10, 20];
+
+    private static readonly Root Root = new();
+
+    private static readonly object[][] Tests = new object[][] {
         // Array elements test
-        new object [] { STRING_ARRAY,     "length",       (2) },
-        new object [] { STRING_ARRAY,     "#root[1]",     "world" },
-        new object [] { INT_ARRAY,        "#root[1]",     (20) },
-        new object [] { INT_ARRAY,        "#root[1]",     (20), "50", (50) },
-        new object [] { INT_ARRAY,        "#root[1]",     (50), new string[] { "50", "100" }, (50) },
-        new object [] { ROOT,             "IntValue",     (0), new string[] { "50", "100" }, (50) },
-        new object [] { ROOT,             "Array",        ROOT.getArray(), new string[] { "50", "100" }, new int[] { 50, 100 } },
+        [StringArray, "length", (2)],
+        [StringArray, "#root[1]", "world"],
+        [IntArray, "#root[1]", (20)],
+        [IntArray, "#root[1]", (20), "50", (50)],
+        [IntArray, "#root[1]", (50), new string[] { "50", "100" }, (50)],
+        [Root, "IntValue", (0), new string[] { "50", "100" }, (50)],
+        [Root, "Array", Root.getArray(), new string[] { "50", "100" }, new int[] { 50, 100 }],
     };
 
-    /*===================================================================
-        Private static methods
-      ===================================================================*/
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new ArrayElementsTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new ArrayElementsTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new ArrayElementsTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
+        for (var i = 0; i < Tests.Length; i++) {
+            if (Tests[i].Length == 3) {
+                result.addTest(
+                    new ArrayElementsTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1], Tests[i][2]));
+            } else {
+                if (Tests[i].Length == 4) {
+                    result.addTest(new ArrayElementsTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                        Tests[i][2], Tests[i][3]));
+                } else {
+                    if (Tests[i].Length == 5) {
+                        result.addTest(new ArrayElementsTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                            Tests[i][2], Tests[i][3], Tests[i][4]));
+                    } else {
                         throw new Exception("don't understand TEST format");
                     }
                 }
             }
         }
+
         return result;
     }
 
-    /*===================================================================
-        Constructors
-      ===================================================================*/
     public ArrayElementsTest()
     {
-	   
     }
 
     public ArrayElementsTest(string name) : base(name)
     {
-	    
     }
 
-    public ArrayElementsTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+    public ArrayElementsTest(string name, object root, string expressionString, object expectedResult, object setValue,
+        object expectedAfterSetResult)
         : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        ;
     }
 
     public ArrayElementsTest(string name, object root, string expressionString, object expectedResult, object setValue)
         : base(name, root, expressionString, expectedResult, setValue)
     {
-        
     }
 
     public ArrayElementsTest(string name, object root, string expressionString, object expectedResult)
         : base(name, root, expressionString, expectedResult)
     {
-        ;
     }
 
-    /*===================================================================
-        Overridden methods
-      ===================================================================*/
-    [TestFixtureSetUp]
+    [SetUp]
     public override void setUp()
     {
-        TypeConverter       arrayConverter;
-
         base.setUp();
-        arrayConverter = new ArrayDefaultTypeConverter ();
-        context.setTypeConverter(arrayConverter);
+
+        context.setTypeConverter(new ArrayDefaultTypeConverter());
     }
 
-		
-
-    class ArrayDefaultTypeConverter : DefaultTypeConverter
-    {
-        public override object convertValue(IDictionary context, object target, MemberInfo member, string propertyName, object value, Type toType)
+    class ArrayDefaultTypeConverter : DefaultTypeConverter {
+        public override object convertValue(IDictionary context, object target, MemberInfo member, string propertyName,
+            object value, Type toType)
         {
-            if (value.GetType().IsArray) 
-            {
-                if (!toType.IsArray) 
-                {
-                    value = ((Array) value).GetValue (0);
+            if (value.GetType().IsArray) {
+                if (!toType.IsArray) {
+                    value = ((Array)value).GetValue(0);
                 }
             }
+
             return base.convertValue(context, target, member, propertyName, value, toType);
         }
     }

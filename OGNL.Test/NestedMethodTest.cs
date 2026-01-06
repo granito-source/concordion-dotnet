@@ -35,22 +35,23 @@ namespace OGNL.Test;
 
 public class NestedMethodTest : OgnlTestCase
 {
-    private static Component        COMPONENT = new Component();
+    private static Component        COMPONENT = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Expression in a method call argument
-        new object [] { COMPONENT, "ToDisplay.PictureUrl", COMPONENT.getToDisplay().getPictureUrl() },
-        new object [] { COMPONENT, "Page.createRelativeAsset(ToDisplay.PictureUrl)", COMPONENT.getPage().createRelativeAsset(COMPONENT.getToDisplay().getPictureUrl()) },
-    };
+        [COMPONENT, "ToDisplay.PictureUrl", COMPONENT.getToDisplay().getPictureUrl()],
+        [COMPONENT, "Page.createRelativeAsset(ToDisplay.PictureUrl)", COMPONENT.getPage().createRelativeAsset(COMPONENT.getToDisplay().getPictureUrl())
+        ]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

@@ -35,38 +35,38 @@ namespace OGNL.Test;
 
 public class NumberFormatExceptionTest : OgnlTestCase
 {
-    private static Simple           SIMPLE = new Simple();
+    private static Simple           SIMPLE = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // NumberFormatException handling (default is to throw NumberFormatException on bad string conversions)
-        new object [] { SIMPLE, "FloatValue", (0f), (10f), (10f) },    /* set float to 10.0f */
-        new object [] { SIMPLE, "FloatValue", (10f), "x10x", typeof (OgnlException) },      /* set float to invalid format string, should yield OgnlException */
+        [SIMPLE, "FloatValue", (0f), (10f), (10f)],    /* set float to 10.0f */
+        [SIMPLE, "FloatValue", (10f), "x10x", typeof (OgnlException)],      /* set float to invalid format string, should yield OgnlException */
 
-        new object [] { SIMPLE, "IntValue", (0), (34), (34) },   /* set int to 34 */
-        new object [] { SIMPLE, "IntValue", (34), "foobar", typeof (OgnlException) },     /* set int to invalid format string, should yield OgnlException */
-        new object [] { SIMPLE, "IntValue", (34), "", typeof (OgnlException) },           /* set int to empty string, should yield 0gnlException */
-        new object [] { SIMPLE, "IntValue", (34), "       \t", typeof (OgnlException) },  /* set int to whitespace-only string, should yield 0gnlException */
-        new object [] { SIMPLE, "IntValue", (34), "       \t1234\t\t", (1234) },    /* set int to whitespace-laden valid string, should yield 1234 */
+        [SIMPLE, "IntValue", (0), (34), (34)],   /* set int to 34 */
+        [SIMPLE, "IntValue", (34), "foobar", typeof (OgnlException)],     /* set int to invalid format string, should yield OgnlException */
+        [SIMPLE, "IntValue", (34), "", typeof (OgnlException)],           /* set int to empty string, should yield 0gnlException */
+        [SIMPLE, "IntValue", (34), "       \t", typeof (OgnlException)],  /* set int to whitespace-only string, should yield 0gnlException */
+        [SIMPLE, "IntValue", (34), "       \t1234\t\t", (1234)],    /* set int to whitespace-laden valid string, should yield 1234 */
 
         //										{ SIMPLE, "bigIntValue", BigInteger.valueOf(0), BigInteger.valueOf(34), BigInteger.valueOf(34) },   /* set bigint to 34 */
         //										{ SIMPLE, "bigIntValue", BigInteger.valueOf(34), null, null },              /* set bigint to null string, should yield 0 */
         // new object [] { SIMPLE, "BigIntValue", null, "", typeof (OgnlException) },                   /* set bigint to empty string, should yield 0gnlException */
         // new object [] { SIMPLE, "BigIntValue", null, "foobar", typeof (OgnlException) },             /* set bigint to invalid format string, should yield OgnlException */
-                    
-        new object [] { SIMPLE, "BigDecValue", (decimal)(0.0), (decimal)(34.55), (decimal)(34.55) },   /* set bigdec to 34.55 */
+
+        [SIMPLE, "BigDecValue", (decimal)(0.0), (decimal)(34.55), (decimal)(34.55)] /* set bigdec to 34.55 */
         // new object [] { SIMPLE, "BigDecValue", (decimal)(34.55), null, null },               /* set bigdec to null string, should yield 0.0 */
         // new object [] { SIMPLE, "BigDecValue", null, "", null} ,// typeof (OgnlException) },                   /* set bigdec to empty string, should yield 0gnlException */
         // new object [] { SIMPLE, "BigDecValue", null, "foobar", null} , // typeof (OgnlException) },             /* set bigdec to invalid format string, should yield OgnlException */
-    };
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

@@ -1,6 +1,3 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,70 +28,65 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
+
 namespace OGNL.Test;
 
-public class ClassMethodTest : OgnlTestCase
-{
-    private static CorrectedObject  CORRECTED = new CorrectedObject();
+public class ClassMethodTest : OgnlTestCase {
+    private static readonly CorrectedObject Corrected = new();
 
-    private static object[][]       TESTS = {
+    private static readonly object[][] Tests = [
         // Methods on Class
-        new object [] { CORRECTED, "GetType().Name", CORRECTED.GetType().Name },
-        new object [] { CORRECTED, "GetType().GetInterfaces()", CORRECTED.GetType().GetInterfaces() },
-        new object [] { CORRECTED, "GetType().GetInterfaces().length", (CORRECTED.GetType().GetInterfaces().Length) },
-        new object [] { null, "@System.AppDomain@CurrentDomain.Type.GetInterfaces()", System.AppDomain.CurrentDomain.GetType ().GetInterfaces() },
-        new object [] { null, "@System.AppDomain@CurrentDomain.Type.Type.Name", AppDomain.CurrentDomain.GetType ().GetType ().Name },
-        // new object [] { null, "@java.awt.image.ImageObserver@class.getName()", java.awt.image.ImageObserver.getName() },
+        [Corrected, "GetType().Name", Corrected.GetType().Name],
+        [Corrected, "GetType().GetInterfaces()", Corrected.GetType().GetInterfaces()],
+        [Corrected, "GetType().GetInterfaces().length", Corrected.GetType().GetInterfaces().Length],
+        [
+            null, "@System.AppDomain@CurrentDomain.Type.GetInterfaces()",
+            AppDomain.CurrentDomain.GetType().GetInterfaces()
+        ],
+        [null, "@System.AppDomain@CurrentDomain.Type.Type.Name", AppDomain.CurrentDomain.GetType().GetType().Name]
+    ];
 
-    };
-
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
-        {
-            result.addTest(new ClassMethodTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+        for (var i = 0; i < Tests.Length; i++) {
+            result.addTest(new ClassMethodTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1], Tests[i][2]));
         }
+
         return result;
     }
 
-    /*===================================================================
-        Constructors
-      ===================================================================*/
     public ClassMethodTest()
     {
-	  
     }
 
     public ClassMethodTest(string name) : base(name)
     {
-        ;
     }
 
-    public ClassMethodTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+    public ClassMethodTest(string name, object root, string expressionString, object expectedResult, object setValue,
+        object expectedAfterSetResult)
         : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        ;
     }
 
     public ClassMethodTest(string name, object root, string expressionString, object expectedResult, object setValue)
         : base(name, root, expressionString, expectedResult, setValue)
     {
-        
     }
 
     public ClassMethodTest(string name, object root, string expressionString, object expectedResult)
         : base(name, root, expressionString, expectedResult)
     {
-        
     }
+
     [Test]
-    public void Test4 ()
+    public void Test4()
     {
-        suite () [4].runTest ();
+        suite()[4].runTest();
     }
 }

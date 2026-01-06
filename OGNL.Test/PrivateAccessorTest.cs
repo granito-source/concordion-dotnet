@@ -35,30 +35,30 @@ namespace OGNL.Test;
 
 public class PrivateAccessorTest : OgnlTestCase
 {
-    private static Root             ROOT = new Root();
+    private static Root             ROOT = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Using private get/set methods
-        new object [] { ROOT, "getPrivateAccessorIntValue()", (67) },                  /* Call private method */
-        new object [] { ROOT, "privateAccessorIntValue", (67) },                       /* Implied private method */
-        new object [] { ROOT, "privateAccessorIntValue", (67), (100) },     /* Implied private method */
-        new object [] { ROOT, "privateAccessorIntValue2", (67) },                      /* Implied private method */
-        new object [] { ROOT, "privateAccessorIntValue2", (67), (100) },    /* Implied private method */
-        new object [] { ROOT, "privateAccessorIntValue3", (67) },                      /* Implied private method */
-        new object [] { ROOT, "privateAccessorIntValue3", (67), (100) },    /* Implied private method */
-        new object [] { ROOT, "privateAccessorBooleanValue", true },                      /* Implied private method */
-        new object [] { ROOT, "privateAccessorBooleanValue", true, false },       /* Implied private method */
-    };
+        [ROOT, "getPrivateAccessorIntValue()", (67)],                  /* Call private method */
+        [ROOT, "privateAccessorIntValue", (67)],                       /* Implied private method */
+        [ROOT, "privateAccessorIntValue", (67), (100)],     /* Implied private method */
+        [ROOT, "privateAccessorIntValue2", (67)],                      /* Implied private method */
+        [ROOT, "privateAccessorIntValue2", (67), (100)],    /* Implied private method */
+        [ROOT, "privateAccessorIntValue3", (67)],                      /* Implied private method */
+        [ROOT, "privateAccessorIntValue3", (67), (100)],    /* Implied private method */
+        [ROOT, "privateAccessorBooleanValue", true],                      /* Implied private method */
+        [ROOT, "privateAccessorBooleanValue", true, false] /* Implied private method */
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
         // Ignrore 
 			
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

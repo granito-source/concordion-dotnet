@@ -35,24 +35,24 @@ namespace OGNL.Test;
 
 public class NullHandlerTest : OgnlTestCase
 {
-    private static CorrectedObject  CORRECTED = new CorrectedObject();
+    private static CorrectedObject  CORRECTED = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // NullHandler
-        new object [] { CORRECTED, "StringValue", "corrected" },
-        new object [] { CORRECTED, "getStringValue()", "corrected" },
-        new object [] { CORRECTED, "#root.StringValue", "corrected" },
-        new object [] { CORRECTED, "#root.getStringValue()", "corrected" },
-    };
+        [CORRECTED, "StringValue", "corrected"],
+        [CORRECTED, "getStringValue()", "corrected"],
+        [CORRECTED, "#root.StringValue", "corrected"],
+        [CORRECTED, "#root.getStringValue()", "corrected"]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

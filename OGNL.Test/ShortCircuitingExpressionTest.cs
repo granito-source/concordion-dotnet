@@ -34,25 +34,25 @@ namespace OGNL.Test;
 
 public class ShortCircuitingExpressionTest : OgnlTestCase
 {
-    private static object[][]       TESTS = {
-        new object [] { "#root ? someProperty : 99", (99) },
-        new object [] { "#root ? 99 : someProperty", typeof (OgnlException) },
-        new object [] { "(#x=99)? #x.someProperty : #x", typeof (OgnlException)},
-        new object [] { "#xyzzy.doubleValue()", typeof (NullReferenceException) },
-        new object [] { "#xyzzy && #xyzzy.doubleValue()", null },
-        new object [] { "(#x=99) && #x", (99) },
-        new object [] { "#xyzzy || 101", (101) },
-        new object [] { "99 || 101",(99) },
-    };
+    private static object[][]       TESTS = [
+        ["#root ? someProperty : 99", (99)],
+        ["#root ? 99 : someProperty", typeof (OgnlException)],
+        ["(#x=99)? #x.someProperty : #x", typeof (OgnlException)],
+        ["#xyzzy.doubleValue()", typeof (NullReferenceException)],
+        ["#xyzzy && #xyzzy.doubleValue()", null],
+        ["(#x=99) && #x", (99)],
+        ["#xyzzy || 101", (101)],
+        ["99 || 101",(99)]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             result.addTest(new ShortCircuitingExpressionTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null, (string)TESTS[i][0], TESTS[i][1]));
         }

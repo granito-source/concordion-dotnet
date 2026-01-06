@@ -35,34 +35,34 @@ namespace OGNL.Test;
 
 public class PrimitiveArrayTest : OgnlTestCase
 {
-    private static Root             ROOT = new Root();
+    private static Root             ROOT = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Primitive array creation
-        new object [] { ROOT, "new bool[5]",                   new bool[5] },
-        new object [] { ROOT, "new bool[] { true, false }",    new bool[] { true, false } },
-        new object [] { ROOT, "new bool[] { 0, 1, 5.5 }",      new bool[] { false, true, true } },
-        new object [] { ROOT, "new char[] { 'a', 'b' }",          new char[] { 'a', 'b' } },
-        new object [] { ROOT, "new char[] { 10, 11 }",            new char[] { (char)10, (char)11 } },
-        new object [] { ROOT, "new byte[] { 1, 2 }",              new byte[] { 1, 2 } },
-        new object [] { ROOT, "new short[] { 1, 2 }",             new short[] { 1, 2 } },
-        new object [] { ROOT, "new int[six]",                     new int[ROOT.six] },
-        new object [] { ROOT, "new int[#root.six]",               new int[ROOT.six] },
-        new object [] { ROOT, "new int[6]",                       new int[6] },
-        new object [] { ROOT, "new int[] { 1, 2 }",               new int[] { 1, 2 } },
-        new object [] { ROOT, "new long[] { 1, 2 }",              new long[] { 1, 2 } },
-        new object [] { ROOT, "new float[] { 1, 2 }",             new float[] { 1, 2 } },
-        new object [] { ROOT, "new double[] { 1, 2 }",            new double[] { 1, 2 } },
-    };
+        [ROOT, "new bool[5]",                   new bool[5]],
+        [ROOT, "new bool[] { true, false }",    new bool[] { true, false }],
+        [ROOT, "new bool[] { 0, 1, 5.5 }",      new bool[] { false, true, true }],
+        [ROOT, "new char[] { 'a', 'b' }",          new char[] { 'a', 'b' }],
+        [ROOT, "new char[] { 10, 11 }",            new char[] { (char)10, (char)11 }],
+        [ROOT, "new byte[] { 1, 2 }",              new byte[] { 1, 2 }],
+        [ROOT, "new short[] { 1, 2 }",             new short[] { 1, 2 }],
+        [ROOT, "new int[six]",                     new int[ROOT.six]],
+        [ROOT, "new int[#root.six]",               new int[ROOT.six]],
+        [ROOT, "new int[6]",                       new int[6]],
+        [ROOT, "new int[] { 1, 2 }",               new int[] { 1, 2 }],
+        [ROOT, "new long[] { 1, 2 }",              new long[] { 1, 2 }],
+        [ROOT, "new float[] { 1, 2 }",             new float[] { 1, 2 }],
+        [ROOT, "new double[] { 1, 2 }",            new double[] { 1, 2 }]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

@@ -35,24 +35,24 @@ namespace OGNL.Test;
 
 public class NullStringCatenationTest : OgnlTestCase
 {
-    private static Root             ROOT = new Root();
+    private static Root             ROOT = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Null string catenation
-        new object [] { ROOT, "\"bar\" + null", "bar" /* "barnull" */ },                                      /* Catenate null to a string */
-        new object [] { ROOT, "\"bar\" + \"null\"", "barnull" },                                      /* Catenate null to a string */
-        new object [] { ROOT, "\"bar\" + NullObject", "bar"/* "barnull" */},                                /* Catenate null to a string */
-        new object [] { ROOT, "20.56 + NullObject", typeof (NullReferenceException) },                 /* Catenate null to a number */
-    };
+        [ROOT, "\"bar\" + null", "bar" /* "barnull" */],                                      /* Catenate null to a string */
+        [ROOT, "\"bar\" + \"null\"", "barnull"],                                      /* Catenate null to a string */
+        [ROOT, "\"bar\" + NullObject", "bar"/* "barnull" */],                                /* Catenate null to a string */
+        [ROOT, "20.56 + NullObject", typeof (NullReferenceException)] /* Catenate null to a number */
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

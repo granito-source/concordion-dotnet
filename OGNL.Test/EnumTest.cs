@@ -35,34 +35,34 @@ namespace OGNL.Test;
 
 public class EnumTest : OgnlTestCase
 {
-    private static EnumBean             ROOT = new EnumBean();
+    private static EnumBean             ROOT = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // indexed access of with navigation chain (should start back at root)
-        new object [] { ROOT, "ItemValue", ROOT.ItemValue },
-        new object [] { ROOT, "ItemValue == 0 ", true },
+        [ROOT, "ItemValue", ROOT.ItemValue],
+        [ROOT, "ItemValue == 0 ", true],
         // new object [] { ROOT, "ItemValue == '0' ", true },
-        new object [] { ROOT, "ItemValue == \"0\" ", true },
-        new object [] { ROOT, "ItemValue == 'Item1' ", true },
-        new object [] { ROOT, "ItemValue == 'item1' ", true },
-        new object [] { ROOT, "ItemValue", SomeEnum.Item1 },
-        new object [] { ROOT, "ItemValue = 'Item2'", "Item2" },
-        new object [] { ROOT, "ItemValue", SomeEnum.Item2 , "Item1" , SomeEnum.Item1},
-        new object [] { ROOT, "ItemValue = 2", 2 },
-        new object [] { ROOT, "ItemValue", SomeEnum.Item3 , "Item1" , SomeEnum.Item1},
-        new object [] { ROOT, "ItemValue", SomeEnum.Item1 , "item2" , SomeEnum.Item2},
-        new object [] { ROOT, "ItemValue", SomeEnum.Item2 , "2" , SomeEnum.Item3},
-													
-    };
+        [ROOT, "ItemValue == \"0\" ", true],
+        [ROOT, "ItemValue == 'Item1' ", true],
+        [ROOT, "ItemValue == 'item1' ", true],
+        [ROOT, "ItemValue", SomeEnum.Item1],
+        [ROOT, "ItemValue = 'Item2'", "Item2"],
+        [ROOT, "ItemValue", SomeEnum.Item2 , "Item1" , SomeEnum.Item1],
+        [ROOT, "ItemValue = 2", 2],
+        [ROOT, "ItemValue", SomeEnum.Item3 , "Item1" , SomeEnum.Item1],
+        [ROOT, "ItemValue", SomeEnum.Item1 , "item2" , SomeEnum.Item2],
+        [ROOT, "ItemValue", SomeEnum.Item2 , "2" , SomeEnum.Item3]
+
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 2) 
             {

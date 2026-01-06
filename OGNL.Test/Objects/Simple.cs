@@ -127,11 +127,11 @@ public class Simple
 
     public override bool Equals(object other)
     {
-        bool     result = false;
+        var     result = false;
 
         if (other is Simple) 
         {
-            Simple      os = (Simple)other;
+            var      os = (Simple)other;
 
             result = OgnlTestCase.isEqual(os.getStringValue(), getStringValue()) && (os.getIntValue() == getIntValue());
         }

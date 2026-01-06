@@ -155,10 +155,10 @@ public class ObjectIndexedTest
     {
         OgnlRuntime.getPropertyDescriptor(typeof (CollectionBase), "");
         // OgnlRuntime.getPropertyDescriptor(typeof (java.util.AbstractSequentialList), "");
-        OgnlRuntime.getPropertyDescriptor(typeof (System.Array), "");
+        OgnlRuntime.getPropertyDescriptor(typeof (Array), "");
         OgnlRuntime.getPropertyDescriptor(typeof (ArrayList), "");
         // OgnlRuntime.getPropertyDescriptor(typeof (java.util.BitSet), "");
-        OgnlRuntime.getPropertyDescriptor(typeof (System.DateTime), "");
+        OgnlRuntime.getPropertyDescriptor(typeof (DateTime), "");
         OgnlRuntime.getPropertyDescriptor(typeof (FieldInfo), "");
         // OgnlRuntime.getPropertyDescriptor(typeof (java.util.LinkedList), "");
         OgnlRuntime.getPropertyDescriptor(typeof (IList), "");

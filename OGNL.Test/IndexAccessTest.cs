@@ -35,22 +35,22 @@ namespace OGNL.Test;
 
 public class IndexAccessTest : OgnlTestCase
 {
-    private static Root             ROOT = new Root();
+    private static Root             ROOT = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // indexed access of with navigation chain (should start back at root)
-        new object [] { ROOT, "List[Index]", ROOT.getList() [(ROOT.getIndex())] },
-        new object [] { ROOT, "List[size() - 1]", typeof (MethodFailedException) },
-    };
+        [ROOT, "List[Index]", ROOT.getList() [(ROOT.getIndex())]],
+        [ROOT, "List[size() - 1]", typeof (MethodFailedException)]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             result.addTest(new IndexAccessTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
         }

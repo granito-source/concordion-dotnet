@@ -35,38 +35,38 @@ namespace OGNL.Test;
 
 public class IndexedPropertyTest : OgnlTestCase
 {
-    private static Indexed          INDEXED = new Indexed();
+    private static Indexed          INDEXED = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Indexed properties
-        new object [] { INDEXED, "Values", INDEXED.getValues() },                                 /* gets string[] */
-        new object [] { INDEXED, "[\"Values\"]", typeof (MethodFailedException) },                           /* COnflict with this ["string"], Exception */
-        new object [] { INDEXED.getValues(), "[0]", INDEXED.getValues()[0] },                     /* "foo" */
-        new object [] { INDEXED, "getValues()[0]", INDEXED.getValues()[0] },                      /* "foo" directly from array */
-        new object [] { INDEXED, "Item[0]", INDEXED[0] },                             /* "foo" + "xxx" */
-        new object [] { INDEXED, "[0]", INDEXED [0] },                             /* "foo" + "xxx" */
+        [INDEXED, "Values", INDEXED.getValues()],                                 /* gets string[] */
+        [INDEXED, "[\"Values\"]", typeof (MethodFailedException)],                           /* COnflict with this ["string"], Exception */
+        [INDEXED.getValues(), "[0]", INDEXED.getValues()[0]],                     /* "foo" */
+        [INDEXED, "getValues()[0]", INDEXED.getValues()[0]],                      /* "foo" directly from array */
+        [INDEXED, "Item[0]", INDEXED[0]],                             /* "foo" + "xxx" */
+        [INDEXED, "[0]", INDEXED [0]],                             /* "foo" + "xxx" */
         // Index property can't getLength.
-        new object [] { INDEXED, "Values[^]", INDEXED.getValues () [0] },                             /* "foo" + "xxx" */
-        new object [] { INDEXED, "Values[|]", INDEXED.getValues ()[(1)] },                             /* "bar" + "xxx" */
-        new object [] { INDEXED, "Values[$]", INDEXED.getValues ()[(2)] },                             /* "baz" + "xxx" */
+        [INDEXED, "Values[^]", INDEXED.getValues () [0]],                             /* "foo" + "xxx" */
+        [INDEXED, "Values[|]", INDEXED.getValues ()[(1)]],                             /* "bar" + "xxx" */
+        [INDEXED, "Values[$]", INDEXED.getValues ()[(2)]],                             /* "baz" + "xxx" */
         // Try to use this, If There is a Property Named Item to. chould use this.
         // No used....
         // new object [] { INDEXED, "Item[^]", INDEXED.getValues (0) },                             /* "foo" + "xxx" */
-										
-        new object [] { INDEXED, "[0]", "fooxxx" , "xxxx" + "xxx", "xxxx" + "xxx" },    /* set through setValues(int, string) */
-        new object [] { INDEXED, "Item[1]", "bar" + "xxx", "xxxx" + "xxx", "xxxx" + "xxx" },    /* set through setValues(int, string) */
-        new object [] { INDEXED, "Item[1]", "xxxx" + "xxx" },                                   /* getValues(int) again to check if setValues(int, string) was called */
-        new object [] { INDEXED, "setValues(2, \"xxxx\")", null },                                /* was "baz" -> "xxxx" */
-    };
+
+        [INDEXED, "[0]", "fooxxx" , "xxxx" + "xxx", "xxxx" + "xxx"],    /* set through setValues(int, string) */
+        [INDEXED, "Item[1]", "bar" + "xxx", "xxxx" + "xxx", "xxxx" + "xxx"],    /* set through setValues(int, string) */
+        [INDEXED, "Item[1]", "xxxx" + "xxx"],                                   /* getValues(int) again to check if setValues(int, string) was called */
+        [INDEXED, "setValues(2, \"xxxx\")", null] /* was "baz" -> "xxxx" */
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

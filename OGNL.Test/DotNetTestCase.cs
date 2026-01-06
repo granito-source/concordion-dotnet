@@ -12,7 +12,7 @@ public class DotNetTestCase
     [Test]
     public void testHexString ()
     {
-        int i = 123 ;
+        var i = 123 ;
         Console.WriteLine (i.ToString ("x4"));
         Console.Write (typeof (float));
     }
@@ -20,7 +20,7 @@ public class DotNetTestCase
     public void TestLong ()
     {
         long l = 0x12aD ;
-        string s = "12aD" ;
+        var s = "12aD" ;
         Assert.AreEqual (l , Util.ParseLong (s , 16));
 
         l = 44 ;
@@ -50,11 +50,11 @@ public class DotNetTestCase
     [Test]
     public void TestIndexer ()
     {
-        Type type = typeof (Indexer) ;
-        PropertyInfo[] ps = type.GetProperties () ;
-        for (int i = 0; i < ps.Length; i++)
+        var type = typeof (Indexer) ;
+        var ps = type.GetProperties () ;
+        for (var i = 0; i < ps.Length; i++)
         {
-            PropertyInfo p = ps [i] ;
+            var p = ps [i] ;
 
             Console.Out.WriteLine ("p.MemberType = {0}", p.MemberType) ;
             Console.Out.WriteLine ("p.GetMethod = {0}", p.GetGetMethod ()) ;
@@ -70,9 +70,9 @@ public class DotNetTestCase
     [Test]
     public void testULong ()
     {
-        long l = unchecked ((long)0xf800000000000000L) ;
-        ulong u1 = 0xf800000000000000L ;
-        ulong u2 = (ulong) l ;
+        var l = unchecked ((long)0xf800000000000000L) ;
+        var u1 = 0xf800000000000000L ;
+        var u2 = (ulong) l ;
         Assert.AreEqual (u1 , u2);
         // No oct supported.
         // Assert.AreEqual (63 , 077);
@@ -83,7 +83,7 @@ public class DotNetTestCase
     [Test]
     public void testLoadType ()
     {
-        Type t = Type.GetType ("org.ognl.test.objects.Simple,Test") ;
+        var t = Type.GetType ("org.ognl.test.objects.Simple,Test") ;
         Assert.IsNotNull (t);
 
         // t = Type.GetType ("System.Collections.Specialized.ListDictionary,System") ;

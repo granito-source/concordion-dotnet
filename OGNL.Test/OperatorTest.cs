@@ -34,32 +34,32 @@ namespace OGNL.Test;
 
 public class OperatorTest : OgnlTestCase
 {
-    private static object[][]       TESTS = {
-        new object [] { null, "\"one\" > \"two\"", false },
-        new object [] { null, "\"one\" >= \"two\"", false },
-        new object [] { null, "\"one\" < \"two\"", true },
-        new object [] { null, "\"one\" <= \"two\"", true },
-        new object [] { null, "\"one\" == \"two\"", false },
-        new object [] { null, "\"o\" > \"o\"", false },
-        new object [] { null, "\"o\" gt \"o\"", false },
-        new object [] { null, "\"o\" >= \"o\"", true },
-        new object [] { null, "\"o\" gte \"o\"", true },
-        new object [] { null, "\"o\" < \"o\"", false },
-        new object [] { null, "\"o\" lt \"o\"", false },
-        new object [] { null, "\"o\" <= \"o\"", true },
-        new object [] { null, "\"o\" lte \"o\"", true },
-        new object [] { null, "\"o\" == \"o\"", true },
-        new object [] { null, "\"o\" eq \"o\"", true },
-    };
+    private static object[][]       TESTS = [
+        [null, "\"one\" > \"two\"", false],
+        [null, "\"one\" >= \"two\"", false],
+        [null, "\"one\" < \"two\"", true],
+        [null, "\"one\" <= \"two\"", true],
+        [null, "\"one\" == \"two\"", false],
+        [null, "\"o\" > \"o\"", false],
+        [null, "\"o\" gt \"o\"", false],
+        [null, "\"o\" >= \"o\"", true],
+        [null, "\"o\" gte \"o\"", true],
+        [null, "\"o\" < \"o\"", false],
+        [null, "\"o\" lt \"o\"", false],
+        [null, "\"o\" <= \"o\"", true],
+        [null, "\"o\" lte \"o\"", true],
+        [null, "\"o\" == \"o\"", true],
+        [null, "\"o\" eq \"o\"", true]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

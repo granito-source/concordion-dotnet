@@ -35,7 +35,7 @@ namespace OGNL.Test;
 
 public class PrimitiveNullHandlingTest : OgnlTestCase
 {
-    private static Simple           SIMPLE = new Simple();
+    private static Simple           SIMPLE = new();
 
     static PrimitiveNullHandlingTest ()
     {
@@ -43,23 +43,23 @@ public class PrimitiveNullHandlingTest : OgnlTestCase
         SIMPLE.setIntValue(34);
     }
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Primitive null handling
-        new object [] { SIMPLE, "FloatValue", (10.56f), null, (0f) },           /* set float to null, should yield 0.0f */
-        new object [] { SIMPLE, "IntValue", (34), null, (0) },              /* set int to null, should yield 0 */
-        new object [] { SIMPLE, "BooleanValue", false, true, true },      /* set bool to TRUE, should yield true */
-        new object [] { SIMPLE, "BooleanValue", true, null, false },              /* set bool to null, should yield false */
+        [SIMPLE, "FloatValue", (10.56f), null, (0f)],           /* set float to null, should yield 0.0f */
+        [SIMPLE, "IntValue", (34), null, (0)],              /* set int to null, should yield 0 */
+        [SIMPLE, "BooleanValue", false, true, true],      /* set bool to TRUE, should yield true */
+        [SIMPLE, "BooleanValue", true, null, false] /* set bool to null, should yield false */
         // new object [] { SIMPLE, "BigDecValue", (decimal) 10.0, null, (decimal) 0.0 },              /* set decimal to null, should yield 0.0 */
-    };
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

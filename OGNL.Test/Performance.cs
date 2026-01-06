@@ -43,7 +43,7 @@ public class Performance
 
     private string                  name;
     private OgnlContext             context = (OgnlContext)Ognl.createDefaultContext(null);
-    private Bean1                   root = new Bean1();
+    private Bean1                   root = new();
     private SimpleNode              expression;
     private MethodInfo                  method;
     private int                     iterations;
@@ -80,7 +80,7 @@ public class Performance
       ===================================================================*/
     public static void main(string[] args)
     {
-        for (int i = 0; i < args.Length; i++) 
+        for (var i = 0; i < args.Length; i++) 
         {
             if (args[i].Equals("-time")) 
             {
@@ -101,31 +101,30 @@ public class Performance
         OgnlRuntime.setPropertyAccessor(typeof (object), new CompilingPropertyAccessor());
         try 
         {
-            Performance[]   tests = new Performance[]
-            {
-                new Performance("Constant",
+            Performance[]   tests = [
+                new("Constant",
                     "100 + 20 * 5",
                     "testConstantExpression"),
-                new Performance("Single Property",
+                new("Single Property",
                     "bean2",
                     "testSinglePropertyExpression"),
-                new Performance("Property Navigation",
+                new("Property Navigation",
                     "bean2.bean3.value",
                     "testPropertyNavigationExpression"),
-                new Performance("Property Navigation and Comparison",
+                new("Property Navigation and Comparison",
                     "bean2.bean3.value <= 24",
                     "testPropertyNavigationAndComparisonExpression"),
-                new Performance("Property Navigation with Indexed Access",
+                new("Property Navigation with Indexed Access",
                     "bean2.bean3.indexedValue[25]",
                     "testIndexedPropertyNavigationExpression"),
-                new Performance("Property Navigation with Map Access",
+                new("Property Navigation with Map Access",
                     "bean2.bean3.map['foo']",
-                    "testPropertyNavigationWithMapExpression"),
-            };
+                    "testPropertyNavigationWithMapExpression")
+            ];
 
-            for (int i = 0; i < tests.Length; i++) 
+            for (var i = 0; i < tests.Length; i++) 
             {
-                Performance     perf = tests[i];
+                var     perf = tests[i];
 
                 try 
                 {
@@ -161,7 +160,7 @@ public class Performance
         expression = (SimpleNode)Ognl.parseExpression(expressionString);
         try 
         {
-            method = GetType().GetMethod(javaMethodName, new Type[] {});
+            method = GetType().GetMethod(javaMethodName, []);
         } 
         catch (Exception ex) 
         {
@@ -240,7 +239,7 @@ public class Performance
     {
         try 
         {
-            return (Results)method.Invoke(this, new object[] {});
+            return (Results)method.Invoke(this, []);
         } 
         catch (Exception ex) 
         {
@@ -253,7 +252,7 @@ public class Performance
         startTest();
         do 
         {
-            int     result = 100 + 20 * 5;
+            var     result = 100 + 20 * 5;
         } while (!done());
         return endTest();
     }
@@ -283,7 +282,7 @@ public class Performance
         startTest();
         do 
         {
-            bool     result = root.getBean2().getBean3().getValue() < 24;
+            var     result = root.getBean2().getBean3().getValue() < 24;
         } while (!done());
         return endTest();
     }

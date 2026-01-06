@@ -34,43 +34,44 @@ namespace OGNL.Test;
 
 public class ConstantTest : OgnlTestCase
 {
-    private static object[][]       TESTS = {
-        new object [] { "12345", (12345) },
-        new object [] { "0x100", (256) },
-        new object [] { "0xfE", (254) },
-        new object [] { "01000", (512) },
-        new object [] { "1234L", (1234L) },
-        new object [] { "12.34", (12.34) },
-        new object [] { ".1234", (.12340000000000) },
-        new object [] { "12.34f", (12.34f) },
-        new object [] { "12.", (double)(12) },
-        new object [] { "12e+1d", (double)(120) },
-        new object [] { "'x'", ('x') },
-        new object [] { "'\\n'", ('\n') },
-        new object [] { "'\\u048c'", ('\u048c') },
-        new object [] { "'\\47'", ('\x27') },
-        new object [] { "'\\367'", ('\xF7') },
-        new object [] { "'\\367", typeof (ExpressionSyntaxException) },
-        new object [] { "'\\x'", typeof (ExpressionSyntaxException) },
-        new object [] { "\"hello world\"", "hello world" },
-        new object [] { "\"\\u00a0\\u0068ell\\'o\\\\\\n\\r\\f\\t\\b\\\"\\167orld\\\"\"", "\u00a0hell'o\\\n\r\f\t\b\"world\"" },
-        new object [] { "\"hello world", typeof (ExpressionSyntaxException) },
-        new object [] { "\"hello\\x world\"", typeof (ExpressionSyntaxException) },
-        new object [] { "null", null },
-        new object [] { "true", true },
-        new object [] { "false", false },
-        new object [] { "{ false, true, null, 0, 1. }", Util.asList(new object[] { false , true, null, (0), (1d) } ) },
-        new object [] { "'HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\"'", "HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\"" },
-    };
+    private static object[][]       TESTS = [
+        ["12345", (12345)],
+        ["0x100", (256)],
+        ["0xfE", (254)],
+        ["01000", (512)],
+        ["1234L", (1234L)],
+        ["12.34", (12.34)],
+        [".1234", (.12340000000000)],
+        ["12.34f", (12.34f)],
+        ["12.", (double)(12)],
+        ["12e+1d", (double)(120)],
+        ["'x'", ('x')],
+        ["'\\n'", ('\n')],
+        ["'\\u048c'", ('\u048c')],
+        ["'\\47'", ('\x27')],
+        ["'\\367'", ('\xF7')],
+        ["'\\367", typeof (ExpressionSyntaxException)],
+        ["'\\x'", typeof (ExpressionSyntaxException)],
+        ["\"hello world\"", "hello world"],
+        ["\"\\u00a0\\u0068ell\\'o\\\\\\n\\r\\f\\t\\b\\\"\\167orld\\\"\"", "\u00a0hell'o\\\n\r\f\t\b\"world\""],
+        ["\"hello world", typeof (ExpressionSyntaxException)],
+        ["\"hello\\x world\"", typeof (ExpressionSyntaxException)],
+        ["null", null],
+        ["true", true],
+        ["false", false],
+        ["{ false, true, null, 0, 1. }", Util.asList(new object[] { false , true, null, (0), (1d) } )],
+        ["'HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\"'", "HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\""
+        ]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             result.addTest(new ConstantTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null, (string)TESTS[i][0], TESTS[i][1]));
         }

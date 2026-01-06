@@ -35,25 +35,25 @@ namespace OGNL.Test;
 
 public class MethodWithConversionTest : OgnlTestCase
 {
-    private static Simple           SIMPLE = new Simple();
+    private static Simple           SIMPLE = new();
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Method call with conversion
-        new object[] { SIMPLE, "setValues(10, \"10.56\", 34.225)", null },
-        new object[] { SIMPLE, "StringValue", "10" },
-        new object[] { SIMPLE, "StringValue", "10", ('x'), "x" },       /* set through setValue() */
-        new object[] { SIMPLE, "setStringValue('x')", null },                        /* set by calling setStringValue() directly */
-        new object[] { SIMPLE, "FloatValue", (10.56f) },
-    };
+        [SIMPLE, "setValues(10, \"10.56\", 34.225)", null],
+        [SIMPLE, "StringValue", "10"],
+        [SIMPLE, "StringValue", "10", ('x'), "x"],       /* set through setValue() */
+        [SIMPLE, "setStringValue('x')", null],                        /* set by calling setStringValue() directly */
+        [SIMPLE, "FloatValue", (10.56f)]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

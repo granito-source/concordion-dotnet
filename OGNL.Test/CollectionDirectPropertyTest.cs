@@ -1,6 +1,3 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,71 +28,68 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
+
 namespace OGNL.Test;
 
-public class CollectionDirectPropertyTest : OgnlTestCase
-{
-    private static Root             ROOT = new Root();
+public class CollectionDirectPropertyTest : OgnlTestCase {
+    private static readonly Root Root = new();
 
-    private static object[][]       TESTS = {
+    private static readonly object[][] Tests = [
         // Collection direct properties
-        new object [] { Util.asList(new string[]{"hello", "world"}), "size", 2 },
-        new object [] { Util.asList(new string[]{"hello", "world"}), "isEmpty", false },
-        new object [] { Util.asList(new string[]{}), "isEmpty", true },
-        new object [] { Util.asList(new string[]{"hello", "world"}), "iterator.next", "hello" },
-        new object [] { Util.asList(new string[]{"hello", "world"}), "iterator.hasNext", true },
-        new object [] { Util.asList(new string[]{"hello", "world"}), "#it = iterator, #it.next, #it.next, #it.hasNext", false },
-        new object [] { Util.asList(new string[]{"hello", "world"}), "#it = iterator, #it.next, #it.next", "world" },
-        new object [] { Util.asList(new string[]{"hello", "world"}), "size", 2 },
-        new object [] { ROOT, "Map[\"test\"]", ROOT },
-        new object [] { ROOT, "Map.size", ROOT.getMap().Count },
-        new object [] { ROOT, "Map.keys", ROOT.getMap().Keys },
-        new object [] { ROOT, "Map.values", ROOT.getMap().Values },
-        new object [] { ROOT, "Map.keys.size", ROOT.getMap().Keys.Count },
-        new object [] { ROOT, "Map[\"size\"]", ROOT.getMap() [("size")] },
-        new object [] { ROOT, "Map.isEmpty", ROOT.getMap().Count == 0 },
-        new object [] { ROOT, "Map[\"isEmpty\"]", null },
-    };
+        [Util.asList(new[] { "hello", "world" }), "size", 2],
+        [Util.asList(new[] { "hello", "world" }), "isEmpty", false],
+        [Util.asList(new string[] { }), "isEmpty", true],
+        [Util.asList(new[] { "hello", "world" }), "iterator.next", "hello"],
+        [Util.asList(new[] { "hello", "world" }), "iterator.hasNext", true],
+        [Util.asList(new[] { "hello", "world" }), "#it = iterator, #it.next, #it.next, #it.hasNext", false],
+        [Util.asList(new[] { "hello", "world" }), "#it = iterator, #it.next, #it.next", "world"],
+        [Util.asList(new[] { "hello", "world" }), "size", 2],
+        [Root, "Map[\"test\"]", Root],
+        [Root, "Map.size", Root.getMap().Count],
+        [Root, "Map.keys", Root.getMap().Keys],
+        [Root, "Map.values", Root.getMap().Values],
+        [Root, "Map.keys.size", Root.getMap().Keys.Count],
+        [Root, "Map[\"size\"]", Root.getMap()["size"]],
+        [Root, "Map.isEmpty", Root.getMap().Count == 0],
+        [Root, "Map[\"isEmpty\"]", null]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new CollectionDirectPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new CollectionDirectPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new CollectionDirectPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
+        for (var i = 0; i < Tests.Length; i++) {
+            if (Tests[i].Length == 3) {
+                result.addTest(new CollectionDirectPropertyTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                    Tests[i][2]));
+            } else {
+                if (Tests[i].Length == 4) {
+                    result.addTest(new CollectionDirectPropertyTest((string)Tests[i][1], Tests[i][0],
+                        (string)Tests[i][1], Tests[i][2], Tests[i][3]));
+                } else {
+                    if (Tests[i].Length == 5) {
+                        result.addTest(new CollectionDirectPropertyTest((string)Tests[i][1], Tests[i][0],
+                            (string)Tests[i][1], Tests[i][2], Tests[i][3], Tests[i][4]));
+                    } else {
                         throw new Exception("don't understand TEST format");
                     }
                 }
             }
         }
+
         return result;
     }
 
     [Test]
-    public void Test5 ()
+    public void Test5()
     {
-        suite () [5].runTest ();
+        suite()[5].runTest();
     }
 
     /*===================================================================
@@ -103,7 +97,6 @@ public class CollectionDirectPropertyTest : OgnlTestCase
       ===================================================================*/
     public CollectionDirectPropertyTest()
     {
-	 
     }
 
     public CollectionDirectPropertyTest(string name) : base(name)
@@ -111,21 +104,20 @@ public class CollectionDirectPropertyTest : OgnlTestCase
         ;
     }
 
-    public CollectionDirectPropertyTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+    public CollectionDirectPropertyTest(string name, object root, string expressionString, object expectedResult,
+        object setValue, object expectedAfterSetResult)
         : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        
     }
 
-    public CollectionDirectPropertyTest(string name, object root, string expressionString, object expectedResult, object setValue)
+    public CollectionDirectPropertyTest(string name, object root, string expressionString, object expectedResult,
+        object setValue)
         : base(name, root, expressionString, expectedResult, setValue)
     {
-        
     }
 
     public CollectionDirectPropertyTest(string name, object root, string expressionString, object expectedResult)
         : base(name, root, expressionString, expectedResult)
     {
-        
     }
 }

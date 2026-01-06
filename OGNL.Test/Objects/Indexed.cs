@@ -32,7 +32,7 @@ namespace OGNL.Test.Objects;
 
 public class Indexed 
 {
-    private string[]        values = new string[] { "foo", "bar", "baz" };
+    private string[]        values = ["foo", "bar", "baz"];
 
     public Indexed()
     {

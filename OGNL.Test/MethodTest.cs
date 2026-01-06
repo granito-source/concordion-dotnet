@@ -36,18 +36,18 @@ namespace OGNL.Test;
 public class MethodTest : OgnlTestCase
 {
     private static object           ROOT = new Simple();
-    private static object[][]       TESTS = {
-        new object [] { "GetHashCode().ToString ()", ROOT.GetHashCode().ToString () }
-    };
+    private static object[][]       TESTS = [
+        ["GetHashCode().ToString ()", ROOT.GetHashCode().ToString ()]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             result.addTest(new MethodTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", ROOT, (string)TESTS[i][0], TESTS[i][1]));
         }

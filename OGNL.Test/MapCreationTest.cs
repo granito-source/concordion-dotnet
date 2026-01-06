@@ -37,7 +37,7 @@ namespace OGNL.Test;
 
 public class MapCreationTest : OgnlTestCase
 {
-    private static Root             ROOT = new Root();
+    private static Root             ROOT = new();
     private static IDictionary              fooBarMap1 = new Hashtable();
     private static IDictionary              fooBarMap2 = new Hashtable();
     private static IDictionary              fooBarMap3 = new Hashtable();
@@ -57,24 +57,24 @@ public class MapCreationTest : OgnlTestCase
         fooBarMap5.Add("bar", "baz");
     }
 
-    private static object[][]       TESTS = {
+    private static object[][]       TESTS = [
         // Map creation
-        new object [] { ROOT, "#{ \"foo\" : \"bar\" }",                                               fooBarMap1 },
-        new object [] { ROOT, "#{ \"foo\" : \"bar\", \"bar\" : \"baz\"  }",                           fooBarMap2 },
-        new object [] { ROOT, "#{ \"foo\", \"bar\" : \"baz\"  }",                                     fooBarMap3 },
+        [ROOT, "#{ \"foo\" : \"bar\" }",                                               fooBarMap1],
+        [ROOT, "#{ \"foo\" : \"bar\", \"bar\" : \"baz\"  }",                           fooBarMap2],
+        [ROOT, "#{ \"foo\", \"bar\" : \"baz\"  }",                                     fooBarMap3],
         // TODO: Can't load type ListDictionary.
         /*new object [] { ROOT, "#@System.Collections.Specialized.ListDictionary@{ \"foo\" : \"bar\", \"bar\" : \"baz\"  }",  fooBarMap4 },*/
-        new object [] { ROOT, "#@System.Collections.SortedList@{ \"foo\" : \"bar\", \"bar\" : \"baz\"  }",        fooBarMap5 },
-    };
+        [ROOT, "#@System.Collections.SortedList@{ \"foo\" : \"bar\", \"bar\" : \"baz\"  }",        fooBarMap5]
+    ];
 
     /*===================================================================
         Public static methods
       ===================================================================*/
     public override TestSuite suite()
     {
-        TestSuite       result = new TestSuite();
+        var       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++) 
         {
             if (TESTS[i].Length == 3) 
             {

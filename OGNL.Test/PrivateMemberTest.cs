@@ -77,12 +77,12 @@ public class PrivateMemberTest
     [Test]
     public void testPrivateAccessor() // throws OgnlException
     {
-        NUnit.Framework.Assert.AreEqual(Ognl.getValue("privateProperty", context, this), getPrivateProperty());
+        Assert.AreEqual(Ognl.getValue("privateProperty", context, this), getPrivateProperty());
     }
     [Test]
     public void testPrivateField() // throws OgnlException
     {
-        NUnit.Framework.Assert.AreEqual(Ognl.getValue("_privateProperty", context, this), _privateProperty);
+        Assert.AreEqual(Ognl.getValue("_privateProperty", context, this), _privateProperty);
     }
 
     /*===================================================================
