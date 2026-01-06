@@ -36,7 +36,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace OGNL.Test;
 
 [TestFixture]
-public class OgnlMutationTest {
+public class MutationTest {
     private readonly OgnlContext context = Ognl.createDefaultContext(null);
 
     private readonly TestRoot root = new();

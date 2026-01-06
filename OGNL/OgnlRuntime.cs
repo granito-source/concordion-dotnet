@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
-//	Copyright (c) 1998-2004, Drew Davidson ,  Luke Blanshard and Foxcoming
+//	Copyright (c) 1998-2004, Drew Davidson, Luke Blanshard and Foxcoming
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -41,7 +42,7 @@ namespace OGNL;
  * @author Luke Blanshard (blanshlu@netscape.net)
  * @author Drew Davidson (drew@ognl.org)
  */
-public abstract class OgnlRuntime {
+public static class OgnlRuntime {
     public static object NotFound = new();
 
     public static IList NotFoundList = new ArrayList();
@@ -106,7 +107,7 @@ public abstract class OgnlRuntime {
 
     private static ClassCache instanceMethodCache = new();
 
-    private static ClassCache fieldCache = new();
+    private static Dictionary<Type, IDictionary<string, FieldInfo>?> fieldCache = new();
 
     private static IList superclasses = new ArrayList(); /* Used by fieldCache lookup */
 
@@ -123,6 +124,13 @@ public abstract class OgnlRuntime {
     private static EvaluationPool evaluationPool = new();
 
     private static ObjectArrayPool objectArrayPool = new();
+
+    public static V? SafeGet<K, V>(this IDictionary<K, V> dictionary, K key)
+    {
+        dictionary.TryGetValue(key, out var value);
+
+        return value;
+    }
 
     /**
         This is a highly specialized map for storing values keyed by Type objects.
@@ -535,21 +543,15 @@ public abstract class OgnlRuntime {
      * If object is null this will return true because null is compatible
      * with any type.
      */
-    public static bool isTypeCompatible(object obj, Type c)
+    public static bool isTypeCompatible(object? obj, Type type)
     {
-        var result = true;
+        if (obj == null)
+            return true;
 
-        if (obj != null) {
-            if (c.IsPrimitive) {
-                if (obj.GetType() != c) {
-                    result = false;
-                }
-            } else if (!c.IsInstanceOfType(obj)) {
-                result = false;
-            }
-        }
+        if (type.IsPrimitive)
+            return obj.GetType() == type;
 
-        return result;
+        return type.IsInstanceOfType(obj);
     }
 
     /**
@@ -634,13 +636,16 @@ public abstract class OgnlRuntime {
         return primitiveDefaults.get(forClass);
     }
 
-    public static object getConvertedType(OgnlContext context, object target, MemberInfo member, string propertyName,
-        object value, Type type)
+    public static object? getConvertedType(OgnlContext context,
+        object target, MemberInfo member, string propertyName,
+        object? value, Type type)
     {
-        return context.getTypeConverter().convertValue(context, target, member, propertyName, value, type);
+        return context.getTypeConverter().convertValue(context, target,
+            member, propertyName, value, type);
     }
 
-    public static bool getConvertedTypes(OgnlContext context, object target, MemberInfo member, string propertyName,
+    public static bool getConvertedTypes(OgnlContext context,
+        object target, MemberInfo member, string propertyName,
         Type[] parameterTypes, object[] args, object[] newArgs)
     {
         var result = false;
@@ -962,9 +967,10 @@ public abstract class OgnlRuntime {
             if ((result = (IDictionary)cache.get(targetClass)) == null) {
                 cache.put(targetClass, result = new Hashtable(23));
                 var c = targetClass;
-                // TODO: getDeclaredMethods, Ignore, Just return full list.
-                // Only public method here.
-                var ma = c.GetMethods();
+                var ma = c.GetMethods(
+                    BindingFlags.Public |
+                    BindingFlags.NonPublic |
+                    BindingFlags.Instance);
 
                 for (int i = 0, icount = ma.Length; i < icount; i++) {
                     if (ma[i].IsStatic == staticMethods) {
@@ -988,110 +994,91 @@ public abstract class OgnlRuntime {
         return (IList)getMethods(targetClass, staticMethods)[name];
     }
 
-    public static IDictionary getFields(Type targetClass)
+    public static IDictionary<string, FieldInfo> getFields(Type targetClass)
     {
-        IDictionary result;
-
         lock (fieldCache) {
-            if ((result = (IDictionary)fieldCache.get(targetClass)) == null) {
-                FieldInfo[] fa;
+            var result = fieldCache.SafeGet(targetClass);
 
-                result = new Hashtable(23);
+            if (result == null) {
+                var fields = targetClass.GetFields(
+                    BindingFlags.Public |
+                    BindingFlags.NonPublic |
+                    BindingFlags.Instance);
 
-                // TODO: getDeclaredFields
-                // Ignore Just Get All Fields
-                fa = targetClass.GetFields();
+                result = new Dictionary<string, FieldInfo>();
 
-                for (var i = 0; i < fa.Length; i++) {
-                    result[fa[i].Name] = fa[i];
-                }
+                foreach (var field in fields)
+                    result[field.Name] = field;
 
-                fieldCache.put(targetClass, result);
+                fieldCache[targetClass] = result;
             }
-        }
 
-        return result;
+            return result;
+        }
     }
 
-    public static FieldInfo getField(Type inClass, string name)
+    public static FieldInfo? getField(Type inClass, string name)
     {
-        FieldInfo result = null;
-
-        lock (fieldCache) {
-            var o = getFields(inClass)[name];
-
-            if (o is FieldInfo) {
-                result = (FieldInfo)o;
-            } else {
-                if (result == NotFound)
-                    result = null;
-            }
-        }
-
-        return result;
+        return getFields(inClass).SafeGet(name);
     }
 
     public static object? getFieldValue(OgnlContext context,
-        object target, string propertyName)
+        object target, string name)
     {
-        return getFieldValue(context, target, propertyName, false);
+        return getFieldValue(context, target, name, false);
     }
 
-    public static object? getFieldValue(OgnlContext context, object
-        target, string propertyName, bool checkAccessAndExistence)
+    public static object? getFieldValue(OgnlContext context,
+        object target, string name, bool checkAccessAndExistence)
     {
-        object result = null;
-        var f = getField((target == null) ? null : target.GetType(), propertyName);
+        var field = getField(target.GetType(), name);
 
-        if (result == null) {
-            if (f == null) {
-                throw new MissingFieldException(propertyName);
-            }
+        if (field == null || field.IsStatic)
+            throw new MissingFieldException(name);
+
+        try {
+            var state = context.getMemberAccess()
+                .setup(context, target, field, name);
 
             try {
-                object state = null;
-
-                if ((f != null) && !f.IsStatic) {
-                    state = context.getMemberAccess().setup(context, target, f, propertyName);
-                    result = f.GetValue(target);
-                    context.getMemberAccess().restore(context, target, f, propertyName, state);
-                } else
-                    throw new MissingFieldException(propertyName);
-            } catch (MemberAccessException) {
-                throw new MissingFieldException(propertyName);
+                return field.GetValue(target);
+            } finally {
+                context.getMemberAccess()
+                    .restore(context, target, field, name, state);
             }
+        } catch (MemberAccessException ex) {
+            throw new MissingFieldException(name, ex);
         }
-
-        return result;
     }
 
     public static bool setFieldValue(OgnlContext context, object target,
-        string propertyName, object? value)
+        string name, object? value)
     {
-        var result = false;
+        var field = getField(target.GetType(), name);
+
+        if (field == null || field.IsStatic)
+            throw new MissingFieldException(name);
 
         try {
-            var f = getField(target == null ? null : target.GetType(), propertyName);
-            object state;
+            var state = context.getMemberAccess()
+                .setup(context, target, field, name);
 
-            if ((f != null) && !f.IsStatic) {
-                state = context.getMemberAccess().setup(context, target, f, propertyName);
+            try {
+                if (!isTypeCompatible(value, field.FieldType) &&
+                    (value = getConvertedType(context, target, field,
+                        name, value, field.FieldType)) == null)
+                    return false;
 
-                try {
-                    if (isTypeCompatible(value, f.FieldType) ||
-                        ((value = getConvertedType(context, target, f, propertyName, value, f.FieldType)) != null)) {
-                        f.SetValue(target, value);
-                        result = true;
-                    }
-                } finally {
-                    context.getMemberAccess().restore(context, target, f, propertyName, state);
-                }
+                field.SetValue(target, value);
+
+                return true;
+            } finally {
+                context.getMemberAccess()
+                    .restore(context, target, field, name, state);
             }
         } catch (MemberAccessException ex) {
-            throw new NoSuchPropertyException(target, propertyName, ex);
+            throw new NoSuchPropertyException(target, name, ex);
         }
-
-        return result;
     }
 
     public static bool isFieldAccessible(OgnlContext context, object target, Type inClass, string propertyName)

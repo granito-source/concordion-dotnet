@@ -113,8 +113,9 @@ public class ArrayElementsTest : OgnlTestCase {
     }
 
     class ArrayDefaultTypeConverter : DefaultTypeConverter {
-        public override object convertValue(IDictionary context, object target, MemberInfo member, string propertyName,
-            object value, Type toType)
+        public override object? convertValue(IDictionary context, object target, MemberInfo? member,
+            string? propertyName,
+            object? value, Type toType)
         {
             if (value.GetType().IsArray) {
                 if (!toType.IsArray) {

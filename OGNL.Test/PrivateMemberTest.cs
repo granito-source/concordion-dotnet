@@ -1,7 +1,6 @@
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //	Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //	Redistribution and use in source and binary forms, with or without
@@ -30,67 +29,40 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Diagnostics.CodeAnalysis;
+
 namespace OGNL.Test;
 
-/**
- * This is a test program for private access in OGNL.
- * shows the failures and a summary.
- */
 [TestFixture]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public class PrivateMemberTest {
-    private string _privateProperty = "private value";
+    private readonly string privateField = "private value";
 
-    protected OgnlContext context;
+    private readonly OgnlContext context = Ognl.createDefaultContext(null);
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public TestSuite suite()
-    {
-        // return new TestSuite(typeof (PrivateMemberTest));
-        // TODO: Simple Test
-        return null;
-    }
-
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public PrivateMemberTest(string name)
-    {
-    }
-
-    /*===================================================================
-        Public methods
-      ===================================================================*/
-    private string getPrivateProperty()
-    {
-        return _privateProperty;
-    }
-
-    private void setPrivateProperty(string value)
-    {
-        _privateProperty = value;
-    }
-
-    [Test]
-    public void testPrivateAccessor() // throws OgnlException
-    {
-        Assert.AreEqual(Ognl.getValue("privateProperty", context, this), getPrivateProperty());
-    }
-
-    [Test]
-    public void testPrivateField() // throws OgnlException
-    {
-        Assert.AreEqual(Ognl.getValue("_privateProperty", context, this), _privateProperty);
-    }
-
-    /*===================================================================
-        Overridden methods
-      ===================================================================*/
     [SetUp]
     public void setUp()
     {
-        context = (OgnlContext)Ognl.createDefaultContext(null);
         context.setMemberAccess(new DefaultMemberAccess(true));
+    }
+
+    private string GetPrivateAccessor()
+    {
+        return privateField;
+    }
+
+    [Test]
+    public void AllowsGettingValueOfPrivateAccessor()
+    {
+        Assert.That(Ognl.getValue("PrivateAccessor", context, this),
+            Is.EqualTo("private value"));
+    }
+
+    [Test]
+    public void AllowsGettingValueOfPrivateField()
+    {
+        Assert.That(Ognl.getValue("privateField", context, this),
+            Is.EqualTo("private value"));
     }
 }
