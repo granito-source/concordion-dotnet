@@ -42,15 +42,15 @@ public class StaticsAndConstructorsTest : OgnlTestCase {
         ["@@Max(3,4)", 4],
         ["new System.Text.StringBuilder().Append(55).ToString()", "55"],
         ["Type", Root.GetType()],
-        ["@Test.org.ognl.test.objects.Root@class.Type", Root.GetType().GetType()],
+        [$"@{typeof(Root).FullName}@class.Type", Root.GetType().GetType()],
         ["Type.GetType()", Root.GetType().GetType()],
-        ["@Test.org.ognl.test.objects.Root@class.GetType()", Root.GetType().GetType()],
-        ["@Test.org.ognl.test.objects.Root@class.Name", Root.GetType().Name],
+        [$"@{typeof(Root).FullName}@class.GetType()", Root.GetType().GetType()],
+        [$"@{typeof(Root).FullName}@class.Name", Root.GetType().Name],
         ["Type.GetElementType()", Root.GetType().GetElementType()],
         ["Type.ElementType", Root.GetType().GetElementType()],
         ["Type.Type", Root.GetType().GetType()],
         ["getStaticInt()", Root.getStaticInt()],
-        ["@Test.org.ognl.test.objects.Root@getStaticInt()", Root.getStaticInt()]
+        [$"@{typeof(Root).FullName}@getStaticInt()", Root.getStaticInt()]
     ];
 
     public override TestSuite suite()

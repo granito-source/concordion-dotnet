@@ -51,9 +51,9 @@ public class ArrayCreationTest : OgnlTestCase {
             "new Test.org.ognl.test.objects.Simple[] { new Test.org.ognl.test.objects.Simple(), new Test.org.ognl.test.objects.Simple(\"foo\", 1.0, 2) }",
             new[] { new Simple(), new Simple("foo", 1.0f, 2) }
         ],
-        [Root, "new Test.org.ognl.test.objects.Simple[5]", new Simple[5]],
-        [Root, "new Test.org.ognl.test.objects.Simple(new object[5])", new Simple(new object[5])],
-        [Root, "new Test.org.ognl.test.objects.Simple(new string[5])", new Simple(new string[5])]
+        [Root, $"new {typeof(Simple).FullName}[5]", new Simple[5]],
+        [Root, $"new {typeof(Simple).FullName}(new object[5])", new Simple(new object[5])],
+        [Root, $"new {typeof(Simple).FullName}(new string[5])", new Simple(new string[5])]
     ];
 
     public override TestSuite suite()
