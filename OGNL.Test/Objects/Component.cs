@@ -28,17 +28,58 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test.objects
-{
+namespace OGNL.Test.Objects;
 
-	public class ObjectIndexed : BaseObjectIndexed
-	{
-		public ObjectIndexed()
-		{
-       
-			setAttribute("foo", "bar");
-			setAttribute("bar", "baz");
-			setAttribute("other", new OtherObjectIndexed());
-		}
-	}
+public class Component
+{
+    private URLStorage          toDisplay = new URLStorage();
+    private Page                page = new Page();
+
+    public class URLStorage 
+    {
+        private string          pictureUrl = "http://www.picturespace.com/pictures/100";
+
+        public string getPictureUrl()
+        {
+            return pictureUrl;
+        }
+
+        public void setPictureUrl(string value)
+        {
+            pictureUrl = value;
+        }
+    }
+
+    public class Page 
+    {
+        public object createRelativeAsset(string value)
+        {
+            return "/toplevel/" + value;
+        }
+    }
+
+    public Component()
+    {
+        
+    }
+
+    public Page getPage()
+    {
+        return page;
+    }
+
+    public void setPage(Page value)
+    {
+        page = value;
+    }
+
+    public URLStorage getToDisplay()
+    {
+        return toDisplay;
+    }
+
+    public void setToDisplay(URLStorage value)
+    {
+        toDisplay = value;
+    }
 }

@@ -1,9 +1,6 @@
-using System ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
-using NUnit.Framework ;
-
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -34,101 +31,99 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class PrimitiveArrayTest : OgnlTestCase
 {
+    private static Root             ROOT = new Root();
 
-	public class PrimitiveArrayTest : OgnlTestCase
-	{
-		private static Root             ROOT = new Root();
+    private static object[][]       TESTS = {
+        // Primitive array creation
+        new object [] { ROOT, "new bool[5]",                   new bool[5] },
+        new object [] { ROOT, "new bool[] { true, false }",    new bool[] { true, false } },
+        new object [] { ROOT, "new bool[] { 0, 1, 5.5 }",      new bool[] { false, true, true } },
+        new object [] { ROOT, "new char[] { 'a', 'b' }",          new char[] { 'a', 'b' } },
+        new object [] { ROOT, "new char[] { 10, 11 }",            new char[] { (char)10, (char)11 } },
+        new object [] { ROOT, "new byte[] { 1, 2 }",              new byte[] { 1, 2 } },
+        new object [] { ROOT, "new short[] { 1, 2 }",             new short[] { 1, 2 } },
+        new object [] { ROOT, "new int[six]",                     new int[ROOT.six] },
+        new object [] { ROOT, "new int[#root.six]",               new int[ROOT.six] },
+        new object [] { ROOT, "new int[6]",                       new int[6] },
+        new object [] { ROOT, "new int[] { 1, 2 }",               new int[] { 1, 2 } },
+        new object [] { ROOT, "new long[] { 1, 2 }",              new long[] { 1, 2 } },
+        new object [] { ROOT, "new float[] { 1, 2 }",             new float[] { 1, 2 } },
+        new object [] { ROOT, "new double[] { 1, 2 }",            new double[] { 1, 2 } },
+    };
 
-		private static object[][]       TESTS = {
-													// Primitive array creation
-										new object [] { ROOT, "new bool[5]",                   new bool[5] },
-										new object [] { ROOT, "new bool[] { true, false }",    new bool[] { true, false } },
-										new object [] { ROOT, "new bool[] { 0, 1, 5.5 }",      new bool[] { false, true, true } },
-										new object [] { ROOT, "new char[] { 'a', 'b' }",          new char[] { 'a', 'b' } },
-										new object [] { ROOT, "new char[] { 10, 11 }",            new char[] { (char)10, (char)11 } },
-										new object [] { ROOT, "new byte[] { 1, 2 }",              new byte[] { 1, 2 } },
-										new object [] { ROOT, "new short[] { 1, 2 }",             new short[] { 1, 2 } },
-										new object [] { ROOT, "new int[six]",                     new int[ROOT.six] },
-										new object [] { ROOT, "new int[#root.six]",               new int[ROOT.six] },
-										new object [] { ROOT, "new int[6]",                       new int[6] },
-										new object [] { ROOT, "new int[] { 1, 2 }",               new int[] { 1, 2 } },
-										new object [] { ROOT, "new long[] { 1, 2 }",              new long[] { 1, 2 } },
-										new object [] { ROOT, "new float[] { 1, 2 }",             new float[] { 1, 2 } },
-										new object [] { ROOT, "new double[] { 1, 2 }",            new double[] { 1, 2 } },
-		};
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            if (TESTS[i].Length == 3) 
+            {
+                result.addTest(new PrimitiveArrayTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+            } 
+            else 
+            {
+                if (TESTS[i].Length == 4) 
+                {
+                    result.addTest(new PrimitiveArrayTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
+                } 
+                else 
+                {
+                    if (TESTS[i].Length == 5) 
+                    {
+                        result.addTest(new PrimitiveArrayTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
+                    } 
+                    else 
+                    {
+                        throw new Exception("don't understand TEST format");
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				if (TESTS[i].Length == 3) 
-				{
-					result.addTest(new PrimitiveArrayTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-				} 
-				else 
-				{
-					if (TESTS[i].Length == 4) 
-					{
-						result.addTest(new PrimitiveArrayTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-					} 
-					else 
-					{
-						if (TESTS[i].Length == 5) 
-						{
-							result.addTest(new PrimitiveArrayTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-						} 
-						else 
-						{
-							throw new Exception("don't understand TEST format");
-						}
-					}
-				}
-			}
-			return result;
-		}
-
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public PrimitiveArrayTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public PrimitiveArrayTest()
+    {
 	    
-		}
+    }
 
-		public PrimitiveArrayTest(string name) : base(name)
-		{
+    public PrimitiveArrayTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public PrimitiveArrayTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public PrimitiveArrayTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public PrimitiveArrayTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public PrimitiveArrayTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public PrimitiveArrayTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public PrimitiveArrayTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
+    }
 
-		[Test]
-		public void Test7 ()
-		{
-			suite () [7].runTest ();
-		}
-	}
+    [Test]
+    public void Test7 ()
+    {
+        suite () [7].runTest ();
+    }
 }

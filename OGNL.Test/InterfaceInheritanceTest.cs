@@ -1,7 +1,6 @@
-using System ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -32,98 +31,96 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class InterfaceInheritanceTest : OgnlTestCase
 {
+    private static Root             ROOT = new Root();
 
-	public class InterfaceInheritanceTest : OgnlTestCase
-	{
-		private static Root             ROOT = new Root();
+    private static object[][]       TESTS = {
+        // Interface inheritence test
+        new object [] { ROOT, "MyMap", ROOT.getMyMap() },
+        new object [] { ROOT, "MyMap.test", ROOT },
+        new object [] { ROOT.getMyMap(), "list", ROOT.getList() },
+        new object [] { ROOT, "MyMap.array[0]", (ROOT.getArray()[0]) },
+        new object [] { ROOT, "MyMap.list[1]", ROOT.getList() [(1)] },
+        new object [] { ROOT, "MyMap[^]", (99) },
+        new object [] { ROOT, "MyMap[$]", null },
+        new object [] { ROOT.getMyMap(), "array[$]", (ROOT.getArray()[ROOT.getArray().Length-1]) },
+        new object [] { ROOT, "[\"MyMap\"]", ROOT.getMyMap() },
+        new object [] { ROOT, "MyMap[null]", null },
+        new object [] { ROOT, "MyMap[#x = null]", null },
+        new object [] { ROOT, "MyMap.(null,test)", ROOT },
+        /* // Key null is Not allowed in .Net.
+        new object [] { ROOT, "MyMap[null] = 25", (25) },
+        new object [] { ROOT, "MyMap[null]", (25), (50), (50) },*/
+        new object [] { ROOT, "MyMap[0] = 25", (25) },
+        new object [] { ROOT, "MyMap[0]", (25), (50), (50) },
+    };
 
-		private static object[][]       TESTS = {
-													// Interface inheritence test
-										new object [] { ROOT, "MyMap", ROOT.getMyMap() },
-										new object [] { ROOT, "MyMap.test", ROOT },
-										new object [] { ROOT.getMyMap(), "list", ROOT.getList() },
-										new object [] { ROOT, "MyMap.array[0]", (ROOT.getArray()[0]) },
-										new object [] { ROOT, "MyMap.list[1]", ROOT.getList() [(1)] },
-										new object [] { ROOT, "MyMap[^]", (99) },
-										new object [] { ROOT, "MyMap[$]", null },
-										new object [] { ROOT.getMyMap(), "array[$]", (ROOT.getArray()[ROOT.getArray().Length-1]) },
-										new object [] { ROOT, "[\"MyMap\"]", ROOT.getMyMap() },
-										new object [] { ROOT, "MyMap[null]", null },
-										new object [] { ROOT, "MyMap[#x = null]", null },
-										new object [] { ROOT, "MyMap.(null,test)", ROOT },
-										/* // Key null is Not allowed in .Net.
-										new object [] { ROOT, "MyMap[null] = 25", (25) },
-										new object [] { ROOT, "MyMap[null]", (25), (50), (50) },*/
-										new object [] { ROOT, "MyMap[0] = 25", (25) },
-										new object [] { ROOT, "MyMap[0]", (25), (50), (50) },
-		};
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            if (TESTS[i].Length == 3) 
+            {
+                result.addTest(new InterfaceInheritanceTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+            } 
+            else 
+            {
+                if (TESTS[i].Length == 4) 
+                {
+                    result.addTest(new InterfaceInheritanceTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
+                } 
+                else 
+                {
+                    if (TESTS[i].Length == 5) 
+                    {
+                        result.addTest(new InterfaceInheritanceTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
+                    } 
+                    else 
+                    {
+                        throw new Exception("don't understand TEST format");
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				if (TESTS[i].Length == 3) 
-				{
-					result.addTest(new InterfaceInheritanceTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-				} 
-				else 
-				{
-					if (TESTS[i].Length == 4) 
-					{
-						result.addTest(new InterfaceInheritanceTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-					} 
-					else 
-					{
-						if (TESTS[i].Length == 5) 
-						{
-							result.addTest(new InterfaceInheritanceTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-						} 
-						else 
-						{
-							throw new Exception("don't understand TEST format");
-						}
-					}
-				}
-			}
-			return result;
-		}
-
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public InterfaceInheritanceTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public InterfaceInheritanceTest()
+    {
 	    
-		}
+    }
 
-		public InterfaceInheritanceTest(string name) : base(name)
-		{
+    public InterfaceInheritanceTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public InterfaceInheritanceTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public InterfaceInheritanceTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public InterfaceInheritanceTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public InterfaceInheritanceTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public InterfaceInheritanceTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public InterfaceInheritanceTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
-	}
+    }
 }

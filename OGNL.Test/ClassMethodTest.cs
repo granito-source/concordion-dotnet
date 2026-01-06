@@ -1,9 +1,6 @@
-using System ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
-using NUnit.Framework ;
-
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -34,73 +31,70 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class ClassMethodTest : OgnlTestCase
 {
+    private static CorrectedObject  CORRECTED = new CorrectedObject();
 
+    private static object[][]       TESTS = {
+        // Methods on Class
+        new object [] { CORRECTED, "GetType().Name", CORRECTED.GetType().Name },
+        new object [] { CORRECTED, "GetType().GetInterfaces()", CORRECTED.GetType().GetInterfaces() },
+        new object [] { CORRECTED, "GetType().GetInterfaces().length", (CORRECTED.GetType().GetInterfaces().Length) },
+        new object [] { null, "@System.AppDomain@CurrentDomain.Type.GetInterfaces()", System.AppDomain.CurrentDomain.GetType ().GetInterfaces() },
+        new object [] { null, "@System.AppDomain@CurrentDomain.Type.Type.Name", AppDomain.CurrentDomain.GetType ().GetType ().Name },
+        // new object [] { null, "@java.awt.image.ImageObserver@class.getName()", java.awt.image.ImageObserver.getName() },
 
-	public class ClassMethodTest : OgnlTestCase
-	{
-		private static CorrectedObject  CORRECTED = new CorrectedObject();
+    };
 
-		private static object[][]       TESTS = {
-													// Methods on Class
-										new object [] { CORRECTED, "GetType().Name", CORRECTED.GetType().Name },
-										new object [] { CORRECTED, "GetType().GetInterfaces()", CORRECTED.GetType().GetInterfaces() },
-										new object [] { CORRECTED, "GetType().GetInterfaces().length", (CORRECTED.GetType().GetInterfaces().Length) },
-										new object [] { null, "@System.AppDomain@CurrentDomain.Type.GetInterfaces()", System.AppDomain.CurrentDomain.GetType ().GetInterfaces() },
-										new object [] { null, "@System.AppDomain@CurrentDomain.Type.Type.Name", AppDomain.CurrentDomain.GetType ().GetType ().Name },
-										// new object [] { null, "@java.awt.image.ImageObserver@class.getName()", java.awt.image.ImageObserver.getName() },
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-		};
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            result.addTest(new ClassMethodTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+        }
+        return result;
+    }
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
-
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				result.addTest(new ClassMethodTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-			}
-			return result;
-		}
-
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public ClassMethodTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public ClassMethodTest()
+    {
 	  
-		}
+    }
 
-		public ClassMethodTest(string name) : base(name)
-		{
-			;
-		}
+    public ClassMethodTest(string name) : base(name)
+    {
+        ;
+    }
 
-		public ClassMethodTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
-			;
-		}
+    public ClassMethodTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
+        ;
+    }
 
-		public ClassMethodTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public ClassMethodTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public ClassMethodTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public ClassMethodTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
-		[Test]
-		public void Test4 ()
-		{
-			suite () [4].runTest ();
-		}
-	}
+    }
+    [Test]
+    public void Test4 ()
+    {
+        suite () [4].runTest ();
+    }
 }

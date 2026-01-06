@@ -1,5 +1,6 @@
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
+
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,61 +31,60 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class ProtectedInnerClassTest : OgnlTestCase
 {
-	public class ProtectedInnerClassTest : OgnlTestCase
-	{
-		private static Root             ROOT = new Root();
+    private static Root             ROOT = new Root();
 
-		private static object[][]       TESTS = {
-													// member access of inner class (Arrays.asList() returned protected inner class)
-										new object [] { ROOT, "List.size", (ROOT.getList().Count) },
-										new object [] { ROOT, "List[0]", ROOT.getList() [(0)] },
-		};
+    private static object[][]       TESTS = {
+        // member access of inner class (Arrays.asList() returned protected inner class)
+        new object [] { ROOT, "List.size", (ROOT.getList().Count) },
+        new object [] { ROOT, "List[0]", ROOT.getList() [(0)] },
+    };
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				result.addTest(new ProtectedInnerClassTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-			}
-			return result;
-		}
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            result.addTest(new ProtectedInnerClassTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+        }
+        return result;
+    }
 
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public ProtectedInnerClassTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public ProtectedInnerClassTest()
+    {
 	    
-		}
+    }
 
-		public ProtectedInnerClassTest(string name) : base(name)
-		{
+    public ProtectedInnerClassTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public ProtectedInnerClassTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public ProtectedInnerClassTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public ProtectedInnerClassTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public ProtectedInnerClassTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public ProtectedInnerClassTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public ProtectedInnerClassTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
-	}
+    }
 }

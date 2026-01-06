@@ -1,11 +1,6 @@
-using System ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
-using NUnit.Framework ;
-
-using ognl ;
-
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -36,97 +31,95 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class ArrayCreationTest : OgnlTestCase
 {
+    private static Root             ROOT = new Root();
 
-	public class ArrayCreationTest : OgnlTestCase
-	{
-		private static Root             ROOT = new Root();
+    private static object[][]       TESTS = {
+        // Array creation
+        new object [] { ROOT, "new string[] { \"one\", \"two\" }", new string[] { "one", "two" } },
+        new object [] { ROOT, "new string[] { 1, 2 }", new string[] { "1", "2" } },
+        new object [] { ROOT, "new int[] { \"1\", 2, \"3\" }", new int [] { 1 , 2 , 3 } },
+        new object [] { ROOT, "new string[10]", new string[10] },
+        new object [] { ROOT, "new object[4] { #root, #this }", typeof (ExpressionSyntaxException) },
+        new object [] { ROOT, "new object[4]", new object[4] },
+        new object [] { ROOT, "new object[] { #root, #this }", new object[] { ROOT, ROOT } },
+        new object [] { ROOT, "new Test.org.ognl.test.objects.Simple[] { new Test.org.ognl.test.objects.Simple(), new Test.org.ognl.test.objects.Simple(\"foo\", 1.0, 2) }", new Simple[] { new Simple(), new Simple("foo", 1.0f, 2) } },
+        new object [] { ROOT, "new Test.org.ognl.test.objects.Simple[5]", new Simple[5] },
+        new object [] { ROOT, "new Test.org.ognl.test.objects.Simple(new object[5])", new Simple(new object[5]) },
+        new object [] { ROOT, "new Test.org.ognl.test.objects.Simple(new string[5])", new Simple(new string[5]) },
+    };
 
-		private static object[][]       TESTS = {
-													// Array creation
-										new object [] { ROOT, "new string[] { \"one\", \"two\" }", new string[] { "one", "two" } },
-										new object [] { ROOT, "new string[] { 1, 2 }", new string[] { "1", "2" } },
-										new object [] { ROOT, "new int[] { \"1\", 2, \"3\" }", new int [] { 1 , 2 , 3 } },
-										new object [] { ROOT, "new string[10]", new string[10] },
-										new object [] { ROOT, "new object[4] { #root, #this }", typeof (ExpressionSyntaxException) },
-										new object [] { ROOT, "new object[4]", new object[4] },
-										new object [] { ROOT, "new object[] { #root, #this }", new object[] { ROOT, ROOT } },
-										new object [] { ROOT, "new Test.org.ognl.test.objects.Simple[] { new Test.org.ognl.test.objects.Simple(), new Test.org.ognl.test.objects.Simple(\"foo\", 1.0, 2) }", new Simple[] { new Simple(), new Simple("foo", 1.0f, 2) } },
-										new object [] { ROOT, "new Test.org.ognl.test.objects.Simple[5]", new Simple[5] },
-										new object [] { ROOT, "new Test.org.ognl.test.objects.Simple(new object[5])", new Simple(new object[5]) },
-										new object [] { ROOT, "new Test.org.ognl.test.objects.Simple(new string[5])", new Simple(new string[5]) },
-		};
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            if (TESTS[i].Length == 3) 
+            {
+                result.addTest(new ArrayCreationTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+            } 
+            else 
+            {
+                if (TESTS[i].Length == 4) 
+                {
+                    result.addTest(new ArrayCreationTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
+                } 
+                else 
+                {
+                    if (TESTS[i].Length == 5) 
+                    {
+                        result.addTest(new ArrayCreationTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
+                    } 
+                    else 
+                    {
+                        throw new Exception("don't understand TEST format");
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				if (TESTS[i].Length == 3) 
-				{
-					result.addTest(new ArrayCreationTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-				} 
-				else 
-				{
-					if (TESTS[i].Length == 4) 
-					{
-						result.addTest(new ArrayCreationTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-					} 
-					else 
-					{
-						if (TESTS[i].Length == 5) 
-						{
-							result.addTest(new ArrayCreationTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-						} 
-						else 
-						{
-							throw new Exception("don't understand TEST format");
-						}
-					}
-				}
-			}
-			return result;
-		}
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public ArrayCreationTest()
+    {
+    }
 
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public ArrayCreationTest()
-		{
-		}
+    public ArrayCreationTest(string name)
+    {
 
-		public ArrayCreationTest(string name)
-		{
+    }
 
-		}
-
-		public ArrayCreationTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base (name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public ArrayCreationTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base (name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public ArrayCreationTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base (name, root, expressionString, expectedResult, setValue)
-		{
-			;
-		}
+    public ArrayCreationTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base (name, root, expressionString, expectedResult, setValue)
+    {
+        ;
+    }
 
-		public ArrayCreationTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
-			;
-		}
+    public ArrayCreationTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
+        ;
+    }
 
-		[Test]
-		public void Test7 ()
-		{
-			suite () [7].runTest () ;
-		}
-	}
+    [Test]
+    public void Test7 ()
+    {
+        suite () [7].runTest () ;
+    }
 }

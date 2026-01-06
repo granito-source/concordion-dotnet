@@ -28,32 +28,26 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test.objects
+
+namespace OGNL.Test.Objects;
+
+/// <summary>
+/// SomeEnum ��ժҪ˵����
+/// </summary>
+public enum SomeEnum
 {
+    Item1 , 
+    Item2 ,
+    Item3 
+}
 
-	public class CorrectedObject 
-	{
-		public CorrectedObject()
-		{
-     
-		}
+public class EnumBean
+{
+    private SomeEnum _itemValue ;
 
-		public void setStringValue(string value)
-		{
-		}
-
-		public string getStringValue()
-		{
-			return null;
-		}
-
-		public string getIndexedStringValue(string key)
-		{
-			return null;
-		}
-
-		public void setIndexedStringValue(string key, string value)
-		{
-		}
-	}
+    public SomeEnum ItemValue
+    {
+        get { return _itemValue ; }
+        set { _itemValue = value ; }
+    }
 }

@@ -1,11 +1,6 @@
-using System ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
-using NUnit.Framework ;
-
-using ognl ;
-
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -36,95 +31,94 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class NullHandlerTest : OgnlTestCase
 {
-	public class NullHandlerTest : OgnlTestCase
-	{
-		private static CorrectedObject  CORRECTED = new CorrectedObject();
+    private static CorrectedObject  CORRECTED = new CorrectedObject();
 
-		private static object[][]       TESTS = {
-													// NullHandler
-										new object [] { CORRECTED, "StringValue", "corrected" },
-										new object [] { CORRECTED, "getStringValue()", "corrected" },
-										new object [] { CORRECTED, "#root.StringValue", "corrected" },
-										new object [] { CORRECTED, "#root.getStringValue()", "corrected" },
-		};
+    private static object[][]       TESTS = {
+        // NullHandler
+        new object [] { CORRECTED, "StringValue", "corrected" },
+        new object [] { CORRECTED, "getStringValue()", "corrected" },
+        new object [] { CORRECTED, "#root.StringValue", "corrected" },
+        new object [] { CORRECTED, "#root.getStringValue()", "corrected" },
+    };
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				if (TESTS[i].Length == 3) 
-				{
-					result.addTest(new NullHandlerTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-				} 
-				else 
-				{
-					if (TESTS[i].Length == 4) 
-					{
-						result.addTest(new NullHandlerTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-					} 
-					else 
-					{
-						if (TESTS[i].Length == 5) 
-						{
-							result.addTest(new NullHandlerTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-						} 
-						else 
-						{
-							throw new Exception("don't understand TEST format");
-						}
-					}
-				}
-			}
-			return result;
-		}
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            if (TESTS[i].Length == 3) 
+            {
+                result.addTest(new NullHandlerTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+            } 
+            else 
+            {
+                if (TESTS[i].Length == 4) 
+                {
+                    result.addTest(new NullHandlerTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
+                } 
+                else 
+                {
+                    if (TESTS[i].Length == 5) 
+                    {
+                        result.addTest(new NullHandlerTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
+                    } 
+                    else 
+                    {
+                        throw new Exception("don't understand TEST format");
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
 
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public NullHandlerTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public NullHandlerTest()
+    {
 	    
-		}
+    }
 
-		public NullHandlerTest(string name) : base(name)
-		{
+    public NullHandlerTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public NullHandlerTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public NullHandlerTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public NullHandlerTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public NullHandlerTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public NullHandlerTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public NullHandlerTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
+    }
 
-		/*===================================================================
-			Overridden methods
-		  ===================================================================*/
-		[TestFixtureSetUp]
-		public override void setUp()
-		{
-			base.setUp();
-			OgnlRuntime.setNullHandler(typeof (CorrectedObject), new CorrectedObjectNullHandler("corrected"));
-		}
-	}
+    /*===================================================================
+        Overridden methods
+      ===================================================================*/
+    [TestFixtureSetUp]
+    public override void setUp()
+    {
+        base.setUp();
+        OgnlRuntime.setNullHandler(typeof (CorrectedObject), new CorrectedObjectNullHandler("corrected"));
+    }
 }

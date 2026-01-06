@@ -1,5 +1,6 @@
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
+
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,81 +31,79 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class PropertyTest : OgnlTestCase
 {
+    private static Root             ROOT = new Root();
 
-	public class PropertyTest : OgnlTestCase
-	{
-		private static Root             ROOT = new Root();
+    private static object[][]       TESTS = {
+        new object [] { ROOT, "Map", ROOT.getMap() },
+        new object [] { ROOT, "Map.test", ROOT },
+        new object [] { ROOT, "Map[\"test\"]", ROOT },
+        new object [] { ROOT, "Map[\"te\" + \"st\"]", ROOT },
+        new object [] { ROOT, "Map[(\"s\" + \"i\") + \"ze\"]", ROOT.getMap() [(Root.SIZE_STRING)] },
+        new object [] { ROOT, "Map[\"size\"]", ROOT.getMap() [(Root.SIZE_STRING)] },
+        new object [] { ROOT, "Map[@Test.org.ognl.test.objects.Root@SIZE_STRING]", ROOT.getMap()[(Root.SIZE_STRING)] },
+        new object [] { ROOT.getMap(), "list", ROOT.getList() },
+        new object [] { ROOT, "Map.array[0]", (ROOT.getArray()[0]) },
+        new object [] { ROOT, "Map.list[1]", ROOT.getList() [1] },
+        new object [] { ROOT, "Map[^]", (99) },
+        new object [] { ROOT, "Map[$]", null },
+        new object [] { ROOT.getMap(), "array[$]", (ROOT.getArray()[ROOT.getArray().Length-1]) },
+        new object [] { ROOT, "[\"Map\"]", ROOT.getMap() },
+        new object [] { ROOT.getArray(), "length", (ROOT.getArray().Length) },
+        new object [] { ROOT, "getMap().list[|]", ROOT.getList()[(ROOT.getList().Count/2)] },
+        new object [] { ROOT, "Map.(array[2] + size).ToString()", (ROOT.getArray()[2] + ROOT.getMap().Count).ToString () },
+        new object [] { ROOT, "Map.(#this)", ROOT.getMap() },
+        new object [] { ROOT, "Map.(#this != null ? #this['size'] : null)", ROOT.getMap() [(Root.SIZE_STRING)] },
+        new object [] { ROOT, "Map[^].(#this == null ? 'empty' : #this)", (99) },
+        new object [] { ROOT, "Map[$].(#this == null ? 'empty' : #this)", "empty" },
+        new object [] { ROOT, "Map[$].(#root == null ? 'empty' : #root)", ROOT }
+    };
 
-		private static object[][]       TESTS = {
-										new object [] { ROOT, "Map", ROOT.getMap() },
-										new object [] { ROOT, "Map.test", ROOT },
-										new object [] { ROOT, "Map[\"test\"]", ROOT },
-										new object [] { ROOT, "Map[\"te\" + \"st\"]", ROOT },
-										new object [] { ROOT, "Map[(\"s\" + \"i\") + \"ze\"]", ROOT.getMap() [(Root.SIZE_STRING)] },
-										new object [] { ROOT, "Map[\"size\"]", ROOT.getMap() [(Root.SIZE_STRING)] },
-										new object [] { ROOT, "Map[@Test.org.ognl.test.objects.Root@SIZE_STRING]", ROOT.getMap()[(Root.SIZE_STRING)] },
-										new object [] { ROOT.getMap(), "list", ROOT.getList() },
-										new object [] { ROOT, "Map.array[0]", (ROOT.getArray()[0]) },
-										new object [] { ROOT, "Map.list[1]", ROOT.getList() [1] },
-										new object [] { ROOT, "Map[^]", (99) },
-										new object [] { ROOT, "Map[$]", null },
-										new object [] { ROOT.getMap(), "array[$]", (ROOT.getArray()[ROOT.getArray().Length-1]) },
-										new object [] { ROOT, "[\"Map\"]", ROOT.getMap() },
-										new object [] { ROOT.getArray(), "length", (ROOT.getArray().Length) },
-										new object [] { ROOT, "getMap().list[|]", ROOT.getList()[(ROOT.getList().Count/2)] },
-										new object [] { ROOT, "Map.(array[2] + size).ToString()", (ROOT.getArray()[2] + ROOT.getMap().Count).ToString () },
-										new object [] { ROOT, "Map.(#this)", ROOT.getMap() },
-										new object [] { ROOT, "Map.(#this != null ? #this['size'] : null)", ROOT.getMap() [(Root.SIZE_STRING)] },
-										new object [] { ROOT, "Map[^].(#this == null ? 'empty' : #this)", (99) },
-										new object [] { ROOT, "Map[$].(#this == null ? 'empty' : #this)", "empty" },
-										new object [] { ROOT, "Map[$].(#root == null ? 'empty' : #root)", ROOT }
-												};
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            result.addTest(new PropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+        }
+        return result;
+    }
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				result.addTest(new PropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-			}
-			return result;
-		}
-
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public PropertyTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public PropertyTest()
+    {
 	  
-		}
+    }
 
-		public PropertyTest(string name) : base(name)
-		{
+    public PropertyTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public PropertyTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public PropertyTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public PropertyTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public PropertyTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public PropertyTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public PropertyTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
-	}
+    }
 }

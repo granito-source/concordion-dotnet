@@ -1,10 +1,5 @@
-using System ;
+using OGNL.Test.Util;
 
-using NUnit.Framework ;
-
-using ognl ;
-
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -35,72 +30,69 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class ShortCircuitingExpressionTest : OgnlTestCase
 {
+    private static object[][]       TESTS = {
+        new object [] { "#root ? someProperty : 99", (99) },
+        new object [] { "#root ? 99 : someProperty", typeof (OgnlException) },
+        new object [] { "(#x=99)? #x.someProperty : #x", typeof (OgnlException)},
+        new object [] { "#xyzzy.doubleValue()", typeof (NullReferenceException) },
+        new object [] { "#xyzzy && #xyzzy.doubleValue()", null },
+        new object [] { "(#x=99) && #x", (99) },
+        new object [] { "#xyzzy || 101", (101) },
+        new object [] { "99 || 101",(99) },
+    };
 
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-	public class ShortCircuitingExpressionTest : OgnlTestCase
-	{
-		private static object[][]       TESTS = {
-										new object [] { "#root ? someProperty : 99", (99) },
-										new object [] { "#root ? 99 : someProperty", typeof (OgnlException) },
-										new object [] { "(#x=99)? #x.someProperty : #x", typeof (OgnlException)},
-										new object [] { "#xyzzy.doubleValue()", typeof (NullReferenceException) },
-										new object [] { "#xyzzy && #xyzzy.doubleValue()", null },
-										new object [] { "(#x=99) && #x", (99) },
-										new object [] { "#xyzzy || 101", (101) },
-										new object [] { "99 || 101",(99) },
-		};
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            result.addTest(new ShortCircuitingExpressionTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null, (string)TESTS[i][0], TESTS[i][1]));
+        }
+        return result;
+    }
+    [Test]
+    public void Test2 ()
+    {
+        suite () [2].runTest ();
+    }
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
-
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				result.addTest(new ShortCircuitingExpressionTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null, (string)TESTS[i][0], TESTS[i][1]));
-			}
-			return result;
-		}
-		[Test]
-		public void Test2 ()
-		{
-			suite () [2].runTest ();
-		}
-
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public ShortCircuitingExpressionTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public ShortCircuitingExpressionTest()
+    {
 	    
-		}
+    }
 
-		public ShortCircuitingExpressionTest(string name)
-			: base(name)
-		{
+    public ShortCircuitingExpressionTest(string name)
+        : base(name)
+    {
 	    
-		}
+    }
 
-		public ShortCircuitingExpressionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public ShortCircuitingExpressionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public ShortCircuitingExpressionTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public ShortCircuitingExpressionTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public ShortCircuitingExpressionTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public ShortCircuitingExpressionTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
-	}
+    }
 }

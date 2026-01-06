@@ -1,5 +1,6 @@
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
+
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,73 +31,71 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class StaticsAndConstructorsTest : OgnlTestCase
 {
+    private static Root             ROOT = new Root();
 
-	public class StaticsAndConstructorsTest : OgnlTestCase
-	{
-		private static Root             ROOT = new Root();
+    private static object[][]       TESTS = {
+        new object [] { "@System.Type@GetType(\"object\")", typeof (object) },
+        new object [] { "@System.Int32@MaxValue", int.MaxValue },
+        new object [] { "@@Max(3,4)", (4) },
+        new object [] { "new System.Text.StringBuilder().Append(55).ToString()", "55" },
+        new object [] { "Type", ROOT.GetType() },
+        new object [] { "@Test.org.ognl.test.objects.Root@class.Type", ROOT.GetType ().GetType () },
+        new object [] { "Type.GetType()", ROOT.GetType().GetType () },
+        new object [] { "@Test.org.ognl.test.objects.Root@class.GetType()", ROOT.GetType().GetType() },
+        new object [] { "@Test.org.ognl.test.objects.Root@class.Name", ROOT.GetType().Name},
+        new object [] { "Type.GetElementType()", ROOT.GetType().GetElementType () },
+        new object [] { "Type.ElementType", ROOT.GetType().GetElementType() },
+        new object [] { "Type.Type", ROOT.GetType().GetType() },
+        new object [] { "getStaticInt()", (Root.getStaticInt()) },
+        new object [] { "@Test.org.ognl.test.objects.Root@getStaticInt()", (Root.getStaticInt()) },
+    };
 
-		private static object[][]       TESTS = {
-										new object [] { "@System.Type@GetType(\"object\")", typeof (object) },
-										new object [] { "@System.Int32@MaxValue", int.MaxValue },
-										new object [] { "@@Max(3,4)", (4) },
-										new object [] { "new System.Text.StringBuilder().Append(55).ToString()", "55" },
-										new object [] { "Type", ROOT.GetType() },
-										new object [] { "@Test.org.ognl.test.objects.Root@class.Type", ROOT.GetType ().GetType () },
-										new object [] { "Type.GetType()", ROOT.GetType().GetType () },
-										new object [] { "@Test.org.ognl.test.objects.Root@class.GetType()", ROOT.GetType().GetType() },
-										new object [] { "@Test.org.ognl.test.objects.Root@class.Name", ROOT.GetType().Name},
-										new object [] { "Type.GetElementType()", ROOT.GetType().GetElementType () },
-										new object [] { "Type.ElementType", ROOT.GetType().GetElementType() },
-										new object [] { "Type.Type", ROOT.GetType().GetType() },
-										new object [] { "getStaticInt()", (Root.getStaticInt()) },
-										new object [] { "@Test.org.ognl.test.objects.Root@getStaticInt()", (Root.getStaticInt()) },
-		};
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            result.addTest(new StaticsAndConstructorsTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", ROOT, (string)TESTS[i][0], TESTS[i][1]));
+        }
+        return result;
+    }
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				result.addTest(new StaticsAndConstructorsTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", ROOT, (string)TESTS[i][0], TESTS[i][1]));
-			}
-			return result;
-		}
-
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public StaticsAndConstructorsTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public StaticsAndConstructorsTest()
+    {
 	   
-		}
+    }
 
-		public StaticsAndConstructorsTest(string name) : base(name)
-		{
+    public StaticsAndConstructorsTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public StaticsAndConstructorsTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public StaticsAndConstructorsTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public StaticsAndConstructorsTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			:base(name, root, expressionString, expectedResult, setValue)
-		{
+    public StaticsAndConstructorsTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        :base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public StaticsAndConstructorsTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public StaticsAndConstructorsTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
-	}
+    }
 }

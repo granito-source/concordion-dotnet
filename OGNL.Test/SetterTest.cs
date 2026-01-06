@@ -1,10 +1,7 @@
-using System ;
-using System.Collections ;
+using System.Collections;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
-using ognl ;
-
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -35,101 +32,99 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class SetterTest : OgnlTestCase
 {
+    private static Root             ROOT = new Root();
 
-	public class SetterTest : OgnlTestCase
-	{
-		private static Root             ROOT = new Root();
+    private static object[][]       TESTS = {
+        // Setting values
+        new object [] { ROOT.getMap(), "newValue", null, (101) },
+        new object [] { ROOT, "SettableList[0]", "foo", "quux" },     /* absolute indexes */
+        new object [] { ROOT, "SettableList[0]", "quux" },
+        new object [] { ROOT, "SettableList[2]", "baz", "quux" },
+        new object [] { ROOT, "SettableList[2]", "quux" },
+        new object [] { ROOT, "SettableList[$]", "quux", "oompa" },   /* special indexes */
+        new object [] { ROOT, "SettableList[$]", "oompa" },
+        new object [] { ROOT, "SettableList[^]", "quux", "oompa" },
+        new object [] { ROOT, "SettableList[^]", "oompa" },
+        new object [] { ROOT, "SettableList[|]", "bar", "oompa" },
+        new object [] { ROOT, "SettableList[|]", "oompa" },
+        new object [] { ROOT, "Map.newValue", (101), (555) },
+        new object [] { ROOT, "Map", ROOT.getMap(), new Hashtable (), typeof (NoSuchPropertyException) },
+        new object [] { ROOT.getMap(), "newValue2 || Add(\"newValue2\",987), newValue2", (987), (1002) },
+        new object [] { ROOT, "Map.(someMissingKey || newValue)", (555), (666) },
+        new object [] { ROOT.getMap(), "newValue || someMissingKey", (666), (666) }, // no setting happens!
+        new object [] { ROOT, "Map.(newValue && aKey)", null, (54321) },
+        new object [] { ROOT, "Map.(someMissingKey && newValue)", null, null }, // again, no setting
+        new object [] { null, "0", (0), null, typeof (InappropriateExpressionException) }, // illegal for setting, no property
+        new object [] { ROOT, "Map[0]=\"Map.newValue\", Map[0](#this)", (666), (888) },
+    };
 
-		private static object[][]       TESTS = {
-													// Setting values
-										new object [] { ROOT.getMap(), "newValue", null, (101) },
-										new object [] { ROOT, "SettableList[0]", "foo", "quux" },     /* absolute indexes */
-										new object [] { ROOT, "SettableList[0]", "quux" },
-										new object [] { ROOT, "SettableList[2]", "baz", "quux" },
-										new object [] { ROOT, "SettableList[2]", "quux" },
-										new object [] { ROOT, "SettableList[$]", "quux", "oompa" },   /* special indexes */
-										new object [] { ROOT, "SettableList[$]", "oompa" },
-										new object [] { ROOT, "SettableList[^]", "quux", "oompa" },
-										new object [] { ROOT, "SettableList[^]", "oompa" },
-										new object [] { ROOT, "SettableList[|]", "bar", "oompa" },
-										new object [] { ROOT, "SettableList[|]", "oompa" },
-										new object [] { ROOT, "Map.newValue", (101), (555) },
-										new object [] { ROOT, "Map", ROOT.getMap(), new Hashtable (), typeof (NoSuchPropertyException) },
-										new object [] { ROOT.getMap(), "newValue2 || Add(\"newValue2\",987), newValue2", (987), (1002) },
-										new object [] { ROOT, "Map.(someMissingKey || newValue)", (555), (666) },
-										new object [] { ROOT.getMap(), "newValue || someMissingKey", (666), (666) }, // no setting happens!
-										new object [] { ROOT, "Map.(newValue && aKey)", null, (54321) },
-										new object [] { ROOT, "Map.(someMissingKey && newValue)", null, null }, // again, no setting
-										new object [] { null, "0", (0), null, typeof (InappropriateExpressionException) }, // illegal for setting, no property
-										new object [] { ROOT, "Map[0]=\"Map.newValue\", Map[0](#this)", (666), (888) },
-		};
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+        for (int i = 0; i < TESTS.Length; i++)
+        {
+            if (TESTS[i].Length == 3)
+            {
+                result.addTest(new SetterTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+            }
+            else
+            {
+                if (TESTS[i].Length == 4)
+                {
+                    result.addTest(new SetterTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
+                }
+                else
+                {
+                    if (TESTS[i].Length == 5)
+                    {
+                        result.addTest(new SetterTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
+                    }
+                    else
+                    {
+                        throw new Exception("don't understand TEST format");
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				if (TESTS[i].Length == 3) 
-				{
-					result.addTest(new SetterTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-				} 
-				else 
-				{
-					if (TESTS[i].Length == 4) 
-					{
-						result.addTest(new SetterTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-					} 
-					else 
-					{
-						if (TESTS[i].Length == 5) 
-						{
-							result.addTest(new SetterTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-						} 
-						else 
-						{
-							throw new Exception("don't understand TEST format");
-						}
-					}
-				}
-			}
-			return result;
-		}
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public SetterTest()
+    {
 
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public SetterTest()
-		{
-	    
-		}
+    }
 
-		public SetterTest(string name) : base(name)
-		{
-	    
-		}
+    public SetterTest(string name) : base(name)
+    {
 
-		public SetterTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
-        
-		}
+    }
 
-		public SetterTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
-        
-		}
+    public SetterTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
 
-		public SetterTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
-        
-		}
-	}
+    }
+
+    public SetterTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
+
+    }
+
+    public SetterTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
+
+    }
 }

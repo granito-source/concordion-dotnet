@@ -28,25 +28,34 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test.util
+namespace OGNL.Test.Util;
+
+public class NameFactory
 {
+    private string      classBaseName;
+    private int         classNameCounter = 0;
+    private string      variableBaseName;
+    private int         variableNameCounter = 0;
 
-	public class EnhancedClassLoader : ClassLoader
-	{
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public EnhancedClassLoader(ClassLoader parentClassLoader)
-		{
-			base(parentClassLoader);
-		}
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public NameFactory(string classBaseName, string variableBaseName)
+    {
+        this.classBaseName = classBaseName;
+        this.variableBaseName = variableBaseName;
+    }
 
-		/*===================================================================
-			Overridden methods
-		  ===================================================================*/
-		public Class defineClass(string enhancedClassName, byte[] byteCode)
-		{
-			return defineClass(enhancedClassName, byteCode, 0, byteCode.Length);
-		}
-	}
+    /*===================================================================
+        Public methods
+      ===================================================================*/
+    public string getNewClassName()
+    {
+        return classBaseName + classNameCounter++;
+    }
+
+    public string getNewVariableName()
+    {
+        return variableBaseName + variableNameCounter++;
+    }
 }

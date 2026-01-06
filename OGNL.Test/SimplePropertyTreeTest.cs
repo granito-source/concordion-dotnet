@@ -1,7 +1,5 @@
-using ognl ;
-using NUnit.Framework;
+using OGNL.Test.Util;
 
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -32,73 +30,71 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class SimplePropertyTreeTest : OgnlTestCase
 {
+    private static object[][]       TESTS = {
+        new object [] { "name",true },
+        new object [] { "foo",true },
+        new object [] { "name[i]", false },
+        new object [] { "name + foo", false },
+        new object [] { "name.foo", false },
+        new object [] { "name.foo.bar", false },
+        new object [] { "name.{? foo }", false },
+        new object [] { "name.( foo )", false }
+    };
 
-	public class SimplePropertyTreeTest : OgnlTestCase
-	{
-		private static object[][]       TESTS = {
-										new object [] { "name",true },
-										new object [] { "foo",true },
-										new object [] { "name[i]", false },
-										new object [] { "name + foo", false },
-										new object [] { "name.foo", false },
-										new object [] { "name.foo.bar", false },
-										new object [] { "name.{? foo }", false },
-										new object [] { "name.( foo )", false }
-												};
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            result.addTest(new SimplePropertyTreeTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null, (string)TESTS[i][0], TESTS[i][1]));
+        }
+        return result;
+    }
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				result.addTest(new SimplePropertyTreeTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null, (string)TESTS[i][0], TESTS[i][1]));
-			}
-			return result;
-		}
-
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public SimplePropertyTreeTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public SimplePropertyTreeTest()
+    {
 	   
-		}
+    }
 
-		public SimplePropertyTreeTest(string name) : base(name)
-		{
+    public SimplePropertyTreeTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public SimplePropertyTreeTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public SimplePropertyTreeTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public SimplePropertyTreeTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public SimplePropertyTreeTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public SimplePropertyTreeTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public SimplePropertyTreeTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
+    }
 
-		/*===================================================================
-			Overridden methods
-		  ===================================================================*/
-		protected internal override void runTest() 
-		{
-			Assert.IsTrue(Ognl.isSimpleProperty(getExpression(), context) == ((bool)getExpectedResult()));
-		}
-	}
+    /*===================================================================
+        Overridden methods
+      ===================================================================*/
+    protected internal override void runTest() 
+    {
+        Assert.IsTrue(Ognl.isSimpleProperty(getExpression(), context) == ((bool)getExpectedResult()));
+    }
 }

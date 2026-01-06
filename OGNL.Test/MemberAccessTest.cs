@@ -1,13 +1,8 @@
-using System ;
-using System.Collections ;
-using System.Reflection ;
+using System.Collections;
+using System.Reflection;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
-using NUnit.Framework ;
-
-using ognl ;
-
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -38,110 +33,105 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class MemberAccessTest : OgnlTestCase
 {
+    private static Simple           ROOT = new Simple();
+    private static object[][]       TESTS = {
+        // new object [] { "@Runtime@getRuntime()", typeof (OgnlException) },
+        // new object [] { "@System.AppDomain@GetCurrentThreadId()", AppDomain.GetCurrentThreadId () },
+        new object [] { "bigIntValue", typeof (OgnlException) },
+        new object [] { "bigIntValue", typeof (OgnlException), (25), typeof (OgnlException) },
+        new object [] { "getBigIntValue()", typeof (OgnlException) },
+        new object [] { "StringValue", ROOT.getStringValue() },
+    };
 
-	public class MemberAccessTest : OgnlTestCase
-	{
-		private static Simple           ROOT = new Simple();
-		private static object[][]       TESTS = {
-										// new object [] { "@Runtime@getRuntime()", typeof (OgnlException) },
-										// new object [] { "@System.AppDomain@GetCurrentThreadId()", AppDomain.GetCurrentThreadId () },
-										new object [] { "bigIntValue", typeof (OgnlException) },
-										new object [] { "bigIntValue", typeof (OgnlException), (25), typeof (OgnlException) },
-										new object [] { "getBigIntValue()", typeof (OgnlException) },
-										new object [] { "StringValue", ROOT.getStringValue() },
-		};
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            result.addTest(new MemberAccessTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", ROOT, (string)TESTS[i][0], TESTS[i][1]));
+        }
+        return result;
+    }
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				result.addTest(new MemberAccessTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", ROOT, (string)TESTS[i][0], TESTS[i][1]));
-			}
-			return result;
-		}
-
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public MemberAccessTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public MemberAccessTest()
+    {
 	   
-		}
+    }
 
-		public MemberAccessTest(string name) : base(name)
-		{
+    public MemberAccessTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public MemberAccessTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public MemberAccessTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public MemberAccessTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public MemberAccessTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public MemberAccessTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public MemberAccessTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
+    }
 
-		/*===================================================================
-			Overridden methods
-		  ===================================================================*/
-		[TestFixtureSetUp]
-		public override void setUp()
-		{
-			base.setUp();
-			/* Should allow access at all to the Simple class except for the bigIntValue property */
-			context.setMemberAccess(new InnerDefaultMemberAccess ());
-		}
-	}
-
-	class InnerDefaultMemberAccess : DefaultMemberAccess
-	{
-		public InnerDefaultMemberAccess () : base (false) 
-		{
-		}
-		public override bool isAccessible(IDictionary context, object target, MemberInfo member, string propertyName)
-		{
-			if (target == typeof (AppDomain)) 
-			{
-				return false;
-			}
-			if (target is Simple) 
-			{
-				if (propertyName != null) 
-				{
-					return !propertyName.Equals("bigIntValue") &&
-						base.isAccessible(context, target, member, propertyName);
-				} 
-				else 
-				{
-					if (member is MethodInfo) 
-					{
-						return !member.Name.Equals("getBigIntValue") &&
-							!member.Name.Equals("setBigIntValue") &&
-							base.isAccessible(context, target, member, propertyName);
-					}
-				}
-			}
-			return base.isAccessible(context, target, member, propertyName);
-		}
-	}
+    /*===================================================================
+        Overridden methods
+      ===================================================================*/
+    [TestFixtureSetUp]
+    public override void setUp()
+    {
+        base.setUp();
+        /* Should allow access at all to the Simple class except for the bigIntValue property */
+        context.setMemberAccess(new InnerDefaultMemberAccess ());
+    }
 }
 
-
-
+class InnerDefaultMemberAccess : DefaultMemberAccess
+{
+    public InnerDefaultMemberAccess () : base (false) 
+    {
+    }
+    public override bool isAccessible(IDictionary context, object target, MemberInfo member, string propertyName)
+    {
+        if (target == typeof (AppDomain)) 
+        {
+            return false;
+        }
+        if (target is Simple) 
+        {
+            if (propertyName != null) 
+            {
+                return !propertyName.Equals("bigIntValue") &&
+                    base.isAccessible(context, target, member, propertyName);
+            } 
+            else 
+            {
+                if (member is MethodInfo) 
+                {
+                    return !member.Name.Equals("getBigIntValue") &&
+                        !member.Name.Equals("setBigIntValue") &&
+                        base.isAccessible(context, target, member, propertyName);
+                }
+            }
+        }
+        return base.isAccessible(context, target, member, propertyName);
+    }
+}

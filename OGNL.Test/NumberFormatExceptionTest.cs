@@ -1,9 +1,6 @@
-using System ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
-using ognl ;
-
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -34,98 +31,97 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class NumberFormatExceptionTest : OgnlTestCase
 {
-	public class NumberFormatExceptionTest : OgnlTestCase
-	{
-		private static Simple           SIMPLE = new Simple();
+    private static Simple           SIMPLE = new Simple();
 
-		private static object[][]       TESTS = {
-													// NumberFormatException handling (default is to throw NumberFormatException on bad string conversions)
-													new object [] { SIMPLE, "FloatValue", (0f), (10f), (10f) },    /* set float to 10.0f */
-													new object [] { SIMPLE, "FloatValue", (10f), "x10x", typeof (OgnlException) },      /* set float to invalid format string, should yield OgnlException */
+    private static object[][]       TESTS = {
+        // NumberFormatException handling (default is to throw NumberFormatException on bad string conversions)
+        new object [] { SIMPLE, "FloatValue", (0f), (10f), (10f) },    /* set float to 10.0f */
+        new object [] { SIMPLE, "FloatValue", (10f), "x10x", typeof (OgnlException) },      /* set float to invalid format string, should yield OgnlException */
 
-													new object [] { SIMPLE, "IntValue", (0), (34), (34) },   /* set int to 34 */
-													new object [] { SIMPLE, "IntValue", (34), "foobar", typeof (OgnlException) },     /* set int to invalid format string, should yield OgnlException */
-													new object [] { SIMPLE, "IntValue", (34), "", typeof (OgnlException) },           /* set int to empty string, should yield 0gnlException */
-													new object [] { SIMPLE, "IntValue", (34), "       \t", typeof (OgnlException) },  /* set int to whitespace-only string, should yield 0gnlException */
-													new object [] { SIMPLE, "IntValue", (34), "       \t1234\t\t", (1234) },    /* set int to whitespace-laden valid string, should yield 1234 */
+        new object [] { SIMPLE, "IntValue", (0), (34), (34) },   /* set int to 34 */
+        new object [] { SIMPLE, "IntValue", (34), "foobar", typeof (OgnlException) },     /* set int to invalid format string, should yield OgnlException */
+        new object [] { SIMPLE, "IntValue", (34), "", typeof (OgnlException) },           /* set int to empty string, should yield 0gnlException */
+        new object [] { SIMPLE, "IntValue", (34), "       \t", typeof (OgnlException) },  /* set int to whitespace-only string, should yield 0gnlException */
+        new object [] { SIMPLE, "IntValue", (34), "       \t1234\t\t", (1234) },    /* set int to whitespace-laden valid string, should yield 1234 */
 
-													//										{ SIMPLE, "bigIntValue", BigInteger.valueOf(0), BigInteger.valueOf(34), BigInteger.valueOf(34) },   /* set bigint to 34 */
-													//										{ SIMPLE, "bigIntValue", BigInteger.valueOf(34), null, null },              /* set bigint to null string, should yield 0 */
-													// new object [] { SIMPLE, "BigIntValue", null, "", typeof (OgnlException) },                   /* set bigint to empty string, should yield 0gnlException */
-													// new object [] { SIMPLE, "BigIntValue", null, "foobar", typeof (OgnlException) },             /* set bigint to invalid format string, should yield OgnlException */
+        //										{ SIMPLE, "bigIntValue", BigInteger.valueOf(0), BigInteger.valueOf(34), BigInteger.valueOf(34) },   /* set bigint to 34 */
+        //										{ SIMPLE, "bigIntValue", BigInteger.valueOf(34), null, null },              /* set bigint to null string, should yield 0 */
+        // new object [] { SIMPLE, "BigIntValue", null, "", typeof (OgnlException) },                   /* set bigint to empty string, should yield 0gnlException */
+        // new object [] { SIMPLE, "BigIntValue", null, "foobar", typeof (OgnlException) },             /* set bigint to invalid format string, should yield OgnlException */
                     
-													new object [] { SIMPLE, "BigDecValue", (decimal)(0.0), (decimal)(34.55), (decimal)(34.55) },   /* set bigdec to 34.55 */
-													// new object [] { SIMPLE, "BigDecValue", (decimal)(34.55), null, null },               /* set bigdec to null string, should yield 0.0 */
-													// new object [] { SIMPLE, "BigDecValue", null, "", null} ,// typeof (OgnlException) },                   /* set bigdec to empty string, should yield 0gnlException */
-													// new object [] { SIMPLE, "BigDecValue", null, "foobar", null} , // typeof (OgnlException) },             /* set bigdec to invalid format string, should yield OgnlException */
-		};
+        new object [] { SIMPLE, "BigDecValue", (decimal)(0.0), (decimal)(34.55), (decimal)(34.55) },   /* set bigdec to 34.55 */
+        // new object [] { SIMPLE, "BigDecValue", (decimal)(34.55), null, null },               /* set bigdec to null string, should yield 0.0 */
+        // new object [] { SIMPLE, "BigDecValue", null, "", null} ,// typeof (OgnlException) },                   /* set bigdec to empty string, should yield 0gnlException */
+        // new object [] { SIMPLE, "BigDecValue", null, "foobar", null} , // typeof (OgnlException) },             /* set bigdec to invalid format string, should yield OgnlException */
+    };
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				if (TESTS[i].Length == 3) 
-				{
-					result.addTest(new NumberFormatExceptionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-				} 
-				else 
-				{
-					if (TESTS[i].Length == 4) 
-					{
-						result.addTest(new NumberFormatExceptionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-					} 
-					else 
-					{
-						if (TESTS[i].Length == 5) 
-						{
-							result.addTest(new NumberFormatExceptionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-						} 
-						else 
-						{
-							throw new Exception("don't understand TEST format");
-						}
-					}
-				}
-			}
-			return result;
-		}
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            if (TESTS[i].Length == 3) 
+            {
+                result.addTest(new NumberFormatExceptionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+            } 
+            else 
+            {
+                if (TESTS[i].Length == 4) 
+                {
+                    result.addTest(new NumberFormatExceptionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
+                } 
+                else 
+                {
+                    if (TESTS[i].Length == 5) 
+                    {
+                        result.addTest(new NumberFormatExceptionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
+                    } 
+                    else 
+                    {
+                        throw new Exception("don't understand TEST format");
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public NumberFormatExceptionTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public NumberFormatExceptionTest()
+    {
 	
-		}
+    }
 
-		public NumberFormatExceptionTest(string name): base(name)
-		{
+    public NumberFormatExceptionTest(string name): base(name)
+    {
 	    
-		}
+    }
 
-		public NumberFormatExceptionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			:base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public NumberFormatExceptionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        :base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public NumberFormatExceptionTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public NumberFormatExceptionTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public NumberFormatExceptionTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public NumberFormatExceptionTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
-	}
+    }
 }

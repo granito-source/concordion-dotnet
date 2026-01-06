@@ -1,11 +1,6 @@
-using System ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
-using java ;
-
-using NUnit.Framework ;
-
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -36,71 +31,69 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class ProjectionSelectionTest : OgnlTestCase
 {
+    private static Root             ROOT = new Root();
 
-	public class ProjectionSelectionTest : OgnlTestCase
-	{
-		private static Root             ROOT = new Root();
+    private static object[][]       TESTS = {
+        // Projection, selection
+        new object [] { ROOT, "Array.{Type}", Util.asList(new Type[]{typeof (int),typeof (int),typeof (int),typeof (int)}) },
+        new object [] { ROOT, "Map.array.{? #this > 2 }", Util.asList(new int[]{(3), (4)}) },
+        new object [] { ROOT, "Map.array.{^ #this > 2 }", Util.asList(new int[]{(3)}) },
+        new object [] { ROOT, "Map.array.{$ #this > 2 }", Util.asList(new int[]{(4)}) },
+        new object [] { ROOT, "Map.array[*].{?true} instanceof System.Collections.ICollection", true },
+        // { null, "#fact=1, 30H.{? #fact = #fact * (#this+1), false }, #fact", 265252859812191058636308480000000L },
+    };
 
-		private static object[][]       TESTS = {
-													// Projection, selection
-										new object [] { ROOT, "Array.{Type}", Util.asList(new Type[]{typeof (int),typeof (int),typeof (int),typeof (int)}) },
-										new object [] { ROOT, "Map.array.{? #this > 2 }", Util.asList(new int[]{(3), (4)}) },
-										new object [] { ROOT, "Map.array.{^ #this > 2 }", Util.asList(new int[]{(3)}) },
-										new object [] { ROOT, "Map.array.{$ #this > 2 }", Util.asList(new int[]{(4)}) },
-										new object [] { ROOT, "Map.array[*].{?true} instanceof System.Collections.ICollection", true },
-			// { null, "#fact=1, 30H.{? #fact = #fact * (#this+1), false }, #fact", 265252859812191058636308480000000L },
-		};
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            result.addTest(new ProjectionSelectionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+        }
+        return result;
+    }
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				result.addTest(new ProjectionSelectionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-			}
-			return result;
-		}
-
-		[Test]
-		public void Test1 ()
-		{
-			suite () [1].runTest ();
-		}
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public ProjectionSelectionTest()
-		{
+    [Test]
+    public void Test1 ()
+    {
+        suite () [1].runTest ();
+    }
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public ProjectionSelectionTest()
+    {
 	
-		}
+    }
 
-		public ProjectionSelectionTest(string name) : base(name)
-		{
+    public ProjectionSelectionTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public ProjectionSelectionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public ProjectionSelectionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public ProjectionSelectionTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public ProjectionSelectionTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public ProjectionSelectionTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public ProjectionSelectionTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
-	}
+    }
 }

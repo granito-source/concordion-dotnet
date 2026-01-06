@@ -28,17 +28,13 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test.objects
+namespace OGNL.Test.Objects;
+
+public class OtherObjectIndexed : BaseObjectIndexed
 {
-
-	public class Bean2 
-	{
-		private Bean3       bean3 = new Bean3();
-
-		public Bean3 getBean3()
-		{
-			return bean3;
-		}
-	}
+    public OtherObjectIndexed()
+    {
+        setAttribute("foo", "bar");
+        setAttribute("bar", "baz");
+    }
 }
-

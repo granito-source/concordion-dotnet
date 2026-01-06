@@ -1,3 +1,5 @@
+using System.Collections;
+
 //--------------------------------------------------------------------------
 //	Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -28,16 +30,41 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test.objects 
+namespace OGNL.Test.Objects;
+
+public class Bean3 
 {
+    private int         value = 100;
+    private IDictionary         map;
 
-	public class Bean1 
-	{
-		private Bean2       bean2 = new Bean2();
+    public Bean3 ()
+    {
+        map = new Hashtable();
+        map.Add("foo", "bar");
+        map.Add("bar", "baz");
+    }
 
-		public Bean2 getBean2()
-		{
-			return bean2;
-		}
-	}
+    public int getValue()
+    {
+        return value;
+    }
+
+    public void setValue(int value)
+    {
+        this.value = value;
+    }
+
+    public object getIndexedValue(int index)
+    {
+        return null;
+    }
+
+    public void setIndexedValue(int index, object value)
+    {
+    }
+
+    public IDictionary getMap()
+    {
+        return map;
+    }
 }

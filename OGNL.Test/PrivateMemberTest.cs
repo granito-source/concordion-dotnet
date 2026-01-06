@@ -1,8 +1,5 @@
-using NUnit.Framework ;
+using OGNL.Test.Util;
 
-using ognl ;
-
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -33,70 +30,68 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+/**
+ * This is a test program for private access in OGNL.
+ * shows the failures and a summary.
+ */
+[TestFixture]
+public class PrivateMemberTest 
 {
-
-	/**
-	 * This is a test program for private access in OGNL.
-	 * shows the failures and a summary.
-	 */
-	[TestFixture]
-	public class PrivateMemberTest 
-	{
-		private string                  _privateProperty = "private value";
-		protected OgnlContext           context;
+    private string                  _privateProperty = "private value";
+    protected OgnlContext           context;
 
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public TestSuite suite()
-		{
-			// return new TestSuite(typeof (PrivateMemberTest));
-			// TODO: Simple Test
-			return null ;
-		}
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public TestSuite suite()
+    {
+        // return new TestSuite(typeof (PrivateMemberTest));
+        // TODO: Simple Test
+        return null ;
+    }
 
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public PrivateMemberTest(string name)
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public PrivateMemberTest(string name)
+    {
 	   
-		}
+    }
 
-		/*===================================================================
-			Public methods
-		  ===================================================================*/
-		private string getPrivateProperty()
-		{
-			return _privateProperty;
-		}
+    /*===================================================================
+        Public methods
+      ===================================================================*/
+    private string getPrivateProperty()
+    {
+        return _privateProperty;
+    }
 
-		private void setPrivateProperty(string value)
-		{
-			_privateProperty = value;
-		}
+    private void setPrivateProperty(string value)
+    {
+        _privateProperty = value;
+    }
 
-		[Test]
-		public void testPrivateAccessor() // throws OgnlException
-		{
-			NUnit.Framework.Assert.AreEqual(Ognl.getValue("privateProperty", context, this), getPrivateProperty());
-		}
-		[Test]
-		public void testPrivateField() // throws OgnlException
-		{
-			NUnit.Framework.Assert.AreEqual(Ognl.getValue("_privateProperty", context, this), _privateProperty);
-		}
+    [Test]
+    public void testPrivateAccessor() // throws OgnlException
+    {
+        NUnit.Framework.Assert.AreEqual(Ognl.getValue("privateProperty", context, this), getPrivateProperty());
+    }
+    [Test]
+    public void testPrivateField() // throws OgnlException
+    {
+        NUnit.Framework.Assert.AreEqual(Ognl.getValue("_privateProperty", context, this), _privateProperty);
+    }
 
-		/*===================================================================
-			Overridden methods
-		  ===================================================================*/
-		[TestFixtureSetUp]
-		public void setUp()
-		{
-			context = (OgnlContext)Ognl.createDefaultContext(null);
-			context.setMemberAccess(new DefaultMemberAccess(true));
-		}
-	}
+    /*===================================================================
+        Overridden methods
+      ===================================================================*/
+    [TestFixtureSetUp]
+    public void setUp()
+    {
+        context = (OgnlContext)Ognl.createDefaultContext(null);
+        context.setMemberAccess(new DefaultMemberAccess(true));
+    }
 }

@@ -1,5 +1,3 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
 
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
@@ -31,61 +29,38 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace OGNL.Test;
+namespace OGNL.Test.Util;
 
-public class ContextVariableTest : OgnlTestCase
+public class ContextClassLoader : ClassLoader
 {
-    private static object           ROOT = new Simple();
-    private static object[][]       TESTS = {
-        // Naming and referring to names
-        new object [] { "#root", ROOT }, // Special root reference
-        new object [] { "#this", ROOT }, // Special this reference
-        new object [] { "#f=5, #s=6, #f + #s", 11 },
-        new object [] { "#six=(#five=5, 6), #five + #six", 11 }, // Dynamic scoping
-    };
+    OgnlContext context ;
 
     /*===================================================================
-        Public static methods
+                                        Constructors
       ===================================================================*/
-    public override TestSuite suite()
-    {
-        TestSuite       result = new TestSuite();
 
-        for (int i = 0; i < TESTS.Length; i++) 
+    public ContextClassLoader (ClassLoader parentClassLoader, OgnlContext context)
+    {
+        base (parentClassLoader) ;
+        this.context = context ;
+    }
+
+    /*===================================================================
+    Overridden methods
+  ===================================================================*/
+    protected Class findClass (string name)
+        // throws ClassNotFoundException
+    {
+
+        if ((
+                context
+                != null) && (
+                context.getClassResolver
+                    () != null))
         {
-            result.addTest(new ContextVariableTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", ROOT, (string)TESTS[i][0], TESTS[i][1]));
+            return context.getClassResolver().classForName (name , context ) ;
         }
-        return result;
+        return base.findClass(name);
     }
 
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public ContextVariableTest()
-    {
-	    
-    }
-
-    public ContextVariableTest(string name) : base(name)
-    {
-	    
-    }
-
-    public ContextVariableTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-        
-    }
-
-    public ContextVariableTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-        
-    }
-
-    public ContextVariableTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
-        
-    }
 }

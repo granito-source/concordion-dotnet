@@ -1,11 +1,5 @@
-using System ;
-
-using NUnit.Framework ;
-
-using ognl ;
-
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
@@ -37,100 +31,98 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class EnumTest : OgnlTestCase
 {
+    private static EnumBean             ROOT = new EnumBean();
 
-	public class EnumTest : OgnlTestCase
-	{
-		private static EnumBean             ROOT = new EnumBean();
-
-		private static object[][]       TESTS = {
-													// indexed access of with navigation chain (should start back at root)
-													new object [] { ROOT, "ItemValue", ROOT.ItemValue },
-													new object [] { ROOT, "ItemValue == 0 ", true },
-													// new object [] { ROOT, "ItemValue == '0' ", true },
-													new object [] { ROOT, "ItemValue == \"0\" ", true },
-													new object [] { ROOT, "ItemValue == 'Item1' ", true },
-													new object [] { ROOT, "ItemValue == 'item1' ", true },
-													new object [] { ROOT, "ItemValue", SomeEnum.Item1 },
-													new object [] { ROOT, "ItemValue = 'Item2'", "Item2" },
-													new object [] { ROOT, "ItemValue", SomeEnum.Item2 , "Item1" , SomeEnum.Item1},
-													new object [] { ROOT, "ItemValue = 2", 2 },
-													new object [] { ROOT, "ItemValue", SomeEnum.Item3 , "Item1" , SomeEnum.Item1},
-													new object [] { ROOT, "ItemValue", SomeEnum.Item1 , "item2" , SomeEnum.Item2},
-													new object [] { ROOT, "ItemValue", SomeEnum.Item2 , "2" , SomeEnum.Item3},
+    private static object[][]       TESTS = {
+        // indexed access of with navigation chain (should start back at root)
+        new object [] { ROOT, "ItemValue", ROOT.ItemValue },
+        new object [] { ROOT, "ItemValue == 0 ", true },
+        // new object [] { ROOT, "ItemValue == '0' ", true },
+        new object [] { ROOT, "ItemValue == \"0\" ", true },
+        new object [] { ROOT, "ItemValue == 'Item1' ", true },
+        new object [] { ROOT, "ItemValue == 'item1' ", true },
+        new object [] { ROOT, "ItemValue", SomeEnum.Item1 },
+        new object [] { ROOT, "ItemValue = 'Item2'", "Item2" },
+        new object [] { ROOT, "ItemValue", SomeEnum.Item2 , "Item1" , SomeEnum.Item1},
+        new object [] { ROOT, "ItemValue = 2", 2 },
+        new object [] { ROOT, "ItemValue", SomeEnum.Item3 , "Item1" , SomeEnum.Item1},
+        new object [] { ROOT, "ItemValue", SomeEnum.Item1 , "item2" , SomeEnum.Item2},
+        new object [] { ROOT, "ItemValue", SomeEnum.Item2 , "2" , SomeEnum.Item3},
 													
-		};
+    };
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				if (TESTS[i].Length == 2) 
-				{
-					result.addTest(new EnumTest(TESTS [i][0] + "(" + TESTS [i][1] + ")" , null , (string) TESTS [i][0] , TESTS [i][1]));
-				} 
-				else 
-				{
-					if (TESTS [i].Length == 3)
-					{
-						result.addTest(new EnumTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-					}
-					else
-					if (TESTS[i].Length == 4) 
-					{
-						result.addTest(new EnumTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-					} 
-					else 
-					{
-						if (TESTS[i].Length == 5) 
-						{
-							result.addTest(new EnumTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-						} 
-						else 
-						{
-							throw new Exception("don't understand TEST format");
-						}
-					}
-				}
-			}
-			return result;
-		}
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            if (TESTS[i].Length == 2) 
+            {
+                result.addTest(new EnumTest(TESTS [i][0] + "(" + TESTS [i][1] + ")" , null , (string) TESTS [i][0] , TESTS [i][1]));
+            } 
+            else 
+            {
+                if (TESTS [i].Length == 3)
+                {
+                    result.addTest(new EnumTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+                }
+                else
+                if (TESTS[i].Length == 4) 
+                {
+                    result.addTest(new EnumTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
+                } 
+                else 
+                {
+                    if (TESTS[i].Length == 5) 
+                    {
+                        result.addTest(new EnumTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
+                    } 
+                    else 
+                    {
+                        throw new Exception("don't understand TEST format");
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public EnumTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public EnumTest()
+    {
 	    
-		}
+    }
 
-		public EnumTest(string name) : base(name)
-		{
+    public EnumTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public EnumTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			:base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public EnumTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        :base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public EnumTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public EnumTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public EnumTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public EnumTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
 			
-		}
-	}
+    }
 }

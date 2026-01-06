@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------
-//	Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//	Copyright (c) 2004, Drew Davidson ,  Luke Blanshard and Foxcoming
 //  All rights reserved.
 //
 //	Redistribution and use in source and binary forms, with or without
@@ -28,60 +28,74 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test.objects
+namespace OGNL.Test.Objects;
+
+public class Indexed 
 {
+    private string[]        values = new string[] { "foo", "bar", "baz" };
 
-	public class Component
-	{
-		private URLStorage          toDisplay = new URLStorage();
-		private Page                page = new Page();
+    public Indexed()
+    {
+    
+    }
 
-		public class URLStorage 
-		{
-			private string          pictureUrl = "http://www.picturespace.com/pictures/100";
+    public Indexed(string[] values)
+    {
+     
+        this.values = values;
+    }
 
-			public string getPictureUrl()
-			{
-				return pictureUrl;
-			}
+    /* Indexed property "values" */
+    public string[] getValues()
+    {
+        return values;
+    }
 
-			public void setPictureUrl(string value)
-			{
-				pictureUrl = value;
-			}
-		}
+    public void setValues(string[] value)
+    {
+        values = value;
+    }
 
-		public class Page 
-		{
-			public object createRelativeAsset(string value)
-			{
-				return "/toplevel/" + value;
-			}
-		}
+    /**
+        This method returns the string from the array and appends "xxx" to
+        distinguish the "get" method from the direct array access.
+     */
+    public string getValues(int index)
+    {
+        return values[index] + "xxx";
+    }
 
-		public Component()
-		{
-        
-		}
+    public void setValues(int index, string value)
+    {
+        if (value.EndsWith("xxx")) 
+        {
+            values[index] = value.Substring(0, value.Length - 3);
+        } 
+        else 
+        {
+            values[index] = value;
+        }
+    }
 
-		public Page getPage()
-		{
-			return page;
-		}
+    // Add a Item bean property.
+    /*public string [] GetItem ()
+    {
+        return getValues () ;
+    }*/
+    public string this [int index]
+    {
+        get {return values[index] + "xxx"; }
+        set 
+        {
+            if (value.EndsWith("xxx")) 
+            {
+                values[index] = value.Substring(0, value.Length - 3);
+            } 
+            else 
+            {
+                values[index] = value;
+            }
+        }
+    }
 
-		public void setPage(Page value)
-		{
-			page = value;
-		}
-
-		public URLStorage getToDisplay()
-		{
-			return toDisplay;
-		}
-
-		public void setToDisplay(URLStorage value)
-		{
-			toDisplay = value;
-		}
-	}
 }

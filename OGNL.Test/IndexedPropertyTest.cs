@@ -1,11 +1,6 @@
-using System ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
-using NUnit.Framework ;
-
-using ognl ;
-
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson ,  Luke Blanshard and Foxcoming
 //  All rights reserved.
@@ -36,99 +31,97 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class IndexedPropertyTest : OgnlTestCase
 {
+    private static Indexed          INDEXED = new Indexed();
 
-	public class IndexedPropertyTest : OgnlTestCase
-	{
-		private static Indexed          INDEXED = new Indexed();
-
-		private static object[][]       TESTS = {
-													// Indexed properties
-										new object [] { INDEXED, "Values", INDEXED.getValues() },                                 /* gets string[] */
-										new object [] { INDEXED, "[\"Values\"]", typeof (MethodFailedException) },                           /* COnflict with this ["string"], Exception */
-										new object [] { INDEXED.getValues(), "[0]", INDEXED.getValues()[0] },                     /* "foo" */
-										new object [] { INDEXED, "getValues()[0]", INDEXED.getValues()[0] },                      /* "foo" directly from array */
-										new object [] { INDEXED, "Item[0]", INDEXED[0] },                             /* "foo" + "xxx" */
-										new object [] { INDEXED, "[0]", INDEXED [0] },                             /* "foo" + "xxx" */
-										// Index property can't getLength.
-										new object [] { INDEXED, "Values[^]", INDEXED.getValues () [0] },                             /* "foo" + "xxx" */
-										new object [] { INDEXED, "Values[|]", INDEXED.getValues ()[(1)] },                             /* "bar" + "xxx" */
-										new object [] { INDEXED, "Values[$]", INDEXED.getValues ()[(2)] },                             /* "baz" + "xxx" */
-										// Try to use this, If There is a Property Named Item to. chould use this.
-										// No used....
-										// new object [] { INDEXED, "Item[^]", INDEXED.getValues (0) },                             /* "foo" + "xxx" */
+    private static object[][]       TESTS = {
+        // Indexed properties
+        new object [] { INDEXED, "Values", INDEXED.getValues() },                                 /* gets string[] */
+        new object [] { INDEXED, "[\"Values\"]", typeof (MethodFailedException) },                           /* COnflict with this ["string"], Exception */
+        new object [] { INDEXED.getValues(), "[0]", INDEXED.getValues()[0] },                     /* "foo" */
+        new object [] { INDEXED, "getValues()[0]", INDEXED.getValues()[0] },                      /* "foo" directly from array */
+        new object [] { INDEXED, "Item[0]", INDEXED[0] },                             /* "foo" + "xxx" */
+        new object [] { INDEXED, "[0]", INDEXED [0] },                             /* "foo" + "xxx" */
+        // Index property can't getLength.
+        new object [] { INDEXED, "Values[^]", INDEXED.getValues () [0] },                             /* "foo" + "xxx" */
+        new object [] { INDEXED, "Values[|]", INDEXED.getValues ()[(1)] },                             /* "bar" + "xxx" */
+        new object [] { INDEXED, "Values[$]", INDEXED.getValues ()[(2)] },                             /* "baz" + "xxx" */
+        // Try to use this, If There is a Property Named Item to. chould use this.
+        // No used....
+        // new object [] { INDEXED, "Item[^]", INDEXED.getValues (0) },                             /* "foo" + "xxx" */
 										
-										new object [] { INDEXED, "[0]", "fooxxx" , "xxxx" + "xxx", "xxxx" + "xxx" },    /* set through setValues(int, string) */
-										new object [] { INDEXED, "Item[1]", "bar" + "xxx", "xxxx" + "xxx", "xxxx" + "xxx" },    /* set through setValues(int, string) */
-										new object [] { INDEXED, "Item[1]", "xxxx" + "xxx" },                                   /* getValues(int) again to check if setValues(int, string) was called */
-										new object [] { INDEXED, "setValues(2, \"xxxx\")", null },                                /* was "baz" -> "xxxx" */
-		};
+        new object [] { INDEXED, "[0]", "fooxxx" , "xxxx" + "xxx", "xxxx" + "xxx" },    /* set through setValues(int, string) */
+        new object [] { INDEXED, "Item[1]", "bar" + "xxx", "xxxx" + "xxx", "xxxx" + "xxx" },    /* set through setValues(int, string) */
+        new object [] { INDEXED, "Item[1]", "xxxx" + "xxx" },                                   /* getValues(int) again to check if setValues(int, string) was called */
+        new object [] { INDEXED, "setValues(2, \"xxxx\")", null },                                /* was "baz" -> "xxxx" */
+    };
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				if (TESTS[i].Length == 3) 
-				{
-					result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-				} 
-				else 
-				{
-					if (TESTS[i].Length == 4) 
-					{
-						result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-					} 
-					else 
-					{
-						if (TESTS[i].Length == 5) 
-						{
-							result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-						} 
-						else 
-						{
-							throw new Exception("don't understand TEST format");
-						}
-					}
-				}
-			}
-			return result;
-		}
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            if (TESTS[i].Length == 3) 
+            {
+                result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+            } 
+            else 
+            {
+                if (TESTS[i].Length == 4) 
+                {
+                    result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
+                } 
+                else 
+                {
+                    if (TESTS[i].Length == 5) 
+                    {
+                        result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
+                    } 
+                    else 
+                    {
+                        throw new Exception("don't understand TEST format");
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public IndexedPropertyTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public IndexedPropertyTest()
+    {
 	   
-		}
+    }
 
-		public IndexedPropertyTest(string name) : base(name)
-		{
+    public IndexedPropertyTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public IndexedPropertyTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public IndexedPropertyTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public IndexedPropertyTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public IndexedPropertyTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public IndexedPropertyTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public IndexedPropertyTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
-	}
+    }
 }

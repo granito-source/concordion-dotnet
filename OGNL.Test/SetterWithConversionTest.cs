@@ -1,9 +1,6 @@
-using System ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
-using NUnit.Framework ;
-
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -34,94 +31,92 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class SetterWithConversionTest : OgnlTestCase
 {
+    private static Root             ROOT = new Root();
 
-	public class SetterWithConversionTest : OgnlTestCase
-	{
-		private static Root             ROOT = new Root();
+    private static object[][]       TESTS = {
+        // Property set with conversion
+        new object [] { ROOT, "IntValue", (0), (double)(6.5), (6) },
+        // C# use ODD round, so value is 1026
+        new object [] { ROOT, "IntValue", (6), (double)(1025.87645), (1026) },
+        new object [] { ROOT, "IntValue", (1026), "654", (654) },
+        new object [] { ROOT, "StringValue", null, (25), "25" },
+        new object [] { ROOT, "StringValue", "25",(100.25f), "100.25" },
+        new object [] { ROOT, "anotherStringValue", "foo", (0), "0" },
+        new object [] { ROOT, "anotherStringValue", "0", (double)(0.5), "0.5" },
+        new object [] { ROOT, "anotherIntValue", (123), "5", (5) },
+        new object [] { ROOT, "anotherIntValue", (5), (double)(100.25), (100) },
+        //          { ROOT, "anotherIntValue", (100), new string[] { "55" }, (55)},
+        //          { ROOT, "yetAnotherIntValue", (46), new string[] { "55" }, (55)},
 
-		private static object[][]       TESTS = {
-													// Property set with conversion
-										new object [] { ROOT, "IntValue", (0), (double)(6.5), (6) },
-										// C# use ODD round, so value is 1026
-										new object [] { ROOT, "IntValue", (6), (double)(1025.87645), (1026) },
-										new object [] { ROOT, "IntValue", (1026), "654", (654) },
-										new object [] { ROOT, "StringValue", null, (25), "25" },
-										new object [] { ROOT, "StringValue", "25",(100.25f), "100.25" },
-										new object [] { ROOT, "anotherStringValue", "foo", (0), "0" },
-										new object [] { ROOT, "anotherStringValue", "0", (double)(0.5), "0.5" },
-										new object [] { ROOT, "anotherIntValue", (123), "5", (5) },
-										new object [] { ROOT, "anotherIntValue", (5), (double)(100.25), (100) },
-			//          { ROOT, "anotherIntValue", (100), new string[] { "55" }, (55)},
-			//          { ROOT, "yetAnotherIntValue", (46), new string[] { "55" }, (55)},
+    };
 
-		};
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            if (TESTS[i].Length == 3) 
+            {
+                result.addTest(new SetterWithConversionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+            } 
+            else 
+            {
+                if (TESTS[i].Length == 4) 
+                {
+                    result.addTest(new SetterWithConversionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
+                } 
+                else 
+                {
+                    if (TESTS[i].Length == 5) 
+                    {
+                        result.addTest(new SetterWithConversionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
+                    } 
+                    else 
+                    {
+                        throw new Exception("don't understand TEST format");
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				if (TESTS[i].Length == 3) 
-				{
-					result.addTest(new SetterWithConversionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-				} 
-				else 
-				{
-					if (TESTS[i].Length == 4) 
-					{
-						result.addTest(new SetterWithConversionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-					} 
-					else 
-					{
-						if (TESTS[i].Length == 5) 
-						{
-							result.addTest(new SetterWithConversionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-						} 
-						else 
-						{
-							throw new Exception("don't understand TEST format");
-						}
-					}
-				}
-			}
-			return result;
-		}
-
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public SetterWithConversionTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public SetterWithConversionTest()
+    {
 	   
-		}
+    }
 
-		public SetterWithConversionTest(string name) : base(name)
-		{
+    public SetterWithConversionTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public SetterWithConversionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public SetterWithConversionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public SetterWithConversionTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public SetterWithConversionTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public SetterWithConversionTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public SetterWithConversionTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
-	}
+    }
 }

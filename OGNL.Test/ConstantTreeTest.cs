@@ -1,9 +1,5 @@
-using System ;
+using OGNL.Test.Util;
 
-using ognl ;
-using NUnit.Framework;
-
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -34,85 +30,83 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class ConstantTreeTest : OgnlTestCase
 {
+    public static int               nonFinalStaticVariable = 15;
 
-	public class ConstantTreeTest : OgnlTestCase
-	{
-		public static int               nonFinalStaticVariable = 15;
+    private static object[][]       TESTS = {
+        new object [] { "true", true },
+        new object [] { "55", true },
+        new object [] { "@Byte@MinValue", true },
+        new object [] { "@Test.org.ognl.test.ConstantTreeTest@nonFinalStaticVariable", false },
+        new object [] { "@Test.org.ognl.test.ConstantTreeTest@nonFinalStaticVariable + 10", false },
+        new object [] { "55 + 24 + @Byte@MaxValue", true },
+        new object [] { "name", false },
+        new object [] { "name[i]", false },
+        new object [] { "name[i].property", false },
+        new object [] { "name.{? foo }", false },
+        new object [] { "name.{ foo }", false },
+        new object [] { "name.{ 25 }", false }
+    };
 
-		private static object[][]       TESTS = {
-										new object [] { "true", true },
-										new object [] { "55", true },
-										new object [] { "@Byte@MinValue", true },
-										new object [] { "@Test.org.ognl.test.ConstantTreeTest@nonFinalStaticVariable", false },
-										new object [] { "@Test.org.ognl.test.ConstantTreeTest@nonFinalStaticVariable + 10", false },
-										new object [] { "55 + 24 + @Byte@MaxValue", true },
-										new object [] { "name", false },
-										new object [] { "name[i]", false },
-										new object [] { "name[i].property", false },
-										new object [] { "name.{? foo }", false },
-										new object [] { "name.{ foo }", false },
-										new object [] { "name.{ 25 }", false }
-												};
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            result.addTest(new ConstantTreeTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null, (string)TESTS[i][0], TESTS[i][1]));
+        }
+        return result;
+    }
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				result.addTest(new ConstantTreeTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null, (string)TESTS[i][0], TESTS[i][1]));
-			}
-			return result;
-		}
+    /*===================================================================
+        Overridden methods
+      ===================================================================*/
+    protected internal override void runTest() // throws OgnlException
+    {
+        setUp () ;
+        NUnit.Framework.Assert.IsTrue(Ognl.isConstant(getExpression(), context) == ((bool)getExpectedResult()));
+    }
 
-		/*===================================================================
-			Overridden methods
-		  ===================================================================*/
-		protected internal override void runTest() // throws OgnlException
-		{
-			setUp () ;
-			NUnit.Framework.Assert.IsTrue(Ognl.isConstant(getExpression(), context) == ((bool)getExpectedResult()));
-		}
-
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public ConstantTreeTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public ConstantTreeTest()
+    {
 	    
-		}
+    }
 
-		public ConstantTreeTest(string name) : base(name)
-		{
+    public ConstantTreeTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public ConstantTreeTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public ConstantTreeTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public ConstantTreeTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public ConstantTreeTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public ConstantTreeTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public ConstantTreeTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
-		[Test]
-		public void Test2 ()
-		{
-			suite () [2].runTest ();
-		}
-	}
+    }
+    [Test]
+    public void Test2 ()
+    {
+        suite () [2].runTest ();
+    }
 }

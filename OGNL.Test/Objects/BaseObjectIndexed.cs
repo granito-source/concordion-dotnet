@@ -1,4 +1,5 @@
-using System.Collections ;
+using System.Collections;
+
 //--------------------------------------------------------------------------
 //	Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -29,44 +30,53 @@ using System.Collections ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test.objects
+namespace OGNL.Test.Objects;
+
+public class BaseObjectIndexed 
 {
+    private IDictionary     attributes = new Hashtable();
+
+    public BaseObjectIndexed()
+    {
+			
+    }
+
+    public IDictionary getAttributes()
+    {
+        return attributes;
+    }
+
+    public object getAttribute(string name)
+    {
+        return attributes [name];
+    }
+
+    public void setAttribute(string name, object value)
+    {
+        attributes.Add(name, value);
+    }
+
+    /* allow testing property name where types do not match */
+    public object getOtherAttribute(string name)
+    {
+        return null;
+    }
+
+    public void setOtherAttribute(object someObject, object foo)
+    {
+        /* do nothing */
+    }
 
 
-	public class Bean3 
-	{
-		private int         value = 100;
-		private IDictionary         map;
+    /* test whether get only is found */
+    public object getSecondaryAttribute(object name)
+    {
+        return attributes [name];
+    }
 
-		public Bean3 ()
-		{
-			map = new Hashtable();
-			map.Add("foo", "bar");
-			map.Add("bar", "baz");
-		}
-
-		public int getValue()
-		{
-			return value;
-		}
-
-		public void setValue(int value)
-		{
-			this.value = value;
-		}
-
-		public object getIndexedValue(int index)
-		{
-			return null;
-		}
-
-		public void setIndexedValue(int index, object value)
-		{
-		}
-
-		public IDictionary getMap()
-		{
-			return map;
-		}
-	}
+    public object this [object name]
+    {
+        get {return attributes [name];}
+        set {attributes [name] = value;}
+    }
 }

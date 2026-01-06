@@ -1,6 +1,5 @@
-using System.Collections ;
+using System.Collections;
 
-using ognl ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,43 +30,41 @@ using ognl ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class CorrectedObjectNullHandler : NullHandler
 {
+    private string          defaultValue;
 
-	public class CorrectedObjectNullHandler : NullHandler
-	{
-		private string          defaultValue;
-
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public CorrectedObjectNullHandler(string defaultValue)
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public CorrectedObjectNullHandler(string defaultValue)
+    {
         
-			this.defaultValue = defaultValue;
-		}
+        this.defaultValue = defaultValue;
+    }
 
-		/*===================================================================
-			TypeConverter interface (overridden)
-		  ===================================================================*/
-		public object nullMethodResult(IDictionary context, object target, string methodName, object[] args)
-		{
-			if (methodName.Equals("getStringValue")) 
-			{
-				return defaultValue;
-			}
-			return null;
-		}
+    /*===================================================================
+        TypeConverter interface (overridden)
+      ===================================================================*/
+    public object nullMethodResult(IDictionary context, object target, string methodName, object[] args)
+    {
+        if (methodName.Equals("getStringValue")) 
+        {
+            return defaultValue;
+        }
+        return null;
+    }
 
-		public object nullPropertyValue(IDictionary context, object target, object property)
-		{
-			object      result = null;
+    public object nullPropertyValue(IDictionary context, object target, object property)
+    {
+        object      result = null;
 
-			if (property.Equals("StringValue")) 
-			{
-				return defaultValue;
-			}
-			return null;
-		}
-	}
+        if (property.Equals("StringValue")) 
+        {
+            return defaultValue;
+        }
+        return null;
+    }
 }

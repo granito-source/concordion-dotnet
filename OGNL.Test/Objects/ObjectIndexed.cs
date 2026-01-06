@@ -28,29 +28,15 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-using System;
+namespace OGNL.Test.Objects;
 
-namespace org.ognl.test.objects
+public class ObjectIndexed : BaseObjectIndexed
 {
-	/// <summary>
-	/// SomeEnum 的摘要说明。
-	/// </summary>
-	public enum SomeEnum
-	{
-		Item1 , 
-		Item2 ,
-		Item3 
-	}
-
-	public class EnumBean
-	{
-		private SomeEnum _itemValue ;
-
-		public SomeEnum ItemValue
-		{
-			get { return _itemValue ; }
-			set { _itemValue = value ; }
-		}
-	}
-
+    public ObjectIndexed()
+    {
+       
+        setAttribute("foo", "bar");
+        setAttribute("bar", "baz");
+        setAttribute("other", new OtherObjectIndexed());
+    }
 }

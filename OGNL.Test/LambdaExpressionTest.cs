@@ -1,6 +1,5 @@
-using java ;
+using OGNL.Test.Util;
 
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,65 +30,64 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class LambdaExpressionTest : OgnlTestCase
 {
-	public class LambdaExpressionTest : OgnlTestCase
-	{
-		private static object[][]       TESTS = {
-													// Lambda expressions
-										new object [] { null, "#a=:[33](20).{0}.ToArray().Length", (33) },
-										new object [] { null, "#fact=:[#this<=1? 1 : #fact(#this-1) * #this], #fact(30)", (1409286144) },
-										new object [] { null, "#fact=:[#this<=1? 1 : #fact(#this-1) * #this], #fact(30L)", (-8764578968847253504L) },
-										/* // No BigInteger in C#, Ignored
-										new object [] { null, "#fact=:[#this<=1? 1 : #fact(#this-1) * #this], #fact(30h)", ("265252859812191058636308480000000") },*/
-										new object [] { null, "#bump = :[ #this.{ #this + 1 } ], (#bump)({ 1, 2, 3 })", (Util.asList(new int[] { (2), (3), (4) })) },
-										new object [] { null, "#call = :[ \"calling \" + [0] + \" on \" + [1] ], (#call)({ \"x\", \"y\" })", "calling x on y" },
-		};
+    private static object[][]       TESTS = {
+        // Lambda expressions
+        new object [] { null, "#a=:[33](20).{0}.ToArray().Length", (33) },
+        new object [] { null, "#fact=:[#this<=1? 1 : #fact(#this-1) * #this], #fact(30)", (1409286144) },
+        new object [] { null, "#fact=:[#this<=1? 1 : #fact(#this-1) * #this], #fact(30L)", (-8764578968847253504L) },
+        /* // No BigInteger in C#, Ignored
+        new object [] { null, "#fact=:[#this<=1? 1 : #fact(#this-1) * #this], #fact(30h)", ("265252859812191058636308480000000") },*/
+        new object [] { null, "#bump = :[ #this.{ #this + 1 } ], (#bump)({ 1, 2, 3 })", (Util.asList(new int[] { (2), (3), (4) })) },
+        new object [] { null, "#call = :[ \"calling \" + [0] + \" on \" + [1] ], (#call)({ \"x\", \"y\" })", "calling x on y" },
+    };
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				result.addTest(new LambdaExpressionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-			}
-			return result;
-		}
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            result.addTest(new LambdaExpressionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+        }
+        return result;
+    }
 
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public LambdaExpressionTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public LambdaExpressionTest()
+    {
 	    
-		}
+    }
 
-		public LambdaExpressionTest(string name)
-			: base(name)
-		{
+    public LambdaExpressionTest(string name)
+        : base(name)
+    {
 	    
-		}
+    }
 
-		public LambdaExpressionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public LambdaExpressionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public LambdaExpressionTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public LambdaExpressionTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public LambdaExpressionTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public LambdaExpressionTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
-	}
+    }
 }

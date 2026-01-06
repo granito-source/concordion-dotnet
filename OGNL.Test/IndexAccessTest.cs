@@ -1,9 +1,6 @@
-using NUnit.Framework ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
-using ognl ;
-
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -34,68 +31,66 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class IndexAccessTest : OgnlTestCase
 {
+    private static Root             ROOT = new Root();
 
-	public class IndexAccessTest : OgnlTestCase
-	{
-		private static Root             ROOT = new Root();
+    private static object[][]       TESTS = {
+        // indexed access of with navigation chain (should start back at root)
+        new object [] { ROOT, "List[Index]", ROOT.getList() [(ROOT.getIndex())] },
+        new object [] { ROOT, "List[size() - 1]", typeof (MethodFailedException) },
+    };
 
-		private static object[][]       TESTS = {
-													// indexed access of with navigation chain (should start back at root)
-										new object [] { ROOT, "List[Index]", ROOT.getList() [(ROOT.getIndex())] },
-										new object [] { ROOT, "List[size() - 1]", typeof (MethodFailedException) },
-		};
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            result.addTest(new IndexAccessTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+        }
+        return result;
+    }
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				result.addTest(new IndexAccessTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-			}
-			return result;
-		}
-
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public IndexAccessTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public IndexAccessTest()
+    {
 	    
-		}
+    }
 
-		public IndexAccessTest(string name) : base(name)
-		{
+    public IndexAccessTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public IndexAccessTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			:base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public IndexAccessTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        :base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public IndexAccessTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public IndexAccessTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public IndexAccessTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public IndexAccessTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
 			
-		}
+    }
 
-		[Test]
-		public void Test1 ()
-		{
-			suite () [1].runTest ();
-		}
-	}
+    [Test]
+    public void Test1 ()
+    {
+        suite () [1].runTest ();
+    }
 }

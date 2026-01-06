@@ -1,10 +1,7 @@
-using System ;
-using System.Collections ;
-using System.Reflection ;
+using System.Collections;
+using System.Reflection;
+using OGNL.Test.Util;
 
-using ognl ;
-
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -35,212 +32,210 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+/**
+ * Implementation of PropertyAccessor that uses Javassist to compile
+ * a property accessor specifically tailored to the property.
+ */
+public class CompilingPropertyAccessor : ObjectPropertyAccessor
 {
-
-	/**
-	 * Implementation of PropertyAccessor that uses Javassist to compile
-	 * a property accessor specifically tailored to the property.
-	 */
-	public class CompilingPropertyAccessor : ObjectPropertyAccessor
-	{
-		private static NameFactory                  NAME_FACTORY = new NameFactory("ognl.PropertyAccessor", "v");
-		private static Getter                       NotFoundGetter = new Getter() /*{ public object get(OgnlContext context, object target, string propertyName) { return null; } }*/;
-		private static Getter                       DefaultGetter = new Getter() /*{
-                                                    public object get(OgnlContext context, object target, string propertyName)
-                                                    {
-                                                        try {
-                                                            return OgnlRuntime.getMethodValue(context, target, propertyName, true);
-                                                        } catch (Exception ex) {
-                                                            throw new RuntimeException(ex);
-                                                        }
+    private static NameFactory                  NAME_FACTORY = new NameFactory("ognl.PropertyAccessor", "v");
+    private static Getter                       NotFoundGetter = new Getter() /*{ public object get(OgnlContext context, object target, string propertyName) { return null; } }*/;
+    private static Getter                       DefaultGetter = new Getter() /*{
+                                                public object get(OgnlContext context, object target, string propertyName)
+                                                {
+                                                    try {
+                                                        return OgnlRuntime.getMethodValue(context, target, propertyName, true);
+                                                    } catch (Exception ex) {
+                                                        throw new RuntimeException(ex);
                                                     }
-                                                }*/;
-		private static IDictionary                          pools = new Hashtable();
-		private static IDictionary                          loaders = new Hashtable();
+                                                }
+                                            }*/;
+    private static IDictionary                          pools = new Hashtable();
+    private static IDictionary                          loaders = new Hashtable();
 
-		/*private static java.util.IdentityHashMap    PRIMITIVE_WRAPPER_CLASSES = new IdentityHashMap();*/
-		private Hashtable           seenGetMethods = new Hashtable();
+    /*private static java.util.IdentityHashMap    PRIMITIVE_WRAPPER_CLASSES = new IdentityHashMap();*/
+    private Hashtable           seenGetMethods = new Hashtable();
 
-		static CompilingPropertyAccessor ()
-		{
-			/*PRIMITIVE_WRAPPER_CLASSES.put(Boolean.TYPE, Boolean.class);
-			PRIMITIVE_WRAPPER_CLASSES.put(Boolean.class, Boolean.TYPE);
-			PRIMITIVE_WRAPPER_CLASSES.put(Byte.TYPE, Byte.class);
-			PRIMITIVE_WRAPPER_CLASSES.put(Byte.class, Byte.TYPE);
-			PRIMITIVE_WRAPPER_CLASSES.put(Character.TYPE, Character.class);
-			PRIMITIVE_WRAPPER_CLASSES.put(Character.class, Character.TYPE);
-			PRIMITIVE_WRAPPER_CLASSES.put(Short.TYPE, Short.class);
-			PRIMITIVE_WRAPPER_CLASSES.put(Short.class, Short.TYPE);
-			PRIMITIVE_WRAPPER_CLASSES.put(Integer.TYPE, Integer.class);
-			PRIMITIVE_WRAPPER_CLASSES.put(Integer.class, Integer.TYPE);
-			PRIMITIVE_WRAPPER_CLASSES.put(Long.TYPE, Long.class);
-			PRIMITIVE_WRAPPER_CLASSES.put(Long.class, Long.TYPE);
-			PRIMITIVE_WRAPPER_CLASSES.put(Float.TYPE, Float.class);
-			PRIMITIVE_WRAPPER_CLASSES.put(Float.class, Float.TYPE);
-			PRIMITIVE_WRAPPER_CLASSES.put(Double.TYPE, Double.class);
-			PRIMITIVE_WRAPPER_CLASSES.put(Double.class, Double.TYPE);*/
-		}
+    static CompilingPropertyAccessor ()
+    {
+        /*PRIMITIVE_WRAPPER_CLASSES.put(Boolean.TYPE, Boolean.class);
+        PRIMITIVE_WRAPPER_CLASSES.put(Boolean.class, Boolean.TYPE);
+        PRIMITIVE_WRAPPER_CLASSES.put(Byte.TYPE, Byte.class);
+        PRIMITIVE_WRAPPER_CLASSES.put(Byte.class, Byte.TYPE);
+        PRIMITIVE_WRAPPER_CLASSES.put(Character.TYPE, Character.class);
+        PRIMITIVE_WRAPPER_CLASSES.put(Character.class, Character.TYPE);
+        PRIMITIVE_WRAPPER_CLASSES.put(Short.TYPE, Short.class);
+        PRIMITIVE_WRAPPER_CLASSES.put(Short.class, Short.TYPE);
+        PRIMITIVE_WRAPPER_CLASSES.put(Integer.TYPE, Integer.class);
+        PRIMITIVE_WRAPPER_CLASSES.put(Integer.class, Integer.TYPE);
+        PRIMITIVE_WRAPPER_CLASSES.put(Long.TYPE, Long.class);
+        PRIMITIVE_WRAPPER_CLASSES.put(Long.class, Long.TYPE);
+        PRIMITIVE_WRAPPER_CLASSES.put(Float.TYPE, Float.class);
+        PRIMITIVE_WRAPPER_CLASSES.put(Float.class, Float.TYPE);
+        PRIMITIVE_WRAPPER_CLASSES.put(Double.TYPE, Double.class);
+        PRIMITIVE_WRAPPER_CLASSES.put(Double.class, Double.TYPE);*/
+    }
 
-		public static Type getPrimitiveWrapperClass(Type primitiveClass)
-		{
-			// Just return the type
-			return primitiveClass;// (Class)PRIMITIVE_WRAPPER_CLASSES.get(primitiveClass);
-		}
+    public static Type getPrimitiveWrapperClass(Type primitiveClass)
+    {
+        // Just return the type
+        return primitiveClass;// (Class)PRIMITIVE_WRAPPER_CLASSES.get(primitiveClass);
+    }
 
-		public interface Getter
-		{
-			public object get(OgnlContext context, object target, string propertyName);
-		}
+    public interface Getter
+    {
+        public object get(OgnlContext context, object target, string propertyName);
+    }
 
-		public static Getter generateGetter(OgnlContext context, string code) // throws OgnlException
-		{
-			string                  className = NAME_FACTORY.getNewClassName();
+    public static Getter generateGetter(OgnlContext context, string code) // throws OgnlException
+    {
+        string                  className = NAME_FACTORY.getNewClassName();
 
-			try
-			{
-				ClassPool               pool = (ClassPool)pools [(context.getClassResolver())];
-				EnhancedClassLoader     loader = (EnhancedClassLoader)loaders [(context.getClassResolver())];
-				CtClass                 newClass;
-				CtClass                 ognlContextClass;
-				CtClass                 objectClass;
-				CtClass                 stringClass;
-				CtMethod                method;
-				byte[]                  byteCode;
-				Type                   compiledClass;
+        try
+        {
+            ClassPool               pool = (ClassPool)pools [(context.getClassResolver())];
+            EnhancedClassLoader     loader = (EnhancedClassLoader)loaders [(context.getClassResolver())];
+            CtClass                 newClass;
+            CtClass                 ognlContextClass;
+            CtClass                 objectClass;
+            CtClass                 stringClass;
+            CtMethod                method;
+            byte[]                  byteCode;
+            Type                   compiledClass;
 
-				if ((pool == null) || (loader == null)) 
-				{
-					ClassLoader     classLoader = new ContextClassLoader(typeof (OgnlContext).getClassLoader(), context);
+            if ((pool == null) || (loader == null)) 
+            {
+                ClassLoader     classLoader = new ContextClassLoader(typeof (OgnlContext).getClassLoader(), context);
 
-					pool = ClassPool.getDefault();
-					pool.insertClassPath(new LoaderClassPath(classLoader));
-					pools.Add(context.getClassResolver(), pool);
+                pool = ClassPool.getDefault();
+                pool.insertClassPath(new LoaderClassPath(classLoader));
+                pools.Add(context.getClassResolver(), pool);
 
-					loader = new EnhancedClassLoader(classLoader);
-					loaders.Add(context.getClassResolver(), loader);
-				}
+                loader = new EnhancedClassLoader(classLoader);
+                loaders.Add(context.getClassResolver(), loader);
+            }
 
-				newClass = pool.makeClass(className);
-				ognlContextClass = pool.get (typeof (OgnlContext).Name);
-				objectClass = pool.get (typeof (object).Name);
-				stringClass = pool.get (typeof (string).Name);
+            newClass = pool.makeClass(className);
+            ognlContextClass = pool.get (typeof (OgnlContext).Name);
+            objectClass = pool.get (typeof (object).Name);
+            stringClass = pool.get (typeof (string).Name);
 
-				newClass.addInterface(pool.get(typeof (Getter).Name));
-				method = new CtMethod(objectClass, "get", new CtClass[] { ognlContextClass, objectClass, stringClass }, newClass);
-				method.setBody("{" + code + "}");
-				newClass.addMethod(method);
-				byteCode = newClass.toBytecode();
-				compiledClass = loader.defineClass(className, byteCode);
-				return (Getter)compiledClass.newInstance();
-			} 
-			catch (Exception ex) 
-			{
-				throw new OgnlException("Cannot create class", ex);
-			}
-		}
+            newClass.addInterface(pool.get(typeof (Getter).Name));
+            method = new CtMethod(objectClass, "get", new CtClass[] { ognlContextClass, objectClass, stringClass }, newClass);
+            method.setBody("{" + code + "}");
+            newClass.addMethod(method);
+            byteCode = newClass.toBytecode();
+            compiledClass = loader.defineClass(className, byteCode);
+            return (Getter)compiledClass.newInstance();
+        } 
+        catch (Exception ex) 
+        {
+            throw new OgnlException("Cannot create class", ex);
+        }
+    }
 
-		private Getter getGetter(OgnlContext context, object target, string propertyName) // throws OgnlException
-		{
-			Getter      result;
-			Type       targetClass = target.GetType();
-			IDictionary         propertyMap;
+    private Getter getGetter(OgnlContext context, object target, string propertyName) // throws OgnlException
+    {
+        Getter      result;
+        Type       targetClass = target.GetType();
+        IDictionary         propertyMap;
 
-			if ((propertyMap = (IDictionary)seenGetMethods.get(targetClass)) == null) 
-			{
-				propertyMap = new HashMap(101);
-				seenGetMethods.put(targetClass, propertyMap);
-			}
-			if ((result = (Getter)propertyMap.get(propertyName)) == null) 
-			{
-				try 
-				{
-					MethodInfo      method = OgnlRuntime.getGetMethod(context, targetClass, propertyName);
+        if ((propertyMap = (IDictionary)seenGetMethods.get(targetClass)) == null) 
+        {
+            propertyMap = new HashMap(101);
+            seenGetMethods.put(targetClass, propertyMap);
+        }
+        if ((result = (Getter)propertyMap.get(propertyName)) == null) 
+        {
+            try 
+            {
+                MethodInfo      method = OgnlRuntime.getGetMethod(context, targetClass, propertyName);
 
-					if (method != null) 
-					{
-						if (method.IsPublic)
-						{
-							if (method.ReturnType.IsPrimitive) 
-							{
-								propertyMap.Add(propertyName, result = generateGetter(context,
-									"java.lang.object\t\tresult;\n" +
-									targetClass.Name + "\t" + "t0 = (" + targetClass.Name + ")$2;\n" +
-									"\n" +
-									"try {\n" +
-									"   result = new " + getPrimitiveWrapperClass(method.ReturnType).Name + "(t0." + method.Name + "());\n" +
-									"} catch (java.lang.Exception ex) {\n" +
-									"    throw new java.lang.RuntimeException(ex);\n" +
-									"}\n" +
-									"return result;"
-									));
-							} 
-							else 
-							{
-								propertyMap.Add(propertyName, result = generateGetter(context,
-									"java.lang.object\t\tresult;\n" +
-									targetClass.Name + "\t" + "t0 = (" + targetClass.Name + ")$2;\n" +
-									"\n" +
-									"try {\n" +
-									"   result = t0." + method.Name + "();\n" +
-									"} catch (java.lang.Exception ex) {\n" +
-									"    throw new java.lang.RuntimeException(ex);\n" +
-									"}\n" +
-									"return result;"
-									));
-							}
-						} 
-						else 
-						{
-							propertyMap.Add(propertyName, result = DefaultGetter);
-						}
-					} 
-					else 
-					{
-						propertyMap.Add(propertyName, result = NotFoundGetter);
-					}
-				} 
-				catch (Exception ex) 
-				{
-					throw new OgnlException("getting getter", ex);
-				}
-			}
-			return result;
-		}
+                if (method != null) 
+                {
+                    if (method.IsPublic)
+                    {
+                        if (method.ReturnType.IsPrimitive) 
+                        {
+                            propertyMap.Add(propertyName, result = generateGetter(context,
+                                "java.lang.object\t\tresult;\n" +
+                                targetClass.Name + "\t" + "t0 = (" + targetClass.Name + ")$2;\n" +
+                                "\n" +
+                                "try {\n" +
+                                "   result = new " + getPrimitiveWrapperClass(method.ReturnType).Name + "(t0." + method.Name + "());\n" +
+                                "} catch (java.lang.Exception ex) {\n" +
+                                "    throw new java.lang.RuntimeException(ex);\n" +
+                                "}\n" +
+                                "return result;"
+                            ));
+                        } 
+                        else 
+                        {
+                            propertyMap.Add(propertyName, result = generateGetter(context,
+                                "java.lang.object\t\tresult;\n" +
+                                targetClass.Name + "\t" + "t0 = (" + targetClass.Name + ")$2;\n" +
+                                "\n" +
+                                "try {\n" +
+                                "   result = t0." + method.Name + "();\n" +
+                                "} catch (java.lang.Exception ex) {\n" +
+                                "    throw new java.lang.RuntimeException(ex);\n" +
+                                "}\n" +
+                                "return result;"
+                            ));
+                        }
+                    } 
+                    else 
+                    {
+                        propertyMap.Add(propertyName, result = DefaultGetter);
+                    }
+                } 
+                else 
+                {
+                    propertyMap.Add(propertyName, result = NotFoundGetter);
+                }
+            } 
+            catch (Exception ex) 
+            {
+                throw new OgnlException("getting getter", ex);
+            }
+        }
+        return result;
+    }
 
-		/**
-			Returns OgnlRuntime.NotFound if the property does not exist.
-		 */
-		public object getPossibleProperty( IDictionary context, object target, string name) // throws OgnlException
-		{
-			object          result;
-			OgnlContext     ognlContext = (OgnlContext)context;
+    /**
+        Returns OgnlRuntime.NotFound if the property does not exist.
+     */
+    public object getPossibleProperty( IDictionary context, object target, string name) // throws OgnlException
+    {
+        object          result;
+        OgnlContext     ognlContext = (OgnlContext)context;
 
-			if (context [("_compile")] != null) 
-			{
-				Getter        getter = getGetter(ognlContext, target, name);
+        if (context [("_compile")] != null) 
+        {
+            Getter        getter = getGetter(ognlContext, target, name);
 
-				if (getter != NotFoundGetter) 
-				{
-					result = getter.get(ognlContext, target, name);
-				} 
-				else 
-				{
-					try 
-					{
-						result = OgnlRuntime.getFieldValue(ognlContext, target, name, true);
-					} 
-					catch (Exception ex) 
-					{
-						throw new OgnlException(name, ex);
-					}
-				}
-			} 
-			else 
-			{
-				result = base.getPossibleProperty(context, target, name);
-			}
-			return result;
-		}
-	}
+            if (getter != NotFoundGetter) 
+            {
+                result = getter.get(ognlContext, target, name);
+            } 
+            else 
+            {
+                try 
+                {
+                    result = OgnlRuntime.getFieldValue(ognlContext, target, name, true);
+                } 
+                catch (Exception ex) 
+                {
+                    throw new OgnlException(name, ex);
+                }
+            }
+        } 
+        else 
+        {
+            result = base.getPossibleProperty(context, target, name);
+        }
+        return result;
+    }
 }

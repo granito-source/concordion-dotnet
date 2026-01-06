@@ -1,11 +1,6 @@
-using System ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
-using NUnit.Framework ;
-
-using ognl ;
-
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -36,108 +31,105 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class PrivateAccessorTest : OgnlTestCase
 {
+    private static Root             ROOT = new Root();
 
+    private static object[][]       TESTS = {
+        // Using private get/set methods
+        new object [] { ROOT, "getPrivateAccessorIntValue()", (67) },                  /* Call private method */
+        new object [] { ROOT, "privateAccessorIntValue", (67) },                       /* Implied private method */
+        new object [] { ROOT, "privateAccessorIntValue", (67), (100) },     /* Implied private method */
+        new object [] { ROOT, "privateAccessorIntValue2", (67) },                      /* Implied private method */
+        new object [] { ROOT, "privateAccessorIntValue2", (67), (100) },    /* Implied private method */
+        new object [] { ROOT, "privateAccessorIntValue3", (67) },                      /* Implied private method */
+        new object [] { ROOT, "privateAccessorIntValue3", (67), (100) },    /* Implied private method */
+        new object [] { ROOT, "privateAccessorBooleanValue", true },                      /* Implied private method */
+        new object [] { ROOT, "privateAccessorBooleanValue", true, false },       /* Implied private method */
+    };
 
-	public class PrivateAccessorTest : OgnlTestCase
-	{
-		private static Root             ROOT = new Root();
-
-		private static object[][]       TESTS = {
-													// Using private get/set methods
-										new object [] { ROOT, "getPrivateAccessorIntValue()", (67) },                  /* Call private method */
-										new object [] { ROOT, "privateAccessorIntValue", (67) },                       /* Implied private method */
-										new object [] { ROOT, "privateAccessorIntValue", (67), (100) },     /* Implied private method */
-										new object [] { ROOT, "privateAccessorIntValue2", (67) },                      /* Implied private method */
-										new object [] { ROOT, "privateAccessorIntValue2", (67), (100) },    /* Implied private method */
-										new object [] { ROOT, "privateAccessorIntValue3", (67) },                      /* Implied private method */
-										new object [] { ROOT, "privateAccessorIntValue3", (67), (100) },    /* Implied private method */
-										new object [] { ROOT, "privateAccessorBooleanValue", true },                      /* Implied private method */
-										new object [] { ROOT, "privateAccessorBooleanValue", true, false },       /* Implied private method */
-		};
-
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
-			// Ignrore 
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
+        // Ignrore 
 			
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				if (TESTS[i].Length == 3) 
-				{
-					result.addTest(new PrivateAccessorTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-				} 
-				else 
-				{
-					if (TESTS[i].Length == 4) 
-					{
-						result.addTest(new PrivateAccessorTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-					} 
-					else 
-					{
-						if (TESTS[i].Length == 5) 
-						{
-							result.addTest(new PrivateAccessorTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-						} 
-						else 
-						{
-							throw new Exception("don't understand TEST format");
-						}
-					}
-				}
-			}
-			return result;
-		}
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            if (TESTS[i].Length == 3) 
+            {
+                result.addTest(new PrivateAccessorTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+            } 
+            else 
+            {
+                if (TESTS[i].Length == 4) 
+                {
+                    result.addTest(new PrivateAccessorTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
+                } 
+                else 
+                {
+                    if (TESTS[i].Length == 5) 
+                    {
+                        result.addTest(new PrivateAccessorTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
+                    } 
+                    else 
+                    {
+                        throw new Exception("don't understand TEST format");
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
-		[Ignore ("Private Acccess is not Allowed.")]
-		public override void RunTestSuite()
-		{
+    [Ignore ("Private Acccess is not Allowed.")]
+    public override void RunTestSuite()
+    {
 			
-		}
+    }
 
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public PrivateAccessorTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public PrivateAccessorTest()
+    {
 	    
-		}
+    }
 
-		public PrivateAccessorTest(string name) : base(name)
-		{
+    public PrivateAccessorTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public PrivateAccessorTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public PrivateAccessorTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public PrivateAccessorTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public PrivateAccessorTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public PrivateAccessorTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public PrivateAccessorTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
+    }
 
-		/*===================================================================
-			Overridden methods
-		  ===================================================================*/
-		[TestFixtureSetUp]
-		public override void setUp()
-		{
-			base.setUp();
-			context.setMemberAccess(new DefaultMemberAccess(true));
-		}
-	}
+    /*===================================================================
+        Overridden methods
+      ===================================================================*/
+    [TestFixtureSetUp]
+    public override void setUp()
+    {
+        base.setUp();
+        context.setMemberAccess(new DefaultMemberAccess(true));
+    }
 }

@@ -1,12 +1,5 @@
-
-using System ;
-
-using NUnit.Framework ;
-
-using ognl ;
-
-using org.ognl.test.objects ;
-using org.ognl.test.util ;
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
 
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard 
@@ -39,107 +32,105 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class IndexerTest : OgnlTestCase
 {
+    private static NumberIndexer          INDEXED = new NumberIndexer();
 
-	public class IndexerTest : OgnlTestCase
-	{
-		private static NumberIndexer          INDEXED = new NumberIndexer();
+    private static object[][]       TESTS = {
+        // Indexed properties
+        new object [] { INDEXED, "[0]", INDEXED [0] },                                 /* gets this [0] */
+        new object [] { INDEXED, "[\"0\"]", null },                           /* return null */
+        new object [] { INDEXED.Index , "[1]", INDEXED.Index[1] },                     /* 1 */
+        new object [] { INDEXED, "Index[0]", "0" },                      /* 0 */
+        new object [] { INDEXED, "[\"index\"][1]", "1" },                      /* 0 */
+        new object [] { INDEXED, "Index[0, \"1\"]", 1 },                      /* convert */
+        // this [index1 , index2] ;
+        new object [] { INDEXED, "[0, 0]", 0 },                      /* map [0] */
+        new object [] { INDEXED, "[0, 1]", 1 },                      /* map [1] */
+        new object [] { INDEXED, "[0, 2]", 2 },                      /* map [2] */
+        new object [] { INDEXED, "[1, 1]", 2 },                      /* map [2] */
+        new object [] { INDEXED, "[2, 1]", 3 },                      /* map [3] */						
+        new object [] { INDEXED, "[2, 1]", 3 , 5 , 5},                      /* map [3] */						
+        new object [] { INDEXED, "[2, 1]", 5 , 10 , 10 },                      /* map [3] */						
+        new object [] { INDEXED, "Index[0, 0]", 0 },                      /* map [0] */
+        new object [] { INDEXED, "Index[0, 1]", 1 },                      /* map [1] */
+        new object [] { INDEXED, "Index[0, 2]", 2 },                      /* map [2] */
+        new object [] { INDEXED, "Index[1, 1]", 2 },                      /* map [2] */
+        new object [] { INDEXED, "Index[2, 1]", 3 },                      /* map [3] */						
+        new object [] { INDEXED, "Index[2, 1]", 3 , 5 , 5},                      /* map [3] */						
+        new object [] { INDEXED, "Index[2, 1]", 5 , 10 , 10 },                      /* map [3] */						
+    };
 
-		private static object[][]       TESTS = {
-													// Indexed properties
-													new object [] { INDEXED, "[0]", INDEXED [0] },                                 /* gets this [0] */
-													new object [] { INDEXED, "[\"0\"]", null },                           /* return null */
-													new object [] { INDEXED.Index , "[1]", INDEXED.Index[1] },                     /* 1 */
-													new object [] { INDEXED, "Index[0]", "0" },                      /* 0 */
-													new object [] { INDEXED, "[\"index\"][1]", "1" },                      /* 0 */
-													new object [] { INDEXED, "Index[0, \"1\"]", 1 },                      /* convert */
-													// this [index1 , index2] ;
-													new object [] { INDEXED, "[0, 0]", 0 },                      /* map [0] */
-													new object [] { INDEXED, "[0, 1]", 1 },                      /* map [1] */
-													new object [] { INDEXED, "[0, 2]", 2 },                      /* map [2] */
-													new object [] { INDEXED, "[1, 1]", 2 },                      /* map [2] */
-													new object [] { INDEXED, "[2, 1]", 3 },                      /* map [3] */						
-													new object [] { INDEXED, "[2, 1]", 3 , 5 , 5},                      /* map [3] */						
-													new object [] { INDEXED, "[2, 1]", 5 , 10 , 10 },                      /* map [3] */						
-													new object [] { INDEXED, "Index[0, 0]", 0 },                      /* map [0] */
-													new object [] { INDEXED, "Index[0, 1]", 1 },                      /* map [1] */
-													new object [] { INDEXED, "Index[0, 2]", 2 },                      /* map [2] */
-													new object [] { INDEXED, "Index[1, 1]", 2 },                      /* map [2] */
-													new object [] { INDEXED, "Index[2, 1]", 3 },                      /* map [3] */						
-													new object [] { INDEXED, "Index[2, 1]", 3 , 5 , 5},                      /* map [3] */						
-													new object [] { INDEXED, "Index[2, 1]", 5 , 10 , 10 },                      /* map [3] */						
-		};
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            if (TESTS[i].Length == 3) 
+            {
+                result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+            } 
+            else 
+            {
+                if (TESTS[i].Length == 4) 
+                {
+                    result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
+                } 
+                else 
+                {
+                    if (TESTS[i].Length == 5) 
+                    {
+                        result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
+                    } 
+                    else 
+                    {
+                        throw new Exception("don't understand TEST format");
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				if (TESTS[i].Length == 3) 
-				{
-					result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-				} 
-				else 
-				{
-					if (TESTS[i].Length == 4) 
-					{
-						result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-					} 
-					else 
-					{
-						if (TESTS[i].Length == 5) 
-						{
-							result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-						} 
-						else 
-						{
-							throw new Exception("don't understand TEST format");
-						}
-					}
-				}
-			}
-			return result;
-		}
-
-		/*[Test]
-		public void Test11 ()
-		{
-			suite () [11].runTest ();
-		}*/
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public IndexerTest()
-		{
+    /*[Test]
+    public void Test11 ()
+    {
+        suite () [11].runTest ();
+    }*/
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public IndexerTest()
+    {
 	   
-		}
+    }
 
-		public IndexerTest(string name) : base(name)
-		{
+    public IndexerTest(string name) : base(name)
+    {
 	    
-		}
+    }
 
-		public IndexerTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public IndexerTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public IndexerTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public IndexerTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public IndexerTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public IndexerTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
-	}
+    }
 }

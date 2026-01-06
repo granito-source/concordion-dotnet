@@ -1,7 +1,5 @@
-using NUnit.Framework;
-using ognl ;
+using OGNL.Test.Util;
 
-using org.ognl.test.util ;
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -32,71 +30,68 @@ using org.ognl.test.util ;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
-namespace org.ognl.test
+namespace OGNL.Test;
+
+public class SimpleNavigationChainTreeTest : OgnlTestCase
 {
+    private static object[][]       TESTS = new object[][]{
+        new object[] { "name", true },
+        new object[]{ "name[i]", false },
+        new object[]{ "name + foo", false },
+        new object[]{ "name.foo", true }
+    };
 
+    /*===================================================================
+        Public static methods
+      ===================================================================*/
+    public override TestSuite suite()
+    {
+        TestSuite       result = new TestSuite();
 
-	public class SimpleNavigationChainTreeTest : OgnlTestCase
-	{
-		private static object[][]       TESTS = new object[][]{
-										new object[] { "name", true },
-										new object[]{ "name[i]", false },
-										new object[]{ "name + foo", false },
-										new object[]{ "name.foo", true }
-												};
+        for (int i = 0; i < TESTS.Length; i++) 
+        {
+            result.addTest(new SimpleNavigationChainTreeTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null, (string)TESTS[i][0], TESTS[i][1]));
+        }
+        return result;
+    }
 
-		/*===================================================================
-			Public static methods
-		  ===================================================================*/
-		public override TestSuite suite()
-		{
-			TestSuite       result = new TestSuite();
-
-			for (int i = 0; i < TESTS.Length; i++) 
-			{
-				result.addTest(new SimpleNavigationChainTreeTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null, (string)TESTS[i][0], TESTS[i][1]));
-			}
-			return result;
-		}
-
-		/*===================================================================
-			Constructors
-		  ===================================================================*/
-		public SimpleNavigationChainTreeTest()
-		{
+    /*===================================================================
+        Constructors
+      ===================================================================*/
+    public SimpleNavigationChainTreeTest()
+    {
 	    
-		}
+    }
 
-		public SimpleNavigationChainTreeTest(string name)
-			: base(name)
-		{
+    public SimpleNavigationChainTreeTest(string name)
+        : base(name)
+    {
 	    
-		}
+    }
 
-		public SimpleNavigationChainTreeTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-			: base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-		{
+    public SimpleNavigationChainTreeTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    {
         
-		}
+    }
 
-		public SimpleNavigationChainTreeTest(string name, object root, string expressionString, object expectedResult, object setValue)
-			: base(name, root, expressionString, expectedResult, setValue)
-		{
+    public SimpleNavigationChainTreeTest(string name, object root, string expressionString, object expectedResult, object setValue)
+        : base(name, root, expressionString, expectedResult, setValue)
+    {
         
-		}
+    }
 
-		public SimpleNavigationChainTreeTest(string name, object root, string expressionString, object expectedResult)
-			: base(name, root, expressionString, expectedResult)
-		{
+    public SimpleNavigationChainTreeTest(string name, object root, string expressionString, object expectedResult)
+        : base(name, root, expressionString, expectedResult)
+    {
         
-		}
+    }
 
-		/*===================================================================
-			Overridden methods
-		  ===================================================================*/
-		protected internal override void runTest() 
-		{
-			NUnit.Framework.Assert.IsTrue(Ognl.isSimpleNavigationChain(getExpression(), context) == ((bool) getExpectedResult()));
-		}
-	}
+    /*===================================================================
+        Overridden methods
+      ===================================================================*/
+    protected internal override void runTest() 
+    {
+        NUnit.Framework.Assert.IsTrue(Ognl.isSimpleNavigationChain(getExpression(), context) == ((bool) getExpectedResult()));
+    }
 }
