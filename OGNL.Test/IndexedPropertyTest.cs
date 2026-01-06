@@ -47,8 +47,8 @@ public class IndexedPropertyTest : OgnlTestCase
         [INDEXED, "[0]", INDEXED [0]],                             /* "foo" + "xxx" */
         // Index property can't getLength.
         [INDEXED, "Values[^]", INDEXED.getValues () [0]],                             /* "foo" + "xxx" */
-        [INDEXED, "Values[|]", INDEXED.getValues ()[(1)]],                             /* "bar" + "xxx" */
-        [INDEXED, "Values[$]", INDEXED.getValues ()[(2)]],                             /* "baz" + "xxx" */
+        [INDEXED, "Values[|]", INDEXED.getValues ()[1]],                             /* "bar" + "xxx" */
+        [INDEXED, "Values[$]", INDEXED.getValues ()[2]],                             /* "baz" + "xxx" */
         // Try to use this, If There is a Property Named Item to. chould use this.
         // No used....
         // new object [] { INDEXED, "Item[^]", INDEXED.getValues (0) },                             /* "foo" + "xxx" */

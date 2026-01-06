@@ -36,8 +36,8 @@ public class QuotingTest : OgnlTestCase
 {
     private static object[][]       TESTS = [
         // Quoting
-        [null, "`c`", ('c')],
-        [null, "'s'", ('s')],
+        [null, "`c`", 'c'],
+        [null, "'s'", 's'],
         [null, "'string'", "string"],
         [null, "\"string\"", "string"]
     ];

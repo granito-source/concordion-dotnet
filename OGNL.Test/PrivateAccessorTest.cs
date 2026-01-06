@@ -33,20 +33,19 @@ using OGNL.Test.Util;
 //--------------------------------------------------------------------------
 namespace OGNL.Test;
 
-public class PrivateAccessorTest : OgnlTestCase
-{
-    private static Root             ROOT = new();
+public class PrivateAccessorTest : OgnlTestCase {
+    private static Root ROOT = new();
 
-    private static object[][]       TESTS = [
+    private static object[][] TESTS = [
         // Using private get/set methods
-        [ROOT, "getPrivateAccessorIntValue()", (67)],                  /* Call private method */
-        [ROOT, "privateAccessorIntValue", (67)],                       /* Implied private method */
-        [ROOT, "privateAccessorIntValue", (67), (100)],     /* Implied private method */
-        [ROOT, "privateAccessorIntValue2", (67)],                      /* Implied private method */
-        [ROOT, "privateAccessorIntValue2", (67), (100)],    /* Implied private method */
-        [ROOT, "privateAccessorIntValue3", (67)],                      /* Implied private method */
-        [ROOT, "privateAccessorIntValue3", (67), (100)],    /* Implied private method */
-        [ROOT, "privateAccessorBooleanValue", true],                      /* Implied private method */
+        [ROOT, "getPrivateAccessorIntValue()", 67], /* Call private method */
+        [ROOT, "privateAccessorIntValue", 67], /* Implied private method */
+        [ROOT, "privateAccessorIntValue", 67, 100], /* Implied private method */
+        [ROOT, "privateAccessorIntValue2", 67], /* Implied private method */
+        [ROOT, "privateAccessorIntValue2", 67, 100], /* Implied private method */
+        [ROOT, "privateAccessorIntValue3", 67], /* Implied private method */
+        [ROOT, "privateAccessorIntValue3", 67, 100], /* Implied private method */
+        [ROOT, "privateAccessorBooleanValue", true], /* Implied private method */
         [ROOT, "privateAccessorBooleanValue", true, false] /* Implied private method */
     ];
 
@@ -55,41 +54,35 @@ public class PrivateAccessorTest : OgnlTestCase
       ===================================================================*/
     public override TestSuite suite()
     {
-        var       result = new TestSuite();
-        // Ignrore 
-			
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new PrivateAccessorTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new PrivateAccessorTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new PrivateAccessorTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
+        var result = new TestSuite();
+
+        // Ignrore
+
+        for (var i = 0; i < TESTS.Length; i++) {
+            if (TESTS[i].Length == 3) {
+                result.addTest(new PrivateAccessorTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1],
+                    TESTS[i][2]));
+            } else {
+                if (TESTS[i].Length == 4) {
+                    result.addTest(new PrivateAccessorTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1],
+                        TESTS[i][2], TESTS[i][3]));
+                } else {
+                    if (TESTS[i].Length == 5) {
+                        result.addTest(new PrivateAccessorTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1],
+                            TESTS[i][2], TESTS[i][3], TESTS[i][4]));
+                    } else {
                         throw new Exception("don't understand TEST format");
                     }
                 }
             }
         }
+
         return result;
     }
 
-    [Ignore ("Private Acccess is not Allowed.")]
+    [Ignore("Private Acccess is not Allowed.")]
     public override void RunTestSuite()
     {
-			
     }
 
     /*===================================================================
@@ -97,36 +90,33 @@ public class PrivateAccessorTest : OgnlTestCase
       ===================================================================*/
     public PrivateAccessorTest()
     {
-	    
     }
 
     public PrivateAccessorTest(string name) : base(name)
     {
-	    
     }
 
-    public PrivateAccessorTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+    public PrivateAccessorTest(string name, object root, string expressionString, object expectedResult,
+        object setValue, object expectedAfterSetResult)
         : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        
     }
 
-    public PrivateAccessorTest(string name, object root, string expressionString, object expectedResult, object setValue)
+    public PrivateAccessorTest(string name, object root, string expressionString, object expectedResult,
+        object setValue)
         : base(name, root, expressionString, expectedResult, setValue)
     {
-        
     }
 
     public PrivateAccessorTest(string name, object root, string expressionString, object expectedResult)
         : base(name, root, expressionString, expectedResult)
     {
-        
     }
 
     /*===================================================================
         Overridden methods
       ===================================================================*/
-    [TestFixtureSetUp]
+    [SetUp]
     public override void setUp()
     {
         base.setUp();

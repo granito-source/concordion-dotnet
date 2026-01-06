@@ -35,14 +35,14 @@ namespace OGNL.Test;
 public class ShortCircuitingExpressionTest : OgnlTestCase
 {
     private static object[][]       TESTS = [
-        ["#root ? someProperty : 99", (99)],
+        ["#root ? someProperty : 99", 99],
         ["#root ? 99 : someProperty", typeof (OgnlException)],
         ["(#x=99)? #x.someProperty : #x", typeof (OgnlException)],
         ["#xyzzy.doubleValue()", typeof (NullReferenceException)],
         ["#xyzzy && #xyzzy.doubleValue()", null],
-        ["(#x=99) && #x", (99)],
-        ["#xyzzy || 101", (101)],
-        ["99 || 101",(99)]
+        ["(#x=99) && #x", 99],
+        ["#xyzzy || 101", 101],
+        ["99 || 101",99]
     ];
 
     /*===================================================================

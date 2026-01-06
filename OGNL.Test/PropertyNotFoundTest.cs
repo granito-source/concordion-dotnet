@@ -1,6 +1,3 @@
-using System.Collections;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,130 +28,114 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using OGNL.Test.Util;
+
 namespace OGNL.Test;
 
-public class PropertyNotFoundTest : OgnlTestCase
-{
-    private static Blah       BLAH = new();
+public class PropertyNotFoundTest : OgnlTestCase {
+    private static readonly Blah BLAH = new();
 
-    private static object[][]       TESTS = [
-        [BLAH, "webwork.token.name", typeof (OgnlException), "W value", typeof (OgnlException)]
+    private static readonly object[][] Tests = [
+        [BLAH, "webwork.token.name", typeof(OgnlException), "W value", typeof(OgnlException)]
     ];
 
-    /*===================================================================
-        Public static classes
-      ===================================================================*/
-    public class Blah
-    {
-        string          x;
-        string          y;
+    public class Blah {
+        string x;
 
-        public string getX() 
+        string y;
+
+        public string getX()
         {
             return x;
         }
 
-        public void setX(string x) 
+        public void setX(string x)
         {
             this.x = x;
         }
 
-        public string getY() 
+        public string getY()
         {
             return y;
         }
 
-        public void setY(string y) 
+        public void setY(string y)
         {
             this.y = y;
         }
     }
 
-    public class BlahPropertyAccessor : PropertyAccessor
-    {
-        public void setProperty(IDictionary context, object target, object name, object value) // throws OgnlException
+    public class BlahPropertyAccessor : PropertyAccessor {
+        public object? getProperty(OgnlContext context, object target, object name)
         {
-        }
-
-        public object getProperty(IDictionary context, object target, object name) // throws OgnlException
-        {
-            if ("x".Equals(name) || "y".Equals(name)) 
-            {
-                return OgnlRuntime.getProperty((OgnlContext)context, target, name);
+            if ("x".Equals(name) || "y".Equals(name)) {
+                return OgnlRuntime.getProperty(context, target, name);
             }
+
             return null;
         }
+
+        public void setProperty(OgnlContext context, object target, object name, object? value)
+        {
+        }
     }
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
+
     public override TestSuite suite()
     {
-        var       result = new TestSuite();
+        var result = new TestSuite();
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new PropertyNotFoundTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new PropertyNotFoundTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new PropertyNotFoundTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
+        for (var i = 0; i < Tests.Length; i++) {
+            if (Tests[i].Length == 3) {
+                result.addTest(new PropertyNotFoundTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                    Tests[i][2]));
+            } else {
+                if (Tests[i].Length == 4) {
+                    result.addTest(new PropertyNotFoundTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                        Tests[i][2], Tests[i][3]));
+                } else {
+                    if (Tests[i].Length == 5) {
+                        result.addTest(new PropertyNotFoundTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                            Tests[i][2], Tests[i][3], Tests[i][4]));
+                    } else {
                         throw new Exception("don't understand TEST format");
                     }
                 }
             }
         }
+
         return result;
     }
 
-    /*===================================================================
-        Constructors
-      ===================================================================*/
     public PropertyNotFoundTest()
     {
-	    
     }
 
     public PropertyNotFoundTest(string name) : base(name)
     {
-	    
     }
 
-    public PropertyNotFoundTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+    public PropertyNotFoundTest(string name, object root, string expressionString, object expectedResult,
+        object setValue, object expectedAfterSetResult)
         : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        
     }
 
-    public PropertyNotFoundTest(string name, object root, string expressionString, object expectedResult, object setValue)
+    public PropertyNotFoundTest(string name, object root, string expressionString, object expectedResult,
+        object setValue)
         : base(name, root, expressionString, expectedResult, setValue)
     {
-        
     }
 
     public PropertyNotFoundTest(string name, object root, string expressionString, object expectedResult)
-        :base(name, root, expressionString, expectedResult)
+        : base(name, root, expressionString, expectedResult)
     {
-        
     }
 
-    [TestFixtureSetUp]
+    [SetUp]
     public override void setUp()
     {
         base.setUp();
-        OgnlRuntime.setPropertyAccessor(typeof (Blah), new BlahPropertyAccessor());
+        OgnlRuntime.setPropertyAccessor(typeof(Blah), new BlahPropertyAccessor());
     }
 }

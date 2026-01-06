@@ -39,7 +39,7 @@ public class IndexAccessTest : OgnlTestCase
 
     private static object[][]       TESTS = [
         // indexed access of with navigation chain (should start back at root)
-        [ROOT, "List[Index]", ROOT.getList() [(ROOT.getIndex())]],
+        [ROOT, "List[Index]", ROOT.getList() [ROOT.getIndex()]],
         [ROOT, "List[size() - 1]", typeof (MethodFailedException)]
     ];
 

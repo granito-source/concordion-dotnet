@@ -39,14 +39,14 @@ public class CollectionDirectPropertyTest : OgnlTestCase {
 
     private static readonly object[][] Tests = [
         // Collection direct properties
-        [Util.asList(new[] { "hello", "world" }), "size", 2],
-        [Util.asList(new[] { "hello", "world" }), "isEmpty", false],
-        [Util.asList(new string[] { }), "isEmpty", true],
-        [Util.asList(new[] { "hello", "world" }), "iterator.next", "hello"],
-        [Util.asList(new[] { "hello", "world" }), "iterator.hasNext", true],
-        [Util.asList(new[] { "hello", "world" }), "#it = iterator, #it.next, #it.next, #it.hasNext", false],
-        [Util.asList(new[] { "hello", "world" }), "#it = iterator, #it.next, #it.next", "world"],
-        [Util.asList(new[] { "hello", "world" }), "size", 2],
+        [new[] { "hello", "world" }, "size", 2],
+        [new[] { "hello", "world" }, "isEmpty", false],
+        [Array.Empty<string>(), "isEmpty", true],
+        [new[] { "hello", "world" }, "iterator.next", "hello"],
+        [new[] { "hello", "world" }, "iterator.hasNext", true],
+        [new[] { "hello", "world" }, "#it = iterator, #it.next, #it.next, #it.hasNext", false],
+        [new[] { "hello", "world" }, "#it = iterator, #it.next, #it.next", "world"],
+        [new[] { "hello", "world" }, "size", 2],
         [Root, "Map[\"test\"]", Root],
         [Root, "Map.size", Root.getMap().Count],
         [Root, "Map.keys", Root.getMap().Keys],
@@ -57,9 +57,6 @@ public class CollectionDirectPropertyTest : OgnlTestCase {
         [Root, "Map[\"isEmpty\"]", null]
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
     public override TestSuite suite()
     {
         var result = new TestSuite();
@@ -92,16 +89,12 @@ public class CollectionDirectPropertyTest : OgnlTestCase {
         suite()[5].runTest();
     }
 
-    /*===================================================================
-        Constructors
-      ===================================================================*/
     public CollectionDirectPropertyTest()
     {
     }
 
     public CollectionDirectPropertyTest(string name) : base(name)
     {
-        ;
     }
 
     public CollectionDirectPropertyTest(string name, object root, string expressionString, object expectedResult,

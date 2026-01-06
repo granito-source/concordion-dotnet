@@ -71,7 +71,7 @@ public class ConstantTreeTest : OgnlTestCase
     protected internal override void runTest() // throws OgnlException
     {
         setUp () ;
-        Assert.IsTrue(Ognl.isConstant(getExpression(), context) == ((bool)getExpectedResult()));
+        Assert.IsTrue(Ognl.isConstant(getExpression(), context) == (bool)getExpectedResult());
     }
 
     /*===================================================================

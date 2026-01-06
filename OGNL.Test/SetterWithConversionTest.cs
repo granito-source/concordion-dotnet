@@ -39,16 +39,16 @@ public class SetterWithConversionTest : OgnlTestCase
 
     private static object[][]       TESTS = [
         // Property set with conversion
-        [ROOT, "IntValue", (0), (double)(6.5), (6)],
+        [ROOT, "IntValue", 0, (double)6.5, 6],
         // C# use ODD round, so value is 1026
-        [ROOT, "IntValue", (6), (double)(1025.87645), (1026)],
-        [ROOT, "IntValue", (1026), "654", (654)],
-        [ROOT, "StringValue", null, (25), "25"],
-        [ROOT, "StringValue", "25",(100.25f), "100.25"],
-        [ROOT, "anotherStringValue", "foo", (0), "0"],
-        [ROOT, "anotherStringValue", "0", (double)(0.5), "0.5"],
-        [ROOT, "anotherIntValue", (123), "5", (5)],
-        [ROOT, "anotherIntValue", (5), (double)(100.25), (100)]
+        [ROOT, "IntValue", 6, (double)1025.87645, 1026],
+        [ROOT, "IntValue", 1026, "654", 654],
+        [ROOT, "StringValue", null, 25, "25"],
+        [ROOT, "StringValue", "25",100.25f, "100.25"],
+        [ROOT, "anotherStringValue", "foo", 0, "0"],
+        [ROOT, "anotherStringValue", "0", (double)0.5, "0.5"],
+        [ROOT, "anotherIntValue", 123, "5", 5],
+        [ROOT, "anotherIntValue", 5, (double)100.25, 100]
 
         //          { ROOT, "anotherIntValue", (100), new string[] { "55" }, (55)},
         //          { ROOT, "yetAnotherIntValue", (46), new string[] { "55" }, (55)},

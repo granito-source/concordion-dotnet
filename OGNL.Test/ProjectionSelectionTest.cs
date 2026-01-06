@@ -33,68 +33,58 @@ using OGNL.Test.Util;
 //--------------------------------------------------------------------------
 namespace OGNL.Test;
 
-public class ProjectionSelectionTest : OgnlTestCase
-{
-    private static Root             ROOT = new();
+public class ProjectionSelectionTest : OgnlTestCase {
+    private static readonly Root Root = new();
 
-    private static object[][]       TESTS = [
+    private static readonly object[][] Tests = [
         // Projection, selection
-        [ROOT, "Array.{Type}", Util.asList(new Type[]{typeof (int),typeof (int),typeof (int),typeof (int)})],
-        [ROOT, "Map.array.{? #this > 2 }", Util.asList(new int[]{(3), (4)})],
-        [ROOT, "Map.array.{^ #this > 2 }", Util.asList(new int[]{(3)})],
-        [ROOT, "Map.array.{$ #this > 2 }", Util.asList(new int[]{(4)})],
-        [ROOT, "Map.array[*].{?true} instanceof System.Collections.ICollection", true]
-
-        // { null, "#fact=1, 30H.{? #fact = #fact * (#this+1), false }, #fact", 265252859812191058636308480000000L },
+        [Root, "Array.{Type}", new[] { typeof(int), typeof(int), typeof(int), typeof(int) }],
+        [Root, "Map.array.{? #this > 2 }", new[] { 3, 4 }],
+        [Root, "Map.array.{^ #this > 2 }", new[] { 3 }],
+        [Root, "Map.array.{$ #this > 2 }", new[] { 4 }],
+        [Root, "Map.array[*].{?true} instanceof System.Collections.ICollection", true]
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
     public override TestSuite suite()
     {
-        var       result = new TestSuite();
+        var result = new TestSuite();
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            result.addTest(new ProjectionSelectionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
+        for (var i = 0; i < Tests.Length; i++) {
+            result.addTest(new ProjectionSelectionTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                Tests[i][2]));
         }
+
         return result;
     }
 
     [Test]
-    public void Test1 ()
+    public void Test1()
     {
-        suite () [1].runTest ();
+        suite()[1].runTest();
     }
-    /*===================================================================
-        Constructors
-      ===================================================================*/
+
     public ProjectionSelectionTest()
     {
-	
     }
 
     public ProjectionSelectionTest(string name) : base(name)
     {
-	    
     }
 
-    public ProjectionSelectionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+    public ProjectionSelectionTest(string name, object root, string expressionString, object expectedResult,
+        object setValue, object expectedAfterSetResult)
         : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        
     }
 
-    public ProjectionSelectionTest(string name, object root, string expressionString, object expectedResult, object setValue)
+    public ProjectionSelectionTest(string name, object root, string expressionString, object expectedResult,
+        object setValue)
         : base(name, root, expressionString, expectedResult, setValue)
     {
-        
     }
 
     public ProjectionSelectionTest(string name, object root, string expressionString, object expectedResult)
         : base(name, root, expressionString, expectedResult)
     {
-        
     }
 }

@@ -40,7 +40,7 @@ public class SetterTest : OgnlTestCase
 
     private static object[][]       TESTS = [
         // Setting values
-        [ROOT.getMap(), "newValue", null, (101)],
+        [ROOT.getMap(), "newValue", null, 101],
         [ROOT, "SettableList[0]", "foo", "quux"],     /* absolute indexes */
         [ROOT, "SettableList[0]", "quux"],
         [ROOT, "SettableList[2]", "baz", "quux"],
@@ -51,15 +51,15 @@ public class SetterTest : OgnlTestCase
         [ROOT, "SettableList[^]", "oompa"],
         [ROOT, "SettableList[|]", "bar", "oompa"],
         [ROOT, "SettableList[|]", "oompa"],
-        [ROOT, "Map.newValue", (101), (555)],
+        [ROOT, "Map.newValue", 101, 555],
         [ROOT, "Map", ROOT.getMap(), new Hashtable (), typeof (NoSuchPropertyException)],
-        [ROOT.getMap(), "newValue2 || Add(\"newValue2\",987), newValue2", (987), (1002)],
-        [ROOT, "Map.(someMissingKey || newValue)", (555), (666)],
-        [ROOT.getMap(), "newValue || someMissingKey", (666), (666)], // no setting happens!
-        [ROOT, "Map.(newValue && aKey)", null, (54321)],
+        [ROOT.getMap(), "newValue2 || Add(\"newValue2\",987), newValue2", 987, 1002],
+        [ROOT, "Map.(someMissingKey || newValue)", 555, 666],
+        [ROOT.getMap(), "newValue || someMissingKey", 666, 666], // no setting happens!
+        [ROOT, "Map.(newValue && aKey)", null, 54321],
         [ROOT, "Map.(someMissingKey && newValue)", null, null], // again, no setting
-        [null, "0", (0), null, typeof (InappropriateExpressionException)], // illegal for setting, no property
-        [ROOT, "Map[0]=\"Map.newValue\", Map[0](#this)", (666), (888)]
+        [null, "0", 0, null, typeof (InappropriateExpressionException)], // illegal for setting, no property
+        [ROOT, "Map[0]=\"Map.newValue\", Map[0](#this)", 666, 888]
     ];
 
     /*===================================================================

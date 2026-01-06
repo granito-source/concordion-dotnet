@@ -133,7 +133,7 @@ public class Simple
         {
             var      os = (Simple)other;
 
-            result = OgnlTestCase.isEqual(os.getStringValue(), getStringValue()) && (os.getIntValue() == getIntValue());
+            result = OgnlTestCase.isEqual(os.getStringValue(), getStringValue()) && os.getIntValue() == getIntValue();
         }
         return result;
     }

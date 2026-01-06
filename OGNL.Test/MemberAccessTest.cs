@@ -35,15 +35,15 @@ using OGNL.Test.Util;
 //--------------------------------------------------------------------------
 namespace OGNL.Test;
 
-public class MemberAccessTest : OgnlTestCase
-{
-    private static Simple           ROOT = new();
-    private static object[][]       TESTS = [
+public class MemberAccessTest : OgnlTestCase {
+    private static Simple ROOT = new();
+
+    private static object[][] TESTS = [
         // new object [] { "@Runtime@getRuntime()", typeof (OgnlException) },
         // new object [] { "@System.AppDomain@GetCurrentThreadId()", AppDomain.GetCurrentThreadId () },
-        ["bigIntValue", typeof (OgnlException)],
-        ["bigIntValue", typeof (OgnlException), (25), typeof (OgnlException)],
-        ["getBigIntValue()", typeof (OgnlException)],
+        ["bigIntValue", typeof(OgnlException)],
+        ["bigIntValue", typeof(OgnlException), 25, typeof(OgnlException)],
+        ["getBigIntValue()", typeof(OgnlException)],
         ["StringValue", ROOT.getStringValue()]
     ];
 
@@ -52,12 +52,13 @@ public class MemberAccessTest : OgnlTestCase
       ===================================================================*/
     public override TestSuite suite()
     {
-        var       result = new TestSuite();
+        var result = new TestSuite();
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            result.addTest(new MemberAccessTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", ROOT, (string)TESTS[i][0], TESTS[i][1]));
+        for (var i = 0; i < TESTS.Length; i++) {
+            result.addTest(new MemberAccessTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", ROOT,
+                (string)TESTS[i][0], TESTS[i][1]));
         }
+
         return result;
     }
 
@@ -66,72 +67,64 @@ public class MemberAccessTest : OgnlTestCase
       ===================================================================*/
     public MemberAccessTest()
     {
-	   
     }
 
     public MemberAccessTest(string name) : base(name)
     {
-	    
     }
 
-    public MemberAccessTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+    public MemberAccessTest(string name, object root, string expressionString, object expectedResult, object setValue,
+        object expectedAfterSetResult)
         : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        
     }
 
     public MemberAccessTest(string name, object root, string expressionString, object expectedResult, object setValue)
         : base(name, root, expressionString, expectedResult, setValue)
     {
-        
     }
 
     public MemberAccessTest(string name, object root, string expressionString, object expectedResult)
         : base(name, root, expressionString, expectedResult)
     {
-        
     }
 
     /*===================================================================
         Overridden methods
       ===================================================================*/
-    [TestFixtureSetUp]
+    [SetUp]
     public override void setUp()
     {
         base.setUp();
         /* Should allow access at all to the Simple class except for the bigIntValue property */
-        context.setMemberAccess(new InnerDefaultMemberAccess ());
+        context.setMemberAccess(new InnerDefaultMemberAccess());
     }
 }
 
-class InnerDefaultMemberAccess : DefaultMemberAccess
-{
-    public InnerDefaultMemberAccess () : base (false) 
+class InnerDefaultMemberAccess : DefaultMemberAccess {
+    public InnerDefaultMemberAccess() : base(false)
     {
     }
+
     public override bool isAccessible(IDictionary context, object target, MemberInfo member, string propertyName)
     {
-        if (target == typeof (AppDomain)) 
-        {
+        if (target == typeof(AppDomain)) {
             return false;
         }
-        if (target is Simple) 
-        {
-            if (propertyName != null) 
-            {
+
+        if (target is Simple) {
+            if (propertyName != null) {
                 return !propertyName.Equals("bigIntValue") &&
                     base.isAccessible(context, target, member, propertyName);
-            } 
-            else 
-            {
-                if (member is MethodInfo) 
-                {
+            } else {
+                if (member is MethodInfo) {
                     return !member.Name.Equals("getBigIntValue") &&
                         !member.Name.Equals("setBigIntValue") &&
                         base.isAccessible(context, target, member, propertyName);
                 }
             }
         }
+
         return base.isAccessible(context, target, member, propertyName);
     }
 }

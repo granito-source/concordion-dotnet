@@ -65,12 +65,12 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
         if (object1 == object2) {
             result = true;
         } else {
-            if ((object1 != null) && object1.GetType().IsArray) {
-                if ((object2 != null) && object2.GetType().IsArray && (object2.GetType() == object1.GetType())) {
-                    result = (((Array)object1).GetLength(0) == ((Array)object2).GetLength(0));
+            if (object1 != null && object1.GetType().IsArray) {
+                if (object2 != null && object2.GetType().IsArray && object2.GetType() == object1.GetType()) {
+                    result = ((Array)object1).GetLength(0) == ((Array)object2).GetLength(0);
 
                     if (result) {
-                        for (int i = 0, icount = ((Array)object1).GetLength(0); result && (i < icount); i++) {
+                        for (int i = 0, icount = ((Array)object1).GetLength(0); result && i < icount; i++) {
                             result = isEqual(((Array)object1).GetValue(i), ((Array)object2).GetValue(i));
 
                             if (!result)
@@ -79,11 +79,11 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
                     }
                 }
             } else // support ICollection.
-            if ((object1 != null) && typeof(ICollection).IsAssignableFrom(object1.GetType())) {
-                if ((object2 != null) && typeof(ICollection).IsAssignableFrom(object2.GetType()) &&
-                    (object2.GetType() == object1.GetType())) {
-                    result = (object1 != null) && (object2 != null) && object1.Equals(object2);
-                    result = (((ICollection)object1).Count == ((ICollection)object2).Count);
+            if (object1 != null && typeof(ICollection).IsAssignableFrom(object1.GetType())) {
+                if (object2 != null && typeof(ICollection).IsAssignableFrom(object2.GetType()) &&
+                    object2.GetType() == object1.GetType()) {
+                    result = object1 != null && object2 != null && object1.Equals(object2);
+                    result = ((ICollection)object1).Count == ((ICollection)object2).Count;
 
                     if (result) {
                         var e1 = ((ICollection)object1).GetEnumerator();
@@ -99,7 +99,7 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
                 }
             }
             else {
-                result = (object1 != null) && (object2 != null) && object1.Equals(object2);
+                result = object1 != null && object2 != null && object1.Equals(object2);
             }
         }
 

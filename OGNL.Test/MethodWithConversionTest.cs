@@ -41,9 +41,9 @@ public class MethodWithConversionTest : OgnlTestCase
         // Method call with conversion
         [SIMPLE, "setValues(10, \"10.56\", 34.225)", null],
         [SIMPLE, "StringValue", "10"],
-        [SIMPLE, "StringValue", "10", ('x'), "x"],       /* set through setValue() */
+        [SIMPLE, "StringValue", "10", 'x', "x"],       /* set through setValue() */
         [SIMPLE, "setStringValue('x')", null],                        /* set by calling setStringValue() directly */
-        [SIMPLE, "FloatValue", (10.56f)]
+        [SIMPLE, "FloatValue", 10.56f]
     ];
 
     /*===================================================================

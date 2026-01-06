@@ -35,21 +35,21 @@ namespace OGNL.Test;
 public class ConstantTest : OgnlTestCase
 {
     private static object[][]       TESTS = [
-        ["12345", (12345)],
-        ["0x100", (256)],
-        ["0xfE", (254)],
-        ["01000", (512)],
-        ["1234L", (1234L)],
-        ["12.34", (12.34)],
-        [".1234", (.12340000000000)],
-        ["12.34f", (12.34f)],
-        ["12.", (double)(12)],
-        ["12e+1d", (double)(120)],
-        ["'x'", ('x')],
-        ["'\\n'", ('\n')],
-        ["'\\u048c'", ('\u048c')],
-        ["'\\47'", ('\x27')],
-        ["'\\367'", ('\xF7')],
+        ["12345", 12345],
+        ["0x100", 256],
+        ["0xfE", 254],
+        ["01000", 512],
+        ["1234L", 1234L],
+        ["12.34", 12.34],
+        [".1234", .12340000000000],
+        ["12.34f", 12.34f],
+        ["12.", (double)12],
+        ["12e+1d", (double)120],
+        ["'x'", 'x'],
+        ["'\\n'", '\n'],
+        ["'\\u048c'", '\u048c'],
+        ["'\\47'", '\x27'],
+        ["'\\367'", '\xF7'],
         ["'\\367", typeof (ExpressionSyntaxException)],
         ["'\\x'", typeof (ExpressionSyntaxException)],
         ["\"hello world\"", "hello world"],
@@ -59,7 +59,7 @@ public class ConstantTest : OgnlTestCase
         ["null", null],
         ["true", true],
         ["false", false],
-        ["{ false, true, null, 0, 1. }", Util.asList(new object[] { false , true, null, (0), (1d) } )],
+        ["{ false, true, null, 0, 1. }", (object?[])[false , true, null, 0, 1d]],
         ["'HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\"'", "HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\""
         ]
     ];
@@ -71,7 +71,7 @@ public class ConstantTest : OgnlTestCase
     {
         var       result = new TestSuite();
 
-        for (var i = 0; i < TESTS.Length; i++) 
+        for (var i = 0; i < TESTS.Length; i++)
         {
             result.addTest(new ConstantTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null, (string)TESTS[i][0], TESTS[i][1]));
         }
@@ -88,29 +88,29 @@ public class ConstantTest : OgnlTestCase
       ===================================================================*/
     public ConstantTest()
     {
-	   
+
     }
 
     public ConstantTest(string name) : base(name)
     {
-	    
+
     }
 
     public ConstantTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
         : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        
+
     }
 
     public ConstantTest(string name, object root, string expressionString, object expectedResult, object setValue)
         : base(name, root, expressionString, expectedResult, setValue)
     {
-        
+
     }
 
     public ConstantTest(string name, object root, string expressionString, object expectedResult)
         : base(name, root, expressionString, expectedResult)
     {
-       
+
     }
 }

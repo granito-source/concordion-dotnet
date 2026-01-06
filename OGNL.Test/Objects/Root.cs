@@ -32,27 +32,42 @@ using System.Collections;
 //--------------------------------------------------------------------------
 namespace OGNL.Test.Objects;
 
-public class Root
-{
-    public const string      SIZE_STRING = "size";
-    public const int         STATIC_INT = 23;
+public class Root {
+    public const string SIZE_STRING = "size";
 
-    private int[]                   array = [1, 2, 3, 4];
-    private IDictionary                     map = new Hashtable(23);
-    private MyMap                   myMap = new MyMapImpl();
-    private IList                    list ;
-    private IList                    settableList = new ArrayList( Util.asList(new object[] { "foo", "bar", "baz" }));
-    private int                     index = 1;
-    private int                     intValue = 0;
-    private string                  stringValue;
-    private int                     yetAnotherIntValue = 46;
-    private bool                 privateAccessorBooleanValue = true;
-    private int                     privateAccessorIntValue = 67;
-    private int                     privateAccessorIntValue2 = 67;
-    private int                     privateAccessorIntValue3 = 67;
-    public string                   anotherStringValue = "foo";
-    public int                      anotherIntValue = 123;
-    public int                      six = 6;
+    public const int STATIC_INT = 23;
+
+    private int[] array = [1, 2, 3, 4];
+
+    private IDictionary map = new Hashtable(23);
+
+    private MyMap myMap = new MyMapImpl();
+
+    private IList list;
+
+    private readonly IList settableList = new[] { "foo", "bar", "baz" };
+
+    private int index = 1;
+
+    private int intValue = 0;
+
+    private string stringValue;
+
+    private int yetAnotherIntValue = 46;
+
+    private bool privateAccessorBooleanValue = true;
+
+    private int privateAccessorIntValue = 67;
+
+    private int privateAccessorIntValue2 = 67;
+
+    private int privateAccessorIntValue3 = 67;
+
+    public string anotherStringValue = "foo";
+
+    public int anotherIntValue = 123;
+
+    public int six = 6;
 
     /*===================================================================
         Public static methods
@@ -67,21 +82,22 @@ public class Root
       ===================================================================*/
     public Root()
     {
-        list = Util.asList (new object[] { null, this, array }) ;
-        map.Add( "test", this );
-        map.Add( "array", array );
-        map.Add( "list", list );
-        map.Add( "size", 5000 );
-        map.Add( DynamicSubscript.first, 99 );
+        list = new object?[] { null, this, array };
+        map.Add("test", this);
+        map.Add("array", array);
+        map.Add("list", list);
+        map.Add("size", 5000);
+        map.Add(DynamicSubscript.first, 99);
 
         /* make myMap identical */
-        Util.putAll( map , myMap );
+        foreach (var k in map.Keys)
+            myMap.Add(k, map[k]);
     }
 
     /*===================================================================
         Private methods
       ===================================================================*/
-	
+
     private bool isPrivateAccessorBooleanValue()
     {
         return privateAccessorBooleanValue;

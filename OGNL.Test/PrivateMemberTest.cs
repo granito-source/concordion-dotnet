@@ -37,11 +37,10 @@ namespace OGNL.Test;
  * shows the failures and a summary.
  */
 [TestFixture]
-public class PrivateMemberTest 
-{
-    private string                  _privateProperty = "private value";
-    protected OgnlContext           context;
+public class PrivateMemberTest {
+    private string _privateProperty = "private value";
 
+    protected OgnlContext context;
 
     /*===================================================================
         Public static methods
@@ -50,7 +49,7 @@ public class PrivateMemberTest
     {
         // return new TestSuite(typeof (PrivateMemberTest));
         // TODO: Simple Test
-        return null ;
+        return null;
     }
 
     /*===================================================================
@@ -58,7 +57,6 @@ public class PrivateMemberTest
       ===================================================================*/
     public PrivateMemberTest(string name)
     {
-	   
     }
 
     /*===================================================================
@@ -79,6 +77,7 @@ public class PrivateMemberTest
     {
         Assert.AreEqual(Ognl.getValue("privateProperty", context, this), getPrivateProperty());
     }
+
     [Test]
     public void testPrivateField() // throws OgnlException
     {
@@ -88,7 +87,7 @@ public class PrivateMemberTest
     /*===================================================================
         Overridden methods
       ===================================================================*/
-    [TestFixtureSetUp]
+    [SetUp]
     public void setUp()
     {
         context = (OgnlContext)Ognl.createDefaultContext(null);

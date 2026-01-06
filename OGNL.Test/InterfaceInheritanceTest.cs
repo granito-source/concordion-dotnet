@@ -42,11 +42,11 @@ public class InterfaceInheritanceTest : OgnlTestCase
         [ROOT, "MyMap", ROOT.getMyMap()],
         [ROOT, "MyMap.test", ROOT],
         [ROOT.getMyMap(), "list", ROOT.getList()],
-        [ROOT, "MyMap.array[0]", (ROOT.getArray()[0])],
-        [ROOT, "MyMap.list[1]", ROOT.getList() [(1)]],
-        [ROOT, "MyMap[^]", (99)],
+        [ROOT, "MyMap.array[0]", ROOT.getArray()[0]],
+        [ROOT, "MyMap.list[1]", ROOT.getList() [1]],
+        [ROOT, "MyMap[^]", 99],
         [ROOT, "MyMap[$]", null],
-        [ROOT.getMyMap(), "array[$]", (ROOT.getArray()[ROOT.getArray().Length-1])],
+        [ROOT.getMyMap(), "array[$]", ROOT.getArray()[ROOT.getArray().Length-1]],
         [ROOT, "[\"MyMap\"]", ROOT.getMyMap()],
         [ROOT, "MyMap[null]", null],
         [ROOT, "MyMap[#x = null]", null],
@@ -54,8 +54,8 @@ public class InterfaceInheritanceTest : OgnlTestCase
         /* // Key null is Not allowed in .Net.
         new object [] { ROOT, "MyMap[null] = 25", (25) },
         new object [] { ROOT, "MyMap[null]", (25), (50), (50) },*/
-        [ROOT, "MyMap[0] = 25", (25)],
-        [ROOT, "MyMap[0]", (25), (50), (50)]
+        [ROOT, "MyMap[0] = 25", 25],
+        [ROOT, "MyMap[0]", 25, 50, 50]
     ];
 
     /*===================================================================

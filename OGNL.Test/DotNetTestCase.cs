@@ -79,7 +79,7 @@ public class DotNetTestCase {
         // No oct supported.
         // Assert.AreEqual (63 , 077);
         Assert.That(81 & 63, Is.EqualTo(17));
-        Assert.That(1L << (17), Is.EqualTo(131072));
+        Assert.That(1L << 17, Is.EqualTo(131072));
     }
 
     [Test]

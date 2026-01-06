@@ -45,12 +45,12 @@ public class ArrayElementsTest : OgnlTestCase {
 
     private static readonly object[][] Tests = new object[][] {
         // Array elements test
-        [StringArray, "length", (2)],
+        [StringArray, "length", 2],
         [StringArray, "#root[1]", "world"],
-        [IntArray, "#root[1]", (20)],
-        [IntArray, "#root[1]", (20), "50", (50)],
-        [IntArray, "#root[1]", (50), new string[] { "50", "100" }, (50)],
-        [Root, "IntValue", (0), new string[] { "50", "100" }, (50)],
+        [IntArray, "#root[1]", 20],
+        [IntArray, "#root[1]", 20, "50", 50],
+        [IntArray, "#root[1]", 50, new string[] { "50", "100" }, 50],
+        [Root, "IntValue", 0, new string[] { "50", "100" }, 50],
         [Root, "Array", Root.getArray(), new string[] { "50", "100" }, new int[] { 50, 100 }],
     };
 
