@@ -1,6 +1,3 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,94 +28,76 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
+
 namespace OGNL.Test;
 
-public class NullHandlerTest : OgnlTestCase
-{
-    private static CorrectedObject  CORRECTED = new();
+public class NullHandlerTest : OgnlTestCase {
+    private static readonly CorrectedObject Corrected = new();
 
-    private static object[][]       TESTS = [
+    private static readonly object[][] Tests = [
         // NullHandler
-        [CORRECTED, "StringValue", "corrected"],
-        [CORRECTED, "getStringValue()", "corrected"],
-        [CORRECTED, "#root.StringValue", "corrected"],
-        [CORRECTED, "#root.getStringValue()", "corrected"]
+        [Corrected, "StringValue", "corrected"],
+        [Corrected, "getStringValue()", "corrected"],
+        [Corrected, "#root.StringValue", "corrected"],
+        [Corrected, "#root.getStringValue()", "corrected"]
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
     public override TestSuite suite()
     {
-        var       result = new TestSuite();
+        var result = new TestSuite();
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new NullHandlerTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new NullHandlerTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new NullHandlerTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
+        for (var i = 0; i < Tests.Length; i++) {
+            if (Tests[i].Length == 3) {
+                result.addTest(new NullHandlerTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1], Tests[i][2]));
+            } else {
+                if (Tests[i].Length == 4) {
+                    result.addTest(new NullHandlerTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                        Tests[i][2], Tests[i][3]));
+                } else {
+                    if (Tests[i].Length == 5) {
+                        result.addTest(new NullHandlerTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                            Tests[i][2], Tests[i][3], Tests[i][4]));
+                    } else {
                         throw new Exception("don't understand TEST format");
                     }
                 }
             }
         }
+
         return result;
     }
 
-
-    /*===================================================================
-        Constructors
-      ===================================================================*/
     public NullHandlerTest()
     {
-	    
     }
 
     public NullHandlerTest(string name) : base(name)
     {
-	    
     }
 
-    public NullHandlerTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
+    public NullHandlerTest(string name, object root, string expressionString, object expectedResult, object setValue,
+        object expectedAfterSetResult)
         : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        
     }
 
     public NullHandlerTest(string name, object root, string expressionString, object expectedResult, object setValue)
         : base(name, root, expressionString, expectedResult, setValue)
     {
-        
     }
 
     public NullHandlerTest(string name, object root, string expressionString, object expectedResult)
         : base(name, root, expressionString, expectedResult)
     {
-        
     }
 
-    /*===================================================================
-        Overridden methods
-      ===================================================================*/
-    [TestFixtureSetUp]
+    [SetUp]
     public override void setUp()
     {
         base.setUp();
-        OgnlRuntime.setNullHandler(typeof (CorrectedObject), new CorrectedObjectNullHandler("corrected"));
+        OgnlRuntime.setNullHandler(typeof(CorrectedObject), new CorrectedObjectNullHandler("corrected"));
     }
 }
