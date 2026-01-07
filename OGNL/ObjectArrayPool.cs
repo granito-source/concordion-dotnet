@@ -34,20 +34,20 @@ using System.Collections;
 namespace OGNL;
 
 public sealed class ObjectArrayPool : object {
-    Hashtable pools = new(23);
+    private readonly Hashtable pools = new(23);
 
     public class SizePool : object {
-        IList arrays = new ArrayList();
+        private readonly IList arrays = new ArrayList();
 
-        int arraySize;
+        private readonly int arraySize;
 
-        int size;
+        private int size;
 
-        int created = 0;
+        private int created = 0;
 
-        int recovered = 0;
+        private int recovered = 0;
 
-        int recycled = 0;
+        private int recycled = 0;
 
         public SizePool(int arraySize) : this(arraySize, 0)
         {
@@ -92,7 +92,7 @@ public sealed class ObjectArrayPool : object {
                 if (value != null) {
                     if (value.Length != arraySize) {
                         throw new ArgumentException("recycled array size " + value.Length +
-                                                    " inappropriate for pool array size " + arraySize);
+                            " inappropriate for pool array size " + arraySize);
                     }
 
                     // Array.Fill(value, null);
@@ -145,10 +145,6 @@ public sealed class ObjectArrayPool : object {
         }
     }
 
-    public ObjectArrayPool()
-    {
-    }
-
     public Hashtable getSizePools()
     {
         return pools;
@@ -159,22 +155,21 @@ public sealed class ObjectArrayPool : object {
         lock (this) {
             var result = (SizePool?)pools[arraySize];
 
-            if (result == null) {
-                pools[arraySize] = (result = new SizePool(arraySize));
-            }
+            if (result == null)
+                pools[arraySize] = result = new SizePool(arraySize);
 
             return result;
         }
     }
 
-    public object[] create(int arraySize)
+    public object?[] create(int arraySize)
     {
         lock (this) {
             return getSizePool(arraySize).create();
         }
     }
 
-    public object[] create(object singleton)
+    public object?[] create(object? singleton)
     {
         lock (this) {
             var result = create(1);
@@ -185,7 +180,7 @@ public sealed class ObjectArrayPool : object {
         }
     }
 
-    public object[] create(object object1, object object2)
+    public object?[] create(object? object1, object? object2)
     {
         lock (this) {
             var result = create(2);
@@ -197,7 +192,8 @@ public sealed class ObjectArrayPool : object {
         }
     }
 
-    public object[] create(object object1, object object2, object object3)
+    public object?[] create(object? object1, object? object2,
+        object? object3)
     {
         lock (this) {
             var result = create(3);
@@ -210,7 +206,8 @@ public sealed class ObjectArrayPool : object {
         }
     }
 
-    public object[] create(object object1, object object2, object object3, object object4)
+    public object?[] create(object? object1, object? object2,
+        object? object3, object? object4)
     {
         lock (this) {
             var result = create(4);
@@ -224,7 +221,8 @@ public sealed class ObjectArrayPool : object {
         }
     }
 
-    public object[] create(object object1, object object2, object object3, object object4, object object5)
+    public object?[] create(object? object1, object? object2,
+        object? object3, object? object4, object? object5)
     {
         lock (this) {
             var result = create(5);
@@ -239,12 +237,11 @@ public sealed class ObjectArrayPool : object {
         }
     }
 
-    public void recycle(object[]? value)
+    public void recycle(object?[]? value)
     {
         lock (this) {
-            if (value != null) {
+            if (value != null)
                 getSizePool(value.Length).recycle(value);
-            }
         }
     }
 }

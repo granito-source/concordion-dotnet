@@ -50,8 +50,8 @@ public interface MethodAccessor {
     /// <returns>result of calling the method</returns>
     ///  <exception href="MethodFailedException"> if there is an error calling the method</exception>
     ///
-    object callStaticMethod(OgnlContext context, Type targetClass,
-        string methodName, object[] args);
+    object? callStaticMethod(OgnlContext context, Type targetClass,
+        string methodName, object?[] args);
 
     /// <summary>
     ///  Calls the method named with the arguments given.
@@ -63,6 +63,6 @@ public interface MethodAccessor {
     /// <returns>result of calling the method</returns>
     ///  <exception href="MethodFailedException"> if there is an error calling the method</exception>
     ///
-    object callMethod(OgnlContext context, object target,
-        string methodName, object[] args);
+    object? callMethod(OgnlContext context, object target,
+        string methodName, object?[] args);
 }

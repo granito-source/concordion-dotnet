@@ -104,7 +104,7 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
         if (!indexed && name is string plainName && isPropertyName(plainName))
             return tryGettingProperty(context, target, plainName);
 
-        return OgnlRuntime.getIndxerValue(context, target, name, [name]);
+        return OgnlRuntime.getIndexerValue(context, target, name, [name]);
     }
 
     public virtual void setProperty(OgnlContext context, object target,
@@ -124,7 +124,7 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
             OgnlRuntime.hasSetIndexer(context, target, target.GetType(), 1);
 
         if (indexed)
-            OgnlRuntime.setIndxerValue(context, target, name, value, [name]);
+            OgnlRuntime.setIndexerValue(context, target, name, value, [name]);
         else
             trySettingProperty(context, target, plainName, value);
     }

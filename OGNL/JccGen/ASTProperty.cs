@@ -83,7 +83,7 @@ class ASTProperty : SimpleNode {
         return children[0].getValue(context, context.getRoot());
     }
 
-    protected override object getValueBody(OgnlContext context,
+    protected override object? getValueBody(OgnlContext context,
         object source)
     {
         if (indexedAccess && children[0] is ASTSequence) {
@@ -92,10 +92,10 @@ class ASTProperty : SimpleNode {
             var indexParameters = ((ASTSequence)children[0]).getValues(context, context.getRoot());
 
             /* return IndexerAccessor.getIndexerValue (source, indexParameters) ; */
-            return OgnlRuntime.getIndxerValue(context, source, "Indexer", indexParameters);
+            return OgnlRuntime.getIndexerValue(context, source, "Indexer", indexParameters);
         }
 
-        object result;
+        object? result;
 
         var property = getProperty(context, source);
         Node indexSibling;
@@ -119,7 +119,7 @@ class ASTProperty : SimpleNode {
             var indexParameters = ((ASTSequence)children[0]).getValues(context, context.getRoot());
 
             /*IndexerAccessor.setIndexerValue (target, value ,indexParameters) ;*/
-            OgnlRuntime.setIndxerValue(context, target, "Indexer", value, indexParameters);
+            OgnlRuntime.setIndexerValue(context, target, "Indexer", value, indexParameters);
 
             return;
         }

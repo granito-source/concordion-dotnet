@@ -2,9 +2,6 @@ using System.Collections;
 
 namespace OGNL;
 
-/// <summary>
-/// Long
-/// </summary>
 public static class Util {
     public static long ParseLong(string s, int radix = 10)
     {
@@ -90,9 +87,9 @@ public static class Util {
         return ch <= 0x009F && (ch <= 0x001F || ch >= 0x007F);
     }
 
-    public static IList NCopies(int n, object o)
+    public static IList<T> NCopies<T>(int n, T o)
     {
-        return new CopiesList(n, o);
+        return new List<T>(Enumerable.Repeat(o, n));
     }
 
     public static bool Eq(object? o1, object? o2)
@@ -110,108 +107,6 @@ public static class Util {
             var value = entry.Value;
 
             target[key] = value;
-        }
-    }
-}
-
-internal class CopiesList : IList {
-    public int Count { get; }
-
-    public object SyncRoot => this;
-
-    public bool IsReadOnly => true;
-
-    public bool IsFixedSize => true;
-
-    public bool IsSynchronized => true;
-
-    private readonly object element;
-
-    public CopiesList(int n, object o)
-    {
-        if (n < 0)
-            throw new ArgumentException("List length = " + n);
-
-        Count = n;
-        element = o;
-    }
-
-    public void CopyTo(Array array, int index)
-    {
-        throw new NotImplementedException();
-    }
-
-    public int Add(object? value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool Contains(object? value)
-    {
-        return Count != 0 && Util.Eq(value, element);
-    }
-
-    public void Clear()
-    {
-        throw new NotImplementedException();
-    }
-
-    public int IndexOf(object? value)
-    {
-        return Contains(value) ? 0 : -1;
-    }
-
-    public void Insert(int index, object? value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Remove(object? value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void RemoveAt(int index)
-    {
-        throw new NotImplementedException();
-    }
-
-    public object? this[int index] {
-        get {
-            if (index < 0 || index >= Count)
-                throw new IndexOutOfRangeException("Index: " + index +
-                    ", Size: " + Count);
-
-            return element;
-        }
-
-        set => throw new NotImplementedException();
-    }
-
-    public IEnumerator GetEnumerator()
-    {
-        return new CopiesEnumerator(Count, element);
-    }
-
-    private class CopiesEnumerator(int n, object element) : IEnumerator {
-        private int index = 0;
-
-        public object Current {
-            get {
-                index++;
-
-                return element;
-            }
-        }
-
-        public bool MoveNext()
-        {
-            return index < n;
-        }
-
-        public void Reset()
-        {
-            index = 0;
         }
     }
 }

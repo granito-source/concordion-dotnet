@@ -36,6 +36,11 @@ using System.Text;
 
 namespace OGNL;
 
+using MethodMap = IDictionary<string, IList<MethodInfo>>;
+using MethodCache = Dictionary<Type, IDictionary<string, IList<MethodInfo>>>;
+using FieldMap = IDictionary<string, FieldInfo>;
+using FieldCache = Dictionary<Type, IDictionary<string, FieldInfo>>;
+
 /**
  * This is an abstract class with static methods that define runtime
  * caching information in OGNL.
@@ -103,13 +108,11 @@ public static class OgnlRuntime {
 
     private static ClassCache constructorCache = new();
 
-    private static ClassCache staticMethodCache = new();
+    private static MethodCache staticMethodCache = new();
 
-    private static ClassCache instanceMethodCache = new();
+    private static MethodCache instanceMethodCache = new();
 
-    private static Dictionary<Type, IDictionary<string, FieldInfo>?> fieldCache = new();
-
-    private static IList superclasses = new ArrayList(); /* Used by fieldCache lookup */
+    private static FieldCache fieldCache = new();
 
     private static ClassCache[] declaredMethods = [new(), new()]; /* set, get */
 
@@ -130,6 +133,15 @@ public static class OgnlRuntime {
         dictionary.TryGetValue(key, out var value);
 
         return value;
+    }
+
+    public static void Append<K, V>(this IDictionary<K, IList<V>> dictionary,
+        K key, V value)
+    {
+        if (!dictionary.TryGetValue(key, out var list))
+            dictionary[key] = list = new List<V>();
+
+        list.Add(value);
     }
 
     /**
@@ -530,12 +542,6 @@ public static class OgnlRuntime {
         }
     }
 
-    public static object? invokeMethod(object target, MethodInfo method,
-        object[] argsArray)
-    {
-        return method.Invoke(target, argsArray);
-    }
-
     /**
      * Tells whether the given object is compatible with the given class
      * ---that is, whether the given object can be passed as an argument
@@ -674,21 +680,23 @@ public static class OgnlRuntime {
         return result;
     }
 
-    public static MethodInfo getConvertedMethodAndArgs(OgnlContext context, object target, string propertyName,
-        IList methods, object[] args, object[] newArgs)
+    public static MethodInfo? getConvertedMethodAndArgs(OgnlContext context,
+        object target, string propertyName, IList<MethodInfo> methods,
+        object[] args, object[] newArgs)
     {
-        MethodInfo result = null;
         var converter = context.getTypeConverter();
 
-        if ((converter != null) && (methods != null)) {
-            for (int i = 0, icount = methods.Count; (result == null) && (i < icount); i++) {
-                var m = (MethodInfo)methods[i];
-                var parameterTypes = getParameterTypes(m);
+        if (converter == null)
+            return null;
 
-                if (getConvertedTypes(context, target, m, propertyName, parameterTypes, args, newArgs)) {
-                    result = m;
-                }
-            }
+        MethodInfo? result = null;
+
+        for (int i = 0, icount = methods.Count; (result == null) && (i < icount); i++) {
+            var m = methods[i];
+            var parameterTypes = getParameterTypes(m);
+
+            if (getConvertedTypes(context, target, m, propertyName, parameterTypes, args, newArgs))
+                result = m;
         }
 
         return result;
@@ -720,50 +728,51 @@ public static class OgnlRuntime {
         and the converted arguments in actualArgs.  If unsuccessful this method will return
         null and the actualArgs will be empty.
      */
-    public static MethodInfo getAppropriateMethod(OgnlContext context, object source, object target, string methodName,
-        string propertyName, IList methods, object[] args, object[] actualArgs)
+    public static MethodInfo getAppropriateMethod(OgnlContext context,
+        object source, object? target, string? methodName,
+        string? propertyName, IList<MethodInfo> methods, object?[] args,
+        object?[] actualArgs)
     {
         MethodInfo result = null;
         Type[] resultParameterTypes = null;
 
-        if (methods != null) {
-            for (int i = 0, icount = methods.Count; i < icount; i++) {
-                var m = (MethodInfo)methods[i];
-                var mParameterTypes = getParameterTypes(m);
+        for (int i = 0, icount = methods.Count; i < icount; i++) {
+            var m = methods[i];
+            var mParameterTypes = getParameterTypes(m);
 
-                if (areArgsCompatible(args, mParameterTypes) &&
-                    ((result == null) || isMoreSpecific(mParameterTypes, resultParameterTypes))) {
-                    result = m;
-                    resultParameterTypes = mParameterTypes;
-                    Array.Copy(args, 0, actualArgs, 0, args.Length);
+            if (areArgsCompatible(args, mParameterTypes) &&
+                ((result == null) || isMoreSpecific(mParameterTypes, resultParameterTypes))) {
+                result = m;
+                resultParameterTypes = mParameterTypes;
+                Array.Copy(args, 0, actualArgs, 0, args.Length);
 
-                    for (var j = 0; j < mParameterTypes.Length; j++) {
-                        var type = mParameterTypes[j];
+                for (var j = 0; j < mParameterTypes.Length; j++) {
+                    var type = mParameterTypes[j];
 
-                        if (type.IsPrimitive && (actualArgs[j] == null)) {
-                            actualArgs[j] = getConvertedType(context, source, result, propertyName, null, type);
-                        }
+                    if (type.IsPrimitive && (actualArgs[j] == null)) {
+                        actualArgs[j] = getConvertedType(context, source, result, propertyName, null, type);
                     }
                 }
             }
         }
 
-        if (result == null) {
-            result = getConvertedMethodAndArgs(context, target, propertyName, methods, args, actualArgs);
-        }
+        if (result == null)
+            result = getConvertedMethodAndArgs(context, target,
+                propertyName, methods, args, actualArgs);
 
         return result;
     }
 
-    public static object callAppropriateMethod(OgnlContext context, object? source, object? target, string methodName,
-        string? propertyName, IList? methods, object[] args)
+    public static object? callAppropriateMethod(OgnlContext context,
+        object source, object? target, string? methodName,
+        string? propertyName, IList<MethodInfo> methods, object?[] args)
     {
-        Exception reason = null;
         var actualArgs = objectArrayPool.create(args.Length);
+        Exception? reason;
 
         try {
-            var method = getAppropriateMethod(context, source, target, methodName, propertyName, methods, args,
-                actualArgs);
+            var method = getAppropriateMethod(context, source, target,
+                methodName, propertyName, methods, args, actualArgs);
 
             if ((method == null) || !isMethodAccessible(context, source, method, propertyName)) {
                 var buffer = new StringBuilder();
@@ -783,7 +792,7 @@ public static class OgnlRuntime {
                 throw new MissingMethodException(methodName + "(" + buffer + ")");
             }
 
-            return invokeMethod(target, method, actualArgs);
+            return method.Invoke(target, actualArgs);
         } catch (TargetInvocationException e) {
             reason = e.InnerException;
         } catch (Exception e) {
@@ -795,33 +804,24 @@ public static class OgnlRuntime {
         throw new MethodFailedException(source, methodName, reason);
     }
 
-    public static object callStaticMethod(OgnlContext context,
-        string className, string methodName, object[] args)
+    public static object? callStaticMethod(OgnlContext context,
+        string className, string methodName, object?[] args)
     {
         try {
             var targetClass = classForName(context, className);
-            var ma = getMethodAccessor(targetClass);
 
-            return ma.callStaticMethod(context, targetClass, methodName, args);
+            return getMethodAccessor(targetClass)
+                .callStaticMethod(context, targetClass, methodName, args);
         } catch (TypeLoadException ex) {
             throw new MethodFailedException(className, methodName, ex);
         }
     }
 
-    public static object callMethod(OgnlContext context, object target, string methodName, string propertyName,
-        object[] args) // throws OgnlException, MethodFailedException
+    public static object? callMethod(OgnlContext context, object target,
+        string methodName, string propertyName, object?[] args)
     {
-        object result;
-
-        if (target != null) {
-            var ma = getMethodAccessor(target.GetType());
-
-            result = ma.callMethod(context, target, methodName, args);
-        } else {
-            throw new NullReferenceException("target is null for method " + methodName);
-        }
-
-        return result;
+        return getMethodAccessor(target.GetType())
+            .callMethod(context, target, methodName, args);
     }
 
     public static object callConstructor(OgnlContext context, string className, object[] args) // throws OgnlException
@@ -874,36 +874,30 @@ public static class OgnlRuntime {
         throw new MethodFailedException(className, "new", reason);
     }
 
-    public static object?
-        getMethodValue(OgnlContext context, object target,
-            string propertyName) // throws OgnlException, IllegalAccessException, NoSuchMethodException, IntrospectionException
-    {
-        return getMethodValue(context, target, propertyName, false);
-    }
-
     /**
         If the checkAccessAndExistence flag is true this method will check to see if the
         method exists and if it is accessible according to the context's MemberAccess.
         If neither test passes this will return NotFound.
      */
-    public static object? getMethodValue(OgnlContext context, object target, string propertyName,
-        bool checkAccessAndExistence) // throws OgnlException, IllegalAccessException, NoSuchMethodException, IntrospectionException
+    public static object? getMethodValue(OgnlContext context,
+        object target, string propertyName,
+        bool checkAccessAndExistence = false)
     {
         object result = null;
-        var m = getGetMethod(context, (target == null) ? null : target.GetType(), propertyName);
+        var method = getGetMethod(context, target.GetType(), propertyName);
 
         // check accessible, IGNORED.
         if (checkAccessAndExistence) {
-            if ((m == null)
+            if ((method == null)
                 /* || !context.getMemberAccess().isAccessible(context, target, m, propertyName) */) {
                 result = NotFound;
             }
         }
 
         if (result == null) {
-            if (m != null) {
+            if (method != null) {
                 try {
-                    result = invokeMethod(target, m, NoArguments);
+                    result = method.Invoke(target, NoArguments);
                 } catch (TargetInvocationException ex) {
                     throw new OgnlException(propertyName, ex.InnerException);
                 }
@@ -925,9 +919,9 @@ public static class OgnlRuntime {
         string propertyName, object? value, bool checkAccessAndExistence)
     {
         var result = true;
-        var m = getSetMethod(context, (target == null) ? null : target.GetType(), propertyName);
+        var m = getSetMethod(context, target == null ? null : target.GetType(), propertyName);
 
-        if (result) {
+        if (result)
             if (m != null) {
                 var args = objectArrayPool.create(value);
 
@@ -939,7 +933,6 @@ public static class OgnlRuntime {
             } else {
                 result = false;
             }
-        }
 
         return result;
     }
@@ -958,60 +951,59 @@ public static class OgnlRuntime {
         return result;
     }
 
-    public static IDictionary getMethods(Type targetClass, bool staticMethods)
+    public static MethodMap getMethods(Type targetClass, bool staticMethods)
     {
         var cache = staticMethods ? staticMethodCache : instanceMethodCache;
-        IDictionary result;
 
         lock (cache) {
-            if ((result = (IDictionary)cache.get(targetClass)) == null) {
-                cache.put(targetClass, result = new Hashtable(23));
-                var c = targetClass;
-                var ma = c.GetMethods(
-                    BindingFlags.Public |
-                    BindingFlags.NonPublic |
-                    BindingFlags.Instance);
+            var cached = cache.SafeGet(targetClass);
 
-                for (int i = 0, icount = ma.Length; i < icount; i++) {
-                    if (ma[i].IsStatic == staticMethods) {
-                        var ml = (IList)result[ma[i].Name];
+            if (cached != null)
+                return cached;
 
-                        if (ml == null)
-                            result[ma[i].Name] = (ml = new ArrayList());
+            var methods = targetClass.GetMethods(
+                BindingFlags.Public |
+                BindingFlags.NonPublic |
+                BindingFlags.Instance);
+            var result = new Dictionary<string, IList<MethodInfo>>();
 
-                        ml.Add(ma[i]);
-                    }
-                }
-            }
+            foreach (var method in methods)
+                if (method.IsStatic == staticMethods)
+                    result.Append(method.Name, method);
+
+            cache[targetClass] = result;
+
+            return result;
         }
-
-        return result;
     }
 
-    public static IList? getMethods(Type targetClass, string name,
-        bool staticMethods)
+    public static IList<MethodInfo> getMethods(Type targetClass,
+        string name, bool staticMethods)
     {
-        return (IList)getMethods(targetClass, staticMethods)[name];
+        var methodMap = getMethods(targetClass, staticMethods);
+
+        return methodMap.TryGetValue(name, out var methods) ? methods :
+            new List<MethodInfo>();
     }
 
-    public static IDictionary<string, FieldInfo> getFields(Type targetClass)
+    public static FieldMap getFields(Type targetClass)
     {
         lock (fieldCache) {
-            var result = fieldCache.SafeGet(targetClass);
+            var cached = fieldCache.SafeGet(targetClass);
 
-            if (result == null) {
-                var fields = targetClass.GetFields(
-                    BindingFlags.Public |
-                    BindingFlags.NonPublic |
-                    BindingFlags.Instance);
+            if (cached != null)
+                return cached;
 
-                result = new Dictionary<string, FieldInfo>();
+            var fields = targetClass.GetFields(
+                BindingFlags.Public |
+                BindingFlags.NonPublic |
+                BindingFlags.Instance);
+            var result = new Dictionary<string, FieldInfo>();
 
-                foreach (var field in fields)
-                    result[field.Name] = field;
+            foreach (var field in fields)
+                result[field.Name] = field;
 
-                fieldCache[targetClass] = result;
-            }
+            fieldCache[targetClass] = result;
 
             return result;
         }
@@ -1203,11 +1195,10 @@ public static class OgnlRuntime {
         }
     }
 
-    public static MethodInfo
-        getGetMethod(OgnlContext context, Type targetClass,
-            string propertyName) // throws IntrospectionException, OgnlException
+    public static MethodInfo? getGetMethod(OgnlContext context,
+        Type targetClass, string propertyName)
     {
-        MethodInfo result = null;
+        MethodInfo? result = null;
         var pd = getPropertyDescriptor(targetClass, propertyName);
 
         if (pd == null) {
@@ -1232,7 +1223,7 @@ public static class OgnlRuntime {
         return result;
     }
 
-    public static bool isMethodAccessible(OgnlContext context, object target, MethodInfo method, string propertyName)
+    public static bool isMethodAccessible(OgnlContext context, object target, MethodInfo method, string? propertyName)
     {
         return (method == null) ? false : context.getMemberAccess().isAccessible(context, target, method, propertyName);
     }
@@ -1341,89 +1332,6 @@ public static class OgnlRuntime {
         }
 
         return result;
-    }
-
-    /* No used method */
-    private static void
-        findObjectIndexedPropertyDescriptors(Type targetClass, IDictionary intoMap) // throws OgnlException
-    {
-        // TODO: Use Indexed Property.
-        var allMethods = getMethods(targetClass, false);
-        IDictionary pairs = new Hashtable(101);
-
-        for (var it = allMethods.Keys.GetEnumerator(); it.MoveNext();) {
-            var methodName = (string)it.Current;
-            var methods = (IList)allMethods[(methodName)];
-
-            /*
-                Only process set/get where there is exactly one implementation
-                of the method per class and those implementations are all the
-                same
-             */
-            if (indexMethodCheck(methods)) {
-                bool isGet = false,
-                    isSet = false;
-                var m = (MethodInfo)methods[0];
-
-                if (((isSet = methodName.StartsWith(SET_PREFIX)) || (isGet = methodName.StartsWith(GET_PREFIX))) &&
-                    (methodName.Length > 3)) {
-                    var propertyName = /*Introspector.decapitalize*/(methodName.Substring(3));
-                    var parameterTypes = getParameterTypes(m);
-                    var parameterCount = parameterTypes.Length;
-
-                    if (isGet && (parameterCount == 1) && (m.ReturnType != typeof(void))) {
-                        var pair = (IList)pairs[(propertyName)];
-
-                        if (pair == null) {
-                            pairs[propertyName] = (pair = new ArrayList());
-                        }
-
-                        pair.Add(m);
-                    }
-
-                    if (isSet && (parameterCount == 2) && (m.ReturnType == typeof(void))) {
-                        var pair = (IList)pairs[(propertyName)];
-
-                        if (pair == null) {
-                            pairs[propertyName] = (pair = new ArrayList());
-                        }
-
-                        pair.Add(m);
-                    }
-                }
-            }
-        }
-
-        for (var it = pairs.Keys.GetEnumerator(); it.MoveNext();) {
-            var propertyName = (string)it.Current;
-            var methods = (IList)pairs[(propertyName)];
-
-            if (methods.Count == 2) {
-                MethodInfo method1 = (MethodInfo)methods[(0)],
-                    method2 = (MethodInfo)methods[(1)],
-                    setMethod = (method1.GetParameters().Length == 2) ? method1 : method2,
-                    getMethod = (setMethod == method1) ? method2 : method1;
-                var keyType = getMethod.GetParameters()[0].ParameterType;
-                var propertyType = getMethod.ReturnType;
-
-                if (keyType == setMethod.GetParameters()[0].ParameterType) {
-                    if (propertyType == setMethod.GetParameters()[1].ParameterType) {
-                        ObjectIndexedPropertyDescriptor propertyDescriptor;
-
-                        try {
-                            propertyDescriptor =
-                                null; // new ObjectIndexedPropertyDescriptor(propertyName, propertyType, getMethod, setMethod);
-                        } catch (Exception ex) {
-                            throw new OgnlException(
-                                "creating object indexed property descriptor for '" + propertyName + "' in " +
-                                targetClass, ex);
-                        }
-
-                        intoMap[propertyName] = (propertyDescriptor);
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -1853,46 +1761,37 @@ public static class OgnlRuntime {
         return objectArrayPool;
     }
 
-    // Use Indexer
-    public static IList getIndexerSetMethods(OgnlContext context, Type source)
+    public static IList<MethodInfo> getIndexerSetMethods(
+        OgnlContext context, Type source)
     {
-        var ps = source.GetProperties();
-        var ms = new ArrayList(16);
-
-        for (var i = 0; i < ps.Length; i++) {
-            var p = ps[i];
-
-            if (p.CanWrite && p.GetIndexParameters().Length > 0) {
-                ms.Add(p.GetSetMethod());
-            }
-        }
-
-        return ms;
+        return (
+            from property in source.GetProperties()
+            where property.CanWrite && property.GetIndexParameters().Length > 0
+            select property.GetSetMethod()
+        )
+            .Where(method => method != null)
+            .ToList();
     }
 
-    public static IList getIndexerGetMethods(OgnlContext context, Type source)
+    public static IList<MethodInfo> getIndexerGetMethods(
+        OgnlContext context, Type source)
     {
-        var ps = source.GetProperties();
-        var ms = new ArrayList(16);
-
-        for (var i = 0; i < ps.Length; i++) {
-            var p = ps[i];
-
-            if (p.CanRead && p.GetIndexParameters().Length > 0) {
-                ms.Add(p.GetGetMethod());
-            }
-        }
-
-        return ms;
+        return (
+                from property in source.GetProperties()
+                where property.CanWrite && property.GetIndexParameters().Length > 0
+                select property.GetGetMethod()
+            )
+            .Where(method => method != null)
+            .ToList();
     }
 
-    public static bool setIndxerValue(OgnlContext context, object target, object name, object? value, object[] args)
+    public static bool setIndexerValue(OgnlContext context, object target,
+        object name, object? value, object[] args)
     {
-        var result = false;
-        var methods = getIndexerSetMethods(context, (target == null) ? null : target.GetType());
+        var methods = getIndexerSetMethods(context, target.GetType());
 
-        if ((methods == null) || (methods.Count == 0))
-            return result;
+        if (methods.Count == 0)
+            return false;
 
         var actualArgs = objectArrayPool.create(args.Length + 1);
 
@@ -1900,26 +1799,25 @@ public static class OgnlRuntime {
         actualArgs[args.Length] = value;
 
         try {
-            callAppropriateMethod(context, target, target, null, null, methods, actualArgs);
-            result = true;
-        } finally {
-            objectArrayPool.recycle(args);
-        }
+            callAppropriateMethod(context, target, target, null, null,
+                methods, actualArgs);
 
-        return result;
+            return true;
+        } finally {
+            objectArrayPool.recycle(actualArgs);
+        }
     }
 
-    public static object getIndxerValue(OgnlContext context, object target, object name, object[] args)
+    public static object? getIndexerValue(OgnlContext context,
+        object target, object name, object[] args)
     {
-        object result = null;
-        var methods = getIndexerGetMethods(context, (target == null) ? null : target.GetType());
+        var methods = getIndexerGetMethods(context, target.GetType());
 
-        if ((methods == null) || (methods.Count == 0))
+        if (methods.Count == 0)
             throw new NoSuchPropertyException(target, getIndexerName(args));
 
-        result = callAppropriateMethod(context, target, target, getIndexerName(args), "Indexer", methods, args);
-
-        return result;
+        return callAppropriateMethod(context, target, target,
+            getIndexerName(args), "Indexer", methods, args);
     }
 
     public static string getIndexerName(object[] ts)

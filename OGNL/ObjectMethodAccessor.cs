@@ -39,8 +39,8 @@ namespace OGNL;
 ///@author Drew Davidson (drew@ognl.org)
 ///
 public class ObjectMethodAccessor : MethodAccessor {
-    public object callStaticMethod(OgnlContext context, Type targetClass,
-        string methodName, object[] args)
+    public object? callStaticMethod(OgnlContext context, Type targetClass,
+        string methodName, object?[] args)
     {
         var methods = OgnlRuntime.getMethods(targetClass, methodName, true);
 
@@ -48,13 +48,13 @@ public class ObjectMethodAccessor : MethodAccessor {
             null, methodName, null, methods, args);
     }
 
-    public object callMethod(OgnlContext context, object target,
-        string methodName, object[] args)
+    public object? callMethod(OgnlContext context, object target,
+        string methodName, object?[] args)
     {
         var targetClass = target.GetType();
         var methods = OgnlRuntime.getMethods(targetClass, methodName, false);
 
-        if (methods == null || methods.Count == 0)
+        if (methods.Count == 0)
             methods = OgnlRuntime.getMethods(targetClass, methodName, true);
 
         return OgnlRuntime.callAppropriateMethod(context, target, target,
