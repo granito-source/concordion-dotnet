@@ -36,10 +36,8 @@ namespace OGNL.Test;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
-public class PrivateMemberTest {
+public class PrivateMemberTest : OgnlFixture {
     private readonly string privateField = "private value";
-
-    private readonly OgnlContext context = Ognl.createDefaultContext(null);
 
     [SetUp]
     public void setUp()
@@ -47,22 +45,20 @@ public class PrivateMemberTest {
         context.setMemberAccess(new DefaultMemberAccess(true));
     }
 
-    private string GetPrivateAccessor()
-    {
-        return privateField;
-    }
-
     [Test]
     public void AllowsGettingValueOfPrivateAccessor()
     {
-        Assert.That(Ognl.getValue("PrivateAccessor", context, this),
-            Is.EqualTo("private value"));
+        Assert.That(Get("PrivateAccessor"), Is.EqualTo("private value"));
     }
 
     [Test]
     public void AllowsGettingValueOfPrivateField()
     {
-        Assert.That(Ognl.getValue("privateField", context, this),
-            Is.EqualTo("private value"));
+        Assert.That(Get("privateField"), Is.EqualTo("private value"));
+    }
+
+    private string GetPrivateAccessor()
+    {
+        return privateField;
     }
 }

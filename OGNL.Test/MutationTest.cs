@@ -36,10 +36,11 @@ using System.Diagnostics.CodeAnalysis;
 namespace OGNL.Test;
 
 [TestFixture]
-public class MutationTest {
-    private readonly OgnlContext context = Ognl.createDefaultContext(null);
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+public class MutationTest : OgnlFixture {
+    public readonly IDictionary dictionary = new Hashtable();
 
-    private readonly TestRoot root = new();
+    public readonly IList array = new[] { "foo", "bar", "baz" };
 
     [Test]
     public void ThrowsExceptionWhenNotAProperty()
@@ -210,22 +211,5 @@ public class MutationTest {
             Assert.That(Get("array[1]"), Is.EqualTo("451"));
             Assert.That(Get("array[2]"), Is.EqualTo("1984"));
         });
-    }
-
-    private object? Get(string expression)
-    {
-        return Ognl.getValue(expression, context, root);
-    }
-
-    private void Set(string expression, object? value)
-    {
-        Ognl.setValue(expression, context, root, value);
-    }
-
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    private class TestRoot {
-        public readonly IDictionary dictionary = new Hashtable();
-
-        public readonly IList array = new[] { "foo", "bar", "baz" };
     }
 }

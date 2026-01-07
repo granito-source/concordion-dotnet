@@ -36,9 +36,7 @@ using System.Collections.Specialized;
 namespace OGNL.Test;
 
 [TestFixture]
-public class DictionaryCreationTest {
-    private readonly OgnlContext context = Ognl.createDefaultContext(null);
-
+public class DictionaryCreationTest : OgnlFixture {
     [Test]
     public void CanCreateEmptyDictionary()
     {
@@ -66,10 +64,5 @@ public class DictionaryCreationTest {
         var actual = Get("#@System.Collections.Specialized.ListDictionary@{}");
 
         Assert.That(actual, Is.TypeOf<ListDictionary>());
-    }
-
-    private object? Get(string expression)
-    {
-        return Ognl.getValue(expression, context, this);
     }
 }
