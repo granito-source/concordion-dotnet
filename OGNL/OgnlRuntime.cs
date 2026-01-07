@@ -961,10 +961,7 @@ public static class OgnlRuntime {
             if (cached != null)
                 return cached;
 
-            var methods = targetClass.GetMethods(
-                BindingFlags.Public |
-                BindingFlags.NonPublic |
-                BindingFlags.Instance);
+            var methods = targetClass.GetMethods();
             var result = new Dictionary<string, IList<MethodInfo>>();
 
             foreach (var method in methods)
@@ -994,10 +991,7 @@ public static class OgnlRuntime {
             if (cached != null)
                 return cached;
 
-            var fields = targetClass.GetFields(
-                BindingFlags.Public |
-                BindingFlags.NonPublic |
-                BindingFlags.Instance);
+            var fields = targetClass.GetFields();
             var result = new Dictionary<string, FieldInfo>();
 
             foreach (var field in fields)
