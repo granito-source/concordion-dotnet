@@ -466,48 +466,28 @@ public class OgnlContext : IDictionary {
         }
 
         set {
+            if (key.Equals(CONTEXT_CONTEXT_KEY))
+                throw new ArgumentException(
+                    $"can't change {CONTEXT_CONTEXT_KEY} in context");
+
             if (key.Equals(THIS_CONTEXT_KEY))
                 setCurrentObject(value);
             else if (key.Equals(ROOT_CONTEXT_KEY))
                 setRoot(value);
-            else {
-                if (key.Equals(CONTEXT_CONTEXT_KEY))
-                    throw new ArgumentException("can't change " + CONTEXT_CONTEXT_KEY + " in context");
-
-                if (key.Equals(TRACE_EVALUATIONS_CONTEXT_KEY))
-                    setTraceEvaluations(OgnlOps.booleanValue(value));
-                else if (key.Equals(LAST_EVALUATION_CONTEXT_KEY))
-                    setLastEvaluation((Evaluation?)value);
-                else if (key.Equals(KEEP_LAST_EVALUATION_CONTEXT_KEY)) {
-                    setKeepLastEvaluation(OgnlOps.booleanValue(value));
-                } else if (key.Equals(CLASS_RESOLVER_CONTEXT_KEY)) {
-                    setClassResolver((ClassResolver)value);
-                } else if (key.Equals(TYPE_CONVERTER_CONTEXT_KEY)) {
-                    setTypeConverter((TypeConverter)value);
-                } else {
-                    if (!key.Equals(MEMBER_ACCESS_CONTEXT_KEY)) {
-                        throw new ArgumentException("unknown reserved key '" + key + "'");
-                    }
-
-                    setMemberAccess((MemberAccess)value);
-                }
-
-                var flag = false;
-
-                foreach (var obj2 in values.Keys) {
-                    if (obj2.Equals(key)) {
-                        flag = true;
-
-                        break;
-                    }
-                }
-
-                if (flag) {
-                    values[key] = value;
-                } else {
-                    values.Add(key, value);
-                }
-            }
+            else if (key.Equals(TRACE_EVALUATIONS_CONTEXT_KEY))
+                setTraceEvaluations(OgnlOps.booleanValue(value));
+            else if (key.Equals(LAST_EVALUATION_CONTEXT_KEY))
+                setLastEvaluation((Evaluation?)value);
+            else if (key.Equals(KEEP_LAST_EVALUATION_CONTEXT_KEY))
+                setKeepLastEvaluation(OgnlOps.booleanValue(value));
+            else if (key.Equals(CLASS_RESOLVER_CONTEXT_KEY))
+                setClassResolver((ClassResolver)value);
+            else if (key.Equals(TYPE_CONVERTER_CONTEXT_KEY))
+                setTypeConverter((TypeConverter)value);
+            else if (key.Equals(MEMBER_ACCESS_CONTEXT_KEY))
+                setMemberAccess((MemberAccess)value);
+            else
+                values[key] = value;
         }
     }
 }
