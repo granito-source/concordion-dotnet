@@ -1,7 +1,6 @@
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -30,18 +29,22 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Diagnostics.CodeAnalysis;
+
 namespace OGNL.Test;
 
-public class ConstantTreeTest : OgnlTestCase
-{
-    public static int               nonFinalStaticVariable = 15;
+[TestFixture]
+public class ConstantTreeTest : OgnlFixture {
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public static int NonReadonlyStaticVariable = 42;
 
-    private static object[][]       TESTS = [
+    private static readonly object[][] Tests = [
         ["true", true],
         ["55", true],
         ["@Byte@MinValue", true],
-        ["@Test.org.ognl.test.ConstantTreeTest@nonFinalStaticVariable", false],
-        ["@Test.org.ognl.test.ConstantTreeTest@nonFinalStaticVariable + 10", false],
+        ["@OGNL.Test.ConstantTreeTest@NonReadonlyStaticVariable", false],
+        ["@OGNL.Test.ConstantTreeTest@NonReadonlyStaticVariable + 10", false],
         ["55 + 24 + @Byte@MaxValue", true],
         ["name", false],
         ["name[i]", false],
@@ -51,62 +54,11 @@ public class ConstantTreeTest : OgnlTestCase
         ["name.{ 25 }", false]
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
+    [Test, TestCaseSource(nameof(Tests))]
+    public void EvaluatesForConstant(string expression, bool expected)
     {
-        var       result = new TestSuite();
+        var tree = Ognl.parseExpression(expression);
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            result.addTest(new ConstantTreeTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null, (string)TESTS[i][0], TESTS[i][1]));
-        }
-        return result;
-    }
-
-    /*===================================================================
-        Overridden methods
-      ===================================================================*/
-    protected internal override void runTest() // throws OgnlException
-    {
-        setUp () ;
-        Assert.IsTrue(Ognl.isConstant(getExpression(), context) == (bool)getExpectedResult());
-    }
-
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public ConstantTreeTest()
-    {
-	    
-    }
-
-    public ConstantTreeTest(string name) : base(name)
-    {
-	    
-    }
-
-    public ConstantTreeTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-        
-    }
-
-    public ConstantTreeTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-        
-    }
-
-    public ConstantTreeTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
-        
-    }
-    [Test]
-    public void Test2 ()
-    {
-        suite () [2].runTest ();
+        Assert.That(Ognl.isConstant(tree), Is.EqualTo(expected));
     }
 }

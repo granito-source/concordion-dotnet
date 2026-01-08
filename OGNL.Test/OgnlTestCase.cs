@@ -1,6 +1,5 @@
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson ,  Luke Blanshard and Foxcoming
-//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
