@@ -48,7 +48,6 @@ public interface ClassResolver {
     /// Resolve Class Type by class name.
     /// </summary>
     /// <param name="className"></param>
-    /// <param name="context">OgnlContext</param>
     /// <returns></returns>
-    Type classForName(string className, IDictionary context);
+    Type classForName(string className);
 }

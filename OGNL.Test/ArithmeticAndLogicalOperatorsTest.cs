@@ -165,7 +165,7 @@ public class ArithmeticAndLogicalOperatorsTest : OgnlFixture {
     }
 
     [Test, TestCaseSource(nameof(Tests))]
-    public void CanPerformOperation(string expression, object expected)
+    public void ExecutesOperation(string expression, object expected)
     {
         Assert.That(Get(expression), Is.EqualTo(expected));
     }

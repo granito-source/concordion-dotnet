@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson ,  Luke Blanshard and Foxcoming
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //	Redistribution and use in source and binary forms, with or without
@@ -29,70 +30,34 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using System.Collections;
-
 namespace OGNL;
 
-///<summary>
-///Default class resolution.  Uses Type.GetType() to look up classes by name.
-///It also looks in the "System" package if the class named does not give
-///a package specifier, allowing easier usage of these classes.
-///</summary>
-///<remarks>
-///You can specify Full assamblly class name as parameter. Under constraint of OGNL syntax,
-///the full name in following form: <c>AssambllyName.namespace.className</c>.
-///</remarks>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///
 public class DefaultClassResolver : ClassResolver {
-    IDictionary classes = new Hashtable(101);
+    private readonly Dictionary<string, Type> classCache = new();
 
-    static readonly string[] DEFAULT_DLL_NAMES = [
-        "System" // System.dll
-    ];
-
-    public Type classForName(string className, IDictionary context)
+    public Type classForName(string className)
     {
-        Type? result;
+        if (!className.Contains('.'))
+            className = $"System.{className}";
 
-        if ((result = (Type)classes[className]) == null) {
-            result = Type.GetType(className);
+        lock (classCache) {
+            var cached = classCache.SafeGet(className);
 
-            if (result == null) {
-                var index = className.IndexOf('.');
+            if (cached != null)
+                return cached;
 
-                if (index <= 0) {
-                    // TODO; Use System instead of java.lang
-                    result = Type.GetType("System." + className);
-                    classes["System." + className] = result;
-                } else
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+                var type = assembly.GetType(className);
 
-                    // try to resolve with AssemblyQualifiedName
-                if (index < className.Length - 1) {
-                    var assemblyName = className.Substring(0, index);
-                    var clsName = className.Substring(index + 1);
-                    result = Type.GetType(clsName + "," + assemblyName);
-                }
+                if (type != null) {
+                    classCache[className] = type;
 
-                // use default DLL Names
-                if (result == null) {
-                    for (var i = 0; i < DEFAULT_DLL_NAMES.Length; i++) {
-                        var assemblyName = DEFAULT_DLL_NAMES[i];
-                        result = Type.GetType(className + "," + assemblyName);
-
-                        if (result != null)
-                            break;
-                    }
+                    return type;
                 }
             }
 
-            if (result == null)
-                throw new ArgumentException("This Class [" + className + "] Not Found.", "className");
-
-            classes[className] = result;
+            throw new ArgumentException($"Class [{className}] not found.",
+                nameof(className));
         }
-
-        return result;
     }
 }

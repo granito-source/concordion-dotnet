@@ -617,7 +617,7 @@ public static class OgnlRuntime {
                 resolver = OgnlContext.DEFAULT_CLASS_RESOLVER;
             }
 
-            result = resolver.classForName(className, context);
+            result = resolver.classForName(className);
         }
 
         return result;

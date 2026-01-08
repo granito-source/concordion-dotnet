@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -29,86 +30,38 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 namespace OGNL.Test;
 
-public class ArrayCreationTest : OgnlTestCase {
-    private static readonly Root Root = new();
-
+[TestFixture]
+public class ArrayCreationTest : OgnlFixture {
     private static readonly object[][] Tests = [
-        // Array creation
-        [Root, "new string[] { \"one\", \"two\" }", new[] { "one", "two" }],
-        [Root, "new string[] { 1, 2 }", new[] { "1", "2" }],
-        [Root, "new int[] { \"1\", 2, \"3\" }", new[] { 1, 2, 3 }],
-        [Root, "new string[10]", new string[10]],
-        [Root, "new object[4] { #root, #this }", typeof(ExpressionSyntaxException)],
-        [Root, "new object[4]", new object[4]],
-        [Root, "new object[] { #root, #this }", new object[] { Root, Root }],
-        [
-            Root,
-            "new Test.org.ognl.test.objects.Simple[] { new Test.org.ognl.test.objects.Simple(), new Test.org.ognl.test.objects.Simple(\"foo\", 1.0, 2) }",
-            new[] { new Simple(), new Simple("foo", 1.0f, 2) }
-        ],
-        [Root, $"new {typeof(Simple).FullName}[5]", new Simple[5]],
-        [Root, $"new {typeof(Simple).FullName}(new object[5])", new Simple(new object[5])],
-        [Root, $"new {typeof(Simple).FullName}(new string[5])", new Simple(new string[5])]
+        ["new string[] { \"one\", \"two\" }", new[] { "one", "two" }],
+        ["new string[] { 1, 2 }", new[] { "1", "2" }],
+        ["new int[] { \"1\", 2, \"3\" }", new[] { 1, 2, 3 }],
+        ["new string[4]", new string[4]],
+        ["new object[2]", new object[2]],
+        ["new Char[2]", new char[2]],
+        ["new OGNL.Test.ArrayCreationTest[1]", new ArrayCreationTest[1]],
+        ["new decimal[] { new Decimal(42) }", new decimal[] { new(42) }]
     ];
 
-    public override TestSuite suite()
+    [Test, TestCaseSource(nameof(Tests))]
+    public void CreatesArray(string expression, object expected)
     {
-        var result = new TestSuite();
-
-        for (var i = 0; i < Tests.Length; i++) {
-            if (Tests[i].Length == 3) {
-                result.addTest(
-                    new ArrayCreationTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1], Tests[i][2]));
-            } else {
-                if (Tests[i].Length == 4) {
-                    result.addTest(new ArrayCreationTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
-                        Tests[i][2], Tests[i][3]));
-                } else {
-                    if (Tests[i].Length == 5) {
-                        result.addTest(new ArrayCreationTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
-                            Tests[i][2], Tests[i][3], Tests[i][4]));
-                    } else {
-                        throw new Exception("don't understand TEST format");
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    public ArrayCreationTest()
-    {
-    }
-
-    public ArrayCreationTest(string name)
-    {
-    }
-
-    public ArrayCreationTest(string name, object root, string expressionString, object expectedResult, object setValue,
-        object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-    }
-
-    public ArrayCreationTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-    }
-
-    public ArrayCreationTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
+        Assert.That(Get(expression), Is.EqualTo(expected));
     }
 
     [Test]
-    public void Test7()
+    public void AllowsUsingContextVariablesInInitializers()
     {
-        suite()[7].runTest();
+        Assert.That(Get("new object[] { #root, #this }"),
+            Is.EqualTo(new object[] { this, this }));
+    }
+
+    [Test]
+    public void ThrowsExceptionWhenBothSizeAndInitializersArePresent()
+    {
+        Assert.Throws<ExpressionSyntaxException>(() =>
+            Get("new string[2] { \"uno\", \"dos\" }"));
     }
 }
