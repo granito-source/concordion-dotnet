@@ -1772,7 +1772,7 @@ public static class OgnlRuntime {
     {
         return (
                 from property in source.GetProperties()
-                where property.CanWrite && property.GetIndexParameters().Length > 0
+                where property.CanRead && property.GetIndexParameters().Length > 0
                 select property.GetGetMethod()
             )
             .Where(method => method != null)

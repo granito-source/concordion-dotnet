@@ -1,9 +1,7 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
-//  Copyright (c) 2004, Drew Davidson and Luke Blanshard 
+//  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //	Copyright (c) 2005, Foxcoming
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -32,105 +30,47 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
 namespace OGNL.Test;
 
-public class IndexerTest : OgnlTestCase
-{
-    private static NumberIndexer          INDEXED = new();
-
-    private static object[][]       TESTS = [
-        // Indexed properties
-        [INDEXED, "[0]", INDEXED [0]],                                 /* gets this [0] */
-        [INDEXED, "[\"0\"]", null],                           /* return null */
-        [INDEXED.Index , "[1]", INDEXED.Index[1]],                     /* 1 */
-        [INDEXED, "Index[0]", "0"],                      /* 0 */
-        [INDEXED, "[\"index\"][1]", "1"],                      /* 0 */
-        [INDEXED, "Index[0, \"1\"]", 1],                      /* convert */
-        // this [index1 , index2] ;
-        [INDEXED, "[0, 0]", 0],                      /* map [0] */
-        [INDEXED, "[0, 1]", 1],                      /* map [1] */
-        [INDEXED, "[0, 2]", 2],                      /* map [2] */
-        [INDEXED, "[1, 1]", 2],                      /* map [2] */
-        [INDEXED, "[2, 1]", 3],                      /* map [3] */
-        [INDEXED, "[2, 1]", 3 , 5 , 5],                      /* map [3] */
-        [INDEXED, "[2, 1]", 5 , 10 , 10],                      /* map [3] */
-        [INDEXED, "Index[0, 0]", 0],                      /* map [0] */
-        [INDEXED, "Index[0, 1]", 1],                      /* map [1] */
-        [INDEXED, "Index[0, 2]", 2],                      /* map [2] */
-        [INDEXED, "Index[1, 1]", 2],                      /* map [2] */
-        [INDEXED, "Index[2, 1]", 3],                      /* map [3] */
-        [INDEXED, "Index[2, 1]", 3 , 5 , 5],                      /* map [3] */
-        [INDEXED, "Index[2, 1]", 5 , 10 , 10] /* map [3] */
+[TestFixture]
+public class IndexerTest : OgnlFixture {
+    private static readonly object?[][] Tests = [
+        ["indexer[0]", 0],
+        ["indexer[3]", 3],
+        ["indexer[\"0\"]", null],
+        ["indexer['index'][1]", 1],
+        ["indexer[1, 2]", "3"],
+        ["indexer[1, 1] = '17', indexer[2]", 17],
+        ["indexer[2, \"1\"] = '42', indexer[3]", 42]
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
-    {
-        var       result = new TestSuite();
+    public class TestIndexer {
+        private readonly Dictionary<int, int?> values = new() {
+            [0] = 0,
+            [1] = 1,
+            [2] = 2,
+            [3] = 3
+        };
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
-                        throw new Exception("don't understand TEST format");
-                    }
-                }
-            }
+        public int? this[int index] => values[index];
+
+        public TestIndexer? this[string index] =>
+            "index".Equals(index) ? this : null;
+
+        public string? this[int index1, int index2] {
+            get => values[index1 + index2].ToString();
+
+            set => values[index1 + index2] =
+                value == null ? null : int.Parse(value);
         }
-        return result;
     }
 
-    /*[Test]
-    public void Test11 ()
-    {
-        suite () [11].runTest ();
-    }*/
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public IndexerTest()
-    {
-	   
-    }
+    public readonly TestIndexer indexer = new();
 
-    public IndexerTest(string name) : base(name)
+    [Test, TestCaseSource(nameof(Tests))]
+    public void AccessesIndexed(string expression, object? expected)
     {
-	    
-    }
-
-    public IndexerTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-        
-    }
-
-    public IndexerTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-        
-    }
-
-    public IndexerTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
-        
+        Assert.That(Get(expression), Is.EqualTo(expected));
     }
 }

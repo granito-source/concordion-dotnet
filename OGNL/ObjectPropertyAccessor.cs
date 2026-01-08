@@ -99,7 +99,7 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
 
         var indexed = currentNode is ASTProperty astProperty &&
             astProperty.isIndexedAccess() &&
-            OgnlRuntime.hasSetIndexer(context, target, target.GetType(), 1);
+            OgnlRuntime.hasGetIndexer(context, target, target.GetType(), 1);
 
         if (!indexed && name is string plainName && isPropertyName(plainName))
             return tryGettingProperty(context, target, plainName);
