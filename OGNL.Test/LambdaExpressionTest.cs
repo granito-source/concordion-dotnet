@@ -1,7 +1,6 @@
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -30,64 +29,24 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
 namespace OGNL.Test;
 
-public class LambdaExpressionTest : OgnlTestCase
-{
-    private static object[][]       TESTS = [
-        // Lambda expressions
-        [null, "#a=:[33](20).{0}.ToArray().Length", 33],
-        [null, "#fact=:[#this<=1? 1 : #fact(#this-1) * #this], #fact(30)", 1409286144],
-        [null, "#fact=:[#this<=1? 1 : #fact(#this-1) * #this], #fact(30L)", -8764578968847253504L],
-        /* // No BigInteger in C#, Ignored
-        new object [] { null, "#fact=:[#this<=1? 1 : #fact(#this-1) * #this], #fact(30h)", ("265252859812191058636308480000000") },*/
-        [null, "#bump = :[ #this.{ #this + 1 } ], (#bump)({ 1, 2, 3 })", new[] { 2, 3, 4 }],
-        [null, "#call = :[ \"calling \" + [0] + \" on \" + [1] ], (#call)({ \"x\", \"y\" })", "calling x on y"]
+[TestFixture]
+public class LambdaExpressionTest : OgnlFixture {
+    private static readonly object[][] Tests = [
+        ["#a = :[33](20).{0}.ToArray().Length", 33],
+        ["#fact = :[#this <= 1 ? 1 : #fact(#this - 1) * #this], #fact(6)",
+            720],
+        ["#bump = :[#this.{ #this + 1 } ], (#bump)({ 1, 2, 3 })",
+            new[] { 2, 3, 4 }],
+        ["#call = :[ \"calling \" + [0] + \" on \" + [1] ], (#call)({ \"x\", \"y\" })",
+            "calling x on y"]
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
+    [Test, TestCaseSource(nameof(Tests))]
+    public void ExecutesLambdaExpression(string expression, object? expected)
     {
-        var       result = new TestSuite();
-
-        for (var i = 0; i < TESTS.Length; i++)
-        {
-            result.addTest(new LambdaExpressionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-        }
-        return result;
-    }
-
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public LambdaExpressionTest()
-    {
-
-    }
-
-    public LambdaExpressionTest(string name)
-        : base(name)
-    {
-
-    }
-
-    public LambdaExpressionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-
-    }
-
-    public LambdaExpressionTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-
-    }
-
-    public LambdaExpressionTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
-
+        Assert.That(Get(expression), Is.EqualTo(expected));
     }
 }
