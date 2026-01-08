@@ -1,8 +1,6 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -31,61 +29,30 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
 namespace OGNL.Test;
 
-public class ContextVariableTest : OgnlTestCase
-{
-    private static object           ROOT = new Simple();
-    private static object[][]       TESTS = [
-        // Naming and referring to names
-        ["#root", ROOT], // Special root reference
-        ["#this", ROOT], // Special this reference
-        ["#f=5, #s=6, #f + #s", 11],
-        ["#six=(#five=5, 6), #five + #six", 11] // Dynamic scoping
-    ];
-
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
+public class ContextVariableTest : OgnlFixture {
+    [Test]
+    public void HasSpecialRootVariable()
     {
-        var       result = new TestSuite();
-
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            result.addTest(new ContextVariableTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", ROOT, (string)TESTS[i][0], TESTS[i][1]));
-        }
-        return result;
+        Assert.That(Get("#root"), Is.SameAs(this));
     }
 
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public ContextVariableTest()
+    [Test]
+    public void HasSpecialThisVariable()
     {
-	    
+        Assert.That(Get("#this"), Is.SameAs(this));
     }
 
-    public ContextVariableTest(string name) : base(name)
+    [Test]
+    public void SetsAndUsesContextVariablesInExpressions()
     {
-	    
-    }
-
-    public ContextVariableTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-        
-    }
-
-    public ContextVariableTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-        
-    }
-
-    public ContextVariableTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
-        
+        Assert.Multiple(() => {
+            Assert.That(Get("#five = 5, #six = 6, #five + #six"),
+                Is.EqualTo(11));
+            Assert.That(Get("#six = (#five = 5, 6), #five + #six"),
+                Is.EqualTo(11));
+        });
     }
 }
