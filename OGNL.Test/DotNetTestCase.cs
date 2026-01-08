@@ -85,7 +85,7 @@ public class DotNetTestCase {
     [Test]
     public void testLoadType()
     {
-        var t = Type.GetType("org.ognl.test.objects.Simple,Test");
+        var t = Type.GetType("OGNL.Test.Objects.Simple,OGNL.Test");
         Assert.IsNotNull(t);
 
         // t = Type.GetType ("System.Collections.Specialized.ListDictionary,System") ;
