@@ -158,7 +158,7 @@ public class ArithmeticAndLogicalOperatorsTest : OgnlFixture {
     ];
 
     [SetUp]
-    public void setUp()
+    public void SetUp()
     {
         context.Add("x", "1");
         context.Add("y", (decimal)1);

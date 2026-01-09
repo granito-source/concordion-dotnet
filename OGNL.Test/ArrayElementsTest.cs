@@ -30,100 +30,72 @@
 //--------------------------------------------------------------------------
 
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
 
 namespace OGNL.Test;
 
-public class ArrayElementsTest : OgnlTestCase {
+public class ArrayElementsTest : OgnlFixture {
     private static readonly string[] StringArray = ["hello", "world"];
 
     private static readonly int[] IntArray = [10, 20];
 
-    private static readonly Root Root = new();
-
-    private static readonly object[][] Tests = new object[][] {
-        // Array elements test
-        [StringArray, "length", 2],
+    private static readonly object[][] EvaluationTests = [
+        [StringArray, "Length", 2],
+        [StringArray, "[1]", "world"],
         [StringArray, "#root[1]", "world"],
+        [StringArray, "#root", new[] { "hello", "world" }],
+        [IntArray, "[1]", 20],
         [IntArray, "#root[1]", 20],
-        [IntArray, "#root[1]", 20, "50", 50],
-        [IntArray, "#root[1]", 50, new string[] { "50", "100" }, 50],
-        [Root, "IntValue", 0, new string[] { "50", "100" }, 50],
-        [Root, "Array", Root.getArray(), new string[] { "50", "100" }, new int[] { 50, 100 }],
-    };
+        [IntArray, "#root", new[] { 10, 20 }]
+    ];
 
-    public override TestSuite suite()
-    {
-        var result = new TestSuite();
+    private static readonly object?[][] MutationTests = [
+        [IntArray, "[0]", "42", 42],
+        [IntArray, "#root[1]", "50", 50],
+        [IntArray, "#root[1]", new[] { "100", "200" }, 100],
+        [null, "IntValue", new[] { "100", "200" }, 100]
+    ];
 
-        for (var i = 0; i < Tests.Length; i++) {
-            if (Tests[i].Length == 3) {
-                result.addTest(
-                    new ArrayElementsTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1], Tests[i][2]));
-            } else {
-                if (Tests[i].Length == 4) {
-                    result.addTest(new ArrayElementsTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
-                        Tests[i][2], Tests[i][3]));
-                } else {
-                    if (Tests[i].Length == 5) {
-                        result.addTest(new ArrayElementsTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
-                            Tests[i][2], Tests[i][3], Tests[i][4]));
-                    } else {
-                        throw new Exception("don't understand TEST format");
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    public ArrayElementsTest()
-    {
-    }
-
-    public ArrayElementsTest(string name) : base(name)
-    {
-    }
-
-    public ArrayElementsTest(string name, object root, string expressionString, object expectedResult, object setValue,
-        object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-    }
-
-    public ArrayElementsTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-    }
-
-    public ArrayElementsTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
-    }
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public int IntValue { get; set; }
 
     [SetUp]
-    public override void setUp()
+    public void SetUp()
     {
-        base.setUp();
-
         context.setTypeConverter(new ArrayDefaultTypeConverter());
     }
 
-    class ArrayDefaultTypeConverter : DefaultTypeConverter {
-        public override object? convertValue(IDictionary context, object target, MemberInfo? member,
-            string? propertyName,
+    [Test, TestCaseSource(nameof(EvaluationTests))]
+    public void Evaluates(object root, string expression, object expected)
+    {
+        WithRoot(root);
+
+        Assert.That(Get(expression), Is.EqualTo(expected));
+    }
+
+    [Test, TestCaseSource(nameof(MutationTests))]
+    public void Mutates(object? root, string expression, object value,
+        object expected)
+    {
+        if (root != null)
+            WithRoot(root);
+
+        Set(expression, value);
+
+        Assert.That(Get(expression), Is.EqualTo(expected));
+    }
+
+    private class ArrayDefaultTypeConverter : DefaultTypeConverter {
+        public override object? convertValue(IDictionary context,
+            object target, MemberInfo? member, string? propertyName,
             object? value, Type toType)
         {
-            if (value.GetType().IsArray) {
-                if (!toType.IsArray) {
-                    value = ((Array)value).GetValue(0);
-                }
-            }
+            if (value != null && value.GetType().IsArray && !toType.IsArray)
+                value = ((Array)value).GetValue(0);
 
-            return base.convertValue(context, target, member, propertyName, value, toType);
+            return base.convertValue(context, target, member,
+                propertyName, value, toType);
         }
     }
 }
