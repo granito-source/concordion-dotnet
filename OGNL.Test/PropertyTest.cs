@@ -85,7 +85,7 @@ public class PropertyTest : OgnlFixture {
     public Dictionary<string, object> Dictionary { get; } = TestMap;
 
     [Test, TestCaseSource(nameof(Tests))]
-    public void GetsProperty(string expression, object? expected)
+    public void Evaluates(string expression, object expected)
     {
         Assert.That(Get(expression), Is.EqualTo(expected));
     }

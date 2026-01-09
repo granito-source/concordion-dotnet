@@ -69,7 +69,7 @@ public class CollectionPropertyTest : OgnlFixture {
     public List<string> list = ["one", "two"];
 
     [Test, TestCaseSource(nameof(Tests))]
-    public void AccessesCollectionProperties(string expression, object? expected)
+    public void Evaluates(string expression, object? expected)
     {
         Assert.That(Get(expression), Is.EqualTo(expected));
     }

@@ -45,7 +45,7 @@ public class LambdaExpressionTest : OgnlFixture {
     ];
 
     [Test, TestCaseSource(nameof(Tests))]
-    public void ExecutesLambdaExpression(string expression, object? expected)
+    public void Evaluates(string expression, object expected)
     {
         Assert.That(Get(expression), Is.EqualTo(expected));
     }

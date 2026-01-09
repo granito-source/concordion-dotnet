@@ -1,8 +1,6 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -31,60 +29,35 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Diagnostics.CodeAnalysis;
+
 namespace OGNL.Test;
 
-public class ProjectionSelectionTest : OgnlTestCase {
-    private static readonly Root Root = new();
-
+[TestFixture]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+public class ProjectionSelectionTest : OgnlFixture {
     private static readonly object[][] Tests = [
-        // Projection, selection
-        [Root, "Array.{Type}", new[] { typeof(int), typeof(int), typeof(int), typeof(int) }],
-        [Root, "Map.array.{? #this > 2 }", new[] { 3, 4 }],
-        [Root, "Map.array.{^ #this > 2 }", new[] { 3 }],
-        [Root, "Map.array.{$ #this > 2 }", new[] { 4 }],
-        [Root, "Map.array[*].{?true} instanceof System.Collections.ICollection", true]
+        ["array.{ Type }",
+            new[] { typeof(int), typeof(int), typeof(int), typeof(int) }],
+        ["array.{? #this > 1 }", new[] { 2, 3 }],
+        ["array.{^ #this > 1 }", new[] { 2 }],
+        ["array.{$ #this > 1 }", new[] { 3 }],
+        ["array[*].{? true } instanceof System.Collections.IList", true],
+        ["list.{ Type }",
+            new[] { typeof(string), typeof(string), typeof(string) }],
+        ["list.{? #this.Length < 4 }", new[] { "one", "two" }],
+        ["list.{^ #this.Length < 4 }", new[] { "one" }],
+        ["list.{$ #this.Length < 4 }", new[] { "two" }]
     ];
 
-    public override TestSuite suite()
+    public readonly int[] array = [0, 1, 2, 3];
+
+    public readonly List<string> list = ["zero", "one", "two"];
+
+    [Test, TestCaseSource(nameof(Tests))]
+    public void Evaluates(string expression, object expected)
     {
-        var result = new TestSuite();
-
-        for (var i = 0; i < Tests.Length; i++) {
-            result.addTest(new ProjectionSelectionTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
-                Tests[i][2]));
-        }
-
-        return result;
-    }
-
-    [Test]
-    public void Test1()
-    {
-        suite()[1].runTest();
-    }
-
-    public ProjectionSelectionTest()
-    {
-    }
-
-    public ProjectionSelectionTest(string name) : base(name)
-    {
-    }
-
-    public ProjectionSelectionTest(string name, object root, string expressionString, object expectedResult,
-        object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-    }
-
-    public ProjectionSelectionTest(string name, object root, string expressionString, object expectedResult,
-        object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-    }
-
-    public ProjectionSelectionTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
+        Assert.That(Get(expression), Is.EqualTo(expected));
     }
 }
