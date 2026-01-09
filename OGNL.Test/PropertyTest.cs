@@ -62,27 +62,27 @@ public class PropertyTest : OgnlFixture {
         ["List[^]", "zero"],
         ["List[|]", "one"],
         ["List[$]", "two"],
-        ["Map", TestMap],
-        ["[\"Map\"]", TestMap],
-        ["Map.test", 42],
-        ["Map['test']", 42],
-        ["Map['te' + 'st']", 42],
-        ["Map['size']", "SIZE"],
-        ["Map[@OGNL.Test.PropertyTest@Size]", "SIZE"],
-        ["Map.size", 3],
-        ["Map.array[0]", "zero"],
-        ["Map.(array[1] + size)", "one3"],
-        ["Map.(#this)", TestMap],
-        ["Map.(#this != null ? #this['size'] : null)", "SIZE"],
-        ["Map[\"test\"].(#this == null ? 'empty' : #this)", 42],
-        ["Map[\"missing\"].(#this == null ? 'empty' : #this)", "empty"]
+        ["Dictionary", TestMap],
+        ["[\"Dictionary\"]", TestMap],
+        ["Dictionary.test", 42],
+        ["Dictionary['test']", 42],
+        ["Dictionary['te' + 'st']", 42],
+        ["Dictionary['size']", "SIZE"],
+        ["Dictionary[@OGNL.Test.PropertyTest@Size]", "SIZE"],
+        ["Dictionary.size", 3],
+        ["Dictionary.array[0]", "zero"],
+        ["Dictionary.(array[1] + size)", "one3"],
+        ["Dictionary.(#this)", TestMap],
+        ["Dictionary.(#this != null ? #this['size'] : null)", "SIZE"],
+        ["Dictionary[\"test\"].(#this == null ? 'empty' : #this)", 42],
+        ["Dictionary[\"missing\"].(#this == null ? 'empty' : #this)", "empty"]
     ];
 
     public string[] Array { get; } = TestArray;
 
     public List<string> List { get; } = TestList;
 
-    public Dictionary<string, object> Map { get; } = TestMap;
+    public Dictionary<string, object> Dictionary { get; } = TestMap;
 
     [Test, TestCaseSource(nameof(Tests))]
     public void GetsProperty(string expression, object? expected)

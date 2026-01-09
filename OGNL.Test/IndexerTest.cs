@@ -31,42 +31,41 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace OGNL.Test;
 
 [TestFixture]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class IndexerTest : OgnlFixture {
     private static readonly object?[][] Tests = [
-        ["indexer[0]", 0],
-        ["indexer[3]", 3],
-        ["indexer[\"0\"]", null],
-        ["indexer['index'][1]", 1],
-        ["indexer[1, 2]", "3"],
-        ["indexer[1, 1] = '17', indexer[2]", 17],
-        ["indexer[2, \"1\"] = '42', indexer[3]", 42]
+        ["[0]", 0],
+        ["[3]", 3],
+        ["[\"0\"]", null],
+        ["['index'][1]", 1],
+        ["[1, 2]", "3"],
+        ["[1, 1] = '17', [2]", 17],
+        ["[2, \"1\"] = '42', [3]", 42]
     ];
 
-    public class TestIndexer {
-        private readonly Dictionary<int, int?> values = new() {
-            [0] = 0,
-            [1] = 1,
-            [2] = 2,
-            [3] = 3
-        };
+    public int? this[int index] => values[index];
 
-        public int? this[int index] => values[index];
+    public IndexerTest? this[string index] =>
+        "index".Equals(index) ? this : null;
 
-        public TestIndexer? this[string index] =>
-            "index".Equals(index) ? this : null;
+    public string? this[int index1, int index2] {
+        get => values[index1 + index2].ToString();
 
-        public string? this[int index1, int index2] {
-            get => values[index1 + index2].ToString();
-
-            set => values[index1 + index2] =
-                value == null ? null : int.Parse(value);
-        }
+        set => values[index1 + index2] =
+            value == null ? null : int.Parse(value);
     }
 
-    public readonly TestIndexer indexer = new();
+    private readonly Dictionary<int, int?> values = new() {
+        [0] = 0,
+        [1] = 1,
+        [2] = 2,
+        [3] = 3
+    };
 
     [Test, TestCaseSource(nameof(Tests))]
     public void AccessesIndexed(string expression, object? expected)
