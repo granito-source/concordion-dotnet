@@ -35,29 +35,36 @@ using System.Reflection;
 
 namespace OGNL.Test;
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class ArrayElementsTest : OgnlFixture {
     private static readonly string[] StringArray = ["hello", "world"];
 
     private static readonly int[] IntArray = [10, 20];
 
     private static readonly object[][] EvaluationTests = [
-        [StringArray, "Length", 2],
+        [StringArray, "length", 2],
         [StringArray, "[1]", "world"],
         [StringArray, "#root[1]", "world"],
         [StringArray, "#root", new[] { "hello", "world" }],
+        [IntArray, "length", 2],
         [IntArray, "[1]", 20],
         [IntArray, "#root[1]", 20],
         [IntArray, "#root", new[] { 10, 20 }]
     ];
 
     private static readonly object?[][] MutationTests = [
+        [StringArray, "[1]", "all", "all"],
+        [StringArray, "#root[0]", "hi", "hi"],
+        [StringArray, "#root[1]", new[] { "all", "folks" }, "all"],
         [IntArray, "[0]", "42", 42],
         [IntArray, "#root[1]", "50", 50],
         [IntArray, "#root[1]", new[] { "100", "200" }, 100],
+        [null, "StringValue", new[] { "one", "two" }, "one"],
         [null, "IntValue", new[] { "100", "200" }, 100]
     ];
 
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public string StringValue { get; set; } = "zero";
+
     public int IntValue { get; set; }
 
     [SetUp]

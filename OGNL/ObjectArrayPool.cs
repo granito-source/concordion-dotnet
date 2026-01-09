@@ -33,10 +33,10 @@ using System.Collections;
 
 namespace OGNL;
 
-public sealed class ObjectArrayPool : object {
+public sealed class ObjectArrayPool {
     private readonly Hashtable pools = new(23);
 
-    public class SizePool : object {
+    public class SizePool {
         private readonly IList arrays = new ArrayList();
 
         private readonly int arraySize;
