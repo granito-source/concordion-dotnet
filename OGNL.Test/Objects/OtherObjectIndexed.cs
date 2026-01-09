@@ -28,10 +28,10 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
 namespace OGNL.Test.Objects;
 
-public class OtherObjectIndexed : BaseObjectIndexed
-{
+public class OtherObjectIndexed : BaseObjectIndexed {
     public OtherObjectIndexed()
     {
         setAttribute("foo", "bar");

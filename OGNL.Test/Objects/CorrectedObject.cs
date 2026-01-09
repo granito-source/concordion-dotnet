@@ -28,15 +28,10 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
 namespace OGNL.Test.Objects;
 
-public class CorrectedObject 
-{
-    public CorrectedObject()
-    {
-     
-    }
-
+public class CorrectedObject {
     public void setStringValue(string value)
     {
     }

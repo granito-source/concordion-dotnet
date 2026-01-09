@@ -37,93 +37,86 @@ namespace OGNL.Test.Objects;
     MyMap->Map but extends object, therefore should be coded using
     MapPropertyAccessor instead of ObjectPropertyAccessor.
  */
-public class MyMapImpl : MyMap
-{
-    public ICollection Keys
-    {
-        get { return map.Keys ; }
+public class MyMapImpl : MyMap {
+    public ICollection Keys {
+        get { return map.Keys; }
     }
 
-    public ICollection Values
-    {
-        get { return map.Values ; }
+    public ICollection Values {
+        get { return map.Values; }
     }
 
-    public bool IsReadOnly
-    {
-        get { return map.IsReadOnly ; }
+    public bool IsReadOnly {
+        get { return map.IsReadOnly; }
     }
 
-    public bool IsFixedSize
-    {
-        get { return map.IsFixedSize ; }
+    public bool IsFixedSize {
+        get { return map.IsFixedSize; }
     }
 
-    public bool Contains (object key)
+    public bool Contains(object key)
     {
-        return map.Contains (key) ;
+        return map.Contains(key);
     }
 
-    public void Add (object key, object value)
+    public void Add(object key, object value)
     {
-        map.Add (key, value) ;
+        map.Add(key, value);
     }
 
-    public void Clear ()
+    public void Clear()
     {
-        map.Clear () ;
+        map.Clear();
     }
 
-    public IDictionaryEnumerator GetEnumerator ()
+    public IDictionaryEnumerator GetEnumerator()
     {
-        return map.GetEnumerator () ;
+        return map.GetEnumerator();
     }
 
-    IEnumerator IEnumerable.GetEnumerator ()
+    IEnumerator IEnumerable.GetEnumerator()
     {
-        return map.GetEnumerator () ;
-    }
-    public void Remove (object key)
-    {
-        map.Remove (key) ;
+        return map.GetEnumerator();
     }
 
-    public object this [object key]
+    public void Remove(object key)
     {
-        get { return map [key] ; }
-        set { map [key] = value ; }
+        map.Remove(key);
     }
 
-    public int Count
-    {
-        get { return map.Count ; }
+    public object this[object key] {
+        get { return map[key]; }
+
+        set { map[key] = value; }
     }
 
-    public object SyncRoot
-    {
-        get { return map.SyncRoot ; }
+    public int Count {
+        get { return map.Count; }
     }
 
-    public bool IsSynchronized
-    {
-        get { return map.IsSynchronized ; }
+    public object SyncRoot {
+        get { return map.SyncRoot; }
     }
 
-    public void CopyTo (Array array, int index)
-    {
-        map.CopyTo (array, index) ;
+    public bool IsSynchronized {
+        get { return map.IsSynchronized; }
     }
 
-    private IDictionary				map = new Hashtable();
-
-    public override bool Equals (object obj)
+    public void CopyTo(Array array, int index)
     {
-        return map.Equals (obj) ;
+        map.CopyTo(array, index);
     }
 
-    public override int GetHashCode ()
+    private IDictionary map = new Hashtable();
+
+    public override bool Equals(object obj)
     {
-        return map.GetHashCode () ;
+        return map.Equals(obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return map.GetHashCode();
     }
 
     public string getDescription()

@@ -28,20 +28,18 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
 namespace OGNL.Test.Objects;
 
-public class Indexed 
-{
-    private string[]        values = ["foo", "bar", "baz"];
+public class Indexed {
+    private string[] values = ["foo", "bar", "baz"];
 
     public Indexed()
     {
-    
     }
 
     public Indexed(string[] values)
     {
-     
         this.values = values;
     }
 
@@ -67,12 +65,9 @@ public class Indexed
 
     public void setValues(int index, string value)
     {
-        if (value.EndsWith("xxx")) 
-        {
+        if (value.EndsWith("xxx")) {
             values[index] = value.Substring(0, value.Length - 3);
-        } 
-        else 
-        {
+        } else {
             values[index] = value;
         }
     }
@@ -82,20 +77,15 @@ public class Indexed
     {
         return getValues () ;
     }*/
-    public string this [int index]
-    {
-        get {return values[index] + "xxx"; }
-        set 
-        {
-            if (value.EndsWith("xxx")) 
-            {
+    public string this[int index] {
+        get { return values[index] + "xxx"; }
+
+        set {
+            if (value.EndsWith("xxx")) {
                 values[index] = value.Substring(0, value.Length - 3);
-            } 
-            else 
-            {
+            } else {
                 values[index] = value;
             }
         }
     }
-
 }

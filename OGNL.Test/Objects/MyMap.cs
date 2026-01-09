@@ -36,7 +36,6 @@ namespace OGNL.Test.Objects;
     This tests the interface inheritence test.  This is a subinterface
     of Map and therefore should inherit the Map property accessor.
  */
-public interface MyMap : IDictionary
-{
+public interface MyMap : IDictionary {
     string getDescription();
 }

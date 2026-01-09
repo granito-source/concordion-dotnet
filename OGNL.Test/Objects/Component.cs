@@ -28,16 +28,16 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
 namespace OGNL.Test.Objects;
 
-public class Component
-{
-    private URLStorage          toDisplay = new();
-    private Page                page = new();
+public class Component {
+    private URLStorage toDisplay = new();
 
-    public class URLStorage 
-    {
-        private string          pictureUrl = "http://www.picturespace.com/pictures/100";
+    private Page page = new();
+
+    public class URLStorage {
+        private string pictureUrl = "http://www.picturespace.com/pictures/100";
 
         public string getPictureUrl()
         {
@@ -50,17 +50,11 @@ public class Component
         }
     }
 
-    public class Page 
-    {
+    public class Page {
         public object createRelativeAsset(string value)
         {
             return "/toplevel/" + value;
         }
-    }
-
-    public Component()
-    {
-        
     }
 
     public Page getPage()

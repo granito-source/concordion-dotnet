@@ -31,23 +31,20 @@
 
 namespace OGNL.Test.Objects;
 
-/// <summary>
-/// SomeEnum ��ժҪ˵����
-/// </summary>
-public enum SomeEnum
-{
-    Item1 , 
-    Item2 ,
-    Item3 
+public enum SomeEnum {
+    Item1,
+
+    Item2,
+
+    Item3
 }
 
-public class EnumBean
-{
-    private SomeEnum _itemValue ;
+public class EnumBean {
+    private SomeEnum _itemValue;
 
-    public SomeEnum ItemValue
-    {
-        get { return _itemValue ; }
-        set { _itemValue = value ; }
+    public SomeEnum ItemValue {
+        get { return _itemValue; }
+
+        set { _itemValue = value; }
     }
 }

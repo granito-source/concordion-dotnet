@@ -2,41 +2,35 @@ using System.Collections;
 
 namespace OGNL.Test.Util;
 
-/// <summary>
-/// TestSuite[ ��ժҪ˵����]
-/// </summary>
-public class TestSuite
-{
-    private ArrayList cases ;
-    public void addTest (OgnlTestCase testCase)
+public class TestSuite {
+    private ArrayList cases;
+
+    public void addTest(OgnlTestCase testCase)
     {
         if (cases == null)
-            cases =new ArrayList();
+            cases = new ArrayList();
 
-        cases.Add (testCase) ;
+        cases.Add(testCase);
     }
 
-    public IEnumerator enumerate ()
+    public IEnumerator enumerate()
     {
         if (cases == null)
-            return null ;
-        else
-            return cases.GetEnumerator ();
+            return null;
+
+        return cases.GetEnumerator();
     }
 
-    public OgnlTestCase this [int index]
-    {
-        get
-        {
+    public OgnlTestCase this[int index] {
+        get {
             if (cases == null)
-                return null ;
-            else
-                return (OgnlTestCase) cases [index] ;
+                return null;
+
+            return (OgnlTestCase)cases[index];
         }
     }
 }
 
-public interface ITestSuiteProvider
-{
-    TestSuite suite() ;
+public interface ITestSuiteProvider {
+    TestSuite suite();
 }

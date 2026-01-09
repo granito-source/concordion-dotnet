@@ -32,14 +32,8 @@ using System.Collections;
 //--------------------------------------------------------------------------
 namespace OGNL.Test.Objects;
 
-public class BaseObjectIndexed 
-{
-    private IDictionary     attributes = new Hashtable();
-
-    public BaseObjectIndexed()
-    {
-			
-    }
+public class BaseObjectIndexed {
+    private IDictionary attributes = new Hashtable();
 
     public IDictionary getAttributes()
     {
@@ -48,7 +42,7 @@ public class BaseObjectIndexed
 
     public object getAttribute(string name)
     {
-        return attributes [name];
+        return attributes[name];
     }
 
     public void setAttribute(string name, object value)
@@ -67,16 +61,15 @@ public class BaseObjectIndexed
         /* do nothing */
     }
 
-
     /* test whether get only is found */
     public object getSecondaryAttribute(object name)
     {
-        return attributes [name];
+        return attributes[name];
     }
 
-    public object this [object name]
-    {
-        get {return attributes [name];}
-        set {attributes [name] = value;}
+    public object this[object name] {
+        get { return attributes[name]; }
+
+        set { attributes[name] = value; }
     }
 }

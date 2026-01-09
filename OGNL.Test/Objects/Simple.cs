@@ -28,30 +28,31 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
 namespace OGNL.Test.Objects;
 
-public class Simple
-{
-    private string          stringValue;
-    private float           floatValue;
-    private int             intValue;
-    private bool         booleanValue;
+public class Simple {
+    private string stringValue;
+
+    private float floatValue;
+
+    private int intValue;
+
+    private bool booleanValue;
+
     // private BigInteger      bigIntValue = BigInteger.valueOf(0);
-    private decimal      bigDecValue = (decimal) 0.0;
+    private decimal bigDecValue = (decimal)0.0;
 
     public Simple()
     {
-        
     }
 
     public Simple(object[] values)
     {
-        
     }
 
     public Simple(string stringValue, float floatValue, int intValue)
     {
-        
         this.stringValue = stringValue;
         this.floatValue = floatValue;
         this.intValue = intValue;
@@ -127,14 +128,15 @@ public class Simple
 
     public override bool Equals(object other)
     {
-        var     result = false;
+        var result = false;
 
-        if (other is Simple) 
-        {
-            var      os = (Simple)other;
+        if (other is Simple) {
+            var os = (Simple)other;
 
-            result = OgnlTestCase.isEqual(os.getStringValue(), getStringValue()) && os.getIntValue() == getIntValue();
+            result = OgnlTestCase.isEqual(os.getStringValue(),
+                getStringValue()) && os.getIntValue() == getIntValue();
         }
+
         return result;
     }
 }
