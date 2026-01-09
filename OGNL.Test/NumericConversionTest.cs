@@ -33,119 +33,128 @@ using OGNL.Test.Util;
 namespace OGNL.Test;
 
 [TestFixture]
-public class NumericConversionTest : OgnlTestCase
-{
-    private object                  value;
-    private Type                   toClass;
-    private object                  expectedValue;
-    private int                     scale;
+public class NumericConversionTest : OgnlTestCase {
+    private object value;
 
-		
-    private static object[][]       TESTS = new object[][]{
+    private Type toClass;
+
+    private object expectedValue;
+
+    private int scale;
+
+    private static object[][] TESTS = new object[][] {
         /* To typeof (int) */
-        ["55", typeof (int), 55],
-        [55, typeof (int), 55],
-        [(double)55, typeof (int), 55],
-        [true, typeof (int), 1],
-        [(byte)55, typeof (int), 55],
-        [(char)55, typeof (int), 55],
-        [(short)55, typeof (int), 55],
-        [55L, typeof (int), 55],
-        [55f, typeof (int), 55],
+        ["55", typeof(int), 55],
+        [55, typeof(int), 55],
+        [(double)55, typeof(int), 55],
+        [true, typeof(int), 1],
+        [(byte)55, typeof(int), 55],
+        [(char)55, typeof(int), 55],
+        [(short)55, typeof(int), 55],
+        [55L, typeof(int), 55],
+        [55f, typeof(int), 55],
+
         // { new BigInteger("55"), typeof (int), (55) },
-        [(decimal) 55, typeof (int), 55],
-                    
+        [(decimal)55, typeof(int), 55],
+
         /* To typeof (double) */
-        ["55.1234", typeof (double), 55.1234],
-        [55, typeof (double), (double)55],
-        [(double)55.1234, typeof (double), 55.1234],
-        [true, typeof (double), (double)1],
-        [(byte)55, typeof (double), (double)55],
-        [(char)55, typeof (double), (double)55],
-        [(short)55, typeof (double), (double)55],
-        [55L, typeof (double), (double)55],
-        [55.1234f, typeof (double), 55.1234, 4],
+        ["55.1234", typeof(double), 55.1234],
+        [55, typeof(double), (double)55],
+        [(double)55.1234, typeof(double), 55.1234],
+        [true, typeof(double), (double)1],
+        [(byte)55, typeof(double), (double)55],
+        [(char)55, typeof(double), (double)55],
+        [(short)55, typeof(double), (double)55],
+        [55L, typeof(double), (double)55],
+        [55.1234f, typeof(double), 55.1234, 4],
+
         // { new BigInteger("55"), typeof (double), (double)(55) },
-        [(decimal) 55.1234, typeof (double), 55.1234],
-                    
+        [(decimal)55.1234, typeof(double), 55.1234],
+
         /* To typeof (bool) */
-        ["true", typeof (bool), true],
-        [55, typeof (bool), true],
-        [(double)55, typeof (bool), true],
-        [true, typeof (bool), true],
-        [(byte)55, typeof (bool), true],
-        [(char)55, typeof (bool), true],
-        [(short)55, typeof (bool), true],
-        [55L, typeof (bool), true],
-        [55f, typeof (bool), true],
+        ["true", typeof(bool), true],
+        [55, typeof(bool), true],
+        [(double)55, typeof(bool), true],
+        [true, typeof(bool), true],
+        [(byte)55, typeof(bool), true],
+        [(char)55, typeof(bool), true],
+        [(short)55, typeof(bool), true],
+        [55L, typeof(bool), true],
+        [55f, typeof(bool), true],
+
         // { new BigInteger("55"), typeof (bool), true },
-        [(decimal)55, typeof (bool), true],
-                    
+        [(decimal)55, typeof(bool), true],
+
         /* To typeof (byte) */
-        ["55", typeof (byte), (byte)55],
-        [55, typeof (byte), (byte)55],
-        [(double)55, typeof (byte), (byte)55],
-        [true, typeof (byte), (byte)1],
-        [(byte)55, typeof (byte), (byte)55],
-        [(char)55, typeof (byte), (byte)55],
-        [(short)55, typeof (byte), (byte)55],
-        [55L, typeof (byte), (byte)55],
-        [55f, typeof (byte), (byte)55],
+        ["55", typeof(byte), (byte)55],
+        [55, typeof(byte), (byte)55],
+        [(double)55, typeof(byte), (byte)55],
+        [true, typeof(byte), (byte)1],
+        [(byte)55, typeof(byte), (byte)55],
+        [(char)55, typeof(byte), (byte)55],
+        [(short)55, typeof(byte), (byte)55],
+        [55L, typeof(byte), (byte)55],
+        [55f, typeof(byte), (byte)55],
+
         // { new BigInteger("55"), typeof (byte), ((byte)55) },
-        [(decimal)55, typeof (byte), (byte)55],
-                    
+        [(decimal)55, typeof(byte), (byte)55],
+
         /* To typeof (char) */
-        ["55", typeof (char), (char)55],
-        [55, typeof (char), (char)55],
-        [(double)55, typeof (char), (char)55],
-        [true, typeof (char), (char)1],
-        [(byte)55, typeof (char), (char)55],
-        [(char)55, typeof (char), (char)55],
-        [(short)55, typeof (char), (char)55],
-        [55L, typeof (char), (char)55],
-        [55f, typeof (char), (char)55],
+        ["55", typeof(char), (char)55],
+        [55, typeof(char), (char)55],
+        [(double)55, typeof(char), (char)55],
+        [true, typeof(char), (char)1],
+        [(byte)55, typeof(char), (char)55],
+        [(char)55, typeof(char), (char)55],
+        [(short)55, typeof(char), (char)55],
+        [55L, typeof(char), (char)55],
+        [55f, typeof(char), (char)55],
+
         // { new BigInteger("55"), typeof (char), ((char)55) },
-        [(decimal)55, typeof (char), (char)55],
-                    
+        [(decimal)55, typeof(char), (char)55],
+
         /* To typeof (short) */
-        ["55", typeof (short), (short)55],
-        [55, typeof (short), (short)55],
-        [(double)55, typeof (short), (short)55],
-        [true, typeof (short), (short)1],
-        [(byte)55, typeof (short), (short)55],
-        [(char)55, typeof (short), (short)55],
-        [(short)55, typeof (short), (short)55],
-        [55L, typeof (short), (short)55],
-        [55f, typeof (short), (short)55],
+        ["55", typeof(short), (short)55],
+        [55, typeof(short), (short)55],
+        [(double)55, typeof(short), (short)55],
+        [true, typeof(short), (short)1],
+        [(byte)55, typeof(short), (short)55],
+        [(char)55, typeof(short), (short)55],
+        [(short)55, typeof(short), (short)55],
+        [55L, typeof(short), (short)55],
+        [55f, typeof(short), (short)55],
+
         // { new BigInteger("55"), typeof (short), ((short)55) },
-        [(decimal)55, typeof (short), (short)55],
-                   
+        [(decimal)55, typeof(short), (short)55],
+
         /* To typeof (long) */
-        ["55", typeof (long), (long)55],
-        [55, typeof (long), (long)55],
-        [(double)55, typeof (long), (long)55],
-        [true, typeof (long), (long)1],
-        [(byte)55, typeof (long), (long)55],
-        [(char)55, typeof (long), (long)55],
-        [(short)55, typeof (long), (long)55],
-        [(long)55, typeof (long), (long)55],
-        [55f, typeof (long), (long)55],
+        ["55", typeof(long), (long)55],
+        [55, typeof(long), (long)55],
+        [(double)55, typeof(long), (long)55],
+        [true, typeof(long), (long)1],
+        [(byte)55, typeof(long), (long)55],
+        [(char)55, typeof(long), (long)55],
+        [(short)55, typeof(long), (long)55],
+        [(long)55, typeof(long), (long)55],
+        [55f, typeof(long), (long)55],
+
         // { new BigInteger("55"), typeof (long), (long)(55) },
-        [(decimal)55, typeof (long), (long)55],
-                    
+        [(decimal)55, typeof(long), (long)55],
+
         /* To typeof (float) */
-        ["55.1234", typeof (float), (float)55.1234],
-        [55, typeof (float), (float)55],
-        [(double)55.1234, typeof (float), (float)55.1234],
-        [true, typeof (float), (float)1],
-        [(byte)55, typeof (float), (float)55],
-        [(char)55, typeof (float), (float)55],
-        [(short)55, typeof (float), (float)55],
-        [(long)55, typeof (float), (float)55],
-        [(float)55.1234, typeof (float), (float)55.1234],
+        ["55.1234", typeof(float), (float)55.1234],
+        [55, typeof(float), (float)55],
+        [(double)55.1234, typeof(float), (float)55.1234],
+        [true, typeof(float), (float)1],
+        [(byte)55, typeof(float), (float)55],
+        [(char)55, typeof(float), (float)55],
+        [(short)55, typeof(float), (float)55],
+        [(long)55, typeof(float), (float)55],
+        [(float)55.1234, typeof(float), (float)55.1234],
+
         // { new BigInteger("55"), typeof (float), (float)(55) },
-        [(decimal)55.1234, typeof (float), (float)55.1234],
-                   
+        [(decimal)55.1234, typeof(float), (float)55.1234],
+
         /* To BigInteger.class */
         /*{ "55", BigInteger.class, new BigInteger("55") },
         { (55), BigInteger.class, new BigInteger("55") },
@@ -158,19 +167,20 @@ public class NumericConversionTest : OgnlTestCase
         { (float)(55), BigInteger.class, new BigInteger("55") },
         { new BigInteger("55"), BigInteger.class, new BigInteger("55") },
         {  (decimal)(55"), BigInteger.class, new BigInteger("55") },
-*/            
+*/
         /* To typeof (decimal) */
-        ["55.1234", typeof (decimal),  (decimal)55.1234],
-        [55, typeof (decimal),  (decimal)55],
-        [(double)55.1234, typeof (decimal),  (decimal)55.1234, 4],
-        [true, typeof (decimal),  (decimal)1],
-        [(byte)55, typeof (decimal),  (decimal)55],
-        [(char)55, typeof (decimal),  (decimal)55],
-        [(short)55, typeof (decimal),  (decimal)55],
-        [(long)55, typeof (decimal),  (decimal)55],
-        [(float)55.1234, typeof (decimal),  (decimal)55.1234, 4],
+        ["55.1234", typeof(decimal), (decimal)55.1234],
+        [55, typeof(decimal), (decimal)55],
+        [(double)55.1234, typeof(decimal), (decimal)55.1234, 4],
+        [true, typeof(decimal), (decimal)1],
+        [(byte)55, typeof(decimal), (decimal)55],
+        [(char)55, typeof(decimal), (decimal)55],
+        [(short)55, typeof(decimal), (decimal)55],
+        [(long)55, typeof(decimal), (decimal)55],
+        [(float)55.1234, typeof(decimal), (decimal)55.1234, 4],
+
         // { new BigInteger("55"), typeof (decimal),  (decimal)(55) },
-        [(decimal)55.1234, typeof (decimal),  (decimal)55.1234], 
+        [(decimal)55.1234, typeof(decimal), (decimal)55.1234],
     };
 
     /*===================================================================
@@ -178,26 +188,29 @@ public class NumericConversionTest : OgnlTestCase
       ===================================================================*/
     public override TestSuite suite()
     {
-        var       result = new TestSuite();
+        var result = new TestSuite();
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
+        for (var i = 0; i < TESTS.Length; i++) {
             result.addTest(new NumericConversionTest(TESTS[i][0],
                 (Type)TESTS[i][1],
                 TESTS[i][2],
-                TESTS[i].Length > 3 ? (int) TESTS[i][3] : -1));
+                TESTS[i].Length > 3 ? (int)TESTS[i][3] : -1));
         }
+
         return result;
     }
 
     /*===================================================================
         Constructors
       ===================================================================*/
-    public NumericConversionTest () {}
-    public NumericConversionTest(object value, Type toClass, object expectedValue, int scale)
-        : base(value + " [" + value.GetType().Name + "] -> " + toClass.Name + " == " + expectedValue + " [" + expectedValue.GetType().Name + "]" + (scale >= 0 ? " (to within " + scale + " decimal places)" : ""))
+    public NumericConversionTest()
     {
-        
+    }
+
+    public NumericConversionTest(object value, Type toClass, object expectedValue, int scale)
+        : base(value + " [" + value.GetType().Name + "] -> " + toClass.Name + " == " + expectedValue + " [" +
+            expectedValue.GetType().Name + "]" + (scale >= 0 ? " (to within " + scale + " decimal places)" : ""))
+    {
         this.value = value;
         this.toClass = toClass;
         this.expectedValue = expectedValue;
@@ -209,24 +222,20 @@ public class NumericConversionTest : OgnlTestCase
       ===================================================================*/
     protected internal override void runTest() // throws OgnlException
     {
-        object      result;
+        object result;
 
         result = OgnlOps.convertValue(value, toClass);
-        if (!isEqual(result, expectedValue)) 
-        {
-            if (scale >= 0) 
-            {
-                double  scalingFactor = Math.Pow(10, scale),
+
+        if (!isEqual(result, expectedValue)) {
+            if (scale >= 0) {
+                double scalingFactor = Math.Pow(10, scale),
                     v1 = Convert.ToDouble(value) * scalingFactor,
                     v2 = Convert.ToDouble(expectedValue) * scalingFactor;
 
-                Assert.IsTrue((int)v1 == (int)v2);
-            } 
-            else 
-            {
+                Assert.That((int)v1 == (int)v2, Is.True);
+            } else {
                 Assert.Fail();
             }
         }
     }
-		
 }

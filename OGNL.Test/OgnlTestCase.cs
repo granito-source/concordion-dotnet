@@ -178,16 +178,22 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
             testedResult = expectedResult;
             expr = getExpression();
 
-            Assert.IsTrue(isEqual(Ognl.getValue(expr, context, root), expectedResult));
+            Assert.That(
+                isEqual(Ognl.getValue(expr, context, root), expectedResult),
+                Is.True);
 
             if (hasSetValue) {
                 testedResult = hasExpectedAfterSetResult ? expectedAfterSetResult : setValue;
                 Ognl.setValue(expr, context, root, setValue);
-                Assert.IsTrue(isEqual(Ognl.getValue(expr, context, root), testedResult));
+                Assert.That(
+                    isEqual(Ognl.getValue(expr, context, root), testedResult),
+                    Is.True);
             }
         } catch (Exception ex) {
             if (testedResult is Type) {
-                Assert.IsTrue(((Type)testedResult).IsAssignableFrom(ex.GetType()));
+                Assert.That(
+                    ((Type)testedResult).IsAssignableFrom(ex.GetType()),
+                    Is.True);
             } else {
                 Console.WriteLine(ex);
 
