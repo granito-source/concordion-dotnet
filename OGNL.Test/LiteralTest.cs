@@ -69,18 +69,18 @@ public class LiteralTest : OgnlFixture {
     [Test]
     public void ThrowsExceptionWhenStringIsNotClosed()
     {
-        Assert.Multiple(() => {
+        using (Assert.EnterMultipleScope()) {
             Assert.Throws<ExpressionSyntaxException>(() => Get("'unclosed"));
             Assert.Throws<ExpressionSyntaxException>(() => Get("\"unclosed"));
-        });
+        }
     }
 
     [Test]
     public void ThrowsExceptionWhenUnknownEscapeSequence()
     {
-        Assert.Multiple(() => {
+        using (Assert.EnterMultipleScope()) {
             Assert.Throws<ExpressionSyntaxException>(() => Get("'hello\\x'"));
             Assert.Throws<ExpressionSyntaxException>(() => Get("\"hello\\x\""));
-        });
+        }
     }
 }

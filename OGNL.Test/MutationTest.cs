@@ -62,11 +62,10 @@ public class MutationTest : OgnlFixture {
         Set("dictionary.key", 42);
         Set("dictionary.(missing || key)", 212);
 
-        Assert.Multiple(() =>
-        {
+        using (Assert.EnterMultipleScope()) {
             Assert.That(Get("dictionary.key"), Is.EqualTo(212));
             Assert.That(Get("dictionary.missing"), Is.Null);
-        });
+        }
     }
 
     [Test]
@@ -75,11 +74,10 @@ public class MutationTest : OgnlFixture {
         Set("dictionary.key", 42);
         Set("dictionary.(key || missing)", 212);
 
-        Assert.Multiple(() =>
-        {
+        using (Assert.EnterMultipleScope()) {
             Assert.That(Get("dictionary.key"), Is.EqualTo(42));
             Assert.That(Get("dictionary.missing"), Is.Null);
-        });
+        }
     }
 
     [Test]
@@ -88,11 +86,10 @@ public class MutationTest : OgnlFixture {
         Set("dictionary.key", 42);
         Set("dictionary.(key && conditional)", 212);
 
-        Assert.Multiple(() =>
-        {
+        using (Assert.EnterMultipleScope()) {
             Assert.That(Get("dictionary.key"), Is.EqualTo(42));
             Assert.That(Get("dictionary.conditional"), Is.EqualTo(212));
-        });
+        }
     }
 
     [Test]
@@ -100,11 +97,10 @@ public class MutationTest : OgnlFixture {
     {
         Set("dictionary.(missing && conditional)", 42);
 
-        Assert.Multiple(() =>
-        {
+        using (Assert.EnterMultipleScope()) {
             Assert.That(Get("dictionary.missing"), Is.Null);
             Assert.That(Get("dictionary.conditional"), Is.Null);
-        });
+        }
     }
 
     [Test]
@@ -137,12 +133,11 @@ public class MutationTest : OgnlFixture {
         Set("array[1]", "451");
         Set("array[2]", "1984");
 
-        Assert.Multiple(() =>
-        {
+        using (Assert.EnterMultipleScope()) {
             Assert.That(Get("array[0]"), Is.EqualTo("42"));
             Assert.That(Get("array[1]"), Is.EqualTo("451"));
             Assert.That(Get("array[2]"), Is.EqualTo("1984"));
-        });
+        }
     }
 
     [Test]
@@ -166,12 +161,11 @@ public class MutationTest : OgnlFixture {
         Set("array[|]", "451");
         Set("array[$]", "1984");
 
-        Assert.Multiple(() =>
-        {
+        using (Assert.EnterMultipleScope()) {
             Assert.That(Get("array[0]"), Is.EqualTo("42"));
             Assert.That(Get("array[1]"), Is.EqualTo("451"));
             Assert.That(Get("array[2]"), Is.EqualTo("1984"));
-        });
+        }
     }
 
     [Test]
@@ -179,12 +173,11 @@ public class MutationTest : OgnlFixture {
     {
         Set("array[*]", new[] { "42", "451", "1984" });
 
-        Assert.Multiple(() =>
-        {
+        using (Assert.EnterMultipleScope()) {
             Assert.That(Get("array[0]"), Is.EqualTo("42"));
             Assert.That(Get("array[1]"), Is.EqualTo("451"));
             Assert.That(Get("array[2]"), Is.EqualTo("1984"));
-        });
+        }
     }
 
     [Test]
@@ -192,12 +185,11 @@ public class MutationTest : OgnlFixture {
     {
         Set("array[*]", new[] { "42", "451" });
 
-        Assert.Multiple(() =>
-        {
+        using (Assert.EnterMultipleScope()) {
             Assert.That(Get("array[0]"), Is.EqualTo("42"));
             Assert.That(Get("array[1]"), Is.EqualTo("451"));
             Assert.That(Get("array[2]"), Is.EqualTo("baz"));
-        });
+        }
     }
 
     [Test]
@@ -205,11 +197,10 @@ public class MutationTest : OgnlFixture {
     {
         Set("array[*]", new[] { "42", "451", "1984", "90210" });
 
-        Assert.Multiple(() =>
-        {
+        using (Assert.EnterMultipleScope()) {
             Assert.That(Get("array[0]"), Is.EqualTo("42"));
             Assert.That(Get("array[1]"), Is.EqualTo("451"));
             Assert.That(Get("array[2]"), Is.EqualTo("1984"));
-        });
+        }
     }
 }

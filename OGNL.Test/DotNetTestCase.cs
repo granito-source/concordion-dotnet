@@ -68,8 +68,7 @@ public class DotNetTestCase {
         var u1 = 0xf800000000000000L;
         var u2 = (ulong)l;
 
-        using (Assert.EnterMultipleScope())
-        {
+        using (Assert.EnterMultipleScope()) {
             Assert.That(u2, Is.EqualTo(u1));
             Assert.That(81 & 63, Is.EqualTo(17));
             Assert.That(1L << 17, Is.EqualTo(131072));
@@ -87,8 +86,7 @@ public class DotNetTestCase {
     [Test]
     public void TestEnum()
     {
-        using (Assert.EnterMultipleScope())
-        {
+        using (Assert.EnterMultipleScope()) {
             Assert.That(Enum.Parse<SomeEnum>("Item1", true),
                 Is.EqualTo(SomeEnum.Item1));
             Assert.That(Enum.Parse<SomeEnum>("item2", true),

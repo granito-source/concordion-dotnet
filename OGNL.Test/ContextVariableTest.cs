@@ -48,11 +48,11 @@ public class ContextVariableTest : OgnlFixture {
     [Test]
     public void SetsAndUsesContextVariablesInExpressions()
     {
-        Assert.Multiple(() => {
+        using (Assert.EnterMultipleScope()) {
             Assert.That(Get("#five = 5, #six = 6, #five + #six"),
                 Is.EqualTo(11));
             Assert.That(Get("#six = (#five = 5, 6), #five + #six"),
                 Is.EqualTo(11));
-        });
+        }
     }
 }
