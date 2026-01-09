@@ -1,8 +1,6 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -31,62 +29,37 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Diagnostics.CodeAnalysis;
+
 namespace OGNL.Test;
 
-public class StaticsAndConstructorsTest : OgnlTestCase {
-    private static readonly Root Root = new();
+[TestFixture]
+public class StaticsAndConstructorsTest : OgnlFixture {
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("Structure", "NUnit1028")]
+    public static int StaticInt()
+    {
+        return 42;
+    }
 
     private static readonly object[][] Tests = [
-        ["@System.Type@GetType(\"object\")", typeof(object)],
+        ["@System.Type@GetType('System.Object')", typeof(object)],
         ["@System.Int32@MaxValue", int.MaxValue],
         ["@@Max(3,4)", 4],
         ["new System.Text.StringBuilder().Append(55).ToString()", "55"],
-        ["Type", Root.GetType()],
-        [$"@{typeof(Root).FullName}@class.Type", Root.GetType().GetType()],
-        ["Type.GetType()", Root.GetType().GetType()],
-        [$"@{typeof(Root).FullName}@class.GetType()", Root.GetType().GetType()],
-        [$"@{typeof(Root).FullName}@class.Name", Root.GetType().Name],
-        ["Type.GetElementType()", Root.GetType().GetElementType()],
-        ["Type.ElementType", Root.GetType().GetElementType()],
-        ["Type.Type", Root.GetType().GetType()],
-        ["getStaticInt()", Root.getStaticInt()],
-        [$"@{typeof(Root).FullName}@getStaticInt()", Root.getStaticInt()]
+        ["new OGNL.Test.StaticsAndConstructorsTest().Type",
+            typeof(StaticsAndConstructorsTest)],
+        ["Type", typeof(StaticsAndConstructorsTest)],
+        ["@OGNL.Test.StaticsAndConstructorsTest@class",
+            typeof(StaticsAndConstructorsTest)],
+        ["@OGNL.Test.StaticsAndConstructorsTest@StaticInt()", 42],
+        ["StaticInt()", 42]
     ];
 
-    public override TestSuite suite()
+    [Test, TestCaseSource(nameof(Tests))]
+    public void Evaluates(string expression, object expected)
     {
-        var result = new TestSuite();
-
-        for (var i = 0; i < Tests.Length; i++) {
-            result.addTest(new StaticsAndConstructorsTest((string)Tests[i][0] + " (" + Tests[i][1] + ")", Root,
-                (string)Tests[i][0], Tests[i][1]));
-        }
-
-        return result;
-    }
-
-    public StaticsAndConstructorsTest()
-    {
-    }
-
-    public StaticsAndConstructorsTest(string name) : base(name)
-    {
-    }
-
-    public StaticsAndConstructorsTest(string name, object root, string expressionString, object expectedResult,
-        object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-    }
-
-    public StaticsAndConstructorsTest(string name, object root, string expressionString, object expectedResult,
-        object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-    }
-
-    public StaticsAndConstructorsTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
+        Assert.That(Get(expression), Is.EqualTo(expected));
     }
 }
