@@ -50,7 +50,7 @@ class ASTRemainder : ExpressionNode {
         var v1 = children[0].getValue(context, source);
         var v2 = children[1].getValue(context, source);
 
-        return OgnlOps.remainder(v1, v2);
+        return OgnlOps.Remainder(v1, v2);
     }
 
     public override string getExpressionOperator(int index)

@@ -98,6 +98,6 @@ public class NullHandlerTest : OgnlTestCase {
     public override void setUp()
     {
         base.setUp();
-        OgnlRuntime.setNullHandler(typeof(CorrectedObject), new CorrectedObjectNullHandler("corrected"));
+        OgnlRuntime.SetNullHandler(typeof(CorrectedObject), new CorrectedObjectNullHandler("corrected"));
     }
 }

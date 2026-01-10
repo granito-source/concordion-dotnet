@@ -51,7 +51,7 @@ public class EnumerationPropertyAccessor : ObjectPropertyAccessor {
     /// <param name="target"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public override object? getProperty(OgnlContext context,
+    public override object? GetProperty(OgnlContext context,
         object target, object name)
     {
         object? result;
@@ -66,17 +66,17 @@ public class EnumerationPropertyAccessor : ObjectPropertyAccessor {
                 if (name.Equals("hasNext") || name.Equals("hasMoreElements")) {
                     result = e.MoveNext(); // ? Boolean.TRUE : Boolean.FALSE;
                 } else {
-                    result = base.getProperty(context, target, name);
+                    result = base.GetProperty(context, target, name);
                 }
             }
         } else {
-            result = base.getProperty(context, target, name);
+            result = base.GetProperty(context, target, name);
         }
 
         return result;
     }
 
-    public override void setProperty(OgnlContext context, object target,
+    public override void SetProperty(OgnlContext context, object target,
         object name, object? value)
     {
         throw new ArgumentException("can't set property " + name +

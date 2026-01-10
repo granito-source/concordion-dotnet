@@ -37,7 +37,7 @@ public sealed class ObjectArrayPool {
     private readonly Hashtable pools = new(23);
 
     public class SizePool {
-        private readonly IList arrays = new ArrayList();
+        private readonly ArrayList arrays = new();
 
         private readonly int arraySize;
 
@@ -57,24 +57,23 @@ public sealed class ObjectArrayPool {
         {
             this.arraySize = arraySize;
 
-            for (var i = 0; i < initialSize; i++) {
+            for (var i = 0; i < initialSize; i++)
                 arrays.Add(new object[arraySize]);
-            }
 
             created = size = initialSize;
         }
 
-        public int getArraySize()
+        public int GetArraySize()
         {
             return arraySize;
         }
 
-        public object[] create()
+        public object[] Create()
         {
-            object[]? result;
+            object[] result;
 
             if (size > 0) {
-                result = (object[]?)arrays[size - 1];
+                result = (object[])arrays[size - 1];
                 arrays.Remove(size - 1);
                 size--;
                 recovered++;
@@ -86,7 +85,7 @@ public sealed class ObjectArrayPool {
             return result;
         }
 
-        public void recycle(object?[]? value)
+        public void Recycle(object?[]? value)
         {
             lock (this) {
                 if (value != null) {
@@ -109,10 +108,7 @@ public sealed class ObjectArrayPool {
             }
         }
 
-        /// <summary>
-        /// Returns the number of items in the pool
-        /// </summary>
-        public int getSize()
+        public int GetSize()
         {
             return size;
         }
@@ -121,7 +117,7 @@ public sealed class ObjectArrayPool {
         /// Returns the number of items this pool has created since
         /// it's construction.
         ///</summary>
-        public int getCreatedCount()
+        public int GetCreatedCount()
         {
             return created;
         }
@@ -130,7 +126,7 @@ public sealed class ObjectArrayPool {
         /// Returns the number of items this pool has recovered from
         /// the pool since its construction.
         ///</summary>
-        public int getRecoveredCount()
+        public int GetRecoveredCount()
         {
             return recovered;
         }
@@ -139,18 +135,18 @@ public sealed class ObjectArrayPool {
         /// Returns the number of items this pool has recycled since
         /// it's construction.
         ///</summary>
-        public int getRecycledCount()
+        public int GetRecycledCount()
         {
             return recycled;
         }
     }
 
-    public Hashtable getSizePools()
+    public Hashtable GetSizePools()
     {
         return pools;
     }
 
-    public SizePool getSizePool(int arraySize)
+    public SizePool GetSizePool(int arraySize)
     {
         lock (this) {
             var result = (SizePool?)pools[arraySize];
@@ -162,17 +158,17 @@ public sealed class ObjectArrayPool {
         }
     }
 
-    public object?[] create(int arraySize)
+    public object?[] Create(int arraySize)
     {
         lock (this) {
-            return getSizePool(arraySize).create();
+            return GetSizePool(arraySize).Create();
         }
     }
 
-    public object?[] create(object? singleton)
+    public object?[] Create(object? singleton)
     {
         lock (this) {
-            var result = create(1);
+            var result = Create(1);
 
             result[0] = singleton;
 
@@ -180,10 +176,10 @@ public sealed class ObjectArrayPool {
         }
     }
 
-    public object?[] create(object? object1, object? object2)
+    public object?[] Create(object? object1, object? object2)
     {
         lock (this) {
-            var result = create(2);
+            var result = Create(2);
 
             result[0] = object1;
             result[1] = object2;
@@ -192,11 +188,11 @@ public sealed class ObjectArrayPool {
         }
     }
 
-    public object?[] create(object? object1, object? object2,
+    public object?[] Create(object? object1, object? object2,
         object? object3)
     {
         lock (this) {
-            var result = create(3);
+            var result = Create(3);
 
             result[0] = object1;
             result[1] = object2;
@@ -206,11 +202,11 @@ public sealed class ObjectArrayPool {
         }
     }
 
-    public object?[] create(object? object1, object? object2,
+    public object?[] Create(object? object1, object? object2,
         object? object3, object? object4)
     {
         lock (this) {
-            var result = create(4);
+            var result = Create(4);
 
             result[0] = object1;
             result[1] = object2;
@@ -221,11 +217,11 @@ public sealed class ObjectArrayPool {
         }
     }
 
-    public object?[] create(object? object1, object? object2,
+    public object?[] Create(object? object1, object? object2,
         object? object3, object? object4, object? object5)
     {
         lock (this) {
-            var result = create(5);
+            var result = Create(5);
 
             result[0] = object1;
             result[1] = object2;
@@ -237,11 +233,11 @@ public sealed class ObjectArrayPool {
         }
     }
 
-    public void recycle(object?[]? value)
+    public void Recycle(object?[]? value)
     {
         lock (this) {
             if (value != null)
-                getSizePool(value.Length).recycle(value);
+                GetSizePool(value.Length).Recycle(value);
         }
     }
 }

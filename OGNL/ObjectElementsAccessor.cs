@@ -40,8 +40,8 @@ namespace OGNL;
 ///@author Luke Blanshard (blanshlu@netscape.net)
 ///@author Drew Davidson (drew@ognl.org)
 ///
-public class ObjectElementsAccessor : IElementsAccessor {
-    public IEnumerator getElements(object target)
+public class ObjectElementsAccessor : ElementsAccessor {
+    public IEnumerator GetElements(object target)
     {
         return new ObjectEnumerator(target);
     }

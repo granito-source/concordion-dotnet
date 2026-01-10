@@ -106,7 +106,7 @@ class InnerDefaultMemberAccess : DefaultMemberAccess {
     {
     }
 
-    public override bool isAccessible(IDictionary context, object target, MemberInfo member, string propertyName)
+    public override bool IsAccessible(IDictionary context, object target, MemberInfo member, string propertyName)
     {
         if (target == typeof(AppDomain)) {
             return false;
@@ -115,16 +115,16 @@ class InnerDefaultMemberAccess : DefaultMemberAccess {
         if (target is Simple) {
             if (propertyName != null) {
                 return !propertyName.Equals("bigIntValue") &&
-                    base.isAccessible(context, target, member, propertyName);
+                    base.IsAccessible(context, target, member, propertyName);
             } else {
                 if (member is MethodInfo) {
                     return !member.Name.Equals("getBigIntValue") &&
                         !member.Name.Equals("setBigIntValue") &&
-                        base.isAccessible(context, target, member, propertyName);
+                        base.IsAccessible(context, target, member, propertyName);
                 }
             }
         }
 
-        return base.isAccessible(context, target, member, propertyName);
+        return base.IsAccessible(context, target, member, propertyName);
     }
 }

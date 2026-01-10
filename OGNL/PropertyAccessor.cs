@@ -63,8 +63,7 @@ public interface PropertyAccessor {
     ///@param name    the name of the property to get
     ///@return        the current value of the given property in the given object
     ///@exception OgnlException if there is an error locating the property in the given object
-    ///
-    object? getProperty(OgnlContext context, object target, object name);
+    object? GetProperty(OgnlContext context, object target, object name);
 
     ///<summary>
     ///Sets the value of the property of the given name in the given target object.
@@ -74,6 +73,6 @@ public interface PropertyAccessor {
     ///@param value   the new value for the property
     ///@exception OgnlException if there is an error setting the property in the given object
     ///
-    void setProperty(OgnlContext context, object target, object name,
+    void SetProperty(OgnlContext context, object target, object name,
         object? value);
 }

@@ -70,12 +70,12 @@ class ASTProperty : SimpleNode {
             var property = getProperty(context, source);
 
             if (property is string) {
-                return OgnlRuntime.getIndexedPropertyType(context, (source == null) ? null : source.GetType(),
+                return OgnlRuntime.GetIndexedPropertyType(context, (source == null) ? null : source.GetType(),
                     (string)property);
             }
         }
 
-        return OgnlRuntime.INDEXED_PROPERTY_NONE;
+        return OgnlRuntime.IndexedPropertyNone;
     }
 
     public object getProperty(OgnlContext context, object source)
@@ -92,7 +92,7 @@ class ASTProperty : SimpleNode {
             var indexParameters = ((ASTSequence)children[0]).getValues(context, context.getRoot());
 
             /* return IndexerAccessor.getIndexerValue (source, indexParameters) ; */
-            return OgnlRuntime.getIndexerValue(context, source, "Indexer", indexParameters);
+            return OgnlRuntime.GetIndexerValue(context, source, "Indexer", indexParameters);
         }
 
         object? result;
@@ -100,10 +100,10 @@ class ASTProperty : SimpleNode {
         var property = getProperty(context, source);
         Node indexSibling;
 
-        result = OgnlRuntime.getProperty(context, source, property);
+        result = OgnlRuntime.GetProperty(context, source, property);
 
         if (result == null) {
-            result = OgnlRuntime.getNullHandler(OgnlRuntime.getTargetClass(source))
+            result = OgnlRuntime.GetNullHandler(OgnlRuntime.GetTargetClass(source))
                 .nullPropertyValue(context, source, property);
         }
 
@@ -119,12 +119,12 @@ class ASTProperty : SimpleNode {
             var indexParameters = ((ASTSequence)children[0]).getValues(context, context.getRoot());
 
             /*IndexerAccessor.setIndexerValue (target, value ,indexParameters) ;*/
-            OgnlRuntime.setIndexerValue(context, target, "Indexer", value, indexParameters);
+            OgnlRuntime.SetIndexerValue(context, target, "Indexer", value, indexParameters);
 
             return;
         }
 
-        OgnlRuntime.setProperty(context, target, getProperty(context, target), value);
+        OgnlRuntime.SetProperty(context, target, getProperty(context, target), value);
     }
 
     public override bool isNodeSimpleProperty(OgnlContext context)

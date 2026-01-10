@@ -55,7 +55,7 @@ class ASTInstanceof : SimpleNode {
     {
         var value = children[0].getValue(context, source);
 
-        return OgnlRuntime.isInstance(context, value, targetType);
+        return OgnlRuntime.IsInstance(context, value, targetType);
     }
 
     public override string ToString()

@@ -65,7 +65,7 @@ class ASTCtor : SimpleNode {
     {
         object result, root = context.getRoot();
         var count = jjtGetNumChildren();
-        var args = OgnlRuntime.getObjectArrayPool().create(count);
+        var args = OgnlRuntime.ObjectArrayPool.Create(count);
 
         try {
             for (var i = 0; i < count; ++i) {
@@ -75,7 +75,7 @@ class ASTCtor : SimpleNode {
             if (isArray) {
                 if (args.Length == 1) {
                     try {
-                        var componentClass = OgnlRuntime.classForName(context, className);
+                        var componentClass = OgnlRuntime.ClassForName(context, className);
                         IList sourceList = null;
                         int size;
 
@@ -83,7 +83,7 @@ class ASTCtor : SimpleNode {
                             sourceList = (IList)args[0];
                             size = sourceList.Count;
                         } else {
-                            size = (int)OgnlOps.longValue(args[0]);
+                            size = (int)OgnlOps.LongValue(args[0]);
                         }
 
                         result = Array.CreateInstance(componentClass, size);
@@ -109,12 +109,12 @@ class ASTCtor : SimpleNode {
                     throw new OgnlException("only expect array size or fixed initializer list");
                 }
             } else {
-                result = OgnlRuntime.callConstructor(context, className, args);
+                result = OgnlRuntime.CallConstructor(context, className, args);
             }
 
             return result;
         } finally {
-            OgnlRuntime.getObjectArrayPool().recycle(args);
+            OgnlRuntime.ObjectArrayPool.Recycle(args);
         }
     }
 

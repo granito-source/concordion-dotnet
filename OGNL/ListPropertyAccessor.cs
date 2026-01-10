@@ -40,7 +40,7 @@ namespace OGNL;
 ///@author Luke Blanshard (blanshlu@netscape.net)
 ///@author Drew Davidson (drew@ognl.org)
 public class ListPropertyAccessor : ObjectPropertyAccessor {
-    public override object? getProperty(OgnlContext context,
+    public override object? GetProperty(OgnlContext context,
         object target, object name)
     {
         var list = (IList)target;
@@ -55,7 +55,7 @@ public class ListPropertyAccessor : ObjectPropertyAccessor {
             } else if (name.Equals("isEmpty")) {
                 result = list.Count == 0; // ? Boolean.TRUE : Boolean.FALSE;
             } else {
-                result = base.getProperty(context, target, name);
+                result = base.GetProperty(context, target, name);
             }
 
             return result;
@@ -64,10 +64,10 @@ public class ListPropertyAccessor : ObjectPropertyAccessor {
         if (name is ValueType)
             return list[Convert.ToInt32(name)];
 
-        if (name is DynamicSubscript) {
+        if (name is DynamicSubscript dynamic) {
             var len = list.Count;
 
-            switch (((DynamicSubscript)name).getFlag()) {
+            switch (dynamic.getFlag()) {
                 case DynamicSubscript.FIRST:
                     return len > 0 ? list[0] : null;
                 case DynamicSubscript.MID:
@@ -82,11 +82,11 @@ public class ListPropertyAccessor : ObjectPropertyAccessor {
         throw new NoSuchPropertyException(target, name);
     }
 
-    public override void setProperty(OgnlContext context, object target,
+    public override void SetProperty(OgnlContext context, object target,
         object name, object? value)
     {
         if (name is string) {
-            base.setProperty(context, target, name, value);
+            base.SetProperty(context, target, name, value);
 
             return;
         }

@@ -81,7 +81,7 @@ class ASTMap : SimpleNode {
             }
         } else {
             try {
-                answer = (IDictionary)OgnlRuntime.classForName(context, className).GetConstructor([])
+                answer = (IDictionary)OgnlRuntime.ClassForName(context, className).GetConstructor([])
                     .Invoke([]);
             } catch (Exception ex) {
                 throw new OgnlException("IDictionary implementor '" + className + "' not found", ex);

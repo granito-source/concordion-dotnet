@@ -37,17 +37,17 @@ namespace OGNL;
 
 public partial class ObjectPropertyAccessor : PropertyAccessor {
     [GeneratedRegex("^[a-zA-Z_][a-zA-Z0-9_]*$")]
-    private static partial Regex nameRegex();
+    private static partial Regex NameRegex();
 
-    private static object? tryGettingProperty(OgnlContext context,
+    private static object? TryGettingProperty(OgnlContext context,
         object target, string name)
     {
         try {
-            var result = OgnlRuntime.getMethodValue(context, target,
+            var result = OgnlRuntime.GetMethodValue(context, target,
                 name, true);
 
             if (result == OgnlRuntime.NotFound)
-                result = OgnlRuntime.getFieldValue(context, target,
+                result = OgnlRuntime.GetFieldValue(context, target,
                     name, true);
 
             return result == OgnlRuntime.NotFound ?
@@ -60,12 +60,12 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
         }
     }
 
-    private static void trySettingProperty(OgnlContext context,
+    private static void TrySettingProperty(OgnlContext context,
         object target, string name, object? value)
     {
         try {
-            if (!OgnlRuntime.setMethodValue(context, target, name, value, true) &&
-                !OgnlRuntime.setFieldValue(context, target, name, value))
+            if (!OgnlRuntime.SetMethodValue(context, target, name, value, true) &&
+                !OgnlRuntime.SetFieldValue(context, target, name, value))
                 throw new NoSuchPropertyException(target, name);
         } catch (OgnlException) {
             throw;
@@ -74,19 +74,19 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
         }
     }
 
-    private static string fromObjectName(object name)
+    private static string FromObjectName(object name)
     {
         var plainName = name.ToString();
 
         return plainName ?? throw new OgnlException("property name is null");
     }
 
-    private static bool isPropertyName(string? name)
+    private static bool IsPropertyName(string? name)
     {
-        return name != null && nameRegex().IsMatch(name);
+        return name != null && NameRegex().IsMatch(name);
     }
 
-    public virtual object? getProperty(OgnlContext context, object target,
+    public virtual object? GetProperty(OgnlContext context, object target,
         object name)
     {
         var currentNode = context.getCurrentNode();
@@ -99,18 +99,18 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
 
         var indexed = currentNode is ASTProperty astProperty &&
             astProperty.isIndexedAccess() &&
-            OgnlRuntime.hasGetIndexer(context, target, target.GetType(), 1);
+            OgnlRuntime.HasGetIndexer(context, target, target.GetType(), 1);
 
-        if (!indexed && name is string plainName && isPropertyName(plainName))
-            return tryGettingProperty(context, target, plainName);
+        if (!indexed && name is string plainName && IsPropertyName(plainName))
+            return TryGettingProperty(context, target, plainName);
 
-        return OgnlRuntime.getIndexerValue(context, target, name, [name]);
+        return OgnlRuntime.GetIndexerValue(context, target, name, [name]);
     }
 
-    public virtual void setProperty(OgnlContext context, object target,
+    public virtual void SetProperty(OgnlContext context, object target,
         object name, object? value)
     {
-        var plainName = fromObjectName(name);
+        var plainName = FromObjectName(name);
         var currentNode = context.getCurrentNode();
 
         if (currentNode == null)
@@ -121,11 +121,11 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
 
         var indexed = currentNode is ASTProperty astProperty &&
             astProperty.isIndexedAccess() &&
-            OgnlRuntime.hasSetIndexer(context, target, target.GetType(), 1);
+            OgnlRuntime.HasSetIndexer(context, target, target.GetType(), 1);
 
         if (indexed)
-            OgnlRuntime.setIndexerValue(context, target, name, value, [name]);
+            OgnlRuntime.SetIndexerValue(context, target, name, value, [name]);
         else
-            trySettingProperty(context, target, plainName, value);
+            TrySettingProperty(context, target, plainName, value);
     }
 }

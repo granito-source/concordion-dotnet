@@ -63,7 +63,7 @@ class ASTMethod : SimpleNode {
     protected override object getValueBody(OgnlContext context,
         object source)
     {
-        var args = OgnlRuntime.getObjectArrayPool().create(jjtGetNumChildren());
+        var args = OgnlRuntime.ObjectArrayPool.Create(jjtGetNumChildren());
 
         try {
             object result,
@@ -73,17 +73,17 @@ class ASTMethod : SimpleNode {
                 args[i] = children[i].getValue(context, root);
             }
 
-            result = OgnlRuntime.callMethod(context, source, methodName, null, args);
+            result = OgnlRuntime.CallMethod(context, source, methodName, null, args);
 
             if (result == null) {
-                var nh = OgnlRuntime.getNullHandler(OgnlRuntime.getTargetClass(source));
+                var nh = OgnlRuntime.GetNullHandler(OgnlRuntime.GetTargetClass(source));
 
                 result = nh.nullMethodResult(context, source, methodName, args);
             }
 
             return result;
         } finally {
-            OgnlRuntime.getObjectArrayPool().recycle(args);
+            OgnlRuntime.ObjectArrayPool.Recycle(args);
         }
     }
 

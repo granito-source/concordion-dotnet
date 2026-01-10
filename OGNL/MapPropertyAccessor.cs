@@ -41,7 +41,7 @@ namespace OGNL;
 ///@author Drew Davidson (drew@ognl.org)
 ///
 public class MapPropertyAccessor : PropertyAccessor {
-    public object? getProperty(OgnlContext context, object target,
+    public object? GetProperty(OgnlContext context, object target,
         object name)
     {
         object? result;
@@ -85,7 +85,7 @@ public class MapPropertyAccessor : PropertyAccessor {
         return result;
     }
 
-    public void setProperty(OgnlContext context, object target, object name, object? value)
+    public void SetProperty(OgnlContext context, object target, object name, object? value)
     {
         var map = (IDictionary)target;
 

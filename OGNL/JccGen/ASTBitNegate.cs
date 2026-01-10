@@ -47,7 +47,7 @@ class ASTBitNegate : ExpressionNode {
     protected override object getValueBody(OgnlContext context,
         object source)
     {
-        return OgnlOps.bitNegate(children[0].getValue(context, source));
+        return OgnlOps.BitNegate(children[0].getValue(context, source));
     }
 
     public override string ToString()

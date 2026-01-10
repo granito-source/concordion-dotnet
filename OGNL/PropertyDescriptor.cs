@@ -2,16 +2,11 @@ using System.Reflection;
 
 namespace OGNL;
 
-/// <summary>
-/// PropertyDescriptor
-/// </summary>
 public class PropertyDescriptor {
-    protected readonly PropertyInfo? propertyInfo;
+    private readonly PropertyInfo propertyInfo = null!;
 
     public PropertyDescriptor(PropertyInfo propertyInfo)
     {
-        if (propertyInfo == null)
-            throw new ArgumentException("PropertyInfo is NULL!");
         this.propertyInfo = propertyInfo;
     }
 
@@ -19,23 +14,11 @@ public class PropertyDescriptor {
     {
     }
 
-    public virtual MethodInfo? getReadMethod()
-    {
-        return propertyInfo?.GetGetMethod();
-    }
+    public virtual string Name => propertyInfo.Name;
 
-    public virtual string? getName()
-    {
-        return propertyInfo?.Name;
-    }
+    public virtual MethodInfo? ReadMethod => propertyInfo.GetGetMethod();
 
-    public virtual MethodInfo? getWriteMethod()
-    {
-        return propertyInfo?.GetSetMethod();
-    }
+    public virtual MethodInfo? WriteMethod => propertyInfo.GetSetMethod();
 
-    public virtual Type? getPropertyType()
-    {
-        return propertyInfo?.PropertyType;
-    }
+    public virtual Type PropertyType => propertyInfo.PropertyType;
 }

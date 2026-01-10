@@ -47,7 +47,7 @@ namespace OGNL;
 /// </remarks>																																																							* @author Luke Blanshard (blanshlu@netscape.net)
 /// author: Drew Davidson (drew@ognl.org)
 ///
-public interface IElementsAccessor {
+public interface ElementsAccessor {
     ///<summary>
     ///Returns an iterator over the elements of the given target object.
     ///</summary>
@@ -55,5 +55,5 @@ public interface IElementsAccessor {
     ///<returns>an iterator over the elements of the given object</returns>
     ///<exception cref="OgnlException">if there is an error getting the given object's elements</exception>
     ///
-    IEnumerator getElements(object target);
+    IEnumerator GetElements(object target);
 }

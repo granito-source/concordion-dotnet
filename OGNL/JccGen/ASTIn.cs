@@ -50,7 +50,7 @@ class ASTIn : SimpleNode {
         var v1 = children[0].getValue(context, source);
         var v2 = children[1].getValue(context, source);
 
-        return OgnlOps.operin(v1, v2);
+        return OgnlOps.OperIn(v1, v2);
     }
 
     public override string ToString()

@@ -55,7 +55,7 @@ class ASTMultiply : ExpressionNode {
         var result = children[0].getValue(context, source);
 
         for (var i = 1; i < children.Length; ++i)
-            result = OgnlOps.multiply(result, children[i].getValue(context, source));
+            result = OgnlOps.Multiply(result, children[i].getValue(context, source));
 
         return result;
     }

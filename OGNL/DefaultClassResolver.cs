@@ -35,7 +35,7 @@ namespace OGNL;
 public class DefaultClassResolver : ClassResolver {
     private readonly Dictionary<string, Type> classCache = new();
 
-    public Type classForName(string className)
+    public Type ClassForName(string className)
     {
         if (!className.Contains('.'))
             className = $"System.{className}";

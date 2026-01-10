@@ -42,91 +42,70 @@ using FieldMap = IDictionary<string, FieldInfo>;
 using FieldCache = Dictionary<Type, IDictionary<string, FieldInfo>>;
 
 /**
- * This is an abstract class with static methods that define runtime
+ * This is a static class with static methods that define runtime
  * caching information in OGNL.
- * @author Luke Blanshard (blanshlu@netscape.net)
- * @author Drew Davidson (drew@ognl.org)
  */
 public static class OgnlRuntime {
-    public static object NotFound = new();
-
-    public static IList NotFoundList = new ArrayList();
-
-    public static object[] NoArguments = [];
-
-    /** Token returned by TypeConverter for no conversion possible */
-    public static object NoConversionPossible = "ognl.NoConversionPossible";
-
     /** Not an indexed property */
-    public static int INDEXED_PROPERTY_NONE = 0;
+    public const int IndexedPropertyNone = 0;
 
     /** JavaBeans IndexedProperty */
-    public static int INDEXED_PROPERTY_INT = 1;
+    public const int IndexedPropertyInt = 1;
 
     /** OGNL ObjectIndexedProperty */
-    public static int INDEXED_PROPERTY_OBJECT = 2;
+    public const int IndexedPropertyObject = 2;
 
-    public static string NULL_STRING = "" + null;
+    public const string NullString = "" + null;
 
-    private static string SET_PREFIX = "Set";
+    public static readonly object NotFound = new();
 
-    private static string SET_PREFIX2 = "set";
+    public static readonly EvaluationPool EvaluationPool = new();
 
-    private static string GET_PREFIX = "Get";
+    public static readonly ObjectArrayPool ObjectArrayPool = new();
 
-    private static string GET_PREFIX2 = "get";
+    private const string NoConversionPossible = "ognl.NoConversionPossible";
 
-    private static string IS_PREFIX = "Is";
+    private const string SetPrefix = "Set";
 
-    /**
-        Prefix padding for hexadecimal numbers to HEX_LENGTH.
-     */
-    private static IDictionary HEX_PADDING = new Hashtable();
+    private const string SetPrefix2 = "set";
 
-    /**
-        Hexadecimal prefix for printing "pointers".
-     */
-    private static string HEX_PREFIX = "0x";
+    private const string GetPrefix = "Get";
 
-    private static int HEX_LENGTH = 8;
+    private const string GetPrefix2 = "get";
 
-    /**
-        Returned by <CODE>getUniqueDescriptor()</CODE> when the
-        object is <CODE>null</CODE>.
-     */
-    private static string NULL_OBJECT_STRING = "<null>";
+    private const string IsPrefix = "Is";
 
-    private static ClassCache methodAccessors = new();
+    private static readonly ArrayList NotFoundList = new();
 
-    private static ClassCache propertyAccessors = new();
+    private static readonly object[] NoArguments = [];
 
-    private static ClassCache elementsAccessors = new();
+    private static readonly ClassCache MethodAccessors = new();
 
-    private static ClassCache nullHandlers = new();
+    private static readonly ClassCache PropertyAccessors = new();
 
-    private static ClassCache propertyDescriptorCache = new();
+    private static readonly ClassCache ElementsAccessors = new();
 
-    private static ClassCache constructorCache = new();
+    private static readonly ClassCache NullHandlers = new();
 
-    private static MethodCache staticMethodCache = new();
+    private static readonly ClassCache PropertyDescriptorCache = new();
 
-    private static MethodCache instanceMethodCache = new();
+    private static readonly ClassCache ConstructorCache = new();
 
-    private static FieldCache fieldCache = new();
+    private static readonly MethodCache StaticMethodCache = new();
 
-    private static ClassCache[] declaredMethods = [new(), new()]; /* set, get */
+    private static readonly MethodCache InstanceMethodCache = new();
 
-    private static IDictionary primitiveTypes = new Hashtable(101);
+    private static readonly FieldCache FieldCache = new();
 
-    private static ClassCache primitiveDefaults = new();
+    private static readonly ClassCache[] DeclaredMethods = [new(), new()];
 
-    private static IDictionary methodParameterTypesCache = new Hashtable(101);
+    private static readonly Hashtable PrimitiveTypes = new(101);
 
-    private static IDictionary ctorParameterTypesCache = new Hashtable(101);
+    private static readonly ClassCache PrimitiveDefaults = new();
 
-    private static EvaluationPool evaluationPool = new();
+    private static readonly Hashtable MethodParameterTypesCache = new(101);
 
-    private static ObjectArrayPool objectArrayPool = new();
+    private static readonly Hashtable CtorParameterTypesCache = new(101);
 
     public static V? SafeGet<K, V>(this IDictionary<K, V> dictionary, K key)
     {
@@ -144,45 +123,32 @@ public static class OgnlRuntime {
         list.Add(value);
     }
 
-    /**
-        This is a highly specialized map for storing values keyed by Type objects.
-     */
-    private class ClassCache : object {
+    // XXX: replace with a standard collection
+    private class ClassCache {
         /* this MUST be a power of 2 */
-        private static int TABLE_SIZE = 512;
+        private const int TableSize = 512;
 
         /* ...and now you see why.  The table size is used as a mask for generating hashes */
-        private static int TABLE_SIZE_MASK = TABLE_SIZE - 1;
+        private const int TableSizeMask = TableSize - 1;
 
-        private Entry[] table;
+        private readonly Entry?[] table = new Entry[TableSize];
 
-        internal class Entry : object {
-            internal Entry next;
+        internal class Entry(Type key, object value) {
+            internal Entry? Next;
 
-            internal Type key;
+            internal readonly Type Key = key;
 
-            internal object value;
-
-            public Entry(Type key, object value)
-            {
-                this.key = key;
-                this.value = value;
-            }
+            internal object Value = value;
         }
 
-        public ClassCache()
+        public object? Get(Type key)
         {
-            table = new Entry[TABLE_SIZE];
-        }
+            object? result = null;
+            var i = key.GetHashCode() & TableSizeMask;
 
-        public object get(Type key)
-        {
-            object result = null;
-            var i = key.GetHashCode() & TABLE_SIZE_MASK;
-
-            for (var entry = table[i]; entry != null; entry = entry.next) {
-                if (entry.key == key) {
-                    result = entry.value;
+            for (var entry = table[i]; entry != null; entry = entry.Next) {
+                if (entry.Key == key) {
+                    result = entry.Value;
 
                     break;
                 }
@@ -191,36 +157,36 @@ public static class OgnlRuntime {
             return result;
         }
 
-        public object put(Type key, object value)
+        public object? Put(Type key, object value)
         {
-            object result = null;
-            var i = key.GetHashCode() & TABLE_SIZE_MASK;
+            object? result = null;
+            var i = key.GetHashCode() & TableSizeMask;
             var entry = table[i];
 
             if (entry == null) {
                 table[i] = new Entry(key, value);
             } else {
-                if (entry.key == key) {
-                    result = entry.value;
-                    entry.value = value;
+                if (entry.Key == key) {
+                    result = entry.Value;
+                    entry.Value = value;
                 } else {
                     while (true) {
-                        if (entry.key == key) {
+                        if (entry.Key == key) {
                             /* replace value */
-                            result = entry.value;
-                            entry.value = value;
+                            result = entry.Value;
+                            entry.Value = value;
 
                             break;
                         }
 
-                        if (entry.next == null) {
+                        if (entry.Next == null) {
                             /* add value */
-                            entry.next = new Entry(key, value);
+                            entry.Next = new Entry(key, value);
 
                             break;
                         }
 
-                        entry = entry.next;
+                        entry = entry.Next;
                     }
                 }
             }
@@ -232,324 +198,188 @@ public static class OgnlRuntime {
     static OgnlRuntime()
     {
         PropertyAccessor p = new ArrayPropertyAccessor();
-        setPropertyAccessor(typeof(object), new ObjectPropertyAccessor());
-        setPropertyAccessor(typeof(byte[]), p);
-        setPropertyAccessor(typeof(short[]), p);
-        setPropertyAccessor(typeof(char[]), p);
-        setPropertyAccessor(typeof(int[]), p);
-        setPropertyAccessor(typeof(long[]), p);
-        setPropertyAccessor(typeof(float[]), p);
-        setPropertyAccessor(typeof(double[]), p);
-        setPropertyAccessor(typeof(object[]), p);
-        setPropertyAccessor(typeof(IList), new ListPropertyAccessor());
-        setPropertyAccessor(typeof(IDictionary), new MapPropertyAccessor());
-        setPropertyAccessor(typeof(ICollection), new SetPropertyAccessor());
+        SetPropertyAccessor(typeof(object), new ObjectPropertyAccessor());
+        SetPropertyAccessor(typeof(byte[]), p);
+        SetPropertyAccessor(typeof(short[]), p);
+        SetPropertyAccessor(typeof(char[]), p);
+        SetPropertyAccessor(typeof(int[]), p);
+        SetPropertyAccessor(typeof(long[]), p);
+        SetPropertyAccessor(typeof(float[]), p);
+        SetPropertyAccessor(typeof(double[]), p);
+        SetPropertyAccessor(typeof(object[]), p);
+        SetPropertyAccessor(typeof(IList), new ListPropertyAccessor());
+        SetPropertyAccessor(typeof(IDictionary), new MapPropertyAccessor());
+        SetPropertyAccessor(typeof(ICollection), new SetPropertyAccessor());
 
         // TODO: Ignore Iterator
         // setPropertyAccessor( typeof (Iterator), new IteratorPropertyAccessor() );
-        setPropertyAccessor(typeof(IEnumerator), new EnumerationPropertyAccessor());
+        SetPropertyAccessor(typeof(IEnumerator), new EnumerationPropertyAccessor());
 
-        IElementsAccessor e = new ArrayElementsAccessor();
-        setElementsAccessor(typeof(object), new ObjectElementsAccessor());
-        setElementsAccessor(typeof(byte[]), e);
-        setElementsAccessor(typeof(short[]), e);
-        setElementsAccessor(typeof(char[]), e);
-        setElementsAccessor(typeof(int[]), e);
-        setElementsAccessor(typeof(long[]), e);
-        setElementsAccessor(typeof(float[]), e);
-        setElementsAccessor(typeof(double[]), e);
-        setElementsAccessor(typeof(object[]), e);
-        setElementsAccessor(typeof(ICollection), new CollectionElementsAccessor());
-        setElementsAccessor(typeof(IDictionary), new MapElementsAccessor());
+        ElementsAccessor e = new ArrayElementsAccessor();
+        SetElementsAccessor(typeof(object), new ObjectElementsAccessor());
+        SetElementsAccessor(typeof(byte[]), e);
+        SetElementsAccessor(typeof(short[]), e);
+        SetElementsAccessor(typeof(char[]), e);
+        SetElementsAccessor(typeof(int[]), e);
+        SetElementsAccessor(typeof(long[]), e);
+        SetElementsAccessor(typeof(float[]), e);
+        SetElementsAccessor(typeof(double[]), e);
+        SetElementsAccessor(typeof(object[]), e);
+        SetElementsAccessor(typeof(ICollection), new CollectionElementsAccessor());
+        SetElementsAccessor(typeof(IDictionary), new MapElementsAccessor());
 
         // TODO: ignore Iterator
         // setElementsAccessor( typeof (Iterator), new IteratorElementsAccessor() );
-        setElementsAccessor(typeof(IEnumerator), new EnumerationElementsAccessor());
-        setElementsAccessor(typeof(ValueType), new NumberElementsAccessor());
+        SetElementsAccessor(typeof(IEnumerator), new EnumerationElementsAccessor());
+        SetElementsAccessor(typeof(ValueType), new NumberElementsAccessor());
 
         NullHandler nh = new ObjectNullHandler();
-        setNullHandler(typeof(object), nh);
-        setNullHandler(typeof(byte[]), nh);
-        setNullHandler(typeof(short[]), nh);
-        setNullHandler(typeof(char[]), nh);
-        setNullHandler(typeof(int[]), nh);
-        setNullHandler(typeof(long[]), nh);
-        setNullHandler(typeof(float[]), nh);
-        setNullHandler(typeof(double[]), nh);
-        setNullHandler(typeof(object[]), nh);
+        SetNullHandler(typeof(object), nh);
+        SetNullHandler(typeof(byte[]), nh);
+        SetNullHandler(typeof(short[]), nh);
+        SetNullHandler(typeof(char[]), nh);
+        SetNullHandler(typeof(int[]), nh);
+        SetNullHandler(typeof(long[]), nh);
+        SetNullHandler(typeof(float[]), nh);
+        SetNullHandler(typeof(double[]), nh);
+        SetNullHandler(typeof(object[]), nh);
 
         MethodAccessor ma = new ObjectMethodAccessor();
-        setMethodAccessor(typeof(object), ma);
-        setMethodAccessor(typeof(byte[]), ma);
-        setMethodAccessor(typeof(short[]), ma);
-        setMethodAccessor(typeof(char[]), ma);
-        setMethodAccessor(typeof(int[]), ma);
-        setMethodAccessor(typeof(long[]), ma);
-        setMethodAccessor(typeof(float[]), ma);
-        setMethodAccessor(typeof(double[]), ma);
-        setMethodAccessor(typeof(object[]), ma);
+        SetMethodAccessor(typeof(object), ma);
+        SetMethodAccessor(typeof(byte[]), ma);
+        SetMethodAccessor(typeof(short[]), ma);
+        SetMethodAccessor(typeof(char[]), ma);
+        SetMethodAccessor(typeof(int[]), ma);
+        SetMethodAccessor(typeof(long[]), ma);
+        SetMethodAccessor(typeof(float[]), ma);
+        SetMethodAccessor(typeof(double[]), ma);
+        SetMethodAccessor(typeof(object[]), ma);
 
-        primitiveTypes["bool"] = typeof(bool);
-        primitiveTypes["byte"] = typeof(byte);
-        primitiveTypes["short"] = typeof(short);
-        primitiveTypes["char"] = typeof(char);
-        primitiveTypes["int"] = typeof(int);
-        primitiveTypes["long"] = typeof(long);
-        primitiveTypes["float"] = typeof(float);
-        primitiveTypes["double"] = typeof(double);
+        PrimitiveTypes["bool"] = typeof(bool);
+        PrimitiveTypes["byte"] = typeof(byte);
+        PrimitiveTypes["short"] = typeof(short);
+        PrimitiveTypes["char"] = typeof(char);
+        PrimitiveTypes["int"] = typeof(int);
+        PrimitiveTypes["long"] = typeof(long);
+        PrimitiveTypes["float"] = typeof(float);
+        PrimitiveTypes["double"] = typeof(double);
 
         // Add String as primitive
-        primitiveTypes["string"] = typeof(string);
+        PrimitiveTypes["string"] = typeof(string);
 
         // Add object as primitive
-        primitiveTypes["object"] = typeof(object);
+        PrimitiveTypes["object"] = typeof(object);
 
         // Add decimal as primitive
-        primitiveTypes["decimal"] = typeof(decimal);
-        primitiveTypes["ulong"] = typeof(ulong);
-        primitiveTypes["uint"] = typeof(uint);
-        primitiveTypes["ushort"] = typeof(ushort);
+        PrimitiveTypes["decimal"] = typeof(decimal);
+        PrimitiveTypes["ulong"] = typeof(ulong);
+        PrimitiveTypes["uint"] = typeof(uint);
+        PrimitiveTypes["ushort"] = typeof(ushort);
 
-        primitiveDefaults.put(typeof(bool), false);
-        primitiveDefaults.put(typeof(byte), (byte)0);
-        primitiveDefaults.put(typeof(short), (short)0);
-        primitiveDefaults.put(typeof(char), (char)0);
-        primitiveDefaults.put(typeof(int), 0);
-        primitiveDefaults.put(typeof(long), 0L);
-        primitiveDefaults.put(typeof(float), 0.0f);
-        primitiveDefaults.put(typeof(double), 0.0D);
-        primitiveDefaults.put(typeof(decimal), (decimal)0);
+        PrimitiveDefaults.Put(typeof(bool), false);
+        PrimitiveDefaults.Put(typeof(byte), (byte)0);
+        PrimitiveDefaults.Put(typeof(short), (short)0);
+        PrimitiveDefaults.Put(typeof(char), (char)0);
+        PrimitiveDefaults.Put(typeof(int), 0);
+        PrimitiveDefaults.Put(typeof(long), 0L);
+        PrimitiveDefaults.Put(typeof(float), 0.0f);
+        PrimitiveDefaults.Put(typeof(double), 0.0D);
+        PrimitiveDefaults.Put(typeof(decimal), (decimal)0);
 
         // TODO: match BigInteger.
         // primitiveDefaults.put(typeof (), new BigInteger("0"));
     }
 
     /**
-        Gets the "target" class of an object for looking up accessors that
-        are registered on the target.  If the object is a Type object this
-        will return the Type itself, else it will return object's GetType()
-        result.
+     * Gets the "target" class of an object for looking up accessors
+     * that are registered on the target.  If the object is a Type object
+     * this will return the Type itself, else it will return object's
+     * GetType() result.
      */
-    public static Type getTargetClass(object o)
+    public static Type? GetTargetClass(object? o)
     {
-        return o == null ? null : o is Type ? (Type)o : o.GetType();
+        return o == null ? null : o as Type ?? o.GetType();
     }
 
     /**
-        Returns the base name (the class name without the
-        package name prepended) of the object given.
+     * Utility to convert a List into an object[] array. If the list
+     * is zero elements this will return a constant array; ToArray()
+     * on List always returns a new object and this is wasteful for
+     * our purposes.
      */
-    public static string getBaseName(object o)
-    {
-        return o == null ? null : getClassBaseName(o.GetType());
-    }
-
-    /**
-        Returns the base name (the class name without the
-        package name prepended) of the class given.
-     */
-    public static string getClassBaseName(Type c)
-    {
-        var s = c.Name;
-
-        return s.Substring(s.LastIndexOf('.') + 1);
-    }
-
-    public static string getClassName(object o, bool fullyQualified)
-    {
-        if (!(o is Type)) {
-            o = o.GetType();
-        }
-
-        return getClassName((Type)o, fullyQualified);
-    }
-
-    public static string getClassName(Type c, bool fullyQualified)
-    {
-        return fullyQualified ? c.Name : getClassBaseName(c);
-    }
-
-    /**
-        Returns the package name of the object's class.
-     */
-    public static string getPackageName(object o)
-    {
-        return o == null ? null : getClassPackageName(o.GetType());
-    }
-
-    /**
-        Returns the package name of the class given.
-     */
-    public static string getClassPackageName(Type c)
-    {
-        var s = c.Name;
-        var i = s.LastIndexOf('.');
-
-        return (i < 0) ? null : s.Substring(0, i);
-    }
-
-    /**
-        Returns a "pointer" string in the usual format for these
-        things - 0x<hex digits>.
-     */
-    public static string getPointerString(int num)
-    {
-        var result = new StringBuilder();
-        var hex = num.ToString("X");
-        string pad;
-        var l = hex.Length;
-
-        if ((pad = (string)HEX_PADDING[l]) == null) {
-            var pb = new StringBuilder();
-
-            for (var i = hex.Length; i < HEX_LENGTH; i++) {
-                pb.Append('0');
-            }
-
-            pad = pb.ToString();
-            HEX_PADDING[l] = pad;
-        }
-
-        result.Append(pad);
-        result.Append(hex);
-
-        return result.ToString();
-    }
-
-    /**
-        Returns a "pointer" string in the usual format for these
-        things - 0x<hex digits> for the object given.  This will
-        always return a unique value for each object.
-     */
-    public static string getPointerString(object o)
-    {
-        // TODO:use hashcode instead of identity.
-        return getPointerString((o == null) ? 0 : o.GetHashCode());
-    }
-
-    /**
-        Returns a unique descriptor string that includes the object's
-        class and a unique integer identifier.  If fullyQualified is
-        true then the class name will be fully qualified to include
-        the package name, else it will be just the class' base name.
-     */
-    public static string getUniqueDescriptor(object obj, bool fullyQualified)
-    {
-        var result = new StringBuilder();
-
-        if (obj != null) {
-            result.Append(getClassName(obj, fullyQualified));
-            result.Append('@');
-            result.Append(getPointerString(obj));
-        } else {
-            result.Append(NULL_OBJECT_STRING);
-        }
-
-        return (result.ToString());
-    }
-
-    /**
-        Returns a unique descriptor string that includes the object's
-        class' base name and a unique integer identifier.
-     */
-    public static string getUniqueDescriptor(object obj)
-    {
-        return getUniqueDescriptor(obj, false);
-    }
-
-    /**
-        Utility to convert a List into an object[] array.  If the list is zero
-        elements this will return a constant array; toArray() on List always
-        returns a new object and this is wasteful for our purposes.
-     */
-    public static object[] toArray(IList list)
+    public static object[] ToArray(IList list)
     {
         object[] result;
         var size = list.Count;
 
-        if (size == 0) {
+        if (size == 0)
             result = NoArguments;
-        } else {
-            result = getObjectArrayPool().create(list.Count);
+        else {
+            result = ObjectArrayPool.Create(list.Count);
 
-            for (var i = 0; i < size; i++) {
+            for (var i = 0; i < size; i++)
                 result[i] = list[i];
-            }
         }
 
         return result;
     }
 
-    /**
-        Returns the parameter types of the given method.
-     */
-    public static Type[] getParameterTypes(MethodInfo m)
+    private static Type[] GetParameterTypes(MethodInfo m)
     {
-        lock (methodParameterTypesCache) {
+        lock (MethodParameterTypesCache) {
             Type[] result;
 
-            if ((result = (Type[])methodParameterTypesCache[m]) == null) {
-                var pts = getParameterTypes0(m);
+            if ((result = (Type[])MethodParameterTypesCache[m]) == null) {
+                var pts = GetParameterTypes0(m);
 
-                methodParameterTypesCache[m] = (result = pts);
+                MethodParameterTypesCache[m] = result = pts;
             }
 
             return result;
         }
     }
 
-    static Type[] getParameterTypes0(MethodInfo m)
+    private static Type[] GetParameterTypes0(MethodInfo m)
     {
-        // create Parameter type array
         var ps = m.GetParameters();
         var pts = new Type[ps.Length];
 
         for (var i = 0; i < ps.Length; i++) {
             var pt = ps[i];
+
             pts[i] = pt.ParameterType;
         }
 
         return pts;
     }
 
-    static Type[] getParameterTypes0(ConstructorInfo m)
+    private static Type[] GetParameterTypes(ConstructorInfo c)
     {
-        // create Parameter type array
-        var ps = m.GetParameters();
-        var pts = new Type[ps.Length];
-
-        for (var i = 0; i < ps.Length; i++) {
-            var pt = ps[i];
-            pts[i] = pt.ParameterType;
-        }
-
-        return pts;
-    }
-
-    /**
-        Returns the parameter types of the given method.
-     */
-    public static Type[] getParameterTypes(ConstructorInfo c)
-    {
-        lock (ctorParameterTypesCache) {
+        lock (CtorParameterTypesCache) {
             Type[] result;
 
-            if ((result = (Type[])ctorParameterTypesCache[c]) == null) {
-                ctorParameterTypesCache[c] = (result = getParameterTypes0(c));
-            }
+            if ((result = (Type[])CtorParameterTypesCache[c]) == null)
+                CtorParameterTypesCache[c] = result = GetParameterTypes0(c);
 
             return result;
         }
     }
 
-    /**
-     * Tells whether the given object is compatible with the given class
-     * ---that is, whether the given object can be passed as an argument
-     * to a method or constructor whose parameter type is the given class.
-     * If object is null this will return true because null is compatible
-     * with any type.
-     */
-    public static bool isTypeCompatible(object? obj, Type type)
+    private static Type[] GetParameterTypes0(ConstructorInfo m)
+    {
+        var ps = m.GetParameters();
+        var pts = new Type[ps.Length];
+
+        for (var i = 0; i < ps.Length; i++) {
+            var pt = ps[i];
+
+            pts[i] = pt.ParameterType;
+        }
+
+        return pts;
+    }
+
+    private static bool IsTypeCompatible(object? obj, Type type)
     {
         if (obj == null)
             return true;
@@ -560,31 +390,20 @@ public static class OgnlRuntime {
         return type.IsInstanceOfType(obj);
     }
 
-    /**
-     * Tells whether the given array of objects is compatible with the given array of
-     * classes---that is, whether the given array of objects can be passed as arguments
-     * to a method or constructor whose parameter types are the given array of classes.
-     */
-    public static bool areArgsCompatible(object[] args, Type[] classes)
+    private static bool AreArgsCompatible(object[] args, Type[] classes)
     {
         var result = true;
 
-        if (args.Length != classes.Length) {
+        if (args.Length != classes.Length)
             result = false;
-        } else {
-            for (int index = 0, count = args.Length; result && (index < count); ++index) {
-                result = isTypeCompatible(args[index], classes[index]);
-            }
-        }
+        else
+            for (int index = 0, count = args.Length; result && index < count; ++index)
+                result = IsTypeCompatible(args[index], classes[index]);
 
         return result;
     }
 
-    /**
-     * Tells whether the first array of classes is more specific than the second.
-     * Assumes that the two arrays are of the same length.
-     */
-    public static bool isMoreSpecific(Type[] classes1, Type[] classes2)
+    private static bool IsMoreSpecific(Type[] classes1, Type[] classes2)
     {
         for (int index = 0, count = classes1.Length; index < count; ++index) {
             Type c1 = classes1[index], c2 = classes2[index];
@@ -606,28 +425,27 @@ public static class OgnlRuntime {
         return false;
     }
 
-    public static Type classForName(OgnlContext context, string className)
+    public static Type ClassForName(OgnlContext context, string className)
     {
-        var result = (Type)primitiveTypes[className];
+        var result = (Type)PrimitiveTypes[className];
 
         if (result == null) {
             ClassResolver resolver;
 
-            if (context == null || (resolver = context.getClassResolver()) == null) {
+            if (context == null || (resolver = context.getClassResolver()) == null)
                 resolver = OgnlContext.DEFAULT_CLASS_RESOLVER;
-            }
 
-            result = resolver.classForName(className);
+            result = resolver.ClassForName(className);
         }
 
         return result;
     }
 
-    public static bool isInstance(OgnlContext context, object value,
+    public static bool IsInstance(OgnlContext context, object value,
         string className)
     {
         try {
-            var c = classForName(context, className);
+            var c = ClassForName(context, className);
 
             return c.IsInstanceOfType(value);
         } catch (Exception e) {
@@ -637,12 +455,12 @@ public static class OgnlRuntime {
         // TODO: ClassNotFoundException
     }
 
-    public static object getPrimitiveDefaultValue(Type forClass)
+    public static object? GetPrimitiveDefaultValue(Type forClass)
     {
-        return primitiveDefaults.get(forClass);
+        return PrimitiveDefaults.Get(forClass);
     }
 
-    public static object? getConvertedType(OgnlContext context,
+    private static object? GetConvertedType(OgnlContext context,
         object target, MemberInfo member, string propertyName,
         object? value, Type type)
     {
@@ -650,7 +468,7 @@ public static class OgnlRuntime {
             member, propertyName, value, type);
     }
 
-    public static bool getConvertedTypes(OgnlContext context,
+    private static bool GetConvertedTypes(OgnlContext context,
         object target, MemberInfo member, string propertyName,
         Type[] parameterTypes, object[] args, object[] newArgs)
     {
@@ -659,14 +477,14 @@ public static class OgnlRuntime {
         if (parameterTypes.Length == args.Length) {
             result = true;
 
-            for (int i = 0, ilast = parameterTypes.Length - 1; result && (i <= ilast); i++) {
+            for (int i = 0, ilast = parameterTypes.Length - 1; result && i <= ilast; i++) {
                 var arg = args[i];
                 var type = parameterTypes[i];
 
-                if (isTypeCompatible(arg, type)) {
+                if (IsTypeCompatible(arg, type)) {
                     newArgs[i] = arg;
                 } else {
-                    var v = getConvertedType(context, target, member, propertyName, arg, type);
+                    var v = GetConvertedType(context, target, member, propertyName, arg, type);
 
                     if (v == NoConversionPossible) {
                         result = false;
@@ -680,9 +498,9 @@ public static class OgnlRuntime {
         return result;
     }
 
-    public static MethodInfo? getConvertedMethodAndArgs(OgnlContext context,
-        object target, string propertyName, IList<MethodInfo> methods,
-        object[] args, object[] newArgs)
+    private static MethodInfo? GetConvertedMethodAndArgs(
+        OgnlContext context, object target, string propertyName,
+        IList<MethodInfo> methods, object[] args, object[] newArgs)
     {
         var converter = context.getTypeConverter();
 
@@ -691,29 +509,30 @@ public static class OgnlRuntime {
 
         MethodInfo? result = null;
 
-        for (int i = 0, icount = methods.Count; (result == null) && (i < icount); i++) {
+        for (int i = 0, icount = methods.Count; result == null && i < icount; i++) {
             var m = methods[i];
-            var parameterTypes = getParameterTypes(m);
+            var parameterTypes = GetParameterTypes(m);
 
-            if (getConvertedTypes(context, target, m, propertyName, parameterTypes, args, newArgs))
+            if (GetConvertedTypes(context, target, m, propertyName, parameterTypes, args, newArgs))
                 result = m;
         }
 
         return result;
     }
 
-    public static ConstructorInfo getConvertedConstructorAndArgs(OgnlContext context, object target, IList constructors,
+    private static ConstructorInfo GetConvertedConstructorAndArgs(
+        OgnlContext context, object target, IList constructors,
         object[] args, object[] newArgs)
     {
         ConstructorInfo result = null;
         var converter = context.getTypeConverter();
 
-        if ((converter != null) && (constructors != null)) {
-            for (int i = 0, icount = constructors.Count; (result == null) && (i < icount); i++) {
+        if (converter != null && constructors != null) {
+            for (int i = 0, icount = constructors.Count; result == null && i < icount; i++) {
                 var ctor = (ConstructorInfo)constructors[i];
-                var parameterTypes = getParameterTypes(ctor);
+                var parameterTypes = GetParameterTypes(ctor);
 
-                if (getConvertedTypes(context, target, ctor, null, parameterTypes, args, newArgs)) {
+                if (GetConvertedTypes(context, target, ctor, null, parameterTypes, args, newArgs)) {
                     result = ctor;
                 }
             }
@@ -722,26 +541,19 @@ public static class OgnlRuntime {
         return result;
     }
 
-    /**
-        Gets the appropriate method to be called for the given target, method name and arguments.
-        If successful this method will return the Method within the target that can be called
-        and the converted arguments in actualArgs.  If unsuccessful this method will return
-        null and the actualArgs will be empty.
-     */
-    public static MethodInfo getAppropriateMethod(OgnlContext context,
-        object source, object? target, string? methodName,
-        string? propertyName, IList<MethodInfo> methods, object?[] args,
-        object?[] actualArgs)
+    private static MethodInfo GetAppropriateMethod(OgnlContext context,
+        object source, object? target, string? propertyName,
+        IList<MethodInfo> methods, object?[] args, object?[] actualArgs)
     {
         MethodInfo result = null;
         Type[] resultParameterTypes = null;
 
         for (int i = 0, icount = methods.Count; i < icount; i++) {
             var m = methods[i];
-            var mParameterTypes = getParameterTypes(m);
+            var mParameterTypes = GetParameterTypes(m);
 
-            if (areArgsCompatible(args, mParameterTypes) &&
-                ((result == null) || isMoreSpecific(mParameterTypes, resultParameterTypes))) {
+            if (AreArgsCompatible(args, mParameterTypes) &&
+                (result == null || IsMoreSpecific(mParameterTypes, resultParameterTypes))) {
                 result = m;
                 resultParameterTypes = mParameterTypes;
                 Array.Copy(args, 0, actualArgs, 0, args.Length);
@@ -749,39 +561,38 @@ public static class OgnlRuntime {
                 for (var j = 0; j < mParameterTypes.Length; j++) {
                     var type = mParameterTypes[j];
 
-                    if (type.IsPrimitive && (actualArgs[j] == null)) {
-                        actualArgs[j] = getConvertedType(context, source, result, propertyName, null, type);
+                    if (type.IsPrimitive && actualArgs[j] == null) {
+                        actualArgs[j] = GetConvertedType(context, source, result, propertyName, null, type);
                     }
                 }
             }
         }
 
         if (result == null)
-            result = getConvertedMethodAndArgs(context, target,
+            result = GetConvertedMethodAndArgs(context, target,
                 propertyName, methods, args, actualArgs);
 
         return result;
     }
 
-    public static object? callAppropriateMethod(OgnlContext context,
+    public static object? CallAppropriateMethod(OgnlContext context,
         object source, object? target, string? methodName,
         string? propertyName, IList<MethodInfo> methods, object?[] args)
     {
-        var actualArgs = objectArrayPool.create(args.Length);
+        var actualArgs = ObjectArrayPool.Create(args.Length);
         Exception? reason;
 
         try {
-            var method = getAppropriateMethod(context, source, target,
-                methodName, propertyName, methods, args, actualArgs);
+            var method = GetAppropriateMethod(context, source, target, propertyName, methods, args, actualArgs);
 
-            if ((method == null) || !isMethodAccessible(context, source, method, propertyName)) {
+            if (method == null || !IsMethodAccessible(context, source, method, propertyName)) {
                 var buffer = new StringBuilder();
 
                 if (args != null) {
                     for (int i = 0, ilast = args.Length - 1; i <= ilast; i++) {
                         var arg = args[i];
 
-                        buffer.Append((arg == null) ? NULL_STRING : arg.GetType().Name);
+                        buffer.Append(arg == null ? NullString : arg.GetType().Name);
 
                         if (i < ilast) {
                             buffer.Append(", ");
@@ -798,58 +609,59 @@ public static class OgnlRuntime {
         } catch (Exception e) {
             reason = e;
         } finally {
-            objectArrayPool.recycle(actualArgs);
+            ObjectArrayPool.Recycle(actualArgs);
         }
 
         throw new MethodFailedException(source, methodName, reason);
     }
 
-    public static object? callStaticMethod(OgnlContext context,
+    public static object? CallStaticMethod(OgnlContext context,
         string className, string methodName, object?[] args)
     {
         try {
-            var targetClass = classForName(context, className);
+            var targetClass = ClassForName(context, className);
 
-            return getMethodAccessor(targetClass)
+            return GetMethodAccessor(targetClass)
                 .callStaticMethod(context, targetClass, methodName, args);
         } catch (TypeLoadException ex) {
             throw new MethodFailedException(className, methodName, ex);
         }
     }
 
-    public static object? callMethod(OgnlContext context, object target,
+    public static object? CallMethod(OgnlContext context, object target,
         string methodName, string propertyName, object?[] args)
     {
-        return getMethodAccessor(target.GetType())
+        return GetMethodAccessor(target.GetType())
             .callMethod(context, target, methodName, args);
     }
 
-    public static object callConstructor(OgnlContext context, string className, object[] args) // throws OgnlException
+    public static object CallConstructor(OgnlContext context,
+        string className, object[] args)
     {
-        Exception reason = null;
+        Exception? reason;
         var actualArgs = args;
 
         try {
             ConstructorInfo ctor = null;
             Type[] ctorParameterTypes = null;
-            var target = classForName(context, className);
-            var constructors = getConstructors(target);
+            var target = ClassForName(context, className);
+            var constructors = GetConstructors(target);
 
             for (int i = 0, icount = constructors.Count; i < icount; i++) {
                 var c = (ConstructorInfo)constructors[i];
-                var cParameterTypes = getParameterTypes(c);
+                var cParameterTypes = GetParameterTypes(c);
 
-                if (areArgsCompatible(args, cParameterTypes) &&
-                    (ctor == null || isMoreSpecific(cParameterTypes, ctorParameterTypes))) {
+                if (AreArgsCompatible(args, cParameterTypes) &&
+                    (ctor == null || IsMoreSpecific(cParameterTypes, ctorParameterTypes))) {
                     ctor = c;
                     ctorParameterTypes = cParameterTypes;
                 }
             }
 
             if (ctor == null) {
-                actualArgs = objectArrayPool.create(args.Length);
+                actualArgs = ObjectArrayPool.Create(args.Length);
 
-                if ((ctor = getConvertedConstructorAndArgs(context, target, constructors, args, actualArgs)) == null) {
+                if ((ctor = GetConvertedConstructorAndArgs(context, target, constructors, args, actualArgs)) == null) {
                     throw new MissingMethodException();
                 }
             }
@@ -867,7 +679,7 @@ public static class OgnlRuntime {
             reason = e;
         } finally {
             if (actualArgs != args) {
-                objectArrayPool.recycle(actualArgs);
+                ObjectArrayPool.Recycle(actualArgs);
             }
         }
 
@@ -879,16 +691,16 @@ public static class OgnlRuntime {
         method exists and if it is accessible according to the context's MemberAccess.
         If neither test passes this will return NotFound.
      */
-    public static object? getMethodValue(OgnlContext context,
+    public static object? GetMethodValue(OgnlContext context,
         object target, string propertyName,
         bool checkAccessAndExistence = false)
     {
-        object result = null;
-        var method = getGetMethod(context, target.GetType(), propertyName);
+        object? result = null;
+        var method = GetGetMethod(target.GetType(), propertyName);
 
         // check accessible, IGNORED.
         if (checkAccessAndExistence) {
-            if ((method == null)
+            if (method == null
                 /* || !context.getMemberAccess().isAccessible(context, target, m, propertyName) */) {
                 result = NotFound;
             }
@@ -909,26 +721,20 @@ public static class OgnlRuntime {
         return result;
     }
 
-    public static bool setMethodValue(OgnlContext context, object target,
-        string propertyName, object? value)
-    {
-        return setMethodValue(context, target, propertyName, value, false);
-    }
-
-    public static bool setMethodValue(OgnlContext context, object target,
+    public static bool SetMethodValue(OgnlContext context, object target,
         string propertyName, object? value, bool checkAccessAndExistence)
     {
         var result = true;
-        var m = getSetMethod(context, target == null ? null : target.GetType(), propertyName);
+        var m = GetSetMethod(target == null ? null : target.GetType(), propertyName);
 
         if (result)
             if (m != null) {
-                var args = objectArrayPool.create(value);
+                var args = ObjectArrayPool.Create(value);
 
                 try {
-                    callAppropriateMethod(context, target, target, m.Name, propertyName, Util.NCopies(1, m), args);
+                    CallAppropriateMethod(context, target, target, m.Name, propertyName, Util.NCopies(1, m), args);
                 } finally {
-                    objectArrayPool.recycle(args);
+                    ObjectArrayPool.Recycle(args);
                 }
             } else {
                 result = false;
@@ -937,23 +743,23 @@ public static class OgnlRuntime {
         return result;
     }
 
-    public static IList getConstructors(Type targetClass)
+    private static IList GetConstructors(Type targetClass)
     {
         IList result;
 
-        lock (constructorCache) {
-            if ((result = (IList)constructorCache.get(targetClass)) == null) {
+        lock (ConstructorCache) {
+            if ((result = (IList)ConstructorCache.Get(targetClass)) == null) {
                 // TODO: Get Constructors.
-                constructorCache.put(targetClass, result = new ArrayList(targetClass.GetConstructors()));
+                ConstructorCache.Put(targetClass, result = new ArrayList(targetClass.GetConstructors()));
             }
         }
 
         return result;
     }
 
-    public static MethodMap getMethods(Type targetClass, bool staticMethods)
+    private static MethodMap GetMethods(Type targetClass, bool staticMethods)
     {
-        var cache = staticMethods ? staticMethodCache : instanceMethodCache;
+        var cache = staticMethods ? StaticMethodCache : InstanceMethodCache;
 
         lock (cache) {
             var cached = cache.SafeGet(targetClass);
@@ -974,19 +780,19 @@ public static class OgnlRuntime {
         }
     }
 
-    public static IList<MethodInfo> getMethods(Type targetClass,
+    public static IList<MethodInfo> GetMethods(Type targetClass,
         string name, bool staticMethods)
     {
-        var methodMap = getMethods(targetClass, staticMethods);
+        var methodMap = GetMethods(targetClass, staticMethods);
 
         return methodMap.TryGetValue(name, out var methods) ? methods :
             new List<MethodInfo>();
     }
 
-    public static FieldMap getFields(Type targetClass)
+    private static FieldMap GetFields(Type targetClass)
     {
-        lock (fieldCache) {
-            var cached = fieldCache.SafeGet(targetClass);
+        lock (FieldCache) {
+            var cached = FieldCache.SafeGet(targetClass);
 
             if (cached != null)
                 return cached;
@@ -997,61 +803,55 @@ public static class OgnlRuntime {
             foreach (var field in fields)
                 result[field.Name] = field;
 
-            fieldCache[targetClass] = result;
+            FieldCache[targetClass] = result;
 
             return result;
         }
     }
 
-    public static FieldInfo? getField(Type inClass, string name)
+    private static FieldInfo? GetField(Type inClass, string name)
     {
-        return getFields(inClass).SafeGet(name);
+        return GetFields(inClass).SafeGet(name);
     }
 
-    public static object? getFieldValue(OgnlContext context,
-        object target, string name)
-    {
-        return getFieldValue(context, target, name, false);
-    }
-
-    public static object? getFieldValue(OgnlContext context,
+    public static object? GetFieldValue(OgnlContext context,
         object target, string name, bool checkAccessAndExistence)
     {
-        var field = getField(target.GetType(), name);
+        var field = GetField(target.GetType(), name);
 
         if (field == null || field.IsStatic)
             throw new MissingFieldException(name);
 
         try {
             var state = context.getMemberAccess()
-                .setup(context, target, field, name);
+                .Setup(context, target, field, name);
 
             try {
                 return field.GetValue(target);
             } finally {
                 context.getMemberAccess()
-                    .restore(context, target, field, name, state);
+                    .Restore(context, target, field, name, state);
             }
         } catch (MemberAccessException ex) {
             throw new MissingFieldException(name, ex);
         }
     }
 
-    public static bool setFieldValue(OgnlContext context, object target,
+    public static bool SetFieldValue(OgnlContext context, object target,
         string name, object? value)
     {
-        var field = getField(target.GetType(), name);
+        var field = GetField(target.GetType(), name);
 
         if (field == null || field.IsStatic)
             throw new MissingFieldException(name);
 
         try {
             var state = context.getMemberAccess()
-                .setup(context, target, field, name);
+                .Setup(context, target, field, name);
 
             try {
-                if (!isTypeCompatible(value, field.FieldType) &&
-                    (value = getConvertedType(context, target, field,
+                if (!IsTypeCompatible(value, field.FieldType) &&
+                    (value = GetConvertedType(context, target, field,
                         name, value, field.FieldType)) == null)
                     return false;
 
@@ -1060,36 +860,20 @@ public static class OgnlRuntime {
                 return true;
             } finally {
                 context.getMemberAccess()
-                    .restore(context, target, field, name, state);
+                    .Restore(context, target, field, name, state);
             }
         } catch (MemberAccessException ex) {
             throw new NoSuchPropertyException(target, name, ex);
         }
     }
 
-    public static bool isFieldAccessible(OgnlContext context, object target, Type inClass, string propertyName)
+    public static object GetStaticField(OgnlContext context,
+        string className, string fieldName)
     {
-        return isFieldAccessible(context, target, getField(inClass, propertyName), propertyName);
-    }
-
-    public static bool isFieldAccessible(OgnlContext context, object target, FieldInfo field, string propertyName)
-    {
-        return context.getMemberAccess().isAccessible(context, target, field, propertyName);
-    }
-
-    public static bool hasField(OgnlContext context, object target, Type inClass, string propertyName)
-    {
-        var f = getField(inClass, propertyName);
-
-        return (f != null) && isFieldAccessible(context, target, f, propertyName);
-    }
-
-    public static object getStaticField(OgnlContext context, string className, string fieldName) // throws OgnlException
-    {
-        Exception reason = null;
+        Exception? reason;
 
         try {
-            var c = classForName(context, className);
+            var c = ClassForName(context, className);
 
             /*
                 Check for virtual static field "class"; this cannot interfere with
@@ -1135,73 +919,65 @@ public static class OgnlRuntime {
         throw new OgnlException("Could not get static field " + fieldName + " from class " + className, reason);
     }
 
-    public static IList getDeclaredMethods(Type targetClass, string propertyName, bool findSets)
+    private static IList GetDeclaredMethods(Type targetClass, string propertyName, bool findSets)
     {
-        IList result = null;
-        var cache = declaredMethods[findSets ? 0 : 1];
+        IList? result = null;
+        var cache = DeclaredMethods[findSets ? 0 : 1];
 
         lock (cache) {
-            var propertyCache = (IDictionary)cache.get(targetClass);
+            var propertyCache = (IDictionary)cache.Get(targetClass);
 
-            if ((propertyCache == null) || ((result = (IList)propertyCache[propertyName]) == null)) {
+            if (propertyCache == null || (result = (IList)propertyCache[propertyName]) == null) {
                 var baseName = propertyName.Substring(0, 1).ToUpper() + propertyName.Substring(1);
-                var len = baseName.Length;
-
                 var c = targetClass;
-                /*for (Type c = targetClass; c != null; c = c.BaseType) {*/
+
                 // TODO: Get Declared Methods.
-                var methods = c.GetMethods();
 
-                for (var i = 0; i < methods.Length; i++) {
-                    var ms = methods[i].Name;
+                foreach (var method in c.GetMethods()) {
+                    var name = method.Name;
 
-                    if (ms.EndsWith(baseName)) {
+                    if (name.EndsWith(baseName)) {
                         bool isSet = false,
                             isGet = false,
                             isIs = false;
 
-                        if ((isSet = ms.StartsWith(SET_PREFIX)) || (isGet = ms.StartsWith(GET_PREFIX)) ||
-                            (isIs = ms.StartsWith(IS_PREFIX))) {
-                            var prefixLength = (isIs ? 2 : 3);
+                        if ((isSet = name.StartsWith(SetPrefix)) || (isGet = name.StartsWith(GetPrefix)) ||
+                            (isIs = name.StartsWith(IsPrefix))) {
+                            var prefixLength = isIs ? 2 : 3;
 
-                            if (isSet == findSets) {
-                                if (baseName.Length == (ms.Length - prefixLength)) {
-                                    if (result == null) {
-                                        result = new ArrayList();
-                                    }
-
-                                    result.Add(methods[i]);
-                                }
+                            if (isSet == findSets &&
+                                baseName.Length == name.Length - prefixLength) {
+                                result ??= new ArrayList();
+                                result.Add(method);
                             }
                         }
                     }
-                    /*}*/
                 }
 
                 if (propertyCache == null) {
-                    cache.put(targetClass, propertyCache = new Hashtable(101));
+                    cache.Put(targetClass, propertyCache = new Hashtable(101));
                 }
 
-                propertyCache[propertyName] = ((result == null) ? NotFoundList : result);
+                propertyCache[propertyName] = result ?? NotFoundList;
             }
 
-            return (result == NotFoundList) ? null : result;
+            return result == NotFoundList ? null : result;
         }
     }
 
-    public static MethodInfo? getGetMethod(OgnlContext context,
-        Type targetClass, string propertyName)
+    private static MethodInfo? GetGetMethod(Type targetClass,
+        string propertyName)
     {
         MethodInfo? result = null;
-        var pd = getPropertyDescriptor(targetClass, propertyName);
+        var pd = GetPropertyDescriptor(targetClass, propertyName);
 
         if (pd == null) {
-            var methods = getDeclaredMethods(targetClass, propertyName, false /* find 'get' methods */);
+            var methods = GetDeclaredMethods(targetClass, propertyName, false /* find 'get' methods */);
 
             if (methods != null) {
                 for (int i = 0, icount = methods.Count; i < icount; i++) {
-                    var m = (MethodInfo)methods[(i)];
-                    var mParameterTypes = getParameterTypes(m);
+                    var m = (MethodInfo)methods[i];
+                    var mParameterTypes = GetParameterTypes(m);
 
                     if (mParameterTypes.Length == 0) {
                         result = m;
@@ -1211,38 +987,32 @@ public static class OgnlRuntime {
                 }
             }
         } else {
-            result = pd.getReadMethod();
+            result = pd.ReadMethod;
         }
 
         return result;
     }
 
-    public static bool isMethodAccessible(OgnlContext context, object target, MethodInfo method, string? propertyName)
+    private static bool IsMethodAccessible(OgnlContext context,
+        object target, MethodInfo? method, string? propertyName)
     {
-        return (method == null) ? false : context.getMemberAccess().isAccessible(context, target, method, propertyName);
+        return method == null ? false :
+            context.getMemberAccess().IsAccessible(context, target, method, propertyName);
     }
 
-    public static bool
-        hasGetMethod(OgnlContext context, object target, Type targetClass,
-            string propertyName) // throws IntrospectionException, OgnlException
-    {
-        return isMethodAccessible(context, target, getGetMethod(context, targetClass, propertyName), propertyName);
-    }
-
-    public static MethodInfo
-        getSetMethod(OgnlContext context, Type targetClass,
-            string propertyName) // throws IntrospectionException, OgnlException
+    private static MethodInfo GetSetMethod(Type targetClass,
+        string propertyName)
     {
         MethodInfo result = null;
-        var pd = getPropertyDescriptor(targetClass, propertyName);
+        var pd = GetPropertyDescriptor(targetClass, propertyName);
 
         if (pd == null) {
-            var methods = getDeclaredMethods(targetClass, propertyName, true /* find 'set' methods */);
+            var methods = GetDeclaredMethods(targetClass, propertyName, true /* find 'set' methods */);
 
             if (methods != null) {
                 for (int i = 0, icount = methods.Count; i < icount; i++) {
                     var m = (MethodInfo)methods[i];
-                    var mParameterTypes = getParameterTypes(m);
+                    var mParameterTypes = GetParameterTypes(m);
 
                     if (mParameterTypes.Length == 1) {
                         result = m;
@@ -1252,173 +1022,93 @@ public static class OgnlRuntime {
                 }
             }
         } else {
-            result = pd.getWriteMethod();
+            result = pd.WriteMethod;
         }
 
         return result;
     }
 
-    public static bool
-        hasSetMethod(OgnlContext context, object target, Type targetClass,
-            string propertyName) // throws IntrospectionException, OgnlException
-    {
-        return isMethodAccessible(context, target, getSetMethod(context, targetClass, propertyName), propertyName);
-    }
-
-    public static bool
-        hasGetProperty(OgnlContext context, object target, object oname) // throws IntrospectionException, OgnlException
-    {
-        var targetClass = (target == null) ? null : target.GetType();
-        var name = oname.ToString();
-
-        return hasGetMethod(context, target, targetClass, name) || hasField(context, target, targetClass, name);
-    }
-
-    public static bool
-        hasSetProperty(OgnlContext context, object target, object oname) // throws IntrospectionException, OgnlException
-    {
-        var targetClass = (target == null) ? null : target.GetType();
-        var name = oname.ToString();
-
-        return hasSetMethod(context, target, targetClass, name) || hasField(context, target, targetClass, name);
-    }
-
-    private static bool indexMethodCheck(IList methods)
-    {
-        var result = false;
-
-        if (methods.Count > 0) {
-            var fm = (MethodInfo)methods[(0)];
-            var fmpt = getParameterTypes(fm);
-            var fmpc = fmpt.Length;
-
-            var lastMethodClass = fm.DeclaringType;
-
-            result = true;
-
-            for (var i = 1; result && (i < methods.Count); i++) {
-                var m = (MethodInfo)methods[(i)];
-
-                var c = m.DeclaringType;
-
-                // Check to see if more than one method implemented per class
-                if (lastMethodClass == c) {
-                    result = false;
-                } else {
-                    var mpt = getParameterTypes(fm);
-                    var mpc = fmpt.Length;
-
-                    if (fmpc != mpc) {
-                        result = false;
-                    }
-
-                    for (var j = 0; j < fmpc; j++) {
-                        if (fmpt[j] != mpt[j]) {
-                            result = false;
-
-                            break;
-                        }
-                    }
-                }
-
-                lastMethodClass = c;
-            }
-        }
-
-        return result;
-    }
-
-    /**
-        This method returns the property descriptors for the given class as a IDictionary
-     */
-    public static IDictionary getPropertyDescriptors(Type targetClass) // throws IntrospectionException, OgnlException
+    private static IDictionary GetPropertyDescriptors(Type targetClass)
     {
         // TODO: This is the main method about PropertyDescriptor.
         IDictionary result;
 
-        lock (propertyDescriptorCache) {
-            if ((result = (IDictionary)propertyDescriptorCache.get(targetClass)) == null) {
+        lock (PropertyDescriptorCache) {
+            if ((result = (IDictionary)PropertyDescriptorCache.Get(targetClass)) == null) {
                 // TODO: Introspector
                 // No Setter or Getter, Use property.
-                var pda = Introspector.getPropertyDescriptors(targetClass);
+                var pda = Introspector.GetPropertyDescriptors(targetClass);
 
                 result = new Hashtable(101);
 
                 for (int i = 0, icount = pda.Length; i < icount; i++) {
-                    result[pda[i].getName()] = pda[i];
+                    result[pda[i].Name] = pda[i];
                 }
 
                 // findObjectIndexedPropertyDescriptors(targetClass, result);
-                findBeanPropertyDescriptors(targetClass, result);
-                propertyDescriptorCache.put(targetClass, result);
+                FindBeanPropertyDescriptors(targetClass, result);
+                PropertyDescriptorCache.Put(targetClass, result);
             }
         }
 
         return result;
     }
 
-    private static void findBeanPropertyDescriptors(Type targetClass, IDictionary map)
+    private static void FindBeanPropertyDescriptors(Type targetClass, IDictionary map)
     {
-        var allMethods = getMethods(targetClass, false);
+        var allMethods = GetMethods(targetClass, false);
         IDictionary pairs = new Hashtable(101);
 
         for (var it = allMethods.Keys.GetEnumerator(); it.MoveNext();) {
-            var methodName = (string)it.Current;
-            var methods = (IList)allMethods[(methodName)];
+            var methodName = it.Current;
+            var methods = (IList)allMethods[methodName];
 
-            /*
-                Only process set/get where there is exactly one implementation
-                of the method per class and those implementations are all the
-                same
-             */
-            if (beanMethodCheck(methods)) {
-                bool isGet = false,
-                    isSet = false;
-                var m = (MethodInfo)methods[0];
+            bool isGet = false,
+                isSet = false;
+            var m = (MethodInfo)methods[0];
 
-                if (((isSet = methodName.StartsWith(SET_PREFIX) || methodName.StartsWith(SET_PREFIX2)) ||
-                        (isGet = methodName.StartsWith(GET_PREFIX) || methodName.StartsWith(GET_PREFIX2))) &&
-                    (methodName.Length > 3)) {
-                    var propertyName = /*Introspector.decapitalize*/(methodName.Substring(3));
-                    var parameterTypes = getParameterTypes(m);
-                    var parameterCount = parameterTypes.Length;
+            if (((isSet = methodName.StartsWith(SetPrefix) || methodName.StartsWith(SetPrefix2)) ||
+                    (isGet = methodName.StartsWith(GetPrefix) || methodName.StartsWith(GetPrefix2))) &&
+                methodName.Length > 3) {
+                var propertyName = /*Introspector.decapitalize*/methodName.Substring(3);
+                var parameterTypes = GetParameterTypes(m);
+                var parameterCount = parameterTypes.Length;
 
-                    // Ignore property with same name.
-                    if (map.Contains(propertyName))
-                        continue;
+                // Ignore property with same name.
+                if (map.Contains(propertyName))
+                    continue;
 
-                    if (isGet && (parameterCount == 0) && (m.ReturnType != typeof(void))) {
-                        var pair = (IList)pairs[(propertyName)];
+                if (isGet && parameterCount == 0 && m.ReturnType != typeof(void)) {
+                    var pair = (IList)pairs[propertyName];
 
-                        if (pair == null) {
-                            pairs[propertyName] = (pair = new ArrayList());
-                        }
-
-                        pair.Add(m);
+                    if (pair == null) {
+                        pairs[propertyName] = pair = new ArrayList();
                     }
 
-                    if (isSet && (parameterCount == 1) && (m.ReturnType == typeof(void))) {
-                        var pair = (IList)pairs[(propertyName)];
+                    pair.Add(m);
+                }
 
-                        if (pair == null) {
-                            pairs[propertyName] = (pair = new ArrayList());
-                        }
+                if (isSet && parameterCount == 1 && m.ReturnType == typeof(void)) {
+                    var pair = (IList)pairs[propertyName];
 
-                        pair.Add(m);
+                    if (pair == null) {
+                        pairs[propertyName] = pair = new ArrayList();
                     }
+
+                    pair.Add(m);
                 }
             }
         }
 
         for (var it = pairs.Keys.GetEnumerator(); it.MoveNext();) {
             var propertyName = (string)it.Current;
-            var methods = (IList)pairs[(propertyName)];
+            var methods = (IList)pairs[propertyName];
 
             // Read/write only property is allowded .
             if (methods.Count == 1) {
-                MethodInfo method = (MethodInfo)methods[(0)],
-                    setMethod = (method.GetParameters().Length == 1) ? method : null,
-                    getMethod = (setMethod == method) ? null : method;
+                MethodInfo method = (MethodInfo)methods[0],
+                    setMethod = method.GetParameters().Length == 1 ? method : null,
+                    getMethod = setMethod == method ? null : method;
 
                 var propertyType =
                     getMethod != null ? getMethod.ReturnType : setMethod.GetParameters()[0].ParameterType;
@@ -1428,10 +1118,10 @@ public static class OgnlRuntime {
             }
 
             if (methods.Count == 2) {
-                MethodInfo method1 = (MethodInfo)methods[(0)],
-                    method2 = (MethodInfo)methods[(1)],
-                    setMethod = (method1.GetParameters().Length == 1) ? method1 : method2,
-                    getMethod = (setMethod == method1) ? method2 : method1;
+                MethodInfo method1 = (MethodInfo)methods[0],
+                    method2 = (MethodInfo)methods[1],
+                    setMethod = method1.GetParameters().Length == 1 ? method1 : method2,
+                    getMethod = setMethod == method1 ? method2 : method1;
 
                 // Type        keyType = getMethod.GetParameters()[0].ParameterType;
                 var propertyType = getMethod.ReturnType;
@@ -1445,144 +1135,94 @@ public static class OgnlRuntime {
         }
     }
 
-    private static bool beanMethodCheck(IList methods)
-    {
-        return true;
-    }
-
     /**
      * TODO: About PropertyDescriptor
         This method returns a PropertyDescriptor for the given class and property name using
         a IDictionary lookup (using getPropertyDescriptorsMap()).
      */
-    public static PropertyDescriptor
-        getPropertyDescriptor(Type targetClass, string propertyName) // throws IntrospectionException, OgnlException
+    private static PropertyDescriptor GetPropertyDescriptor(
+        Type targetClass, string propertyName)
     {
-        return (targetClass == null) ? null : (PropertyDescriptor)getPropertyDescriptors(targetClass)[(propertyName)];
+        return targetClass == null ? null : (PropertyDescriptor)GetPropertyDescriptors(targetClass)[propertyName];
     }
 
-    public static PropertyDescriptor[] getPropertyDescriptorsArray(Type targetClass) // throws IntrospectionException
+    private static void SetMethodAccessor(Type cls, MethodAccessor accessor)
     {
-        PropertyDescriptor[] result = null;
-
-        if (targetClass != null) {
-            lock (propertyDescriptorCache) {
-                if ((result = (PropertyDescriptor[])propertyDescriptorCache.get(targetClass)) == null) {
-                    propertyDescriptorCache.put(targetClass, result = Introspector.getPropertyDescriptors(targetClass));
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /**
-        Gets the property descriptor with the given name for the target class given.
-        @param targetClass      Type for which property descriptor is desired
-        @param name             Name of property
-        @return                 PropertyDescriptor of the named property or null if
-                                the class has no property with the given name
-     */
-    public static PropertyDescriptor
-        getPropertyDescriptorFromArray(Type targetClass, string name) // throws IntrospectionException
-    {
-        PropertyDescriptor result = null;
-        var pda = getPropertyDescriptorsArray(targetClass);
-
-        for (int i = 0, icount = pda.Length; (result == null) && (i < icount); i++) {
-            if (pda[i].getName().CompareTo(name) == 0) {
-                result = pda[i];
-            }
-        }
-
-        return result;
-    }
-
-    public static void setMethodAccessor(Type cls, MethodAccessor accessor)
-    {
-        lock (methodAccessors) {
-            methodAccessors.put(cls, accessor);
+        lock (MethodAccessors) {
+            MethodAccessors.Put(cls, accessor);
         }
     }
 
-    public static MethodAccessor getMethodAccessor(Type cls) // throws OgnlException
+    private static MethodAccessor GetMethodAccessor(Type cls)
     {
-        var answer = (MethodAccessor)getHandler(cls, methodAccessors);
-
-        if (answer != null)
-            return answer;
-
-        throw new OgnlException("No method accessor for " + cls);
-    }
-
-    public static void setPropertyAccessor(Type cls, PropertyAccessor accessor)
-    {
-        lock (propertyAccessors) {
-            propertyAccessors.put(cls, accessor);
+        lock (MethodAccessors) {
+            return (MethodAccessor)GetHandler(cls, MethodAccessors) ??
+                throw new OgnlException($"No method accessor for {cls}");
         }
     }
 
-    public static PropertyAccessor getPropertyAccessor(Type cls) // throws OgnlException
+    public static void SetPropertyAccessor(Type cls, PropertyAccessor accessor)
     {
-        var answer = (PropertyAccessor)getHandler(cls, propertyAccessors);
-
-        if (answer != null)
-            return answer;
-
-        throw new OgnlException("No property accessor for class " + cls);
-    }
-
-    public static IElementsAccessor getElementsAccessor(Type cls) // throws OgnlException
-    {
-        var answer = (IElementsAccessor)getHandler(cls, elementsAccessors);
-
-        if (answer != null)
-            return answer;
-
-        throw new OgnlException("No elements accessor for class " + cls);
-    }
-
-    public static void setElementsAccessor(Type cls, IElementsAccessor accessor)
-    {
-        lock (elementsAccessors) {
-            elementsAccessors.put(cls, accessor);
+        lock (PropertyAccessors) {
+            PropertyAccessors.Put(cls, accessor);
         }
     }
 
-    public static NullHandler getNullHandler(Type cls) // throws OgnlException
+    private static PropertyAccessor GetPropertyAccessor(Type cls)
     {
-        var answer = (NullHandler)getHandler(cls, nullHandlers);
-
-        if (answer != null)
-            return answer;
-
-        throw new OgnlException("No null handler for class " + cls);
-    }
-
-    public static void setNullHandler(Type cls, NullHandler handler)
-    {
-        lock (nullHandlers) {
-            nullHandlers.put(cls, handler);
+        lock (PropertyAccessors) {
+            return (PropertyAccessor)GetHandler(cls, PropertyAccessors) ??
+                throw new OgnlException($"No property accessor for class {cls}");
         }
     }
 
-    private static object getHandler(Type forClass, ClassCache handlers)
+    public static ElementsAccessor GetElementsAccessor(Type cls)
     {
-        object answer = null;
+        lock (ElementsAccessors) {
+            return (ElementsAccessor)GetHandler(cls, ElementsAccessors) ??
+                throw new OgnlException($"No elements accessor for class {cls}");
+        }
+    }
+
+    private static void SetElementsAccessor(Type cls, ElementsAccessor accessor)
+    {
+        lock (ElementsAccessors) {
+            ElementsAccessors.Put(cls, accessor);
+        }
+    }
+
+    public static NullHandler GetNullHandler(Type cls)
+    {
+        lock (NullHandlers) {
+            return (NullHandler)GetHandler(cls, NullHandlers) ??
+                throw new OgnlException($"No null handler for class {cls}");
+        }
+    }
+
+    public static void SetNullHandler(Type cls, NullHandler handler)
+    {
+        lock (NullHandlers) {
+            NullHandlers.Put(cls, handler);
+        }
+    }
+
+    private static object GetHandler(Type forClass, ClassCache handlers)
+    {
+        object? answer;
 
         lock (handlers) {
-            if ((answer = handlers.get(forClass)) == null) {
+            if ((answer = handlers.Get(forClass)) == null) {
                 Type keyFound;
 
                 if (forClass.IsArray) {
-                    answer = handlers.get(typeof(object[]));
+                    answer = handlers.Get(typeof(object[]));
                     keyFound = null;
                 } else {
                     keyFound = forClass;
 
                     // outer:
                     for (var c = forClass; c != null; c = c.BaseType) {
-                        answer = handlers.get(c);
+                        answer = handlers.Get(c);
 
                         if (answer == null) {
                             var interfaces = c.GetInterfaces();
@@ -1590,12 +1230,9 @@ public static class OgnlRuntime {
                             for (int index = 0, count = interfaces.Length; index < count; ++index) {
                                 var iface = interfaces[index];
 
-                                answer = handlers.get(iface);
-
-                                if (answer == null) {
-                                    /* Try base-interfaces */
-                                    answer = getHandler(iface, handlers);
-                                }
+                                /* Try base-interfaces */
+                                answer = handlers.Get(iface) ??
+                                    GetHandler(iface, handlers);
 
                                 if (answer != null) {
                                     keyFound = iface;
@@ -1616,7 +1253,7 @@ public static class OgnlRuntime {
 
                 if (answer != null) {
                     if (keyFound != forClass) {
-                        handlers.put(forClass, answer);
+                        handlers.Put(forClass, answer);
                     }
                 }
             }
@@ -1625,35 +1262,32 @@ public static class OgnlRuntime {
         return answer;
     }
 
-    public static object getProperty(OgnlContext context, object source, object name) // throws OgnlException
+    public static object? GetProperty(OgnlContext context, object source,
+        object name)
     {
         PropertyAccessor accessor;
 
-        if (source == null) {
-            throw new OgnlException("source is null for getProperty(null, \"" + name + "\")");
-        }
+        if (source == null)
+            throw new OgnlException($"source is null for getProperty(null, \"{name}\")");
 
-        if ((accessor = getPropertyAccessor(getTargetClass(source))) == null) {
-            throw new OgnlException("No property accessor for " + getTargetClass(source).Name);
-        }
+        if ((accessor = GetPropertyAccessor(GetTargetClass(source))) == null)
+            throw new OgnlException($"No property accessor for {GetTargetClass(source).Name}");
 
-        return accessor.getProperty(context, source, name);
+        return accessor.GetProperty(context, source, name);
     }
 
-    public static void
-        setProperty(OgnlContext context, object target, object name, object value) // throws OgnlException
+    public static void SetProperty(OgnlContext context, object target,
+        object name, object value)
     {
         PropertyAccessor accessor;
 
-        if (target == null) {
-            throw new OgnlException("target is null for setProperty(null, \"" + name + "\", " + value + ")");
-        }
+        if (target == null)
+            throw new OgnlException($"target is null for setProperty(null, \"{name}\", {value})");
 
-        if ((accessor = getPropertyAccessor(getTargetClass(target))) == null) {
-            throw new OgnlException("No property accessor for " + getTargetClass(target).Name);
-        }
+        if ((accessor = GetPropertyAccessor(GetTargetClass(target))) == null)
+            throw new OgnlException($"No property accessor for {GetTargetClass(target).Name}");
 
-        accessor.setProperty(context, target, name, value);
+        accessor.SetProperty(context, target, name, value);
     }
 
     /**
@@ -1663,100 +1297,84 @@ public static class OgnlRuntime {
         indexed property patterns (returns <code>INDEXED_PROPERTY_INT</code>) or if it conforms
         to the OGNL arbitrary object indexable (returns <code>INDEXED_PROPERTY_OBJECT</code>).
      */
-    public static int getIndexedPropertyType(OgnlContext context, Type sourceClass, string name) // throws OgnlException
+    public static int GetIndexedPropertyType(OgnlContext context,
+        Type sourceClass, string name)
     {
-        var result = INDEXED_PROPERTY_NONE;
+        var result = IndexedPropertyNone;
 
         try {
-            var pd = getPropertyDescriptor(sourceClass, name);
+            var pd = GetPropertyDescriptor(sourceClass, name);
 
             if (pd != null) {
                 if (pd is IndexedPropertyDescriptor) {
-                    result = INDEXED_PROPERTY_INT;
+                    result = IndexedPropertyInt;
                 } else {
                     if (pd is ObjectIndexedPropertyDescriptor) {
-                        result = INDEXED_PROPERTY_OBJECT;
+                        result = IndexedPropertyObject;
                     }
                 }
             }
         } catch (Exception ex) {
-            throw new OgnlException("problem determining if '" + name + "' is an indexed property", ex);
+            throw new OgnlException($"problem determining if '{name}' is an indexed property", ex);
         }
 
         return result;
     }
 
-    public static object
-        getIndexedProperty(OgnlContext context, object source, string name, object index) // throws OgnlException
+    public static object GetIndexedProperty(OgnlContext context,
+        object source, string name, object index)
     {
-        Exception reason = null;
-        var args = objectArrayPool.create(index);
+        var args = ObjectArrayPool.Create(index);
 
         try {
-            var pd = getPropertyDescriptor((source == null) ? null : source.GetType(), name);
+            var pd = GetPropertyDescriptor(source == null ? null : source.GetType(), name);
             MethodInfo m;
 
-            if (pd is IndexedPropertyDescriptor) {
-                m = ((IndexedPropertyDescriptor)pd).getIndexedReadMethod();
-            } else {
-                if (pd is ObjectIndexedPropertyDescriptor) {
-                    m = ((ObjectIndexedPropertyDescriptor)pd).getIndexedReadMethod();
-                } else {
-                    throw new OgnlException("property '" + name + "' is not an indexed property");
-                }
-            }
+            if (pd is IndexedPropertyDescriptor indexedPropertyDescriptor)
+                m = indexedPropertyDescriptor.getIndexedReadMethod();
+            else if (pd is ObjectIndexedPropertyDescriptor objectIndexedPropertyDescriptor)
+                m = objectIndexedPropertyDescriptor.getIndexedReadMethod();
+            else
+                throw new OgnlException($"property '{name}' is not an indexed property");
 
-            return callMethod(context, source, m.Name, name, args);
+            return CallMethod(context, source, m.Name, name, args);
         } catch (OgnlException) {
             throw;
         } catch (Exception ex) {
-            throw new OgnlException("getting indexed property descriptor for '" + name + "'", ex);
+            throw new OgnlException($"getting indexed property descriptor for '{name}'", ex);
         } finally {
-            objectArrayPool.recycle(args);
+            ObjectArrayPool.Recycle(args);
         }
     }
 
-    public static void setIndexedProperty(OgnlContext context, object source, string name, object index, object value)
+    public static void SetIndexedProperty(OgnlContext context,
+        object source, string name, object index, object value)
     {
-        Exception reason = null;
-        var args = objectArrayPool.create(index, value);
+        Exception? reason = null;
+        var args = ObjectArrayPool.Create(index, value);
 
         try {
-            var pd = getPropertyDescriptor((source == null) ? null : source.GetType(), name);
+            var pd = GetPropertyDescriptor(source == null ? null : source.GetType(), name);
             MethodInfo m;
 
-            if (pd is IndexedPropertyDescriptor) {
-                m = ((IndexedPropertyDescriptor)pd).getIndexedWriteMethod();
-            } else {
-                if (pd is ObjectIndexedPropertyDescriptor) {
-                    m = ((ObjectIndexedPropertyDescriptor)pd).getIndexedWriteMethod();
-                } else {
-                    throw new OgnlException("property '" + name + "' is not an indexed property");
-                }
-            }
+            if (pd is IndexedPropertyDescriptor indexedPropertyDescriptor)
+                m = indexedPropertyDescriptor.getIndexedWriteMethod();
+            else if (pd is ObjectIndexedPropertyDescriptor objectIndexedPropertyDescriptor)
+                m = objectIndexedPropertyDescriptor.getIndexedWriteMethod();
+            else
+                throw new OgnlException($"property '{name}' is not an indexed property");
 
-            callMethod(context, source, m.Name, name, args);
+            CallMethod(context, source, m.Name, name, args);
         } catch (OgnlException) {
             throw;
         } catch (Exception ex) {
-            throw new OgnlException("getting indexed property descriptor for '" + name + "'", ex);
+            throw new OgnlException($"getting indexed property descriptor for '{name}'", ex);
         } finally {
-            objectArrayPool.recycle(args);
+            ObjectArrayPool.Recycle(args);
         }
     }
 
-    public static EvaluationPool getEvaluationPool()
-    {
-        return evaluationPool;
-    }
-
-    public static ObjectArrayPool getObjectArrayPool()
-    {
-        return objectArrayPool;
-    }
-
-    public static IList<MethodInfo> getIndexerSetMethods(
-        OgnlContext context, Type source)
+    private static List<MethodInfo> GetIndexerSetMethods(Type source)
     {
         return (
             from property in source.GetProperties()
@@ -1767,8 +1385,7 @@ public static class OgnlRuntime {
             .ToList();
     }
 
-    public static IList<MethodInfo> getIndexerGetMethods(
-        OgnlContext context, Type source)
+    private static List<MethodInfo> GetIndexerGetMethods(Type source)
     {
         return (
                 from property in source.GetProperties()
@@ -1779,42 +1396,42 @@ public static class OgnlRuntime {
             .ToList();
     }
 
-    public static bool setIndexerValue(OgnlContext context, object target,
+    public static bool SetIndexerValue(OgnlContext context, object target,
         object name, object? value, object[] args)
     {
-        var methods = getIndexerSetMethods(context, target.GetType());
+        var methods = GetIndexerSetMethods(target.GetType());
 
         if (methods.Count == 0)
             return false;
 
-        var actualArgs = objectArrayPool.create(args.Length + 1);
+        var actualArgs = ObjectArrayPool.Create(args.Length + 1);
 
         Array.Copy(args, 0, actualArgs, 0, args.Length);
         actualArgs[args.Length] = value;
 
         try {
-            callAppropriateMethod(context, target, target, null, null,
+            CallAppropriateMethod(context, target, target, null, null,
                 methods, actualArgs);
 
             return true;
         } finally {
-            objectArrayPool.recycle(actualArgs);
+            ObjectArrayPool.Recycle(actualArgs);
         }
     }
 
-    public static object? getIndexerValue(OgnlContext context,
+    public static object? GetIndexerValue(OgnlContext context,
         object target, object name, object[] args)
     {
-        var methods = getIndexerGetMethods(context, target.GetType());
+        var methods = GetIndexerGetMethods(target.GetType());
 
         if (methods.Count == 0)
-            throw new NoSuchPropertyException(target, getIndexerName(args));
+            throw new NoSuchPropertyException(target, GetIndexerName(args));
 
-        return callAppropriateMethod(context, target, target,
-            getIndexerName(args), "Indexer", methods, args);
+        return CallAppropriateMethod(context, target, target,
+            GetIndexerName(args), "Indexer", methods, args);
     }
 
-    public static string getIndexerName(object[] ts)
+    private static string GetIndexerName(object[] ts)
     {
         var sb = new StringBuilder();
         sb.Append("this [");
@@ -1822,6 +1439,7 @@ public static class OgnlRuntime {
         for (var i = 0; i < ts.Length; i++) {
             if (i > 0)
                 sb.Append(", ");
+
             sb.Append(ts[i].GetType().Name);
         }
 
@@ -1830,31 +1448,17 @@ public static class OgnlRuntime {
         return sb.ToString();
     }
 
-    public static bool hasSetIndexer(OgnlContext context, object target, Type targetClass, int paramCount)
+    public static bool HasSetIndexer(OgnlContext context, object target,
+        Type targetClass, int paramCount)
     {
-        var methods = getIndexerSetMethods(context, targetClass);
-
-        for (var i = 0; i < methods.Count; i++) {
-            var method = (MethodInfo)methods[i];
-
-            if (method.GetParameters().Length == paramCount + 1)
-                return true;
-        }
-
-        return false;
+        return GetIndexerSetMethods(targetClass)
+            .Any(method => method.GetParameters().Length == paramCount + 1);
     }
 
-    public static bool hasGetIndexer(OgnlContext context, object target, Type targetClass, int paramCount)
+    public static bool HasGetIndexer(OgnlContext context, object target,
+        Type targetClass, int paramCount)
     {
-        var methods = getIndexerGetMethods(context, targetClass);
-
-        for (var i = 0; i < methods.Count; i++) {
-            var method = (MethodInfo)methods[i];
-
-            if (method.GetParameters().Length == paramCount)
-                return true;
-        }
-
-        return false;
+        return GetIndexerGetMethods(targetClass)
+            .Any(method => method.GetParameters().Length == paramCount);
     }
 }

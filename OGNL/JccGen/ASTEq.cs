@@ -50,7 +50,7 @@ class ASTEq : ExpressionNode {
         var v1 = children[0].getValue(context, source);
         var v2 = children[1].getValue(context, source);
 
-        return OgnlOps.equal(v1, v2) ? true : false;
+        return OgnlOps.Equal(v1, v2) ? true : false;
     }
 
     public override string getExpressionOperator(int index)

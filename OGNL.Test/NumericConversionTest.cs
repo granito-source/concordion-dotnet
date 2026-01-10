@@ -224,7 +224,7 @@ public class NumericConversionTest : OgnlTestCase {
     {
         object result;
 
-        result = OgnlOps.convertValue(value, toClass);
+        result = OgnlOps.ConvertValue(value, toClass);
 
         if (!isEqual(result, expectedValue)) {
             if (scale >= 0) {

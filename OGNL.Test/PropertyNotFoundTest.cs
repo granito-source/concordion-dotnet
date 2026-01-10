@@ -67,16 +67,16 @@ public class PropertyNotFoundTest : OgnlTestCase {
     }
 
     public class BlahPropertyAccessor : PropertyAccessor {
-        public object? getProperty(OgnlContext context, object target, object name)
+        public object? GetProperty(OgnlContext context, object target, object name)
         {
             if ("x".Equals(name) || "y".Equals(name)) {
-                return OgnlRuntime.getProperty(context, target, name);
+                return OgnlRuntime.GetProperty(context, target, name);
             }
 
             return null;
         }
 
-        public void setProperty(OgnlContext context, object target, object name, object? value)
+        public void SetProperty(OgnlContext context, object target, object name, object? value)
         {
         }
     }
@@ -136,6 +136,6 @@ public class PropertyNotFoundTest : OgnlTestCase {
     public override void setUp()
     {
         base.setUp();
-        OgnlRuntime.setPropertyAccessor(typeof(Blah), new BlahPropertyAccessor());
+        OgnlRuntime.SetPropertyAccessor(typeof(Blah), new BlahPropertyAccessor());
     }
 }

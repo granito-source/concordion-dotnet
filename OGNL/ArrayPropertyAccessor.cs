@@ -42,7 +42,7 @@ namespace OGNL;
 /// @author Drew Davidson (drew@ognl.org)
 public class ArrayPropertyAccessor : ObjectPropertyAccessor {
     [return: NotNullIfNotNull("value")]
-    private static object? convert(OgnlContext context, Array target,
+    private static object? Convert(OgnlContext context, Array target,
         object name, object? value)
     {
         if (value == null)
@@ -54,11 +54,7 @@ public class ArrayPropertyAccessor : ObjectPropertyAccessor {
                 target.GetType().GetElementType()!);
     }
 
-    /// <summary>
-    /// Specific property is: length.
-    /// </summary>
-    /// <returns></returns>
-    public override object? getProperty(OgnlContext context,
+    public override object? GetProperty(OgnlContext context,
         object target, object name)
     {
         var array = (Array)target;
@@ -66,7 +62,7 @@ public class ArrayPropertyAccessor : ObjectPropertyAccessor {
         switch (name) {
             case string:
                 return name.Equals("length") ? array.GetLength(0) :
-                    base.getProperty(context, target, name);
+                    base.GetProperty(context, target, name);
             case DynamicSubscript dynamic:
                 var len = array.GetLength(0);
 
@@ -88,20 +84,20 @@ public class ArrayPropertyAccessor : ObjectPropertyAccessor {
 
                 break;
             case ValueType:
-                return array.GetValue(Convert.ToInt32(name));
+                return array.GetValue(System.Convert.ToInt32(name));
         }
 
         throw new NoSuchPropertyException(target, name);
     }
 
-    public override void setProperty(OgnlContext context, object target,
+    public override void SetProperty(OgnlContext context, object target,
         object name, object? value)
     {
         var array = (Array)target;
 
         switch (name) {
             case string:
-                base.setProperty(context, target, name, value);
+                base.SetProperty(context, target, name, value);
 
                 return;
             case DynamicSubscript dynamic:
@@ -118,19 +114,19 @@ public class ArrayPropertyAccessor : ObjectPropertyAccessor {
                         break;
                     case DynamicSubscript.FIRST:
                         array.SetValue(
-                            convert(context, array, name, value),
+                            Convert(context, array, name, value),
                             len > 0 ? 0 : -1);
 
                         break;
                     case DynamicSubscript.MID:
                         array.SetValue(
-                            convert(context, array, name, value),
+                            Convert(context, array, name, value),
                             len > 0 ? len / 2 : -1);
 
                         break;
                     case DynamicSubscript.LAST:
                         array.SetValue(
-                            convert(context, array, name, value),
+                            Convert(context, array, name, value),
                             len > 0 ? len - 1 : -1);
 
                         break;
@@ -138,8 +134,8 @@ public class ArrayPropertyAccessor : ObjectPropertyAccessor {
 
                 return;
             case ValueType:
-                array.SetValue(convert(context, array, name, value),
-                    Convert.ToInt32(name));
+                array.SetValue(Convert(context, array, name, value),
+                    System.Convert.ToInt32(name));
 
                 return;
         }

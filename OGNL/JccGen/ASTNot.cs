@@ -47,7 +47,7 @@ class ASTNot : ExpressionNode {
     protected override object getValueBody(OgnlContext context,
         object source)
     {
-        return !OgnlOps.booleanValue(children[0].getValue(context, source));
+        return !OgnlOps.BooleanValue(children[0].getValue(context, source));
     }
 
     public override string getExpressionOperator(int index)

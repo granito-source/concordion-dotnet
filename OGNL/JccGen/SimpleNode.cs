@@ -211,7 +211,7 @@ public abstract class SimpleNode(int i) : Node {
     public object getValue(OgnlContext context, object source)
     {
         if (context.getTraceEvaluations()) {
-            var pool = OgnlRuntime.getEvaluationPool();
+            var pool = OgnlRuntime.EvaluationPool;
             object result = null;
             Exception evalException = null;
             var evaluation = pool.create(this, source);
@@ -257,7 +257,7 @@ public abstract class SimpleNode(int i) : Node {
     public void setValue(OgnlContext context, object target, object? value)
     {
         if (context.getTraceEvaluations()) {
-            var pool = OgnlRuntime.getEvaluationPool();
+            var pool = OgnlRuntime.EvaluationPool;
             Exception evalException = null;
             var evaluation = pool.create(this, target, true);
 

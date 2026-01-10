@@ -40,8 +40,8 @@ namespace OGNL;
 ///@author Luke Blanshard (blanshlu@netscape.net)
 ///@author Drew Davidson (drew@ognl.org)
 ///
-public class NumberElementsAccessor : NumericTypes, IElementsAccessor {
-    public IEnumerator getElements(object target)
+public class NumberElementsAccessor : NumericTypes, ElementsAccessor {
+    public IEnumerator GetElements(object target)
     {
         return new NumberEnumerator(target);
     }
@@ -55,8 +55,8 @@ public class NumberElementsAccessor : NumericTypes, IElementsAccessor {
 
         public NumberEnumerator(object target)
         {
-            type = OgnlOps.getNumericType(target);
-            finish = OgnlOps.longValue(target);
+            type = OgnlOps.GetNumericType(target);
+            finish = OgnlOps.LongValue(target);
         }
 
         public bool MoveNext()
@@ -74,7 +74,7 @@ public class NumberElementsAccessor : NumericTypes, IElementsAccessor {
                 if (next >= finish)
                     throw new ArgumentOutOfRangeException();
 
-                return OgnlOps.newInteger(type, next++);
+                return OgnlOps.NewInteger(type, next++);
             }
         }
     }

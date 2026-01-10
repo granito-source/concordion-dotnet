@@ -58,7 +58,7 @@ class ASTOr : ExpressionNode {
         for (var i = 0; i <= last; ++i) {
             result = children[i].getValue(context, source);
 
-            if (i != last && OgnlOps.booleanValue(result))
+            if (i != last && OgnlOps.BooleanValue(result))
                 break;
         }
 
@@ -73,7 +73,7 @@ class ASTOr : ExpressionNode {
         for (var i = 0; i < last; ++i) {
             var v = children[i].getValue(context, target);
 
-            if (OgnlOps.booleanValue(v))
+            if (OgnlOps.BooleanValue(v))
                 return;
         }
 

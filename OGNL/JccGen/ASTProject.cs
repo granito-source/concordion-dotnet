@@ -50,9 +50,9 @@ class ASTProject : SimpleNode {
     {
         var expr = children[0];
         var answer = new ArrayList();
-        var elementsAccessor = OgnlRuntime.getElementsAccessor(OgnlRuntime.getTargetClass(source));
+        var elementsAccessor = OgnlRuntime.GetElementsAccessor(OgnlRuntime.GetTargetClass(source));
 
-        for (var e = elementsAccessor.getElements(source); e.MoveNext();) {
+        for (var e = elementsAccessor.GetElements(source); e.MoveNext();) {
             answer.Add(expr.getValue(context, e.Current));
         }
 

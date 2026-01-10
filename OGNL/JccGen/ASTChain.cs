@@ -62,14 +62,14 @@ class ASTChain : SimpleNode {
                     var propertyNode = (ASTProperty)children[i];
                     var indexType = propertyNode.getIndexedPropertyType(context, result);
 
-                    if ((indexType != OgnlRuntime.INDEXED_PROPERTY_NONE) && (children[i + 1] is ASTProperty)) {
+                    if ((indexType != OgnlRuntime.IndexedPropertyNone) && (children[i + 1] is ASTProperty)) {
                         var indexNode = (ASTProperty)children[i + 1];
 
                         if (indexNode.isIndexedAccess()) {
                             var index = indexNode.getProperty(context, result);
 
                             if (index is DynamicSubscript) {
-                                if (indexType == OgnlRuntime.INDEXED_PROPERTY_INT) {
+                                if (indexType == OgnlRuntime.IndexedPropertyInt) {
                                     var array = propertyNode.getValue(context, result);
                                     var len = ((Array)array).Length;
 
@@ -95,7 +95,7 @@ class ASTChain : SimpleNode {
                                             break;
                                     }
                                 } else {
-                                    if (indexType == OgnlRuntime.INDEXED_PROPERTY_OBJECT) {
+                                    if (indexType == OgnlRuntime.IndexedPropertyObject) {
                                         throw new OgnlException("DynamicSubscript '" + indexNode +
                                                                 "' not allowed for object indexed property '" +
                                                                 propertyNode + "'");
@@ -104,7 +104,7 @@ class ASTChain : SimpleNode {
                             }
 
                             if (!handled) {
-                                result = OgnlRuntime.getIndexedProperty(context, result,
+                                result = OgnlRuntime.GetIndexedProperty(context, result,
                                     propertyNode.getProperty(context, result).ToString(), index);
                                 handled = true;
                                 i++;
@@ -133,14 +133,14 @@ class ASTChain : SimpleNode {
                     var propertyNode = (ASTProperty)children[i];
                     var indexType = propertyNode.getIndexedPropertyType(context, target);
 
-                    if ((indexType != OgnlRuntime.INDEXED_PROPERTY_NONE) && (children[i + 1] is ASTProperty)) {
+                    if ((indexType != OgnlRuntime.IndexedPropertyNone) && (children[i + 1] is ASTProperty)) {
                         var indexNode = (ASTProperty)children[i + 1];
 
                         if (indexNode.isIndexedAccess()) {
                             var index = indexNode.getProperty(context, target);
 
                             if (index is DynamicSubscript) {
-                                if (indexType == OgnlRuntime.INDEXED_PROPERTY_INT) {
+                                if (indexType == OgnlRuntime.IndexedPropertyInt) {
                                     var array = propertyNode.getValue(context, target);
                                     var len = ((Array)array).Length;
 
@@ -165,7 +165,7 @@ class ASTChain : SimpleNode {
                                             break;
                                     }
                                 } else {
-                                    if (indexType == OgnlRuntime.INDEXED_PROPERTY_OBJECT) {
+                                    if (indexType == OgnlRuntime.IndexedPropertyObject) {
                                         throw new OgnlException("DynamicSubscript '" + indexNode +
                                                                 "' not allowed for object indexed property '" +
                                                                 propertyNode + "'");
@@ -174,7 +174,7 @@ class ASTChain : SimpleNode {
                             }
 
                             if (!handled) {
-                                OgnlRuntime.setIndexedProperty(context, target,
+                                OgnlRuntime.SetIndexedProperty(context, target,
                                     propertyNode.getProperty(context, target).ToString(), index, value);
                                 handled = true;
                                 i++;

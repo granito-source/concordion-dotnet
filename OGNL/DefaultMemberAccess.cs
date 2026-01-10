@@ -50,11 +50,11 @@ namespace OGNL;
 ///@version 15 October 1999
 ///
 public class DefaultMemberAccess : MemberAccess {
-    public bool allowPrivateAccess = false;
+    public bool AllowPrivateAccess { get; set; } = false;
 
-    public bool allowProtectedAccess = false;
+    public bool AllowProtectedAccess { get; set; } = false;
 
-    public bool allowPackageProtectedAccess = false;
+    public bool AllowPackageProtectedAccess { get; set; } = false;
 
     public DefaultMemberAccess(bool allowAllAccess) :
         this(allowAllAccess, allowAllAccess, allowAllAccess)
@@ -64,57 +64,27 @@ public class DefaultMemberAccess : MemberAccess {
     public DefaultMemberAccess(bool allowPrivateAccess,
         bool allowProtectedAccess, bool allowPackageProtectedAccess)
     {
-        this.allowPrivateAccess = allowPrivateAccess;
-        this.allowProtectedAccess = allowProtectedAccess;
-        this.allowPackageProtectedAccess = allowPackageProtectedAccess;
+        AllowPrivateAccess = allowPrivateAccess;
+        AllowProtectedAccess = allowProtectedAccess;
+        AllowPackageProtectedAccess = allowPackageProtectedAccess;
     }
 
-    public bool getAllowPrivateAccess()
-    {
-        return allowPrivateAccess;
-    }
-
-    public void setAllowPrivateAccess(bool value)
-    {
-        allowPrivateAccess = value;
-    }
-
-    public bool getAllowProtectedAccess()
-    {
-        return allowProtectedAccess;
-    }
-
-    public void setAllowProtectedAccess(bool value)
-    {
-        allowProtectedAccess = value;
-    }
-
-    public bool getAllowPackageProtectedAccess()
-    {
-        return allowPackageProtectedAccess;
-    }
-
-    public void setAllowPackageProtectedAccess(bool value)
-    {
-        allowPackageProtectedAccess = value;
-    }
-
-    public object? setup(IDictionary context, object target,
+    public object? Setup(IDictionary context, object target,
         MemberInfo member, string propertyName)
     {
         return null;
     }
 
-    public void restore(IDictionary context, object target,
+    public void Restore(IDictionary context, object target,
         MemberInfo member, string propertyName, object? state)
     {
     }
 
     ///
-    /// Returns true if the given member is accessible or can be made accessible
-    /// by this object.
+    /// Returns true if the given member is accessible or can be made
+    /// accessible by this object.
     ///
-    public virtual bool isAccessible(IDictionary context, object target,
+    public virtual bool IsAccessible(IDictionary context, object target,
         MemberInfo member, string propertyName)
     {
         return true;

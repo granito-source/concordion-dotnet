@@ -2,28 +2,13 @@ using System.Reflection;
 
 namespace OGNL;
 
-/// <summary>
-/// BeanPropertyDescriptor
-/// </summary>
 public class BeanPropertyDescriptor(string name, Type propertyType,
     MethodInfo reader, MethodInfo writer) : PropertyDescriptor {
-    public override MethodInfo getReadMethod()
-    {
-        return reader;
-    }
+    public override string Name => name;
 
-    public override string getName()
-    {
-        return name;
-    }
+    public override MethodInfo ReadMethod => reader;
 
-    public override MethodInfo getWriteMethod()
-    {
-        return writer;
-    }
+    public override MethodInfo WriteMethod => writer;
 
-    public override Type getPropertyType()
-    {
-        return propertyType;
-    }
+    public override Type PropertyType => propertyType;
 }

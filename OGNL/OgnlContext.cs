@@ -213,7 +213,7 @@ public class OgnlContext : IDictionary {
     ///</summary>
     public void recycleLastEvaluation()
     {
-        OgnlRuntime.getEvaluationPool().recycleAll(lastEvaluation);
+        OgnlRuntime.EvaluationPool.recycleAll(lastEvaluation);
         lastEvaluation = null;
     }
 
@@ -475,11 +475,11 @@ public class OgnlContext : IDictionary {
             else if (key.Equals(ROOT_CONTEXT_KEY))
                 setRoot(value);
             else if (key.Equals(TRACE_EVALUATIONS_CONTEXT_KEY))
-                setTraceEvaluations(OgnlOps.booleanValue(value));
+                setTraceEvaluations(OgnlOps.BooleanValue(value));
             else if (key.Equals(LAST_EVALUATION_CONTEXT_KEY))
                 setLastEvaluation((Evaluation?)value);
             else if (key.Equals(KEEP_LAST_EVALUATION_CONTEXT_KEY))
-                setKeepLastEvaluation(OgnlOps.booleanValue(value));
+                setKeepLastEvaluation(OgnlOps.BooleanValue(value));
             else if (key.Equals(CLASS_RESOLVER_CONTEXT_KEY))
                 setClassResolver((ClassResolver)value);
             else if (key.Equals(TYPE_CONVERTER_CONTEXT_KEY))

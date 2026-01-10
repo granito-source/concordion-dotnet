@@ -58,16 +58,16 @@ class ASTStaticMethod : SimpleNode {
     protected override object getValueBody(OgnlContext context,
         object source)
     {
-        var args = OgnlRuntime.getObjectArrayPool().create(jjtGetNumChildren());
+        var args = OgnlRuntime.ObjectArrayPool.Create(jjtGetNumChildren());
         var root = context.getRoot();
 
         try {
             for (int i = 0, icount = args.Length; i < icount; ++i)
                 args[i] = children[i].getValue(context, root);
 
-            return OgnlRuntime.callStaticMethod(context, className, methodName, args);
+            return OgnlRuntime.CallStaticMethod(context, className, methodName, args);
         } finally {
-            OgnlRuntime.getObjectArrayPool().recycle(args);
+            OgnlRuntime.ObjectArrayPool.Recycle(args);
         }
     }
 

@@ -9,7 +9,7 @@ public static class Introspector {
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public static PropertyDescriptor[] getPropertyDescriptors(Type type)
+    public static PropertyDescriptor[] GetPropertyDescriptors(Type type)
     {
         var ps = type.GetProperties();
         var pda = new PropertyDescriptor[ps.Length];

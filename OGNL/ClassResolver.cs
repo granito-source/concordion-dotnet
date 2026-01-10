@@ -29,8 +29,6 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using System.Collections;
-
 namespace OGNL;
 
 ///<summary>
@@ -49,5 +47,5 @@ public interface ClassResolver {
     /// </summary>
     /// <param name="className"></param>
     /// <returns></returns>
-    Type classForName(string className);
+    Type ClassForName(string className);
 }

@@ -47,7 +47,7 @@ class ASTNegate : ExpressionNode {
     protected override object getValueBody(OgnlContext context,
         object source)
     {
-        return OgnlOps.negate(children[0].getValue(context, source));
+        return OgnlOps.Negate(children[0].getValue(context, source));
     }
 
     public override string ToString()

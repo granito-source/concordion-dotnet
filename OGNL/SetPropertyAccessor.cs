@@ -41,7 +41,7 @@ namespace OGNL;
 ///@author Luke Blanshard (blanshlu@netscape.net)
 ///@author Drew Davidson (drew@ognl.org)
 public class SetPropertyAccessor : ObjectPropertyAccessor {
-    public override object? getProperty(OgnlContext context,
+    public override object? GetProperty(OgnlContext context,
         object target, object name)
     {
         var collection = (ICollection)target;
@@ -55,6 +55,6 @@ public class SetPropertyAccessor : ObjectPropertyAccessor {
         if (name.Equals("isEmpty"))
             return collection.Count == 0;
 
-        return base.getProperty(context, target, name);
+        return base.GetProperty(context, target, name);
     }
 }

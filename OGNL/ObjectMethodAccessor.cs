@@ -42,9 +42,9 @@ public class ObjectMethodAccessor : MethodAccessor {
     public object? callStaticMethod(OgnlContext context, Type targetClass,
         string methodName, object?[] args)
     {
-        var methods = OgnlRuntime.getMethods(targetClass, methodName, true);
+        var methods = OgnlRuntime.GetMethods(targetClass, methodName, true);
 
-        return OgnlRuntime.callAppropriateMethod(context, targetClass,
+        return OgnlRuntime.CallAppropriateMethod(context, targetClass,
             null, methodName, null, methods, args);
     }
 
@@ -52,12 +52,12 @@ public class ObjectMethodAccessor : MethodAccessor {
         string methodName, object?[] args)
     {
         var targetClass = target.GetType();
-        var methods = OgnlRuntime.getMethods(targetClass, methodName, false);
+        var methods = OgnlRuntime.GetMethods(targetClass, methodName, false);
 
         if (methods.Count == 0)
-            methods = OgnlRuntime.getMethods(targetClass, methodName, true);
+            methods = OgnlRuntime.GetMethods(targetClass, methodName, true);
 
-        return OgnlRuntime.callAppropriateMethod(context, target, target,
+        return OgnlRuntime.CallAppropriateMethod(context, target, target,
             methodName, null, methods, args);
     }
 }

@@ -55,7 +55,7 @@ class ASTBitOr : ExpressionNode {
         var result = children[0].getValue(context, source);
 
         for (var i = 1; i < children.Length; ++i)
-            result = OgnlOps.binaryOr(result,
+            result = OgnlOps.BinaryOr(result,
                 children[i].getValue(context, source));
 
         return result;

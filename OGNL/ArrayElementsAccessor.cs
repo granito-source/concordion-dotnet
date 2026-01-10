@@ -39,13 +39,13 @@ namespace OGNL;
 ///@author Luke Blanshard (blanshlu@netscape.net)
 ///@author Drew Davidson (drew@ognl.org)
 ///
-public class ArrayElementsAccessor : IElementsAccessor {
+public class ArrayElementsAccessor : ElementsAccessor {
     /// <summary>
     /// Just return Array.GetEnumerator.
     /// </summary>
     /// <param name="target">The Array</param>
     /// <returns>Enumerator</returns>
-    public IEnumerator getElements(object target)
+    public IEnumerator GetElements(object target)
     {
         return ((Array)target).GetEnumerator();
     }

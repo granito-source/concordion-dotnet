@@ -50,7 +50,7 @@ class ASTUnsignedShiftRight : ExpressionNode {
         var v1 = children[0].getValue(context, source);
         var v2 = children[1].getValue(context, source);
 
-        return OgnlOps.unsignedShiftRight(v1, v2);
+        return OgnlOps.UnsignedShiftRight(v1, v2);
     }
 
     public override string getExpressionOperator(int index)

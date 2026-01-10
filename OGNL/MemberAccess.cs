@@ -47,19 +47,19 @@ public interface MemberAccess {
     /// <summary>
     ///    Sets the member up for accessibility
     /// </summary>
-    object? setup(IDictionary context, object target, MemberInfo member,
+    object? Setup(IDictionary context, object target, MemberInfo member,
         string propertyName);
 
     /// <summary>
     /// Restores the member from the previous setup call.
     /// </summary>
-    void restore(IDictionary context, object target, MemberInfo member,
+    void Restore(IDictionary context, object target, MemberInfo member,
         string propertyName, object? state);
 
     /// <summary>
     ///  Returns true if the given member is accessible or can be made accessible
     /// by this object.
     /// </summary>
-    bool isAccessible(IDictionary context, object target,
+    bool IsAccessible(IDictionary context, object target,
         MemberInfo member, string propertyName);
 }

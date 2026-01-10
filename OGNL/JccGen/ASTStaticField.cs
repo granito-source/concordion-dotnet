@@ -59,7 +59,7 @@ class ASTStaticField : SimpleNode {
     protected override object getValueBody(OgnlContext context,
         object source)
     {
-        return OgnlRuntime.getStaticField(context, className, fieldName);
+        return OgnlRuntime.GetStaticField(context, className, fieldName);
     }
 
     public override bool isNodeConstant(OgnlContext context)
@@ -68,7 +68,7 @@ class ASTStaticField : SimpleNode {
         Exception? reason = null;
 
         try {
-            var c = OgnlRuntime.classForName(context, className);
+            var c = OgnlRuntime.ClassForName(context, className);
 
             /*
                 Check for virtual static field "class"; this cannot interfere with

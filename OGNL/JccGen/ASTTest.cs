@@ -48,7 +48,7 @@ class ASTTest : ExpressionNode {
         object source)
     {
         var test = children[0].getValue(context, source);
-        var branch = OgnlOps.booleanValue(test) ? 1 : 2;
+        var branch = OgnlOps.BooleanValue(test) ? 1 : 2;
 
         return children[branch].getValue(context, source);
     }
@@ -57,7 +57,7 @@ class ASTTest : ExpressionNode {
         object target, object value)
     {
         var test = children[0].getValue(context, target);
-        var branch = OgnlOps.booleanValue(test) ? 1 : 2;
+        var branch = OgnlOps.BooleanValue(test) ? 1 : 2;
 
         children[branch].setValue(context, target, value);
     }
