@@ -2,28 +2,8 @@
 
 namespace Concordion.Internal;
 
-public class FileSource : ISource
-{
-    #region Properties
-
-    private string BaseDirectory
-    {
-        get;
-        set;
-    }
-
-    #endregion
-
-    #region Constructors
-
-    public FileSource(string baseDirectory)
-    {
-        BaseDirectory = Path.GetFullPath(baseDirectory);
-    }
-
-    #endregion
-
-    #region ISource Members
+public class FileSource(string baseDirectory) : ISource {
+    private readonly string baseDirectory = Path.GetFullPath(baseDirectory);
 
     public TextReader CreateReader(Resource resource)
     {
@@ -35,24 +15,15 @@ public class FileSource : ISource
         return ExistingFilePath(resource) != null;
     }
 
-    #endregion
-
-    #region private methods
-
-    private string ExistingFilePath(Resource resource)
+    private string? ExistingFilePath(Resource resource)
     {
-        var filePath = Path.Combine(BaseDirectory, resource.Path);
-        if (File.Exists(filePath))
-        {
-            return filePath;
-        }
-        filePath = Path.Combine(BaseDirectory, resource.ReducedPath);
-        if (File.Exists(filePath))
-        {
-            return filePath;
-        }
-        return null;
-    }
+        var filePath = Path.Combine(baseDirectory, resource.Path);
 
-    #endregion
+        if (File.Exists(filePath))
+            return filePath;
+
+        filePath = Path.Combine(baseDirectory, resource.ReducedPath);
+
+        return File.Exists(filePath) ? filePath : null;
+    }
 }

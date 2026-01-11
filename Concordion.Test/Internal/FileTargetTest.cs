@@ -19,7 +19,7 @@ using Concordion.Api;
 using Concordion.Internal;
 using Moq;
 
-namespace Concordion.Test.Integration;
+namespace Concordion.Test.Internal;
 
 [TestFixture]
 public class FileTargetTest {

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System.Diagnostics.CodeAnalysis;
 using Concordion.Api;
 
 namespace Concordion.Test.Api;
@@ -22,264 +23,191 @@ namespace Concordion.Test.Api;
 [TestFixture]
 public class ResourceTest {
     [Test]
-    public void Test_If_Resource_Ends_Without_Slash_Can_Tell_You_Its_Parent_Successfully()
+    public void CanTellItsOwnPath()
     {
-        Assert.That(new Resource(@"\abc").Parent?.Path, Is.EqualTo(@"\"));
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(Resource("/").Path, Is.EqualTo("/"));
+            Assert.That(Resource("/dev/null").Path, Is.EqualTo("/dev/null"));
+            Assert.That(Resource("/var/run/").Path, Is.EqualTo("/var/run/"));
+        }
     }
 
     [Test]
-    public void Test_If_Resource_Ends_With_Slash_Can_Tell_You_Its_Parent_Successfully()
+    public void CanTellItsOwnName()
     {
-        Assert.That(new Resource(@"\abc\").Parent?.Path, Is.EqualTo(@"\"));
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(Resource("/").Name, Is.EqualTo(""));
+            Assert.That(Resource("/dev/null").Name, Is.EqualTo("null"));
+            Assert.That(Resource("/var/run/").Name, Is.EqualTo("run"));
+        }
     }
 
     [Test]
-    public void Test_If_Nested_Resource_Ends_Without_Slash_Can_Tell_You_Its_Parent_Successfully()
+    public void CanTellItsOwnReducedPathWhenAssemblyIsSet()
     {
-        Assert.That(new Resource(@"\abc\def").Parent?.Path,
-            Is.EqualTo(@"\abc\"));
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(Resource("/", "Fixtures").ReducedPath,
+                Is.EqualTo("/"));
+            Assert.That(Resource("/Fixtures/", "Fixtures").ReducedPath,
+                Is.EqualTo("/"));
+            Assert.That(
+                Resource("/Fixtures/file.txt", "Fixtures").ReducedPath,
+                Is.EqualTo("/file.txt"));
+            Assert.That(
+                Resource("/path/Fixtures/", "Fixtures").ReducedPath,
+                Is.EqualTo("/path/"));
+            Assert.That(
+                Resource("/path/Fixtures/file.txt", "Fixtures")
+                    .ReducedPath,
+                Is.EqualTo("/path/file.txt"));
+            Assert.That(
+                Resource("/path/Test/Fixtures/", "Test.Fixtures")
+                    .ReducedPath,
+                Is.EqualTo("/path/"));
+            Assert.That(
+                Resource("/path/Test/Fixtures/file.txt", "Test.Fixtures")
+                    .ReducedPath,
+                Is.EqualTo("/path/file.txt"));
+        }
     }
 
     [Test]
-    public void Test_If_Nested_Resource_Ends_With_Slash_Can_Tell_You_Its_Parent_Successfully()
+    public void CanTellItsParent()
     {
-        Assert.That(new Resource(@"\abc\def\").Parent?.Path,
-            Is.EqualTo(@"\abc\"));
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(ParentPathOf("/"), Is.Null);
+            Assert.That(ParentPathOf("/abc"), Is.EqualTo("/"));
+            Assert.That(ParentPathOf("/abc/def"), Is.EqualTo("/abc/"));
+            Assert.That(ParentPathOf("/abc/def/"), Is.EqualTo("/abc/"));
+            Assert.That(ParentPathOf("/abc/def/ghi"), Is.EqualTo("/abc/def/"));
+        }
     }
 
     [Test]
-    public void Test_If_Triple_Nested_Resource_Ends_Without_Slash_Can_Tell_You_Its_Parent_Successfully()
+    public void CanCalculateRelativePath()
     {
-        Assert.That(new Resource(@"\abc\def\ghi").Parent?.Path,
-            Is.EqualTo(@"\abc\def\"));
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(RelativePath("/", "/spec/x.html"),
+                Is.EqualTo("spec/x.html"));
+            Assert.That(RelativePath("/spec/x.html", "/spec/x.html"),
+                Is.EqualTo("x.html"));
+            Assert.That(RelativePath("/spec/", "/spec/blah"),
+                Is.EqualTo("blah"));
+            Assert.That(RelativePath("/a/b/c/", "/a/b/x/"),
+                Is.EqualTo("../x/"));
+            Assert.That(RelativePath("/x/b/c/", "/a/b/x/"),
+                Is.EqualTo("../../../a/b/x/"));
+            Assert.That(RelativePath("/a/b/c/file.txt", "/a/x/x/file.txt"),
+                Is.EqualTo("../../x/x/file.txt"));
+            Assert.That(RelativePath("/a/file.txt", "/file.txt"),
+                Is.EqualTo("../file.txt"));
+            Assert.That(RelativePath("/a/b/c/file.txt", "/file.txt"),
+                Is.EqualTo("../../../file.txt"));
+            Assert.That(
+                RelativePath("/spec/concordion/breadcrumbs/Breadcrumbs.html",
+                    "/image/concordion-logo.png"),
+                Is.EqualTo("../../../image/concordion-logo.png"));
+        }
     }
 
     [Test]
-    public void Test_If_Triple_Nested_Resource_Ends_With_Slash_Can_Tell_You_Its_Parent_Successfully()
+    public void CanCreateRelativeResource()
     {
-        Assert.That(new Resource(@"\abc\def\ghi\").Parent?.Path,
-            Is.EqualTo(@"\abc\def\"));
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(RelativeResource("/blah.html", "david.html"),
+                Is.EqualTo("/david.html"));
+            Assert.That(RelativeResource("/", "david.html"),
+                Is.EqualTo("/david.html"));
+            Assert.That(RelativeResource("/blah/x", "david.html"),
+                Is.EqualTo("/blah/david.html"));
+            Assert.That(RelativeResource("/blah/x/y", "david.html"),
+                Is.EqualTo("/blah/x/david.html"));
+            Assert.That(RelativeResource("/blah/x/y", "z/david.html"),
+                Is.EqualTo("/blah/x/z/david.html"));
+            Assert.That(
+                RelativeResource("/blah/docs/example.html", "../style.css"),
+                Is.EqualTo("/blah/style.css"));
+            Assert.That(
+                RelativeResource("/blah/docs/example.html", "../../style.css"),
+                Is.EqualTo("/style.css"));
+            Assert.That(
+                RelativeResource("/blah/docs/work/example.html",
+                    "../../style.css"),
+                Is.EqualTo("/blah/style.css"));
+            Assert.That(
+                RelativeResource("/blah/docs/work/example.html",
+                    "../style.css"),
+                Is.EqualTo("/blah/docs/style.css"));
+            Assert.That(
+                RelativeResource("/blah/example.html", "../style.css"),
+                Is.EqualTo("/style.css"));
+            Assert.That(RelativeResource("/blah/", "../style.css"),
+                Is.EqualTo("/style.css"));
+            Assert.That(RelativeResource("/blah", "style.css"),
+                Is.EqualTo("/style.css"));
+            Assert.That(
+                RelativeResource("/blah/docs/work/", "../css/style.css"),
+                Is.EqualTo("/blah/docs/css/style.css"));
+        }
     }
 
     [Test]
-    [Ignore("failing on Linux, needs investigation")]
-    public void Test_If_Parent_Of_Root_Is_Null()
+    public void TrimsParentDirectoriesAboveRoot()
     {
-        Assert.That(new Resource(@"\").Parent, Is.Null);
-    }
-
-    [Test]
-    public void Test_If_Paths_Point_To_File_And_Are_Identical_Can_Calculate_Relative_Path()
-    {
-        var from = new Resource(@"\spec\x.html");
-        var to = new Resource(@"\spec\x.html");
-
-        Assert.That(from.GetRelativePath(to), Is.EqualTo("x.html"));
-    }
-
-    [Test]
-    public void Test_If_Paths_Are_Not_Identical_Can_Calculate_Relative_Path()
-    {
-        var from = new Resource(@"\spec\");
-        var to = new Resource(@"\spec\blah");
-
-        Assert.That(from.GetRelativePath(to), Is.EqualTo(@"blah"));
-    }
-
-    [Test]
-    public void Test_If_Paths_Are_Not_Identical_And_End_In_Slashes_Can_Calculate_Relative_Path()
-    {
-        var from = new Resource(@"\a\b\c\");
-        var to = new Resource(@"\a\b\x\");
-
-        Assert.That(from.GetRelativePath(to), Is.EqualTo(@"..\x\"));
-    }
-
-    [Test]
-    public void Test_If_Paths_Are_Weird_And_End_In_Slashes_Can_Calculate_Relative_Path()
-    {
-        var from = new Resource(@"\x\b\c\");
-        var to = new Resource(@"\a\b\x\");
-
-        Assert.That(from.GetRelativePath(to), Is.EqualTo(@"..\..\..\a\b\x\"));
-    }
-
-    [Test]
-    public void Test_If_Paths_Share_Common_Root_And_End_In_Text_File_Can_Calculate_Relative_Path()
-    {
-        var from = new Resource(@"\a\b\c\file.txt");
-        var to = new Resource(@"\a\x\x\file.txt");
-
-        Assert.That(from.GetRelativePath(to), Is.EqualTo(@"..\..\x\x\file.txt"));
-    }
-
-    [Test]
-    public void Test_If_Path_To_Image_And_Path_To_Html_File_Can_Calculate_Relative_Path()
-    {
-        var from = new Resource(@"\spec\concordion\breadcrumbs\Breadcrumbs.html");
-        var to = new Resource(@"\image\concordion-logo.png");
-
-        Assert.That(from.GetRelativePath(to),
-            Is.EqualTo(@"..\..\..\image\concordion-logo.png"));
-    }
-
-    [Test]
-    public void Test_Can_Get_Relative_Resource_From_Another_Resource_File_Successfully()
-    {
-        var resourcePath = @"\blah.html";
-        var relativePath = @"david.html";
-
         Assert.That(
-            new Resource(resourcePath).GetRelativeResource(relativePath).Path,
-            Is.EqualTo(@"\david.html"));
+            RelativeResource("/blah/docs/example.html", "../../../style.css"),
+            Is.EqualTo("/style.css"));
     }
 
     [Test]
-    public void Test_Can_Get_Relative_Resource_With_Root_Path_From_Another_Resource_File_Successfully()
+    public void ReturnsHashCodeBasedOnPath()
     {
-        var resourcePath = @"\";
-        var relativePath = @"david.html";
+        const string path = "/some/path/file.txt";
+        var resource = Resource(path);
 
-        Assert.That(
-            new Resource(resourcePath).GetRelativeResource(relativePath).Path,
-            Is.EqualTo(@"\david.html"));
+        Assert.That(resource.GetHashCode(), Is.EqualTo(path.GetHashCode()));
     }
 
     [Test]
-    public void Test_Can_Get_Relative_Resource_With_Directory_From_Another_Resource_File_Successfully()
+    [SuppressMessage("ReSharper", "EqualExpressionComparison")]
+    [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
+    public void FulfilsEqualsContractBasedOnPath()
     {
-        var resourcePath = @"\blah\x";
-        var relativePath = @"david.html";
+        const string path = "/some/path/file.txt";
+        var resource = Resource(path);
 
-        Assert.That(
-            new Resource(resourcePath).GetRelativeResource(relativePath).Path,
-            Is.EqualTo(@"\blah\david.html"));
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(resource.Equals(resource), Is.True);
+            Assert.That(resource.Equals(path), Is.False);
+            Assert.That(resource.Equals(Resource(path)), Is.True);
+            Assert.That(resource.Equals(Resource(path, "Fixture")), Is.True);
+            Assert.That(resource.Equals(Resource("/different")), Is.False);
+            Assert.That(resource.Equals(null), Is.False);
+        }
     }
 
-    [Test]
-    public void Test_Can_Get_Relative_Resource_With_Multiple_Directory_From_Another_Resource_File_Successfully()
+    private string RelativeResource(string resourcePath, string relativePath)
     {
-        var resourcePath = @"\blah\x\y";
-        var relativePath = @"david.html";
-
-        Assert.That(
-            new Resource(resourcePath).GetRelativeResource(relativePath).Path,
-            Is.EqualTo(@"\blah\x\david.html"));
+        return Resource(resourcePath).GetRelativeResource(relativePath).Path;
     }
 
-    [Test]
-    public void Test_Can_Get_Relative_Resource_With_Multiple_Directory_From_Another_Resource_File_In_A_Directory_Successfully()
+    private string RelativePath(string from, string to)
     {
-        var resourcePath = @"\blah\x\y";
-        var relativePath = @"z\david.html";
-
-        Assert.That(
-            new Resource(resourcePath).GetRelativeResource(relativePath).Path,
-            Is.EqualTo(@"\blah\x\z\david.html"));
+        return Resource(from).GetRelativePath(Resource(to));
     }
 
-    [Test]
-    public void Test_Can_Get_Relative_Resource_With_Multiple_Directory_From_Another_Resource_File_In_A_SubDirectory_Successfully()
+    private string? ParentPathOf(string path)
     {
-        var resourcePath = @"\blah\docs\example.html";
-        var relativePath = @"..\style.css";
-
-        Assert.That(
-            new Resource(resourcePath).GetRelativeResource(relativePath).Path,
-            Is.EqualTo(@"\blah\style.css"));
+        return Resource(path).Parent?.Path;
     }
 
-    [Test]
-    public void Test_Can_Get_Relative_Resource_With_Multiple_Directory_And_File_From_Another_Resource_File_In_A_Directory_Successfully()
+    private Resource Resource(string path)
     {
-        var resourcePath = @"\blah\docs\example.html";
-        var relativePath = @"..\..\style.css";
-
-        Assert.That(
-            new Resource(resourcePath).GetRelativeResource(relativePath).Path,
-            Is.EqualTo(@"\style.css"));
+        return new Resource(path);
     }
 
-    [Test]
-    public void Test_Can_Get_Relative_Resource_With_Multiple_Directory_And_File_From_Another_Resource_File_In_A_Directory2_Successfully()
+    private Resource Resource(string path, string assemblyName)
     {
-        var resourcePath = @"\blah\docs\work\example.html";
-        var relativePath = @"..\..\style.css";
-
-        Assert.That(
-            new Resource(resourcePath).GetRelativeResource(relativePath).Path,
-            Is.EqualTo(@"\blah\style.css"));
-    }
-
-    [Test]
-    public void Test_Can_Get_Relative_Resource_With_Multiple_Directory_And_File_From_Another_Resource_File_In_A_Directory3_Successfully()
-    {
-        var resourcePath = @"\blah\docs\work\example.html";
-        var relativePath = @"..\style.css";
-
-        Assert.That(
-            new Resource(resourcePath).GetRelativeResource(relativePath).Path,
-            Is.EqualTo(@"\blah\docs\style.css"));
-    }
-
-    [Test]
-    public void Test_Can_Get_Relative_Resource_With_Multiple_Directory_And_File_From_Another_Resource_File_In_A_Directory4_Successfully()
-    {
-        var resourcePath = @"\blah\example.html";
-        var relativePath = @"..\style.css";
-
-        Assert.That(
-            new Resource(resourcePath).GetRelativeResource(relativePath).Path,
-            Is.EqualTo(@"\style.css"));
-    }
-
-    [Test]
-    public void Test_Can_Get_Relative_Resource_With_Multiple_Directory_And_File_From_Another_Resource_File_In_A_Directory5_Successfully()
-    {
-        var resourcePath = @"\blah\";
-        var relativePath = @"..\style.css";
-
-        Assert.That(
-            new Resource(resourcePath).GetRelativeResource(relativePath).Path,
-            Is.EqualTo(@"\style.css"));
-    }
-
-    [Test]
-    public void Test_Can_Get_Relative_Resource_With_Multiple_Directory_And_File_From_Another_Resource_File_In_A_Directory6_Successfully()
-    {
-        var resourcePath = @"\blah";
-        var relativePath = @"style.css";
-
-        Assert.That(
-            new Resource(resourcePath).GetRelativeResource(relativePath).Path,
-            Is.EqualTo(@"\style.css"));
-    }
-
-    [Test]
-    public void Test_Can_Get_Relative_Resource_With_Multiple_Directory_And_File_From_Another_Resource_File_In_A_Directory7_Successfully()
-    {
-        var resourcePath = @"\blah\docs\work\";
-        var relativePath = @"..\css\style.css";
-
-        Assert.That(
-            new Resource(resourcePath).GetRelativeResource(relativePath).Path,
-            Is.EqualTo(@"\blah\docs\css\style.css"));
-    }
-
-    [Test]
-    [Ignore("failing on Linux, needs investigation")]
-    public void Test_Throws_Exception_If_Relative_Path_Points_Above_Root()
-    {
-        var from = new Resource(@"\spec\concordion\breadcrumbs\Breadcrumbs.html");
-
-        Assert.Throws<Exception>(() =>
-            from.GetRelativeResource(@"..\..\..\..\concordion-logo.png"));
-    }
-
-    [Test]
-    [Ignore("failing on Linux, needs investigation")]
-    public void Test_Can_Strip_Drive_Letter_Successfully()
-    {
-        Assert.That(new Resource(@"C:\blah\").Path, Is.EqualTo(@"\blah\"));
+        return new Resource(path, assemblyName);
     }
 }
