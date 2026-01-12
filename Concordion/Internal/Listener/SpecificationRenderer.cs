@@ -27,7 +27,7 @@ public class SpecificationRenderer : ISpecificationProcessingListener
 
     #region Properties
 
-    private ITarget Target
+    private Target Target
     {
         get;
         set;
@@ -37,7 +37,7 @@ public class SpecificationRenderer : ISpecificationProcessingListener
 
     #region Constructors
 
-    public SpecificationRenderer(ITarget target)
+    public SpecificationRenderer(Target target)
     {
         Target = target;
     }

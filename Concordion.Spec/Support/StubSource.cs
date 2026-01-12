@@ -4,7 +4,7 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Spec.Support;
 
-class StubSource : ISource {
+class StubSource : Source {
     private readonly Dictionary<Resource, string> resources = new();
 
     public void AddResource(string resourceName, string content)
@@ -37,6 +37,11 @@ class StubSource : ISource {
 
         return new StreamReader(
             new MemoryStream(Encoding.UTF8.GetBytes(resources[resource])));
+    }
+
+    public Stream CreateStream(Resource resource)
+    {
+        return new MemoryStream(Encoding.UTF8.GetBytes(resources[resource]));
     }
 
     public bool CanFind(Resource resource)

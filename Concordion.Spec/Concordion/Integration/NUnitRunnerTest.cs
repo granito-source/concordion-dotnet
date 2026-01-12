@@ -1,6 +1,5 @@
 ﻿using Concordion.Runners.NUnit;
 using Concordion.Spec.Support;
-using NUnit.Framework;
 
 namespace Concordion.Spec.Concordion.Integration;
 

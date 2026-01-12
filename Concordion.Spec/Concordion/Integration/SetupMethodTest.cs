@@ -1,5 +1,4 @@
 ﻿using Concordion.Integration;
-using NUnit.Framework;
 
 namespace Concordion.Spec.Concordion.Integration;
 

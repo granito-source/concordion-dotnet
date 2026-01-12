@@ -40,13 +40,13 @@ public class ConcordionBuilder : IConcordionExtender
         set;
     }
 
-    private ISource Source
+    private Source Source
     {
         get;
         set;
     }
 
-    private ITarget Target
+    private Target Target
     {
         get;
         set;
@@ -146,7 +146,7 @@ public class ConcordionBuilder : IConcordionExtender
 
     private List<IExceptionCaughtListener> ExceptionListeners
     {
-        get; 
+        get;
         set;
     }
 
@@ -154,10 +154,10 @@ public class ConcordionBuilder : IConcordionExtender
     {
         get;
         set;
-    } 
+    }
 
     #endregion
-    
+
     public ConcordionBuilder()
     {
         BuildListeners = new List<IConcordionBuildListener>();
@@ -184,9 +184,9 @@ public class ConcordionBuilder : IConcordionExtender
         WithExceptionListener(ExceptionRenderer);
 
         // Set up the commands
-            
+
         CommandRegistry.Register("", "specification", SpecificationCommand);
-            
+
         // Wire up the command listeners
 
         var assertResultRenderer = new AssertResultRenderer();
@@ -199,14 +199,14 @@ public class ConcordionBuilder : IConcordionExtender
         WithDocumentParsingListener(new MetadataCreator());
         WithEmbeddedCss(HtmlFramework.EMBEDDED_STYLESHEET_RESOURCE);
     }
-    
-    public IConcordionExtender WithSource(ISource source) 
+
+    public IConcordionExtender WithSource(Source source)
     {
         Source = source;
         return this;
     }
 
-    public IConcordionExtender WithTarget(ITarget target) 
+    public IConcordionExtender WithTarget(Target target)
     {
         Target = target;
         return this;
@@ -225,7 +225,7 @@ public class ConcordionBuilder : IConcordionExtender
         return this;
     }
 
-    public IConcordionExtender WithEvaluatorFactory(IEvaluatorFactory evaluatorFactory) 
+    public IConcordionExtender WithEvaluatorFactory(IEvaluatorFactory evaluatorFactory)
     {
         EvaluatorFactory = evaluatorFactory;
         return this;
@@ -255,7 +255,7 @@ public class ConcordionBuilder : IConcordionExtender
         return this;
     }
 
-    private ConcordionBuilder WithApprovedCommand(string namespaceURI, string commandName, ICommand command) 
+    private ConcordionBuilder WithApprovedCommand(string namespaceURI, string commandName, ICommand command)
     {
         var exceptionCatchingDecorator = new ExceptionCatchingDecorator(new LocalTextDecorator(command));
         ExceptionListeners.ForEach(exceptionCatchingDecorator.AddExceptionListener);
@@ -300,7 +300,7 @@ public class ConcordionBuilder : IConcordionExtender
         return this;
     }
 
-    public IConcordionExtender WithCommand(string namespaceURI, string commandName, ICommand command) 
+    public IConcordionExtender WithCommand(string namespaceURI, string commandName, ICommand command)
     {
         Check.NotEmpty(namespaceURI, "Namespace URI is mandatory");
         Check.NotEmpty(commandName, "Command name is mandatory");
@@ -354,8 +354,8 @@ public class ConcordionBuilder : IConcordionExtender
         Target = new FileTarget(directory);
         return this;
     }
-        
-    public Concordion Build() 
+
+    public Concordion Build()
     {
         Check.IsFalse(m_BuiltAlready, "ConcordionBuilder currently does not support calling build() twice");
         m_BuiltAlready = true;
@@ -408,8 +408,9 @@ public class ConcordionBuilder : IConcordionExtender
         {
             var sourcePath = resource.Key;
             var targetResource = resource.Value;
-            var inputReader = Source.CreateReader(new Resource(sourcePath));
-            Target.CopyTo(targetResource, inputReader);
+            using var stream = Source.CreateStream(new Resource(sourcePath));
+
+            Target.CopyTo(targetResource, stream);
         }
     }
 

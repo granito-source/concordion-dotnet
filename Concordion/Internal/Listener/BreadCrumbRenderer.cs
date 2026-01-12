@@ -23,7 +23,7 @@ public class BreadCrumbRenderer : ISpecificationProcessingListener
 {
     #region Properties
 
-    private ISource Source
+    private Source Source
     {
         get;
         set;
@@ -33,7 +33,7 @@ public class BreadCrumbRenderer : ISpecificationProcessingListener
 
     #region Constructors
 
-    public BreadCrumbRenderer(ISource source)
+    public BreadCrumbRenderer(Source source)
     {
         Source = source;
     }
@@ -95,7 +95,7 @@ public class BreadCrumbRenderer : ISpecificationProcessingListener
     {
         XDocument document;
 
-        using (var inputStream = Source.CreateReader(indexPageResource))
+        using (var inputStream = Source.CreateStream(indexPageResource))
         {
             document = XDocument.Load(inputStream);
         }

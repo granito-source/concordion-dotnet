@@ -3,7 +3,7 @@ using Concordion.Api;
 
 namespace Concordion.Internal;
 
-public class EmbeddedResourceSource : ISource
+public class EmbeddedResourceSource : Source
 {
     #region Properties
 
@@ -48,8 +48,13 @@ public class EmbeddedResourceSource : ISource
         {
             return new StreamReader(FixtureAssembly.GetManifestResourceStream(fullyQualifiedTypeName));
         }
-            
+
         throw new InvalidOperationException(string.Format("Cannot open the resource {0}", fullyQualifiedTypeName));
+    }
+
+    public Stream CreateStream(Resource resource)
+    {
+        throw new NotImplementedException();
     }
 
     public bool CanFind(Resource resource)

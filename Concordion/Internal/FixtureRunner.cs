@@ -23,7 +23,7 @@ namespace Concordion.Internal;
 public class FixtureRunner {
     private object? m_Fixture;
 
-    private ISource? m_Source;
+    private Source? m_Source;
 
     private FileTarget? m_Target;
 

@@ -17,126 +17,48 @@
  */
 
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Text;
 using Concordion.Api;
-using Concordion.Internal.Util;
 
 namespace Concordion.Internal;
 
-public class FileTarget : ITarget {
-    #region Fields
-
+public class FileTarget(string baseDir) : Target {
     private const long FreshEnoughMillis = 2000; // 2 secs
 
-    #endregion
+    private const int BufferSize = 4096;
 
-    #region Properties
+    private string BaseDir { get; } =
+        Path.EndsInDirectorySeparator(baseDir) ? baseDir :
+            baseDir + Path.DirectorySeparatorChar;
 
-    private string BaseDirectory { get; }
-
-    #endregion
-
-    #region Constructors
-
-    public FileTarget(string? baseDirectory)
+    public void Write(Resource target, string content)
     {
-        BaseDirectory = baseDirectory.EndsWith("\\") ?
-            baseDirectory : baseDirectory + "\\";
+        MakeDirectories(target);
+
+        using var writer = CreateWriter(target);
+
+        writer.Write(content);
     }
 
-    #endregion
-
-    #region Methods
-
-    private void MakeDirectories(Resource resource)
+    public void Write(Resource target, Bitmap image)
     {
-        var path = Path.Combine(BaseDirectory,
-            StripLeadingBackslash(resource.Parent.Path));
+        MakeDirectories(target);
 
-        Directory.CreateDirectory(path);
+        // image.Save(Path.Combine(BaseDir, resource.Path), ImageFormat.Png);
     }
 
-    private static string StripLeadingBackslash(string path)
+    public void CopyTo(Resource target, Stream source)
     {
-        var strippedPath = path;
-
-        if (strippedPath.StartsWith("\\"))
-            strippedPath = strippedPath.Remove(0, 1);
-
-        return strippedPath;
-    }
-
-    private StreamWriter CreateWriter(Resource resource)
-    {
-        var path = GetTargetPath(resource);
-
-        return new StreamWriter(path, false, Encoding.UTF8);
-    }
-
-    private bool IsFreshEnough(string source)
-    {
-        var ageInMillis = DateTime.Now.Subtract(File.GetLastWriteTime(source));
-
-        return ageInMillis.TotalMilliseconds < FreshEnoughMillis;
-    }
-
-    public string GetTargetPath(Resource resource)
-    {
-        return Path.Combine(BaseDirectory, resource.Path);
-    }
-
-    #endregion
-
-    #region ITarget Members
-
-    public void Write(Resource resource, string s)
-    {
-        Check.NotNull(resource, "resource is null");
-        MakeDirectories(resource);
-        using var writer = CreateWriter(resource);
-
-        writer.Write(s);
-    }
-
-    public void Write(Resource resource, Bitmap image)
-    {
-        Check.NotNull(resource, "resource is null");
-        MakeDirectories(resource);
-        image.Save(Path.Combine(BaseDirectory, resource.Path), ImageFormat.Png);
-    }
-
-    public void CopyTo(Resource resource, string destination)
-    {
-        Check.NotNull(resource, "resource is null");
-        MakeDirectories(resource);
-
-        var source = BaseDirectory + resource.Path;
-
-        if (File.Exists(source) && IsFreshEnough(source))
-            return;
-
-        File.Copy(source, destination);
-    }
-
-    public void CopyTo(Resource resource, TextReader inputReader)
-    {
-        Check.NotNull(resource, "resource is null");
-        MakeDirectories(resource);
-
-        var outputFile = GetTargetPath(resource);
+        var outputFile = GetTargetPath(target);
 
         // Do not overwrite if a recent copy already exists
-        if (File.Exists(outputFile) && IsFreshEnough(outputFile))
+        if (IsFreshEnough(outputFile))
             return;
 
-        IOUtil.Copy(inputReader, new StreamWriter(outputFile));
-    }
+        MakeDirectories(target);
 
-    public void Delete(Resource resource)
-    {
-        Check.NotNull(resource, "resource is null");
-        File.Delete(BaseDirectory + resource.Path);
+        using var output = NewFileStream(outputFile, FileMode.Create);
+
+        source.CopyTo(output, BufferSize);
     }
 
     public string ResolvedPathFor(Resource resource)
@@ -144,5 +66,49 @@ public class FileTarget : ITarget {
         return GetTargetPath(resource);
     }
 
-    #endregion
+    protected virtual void CreateDirectory(string path)
+    {
+        Directory.CreateDirectory(path);
+    }
+
+    protected virtual DateTime GetLastWriteTime(string file)
+    {
+        return File.GetLastWriteTime(file);
+    }
+
+    protected virtual Stream NewFileStream(string file, FileMode mode)
+    {
+        return new FileStream(file, mode);
+    }
+
+    private string GetTargetPath(Resource resource)
+    {
+        return Path.Combine(BaseDir, resource.Path);
+    }
+
+    private void MakeDirectories(Resource resource)
+    {
+        var parent = resource.Parent;
+
+        if (parent == null)
+            return;
+
+        var dir = Path.TrimEndingDirectorySeparator(GetTargetPath(parent));
+
+        CreateDirectory(dir);
+    }
+
+    private StreamWriter CreateWriter(Resource resource)
+    {
+        var stream = NewFileStream(GetTargetPath(resource), FileMode.Create);
+
+        return new StreamWriter(stream);
+    }
+
+    private bool IsFreshEnough(string file)
+    {
+        var ageInMillis = DateTime.Now.Subtract(GetLastWriteTime(file));
+
+        return ageInMillis.TotalMilliseconds < FreshEnoughMillis;
+    }
 }

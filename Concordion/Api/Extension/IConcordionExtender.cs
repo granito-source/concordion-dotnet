@@ -140,7 +140,7 @@ public interface IConcordionExtender
      * @param source the new source
      * @return this
      */
-    IConcordionExtender WithSource(ISource source);
+    IConcordionExtender WithSource(Source source);
 
     /**
      * <summary>
@@ -149,7 +149,7 @@ public interface IConcordionExtender
      * <param name="target">the new target</param>
      * <returns>this - to enable fluent interfaces</returns>
      */
-    IConcordionExtender WithTarget(ITarget target);
+    IConcordionExtender WithTarget(Target target);
 
     /**
      * <summary>

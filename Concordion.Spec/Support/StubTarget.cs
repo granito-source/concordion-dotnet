@@ -4,15 +4,10 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Spec.Support;
 
-class StubTarget : ITarget {
-    private readonly Dictionary<Resource, string> writtenStrings;
+internal class StubTarget : Target {
+    private readonly Dictionary<Resource, string> writtenStrings = new();
 
-    private readonly List<Resource> m_CopiedResources = [];
-
-    public StubTarget()
-    {
-        writtenStrings = new Dictionary<Resource, string>();
-    }
+    private readonly List<Resource> copiedResources = [];
 
     public string GetWrittenString(Resource resource)
     {
@@ -23,40 +18,28 @@ class StubTarget : ITarget {
         return writtenStrings[resource];
     }
 
-    #region ITarget Members
-
-    public void Write(Resource resource, string s)
+    public void Write(Resource target, string content)
     {
-        writtenStrings.Add(resource, s);
+        writtenStrings.Add(target, content);
     }
 
-    public void Write(Resource resource, Bitmap image)
+    public void Write(Resource target, Bitmap image)
     {
         // Do nothing
     }
 
-    public void CopyTo(Resource resource, string destination)
+    public void CopyTo(Resource target, Stream source)
     {
-    }
-
-    public void CopyTo(Resource resource, TextReader inputReader)
-    {
-        m_CopiedResources.Add(resource);
+        copiedResources.Add(target);
     }
 
     public bool HasCopiedResource(Resource resource)
     {
-        return m_CopiedResources.Contains(resource);
-    }
-
-    public void Delete(Resource resource)
-    {
+        return copiedResources.Contains(resource);
     }
 
     public string ResolvedPathFor(Resource resource)
     {
         return "";
     }
-
-    #endregion
 }

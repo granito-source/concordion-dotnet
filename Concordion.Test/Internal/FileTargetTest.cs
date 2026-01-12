@@ -17,23 +17,178 @@
 
 using Concordion.Api;
 using Concordion.Internal;
-using Moq;
+using static System.Text.Encoding;
 
 namespace Concordion.Test.Internal;
 
 [TestFixture]
 public class FileTargetTest {
+    private readonly TestFileTarget target = new("/base/directory");
+
     [Test]
-    [Ignore("failing on Linux, needs investigation")]
-    public void Test_Can_Get_File_Path_Successfully()
+    public void CanWriteStringContentToFile()
     {
-        var resource = new Mock<Resource>("blah\\blah.txt");
+        const string content = "file content";
+        var resource = new Resource("path/to/file.txt");
 
-        resource.Setup(x => x.Path).Returns("blah\\blah.txt");
+        target.Write(resource, content);
 
-        var target = new FileTarget(@"c:\temp");
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(target.CreateDirectoryCalls,
+                Is.EquivalentTo(["/base/directory/path/to"]));
+            Assert.That(target.Files, Has.Count.EqualTo(1));
+        }
 
-        Assert.That(target.GetTargetPath(resource.Object),
-            Is.EqualTo(@"c:\temp\blah\blah.txt"));
+        var stream = target.Files["/base/directory/path/to/file.txt"];
+
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(stream.IsClosed, Is.True);
+            Assert.That(stream.ToArray(), Is.EqualTo(UTF8.GetBytes(content)));
+        }
+    }
+
+    [Test]
+    public void UsesResourcePathToWriteWhenItIsAbsolute()
+    {
+        const string content = "file content";
+        var resource = new Resource("/path/to/file.txt");
+
+        target.Write(resource, content);
+
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(target.CreateDirectoryCalls,
+                Is.EquivalentTo(["/path/to"]));
+            Assert.That(target.Files, Has.Count.EqualTo(1));
+        }
+
+        var stream = target.Files["/path/to/file.txt"];
+
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(stream.IsClosed, Is.True);
+            Assert.That(stream.ToArray(), Is.EqualTo(UTF8.GetBytes(content)));
+        }
+    }
+
+    [Test]
+    public void CanCopyStreamContentToFile()
+    {
+        var content = "text content"u8.ToArray();
+        var resource = new Resource("path/to/file.txt");
+
+        target.CopyTo(resource, new MemoryStream(content));
+
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(target.CreateDirectoryCalls,
+                Is.EquivalentTo(["/base/directory/path/to"]));
+            Assert.That(target.Files, Has.Count.EqualTo(1));
+        }
+
+        var stream = target.Files["/base/directory/path/to/file.txt"];
+
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(stream.IsClosed, Is.True);
+            Assert.That(stream.ToArray(), Is.EqualTo(content));
+        }
+    }
+
+    [Test]
+    public void UsesResourcePathToCopyWhenItIsAbsolute()
+    {
+        var content = "text content"u8.ToArray();
+        var resource = new Resource("/path/to/file.txt");
+
+        target.CopyTo(resource, new MemoryStream(content));
+
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(target.CreateDirectoryCalls,
+                Is.EquivalentTo(["/path/to"]));
+            Assert.That(target.Files, Has.Count.EqualTo(1));
+        }
+
+        var stream = target.Files["/path/to/file.txt"];
+
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(stream.IsClosed, Is.True);
+            Assert.That(stream.ToArray(), Is.EqualTo(content));
+        }
+    }
+
+    [Test]
+    public void SkipsCopyingWhenTargetIsFreshEnough()
+    {
+        var content = "text content"u8.ToArray();
+        var resource = new Resource("path/to/fresh.txt");
+
+        target.CopyTo(resource, new MemoryStream(content));
+
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(target.CreateDirectoryCalls, Is.Empty);
+            Assert.That(target.Files, Is.Empty);
+        }
+    }
+
+    [Test]
+    public void DoesCopyStreamWhenTargetIsStale()
+    {
+        var content = "text content"u8.ToArray();
+        var resource = new Resource("path/to/stale.txt");
+
+        target.CopyTo(resource, new MemoryStream(content));
+
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(target.CreateDirectoryCalls,
+                Is.EquivalentTo(["/base/directory/path/to"]));
+            Assert.That(target.Files, Has.Count.EqualTo(1));
+        }
+
+        var stream = target.Files["/base/directory/path/to/stale.txt"];
+
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(stream.IsClosed, Is.True);
+            Assert.That(stream.ToArray(), Is.EqualTo(content));
+        }
+    }
+
+    private class TestStream : MemoryStream {
+        public bool IsClosed;
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            IsClosed = true;
+        }
+    }
+
+    private class TestFileTarget(string baseDir) : FileTarget(baseDir) {
+        public readonly List<string> CreateDirectoryCalls = [];
+
+        public readonly Dictionary<string, TestStream> Files = new();
+
+        protected override void CreateDirectory(string path)
+        {
+            CreateDirectoryCalls.Add(path);
+        }
+
+        protected override Stream NewFileStream(string file, FileMode mode)
+        {
+            Assert.That(mode, Is.EqualTo(FileMode.Create));
+
+            var stream = new TestStream();
+
+            Files[file] = stream;
+
+            return stream;
+        }
+
+        protected override DateTime GetLastWriteTime(string file)
+        {
+            if (file.Contains("fresh"))
+                return DateTime.Now.AddMilliseconds(-1000);
+
+            return file.Contains("stale") ?
+                DateTime.Now.AddMilliseconds(-2001) :
+                DateTime.MinValue;
+        }
     }
 }

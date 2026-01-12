@@ -4,7 +4,7 @@ public class ConcordionBuildEvent
 {
     #region Properties
 
-    public ITarget Target
+    public Target Target
     {
         get;
         private set;
@@ -14,7 +14,7 @@ public class ConcordionBuildEvent
 
     #region Constructors
 
-    public ConcordionBuildEvent(ITarget target)
+    public ConcordionBuildEvent(Target target)
     {
         Target = target;
     }

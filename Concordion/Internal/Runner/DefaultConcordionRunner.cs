@@ -20,13 +20,13 @@ public class DefaultConcordionRunner : IRunner
 {
     #region Properties
 
-    public ISource Source
+    public Source Source
     {
         get;
         private set;
     }
 
-    public ITarget Target
+    public Target Target
     {
         get;
         private set;
@@ -36,7 +36,7 @@ public class DefaultConcordionRunner : IRunner
 
     #region Constructors
 
-    public DefaultConcordionRunner(ISource source, ITarget target)
+    public DefaultConcordionRunner(Source source, Target target)
     {
         Source = source;
         Target = target;

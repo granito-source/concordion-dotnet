@@ -20,8 +20,8 @@ namespace Concordion.Internal;
 public class XmlSpecificationReader : ISpecificationReader
 {
     #region Properties
-        
-    private ISource Source
+
+    private Source Source
     {
         get;
         set;
@@ -42,8 +42,8 @@ public class XmlSpecificationReader : ISpecificationReader
     #endregion
 
     #region Constructors
-        
-    public XmlSpecificationReader(ISource source, DocumentParser documentParser)
+
+    public XmlSpecificationReader(Source source, DocumentParser documentParser)
     {
         Source = source;
         DocumentParser = documentParser;
@@ -57,7 +57,7 @@ public class XmlSpecificationReader : ISpecificationReader
     {
         XDocument document;
 
-        using (var inputStream = Source.CreateReader(resource))
+        using (var inputStream = Source.CreateStream(resource))
         {
             document = XDocument.Load(inputStream);
         }

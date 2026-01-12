@@ -2,12 +2,17 @@
 
 namespace Concordion.Internal;
 
-public class FileSource(string baseDirectory) : ISource {
+public class FileSource(string baseDirectory) : Source {
     private readonly string baseDirectory = Path.GetFullPath(baseDirectory);
 
     public TextReader CreateReader(Resource resource)
     {
         return new StreamReader(new FileStream(ExistingFilePath(resource), FileMode.Open));
+    }
+
+    public Stream CreateStream(Resource resource)
+    {
+        return new FileStream(ExistingFilePath(resource), FileMode.Open);
     }
 
     public bool CanFind(Resource resource)

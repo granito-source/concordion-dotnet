@@ -12,41 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Drawing;
+
 namespace Concordion.Api;
 
 /// <summary>
 /// The destination area of all specifications (aka The BaseOutput Directory)
 /// </summary>
-public interface ITarget
-{
+public interface Target {
     /// <summary>
     /// Writes the specified resource.
     /// </summary>
-    /// <param name="resource">The resource.</param>
-    /// <param name="source">The source.</param>
-    void Write(Resource resource, string source);
+    /// <param name="target">The resource.</param>
+    /// <param name="content">The source.</param>
+    void Write(Resource target, string content);
 
     /// <summary>
     /// Writes the specified resource.
     /// </summary>
-    /// <param name="resource">The resource.</param>
+    /// <param name="target">The resource.</param>
     /// <param name="image">The image.</param>
-    void Write(Resource resource, System.Drawing.Bitmap image);
+    void Write(Resource target, Bitmap image);
 
-    /// <summary>
-    /// Copies to.
-    /// </summary>
-    /// <param name="resource">The resource.</param>
-    /// <param name="destination">The destination.</param>
-    void CopyTo(Resource resource, string destination);
-
-    void CopyTo(Resource resource, TextReader inputReader);
-
-    /// <summary>
-    /// Deletes the specified resource.
-    /// </summary>
-    /// <param name="resource">The resource.</param>
-    void Delete(Resource resource);
+    void CopyTo(Resource target, Stream source);
 
     string ResolvedPathFor(Resource resource);
 }

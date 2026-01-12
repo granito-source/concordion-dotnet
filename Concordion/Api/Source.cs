@@ -17,14 +17,9 @@ namespace Concordion.Api;
 /// <summary>
 /// Represents the source for specifications (aka The BaseInputDirectory)
 /// </summary>
-public interface ISource
+public interface Source
 {
-    /// <summary>
-    /// Creates the reader.
-    /// </summary>
-    /// <param name="resource">The resource.</param>
-    /// <returns></returns>
-    TextReader CreateReader(Resource resource);
+    Stream CreateStream(Resource resource);
 
     /// <summary>
     /// Determines whether this instance can find the specified resource.

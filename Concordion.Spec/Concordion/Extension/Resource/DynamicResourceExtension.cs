@@ -5,9 +5,7 @@ using Concordion.Api.Listener;
 namespace Concordion.Spec.Concordion.Extension.Resource;
 
 public class DynamicResourceExtension : IConcordionExtension, IConcordionBuildListener {
-    public static readonly string SourcePath = "/test/concordion/o.png";
-
-    private ITarget? m_Target;
+    private Target? target;
 
     public void AddTo(IConcordionExtender concordionExtender)
     {
@@ -16,7 +14,7 @@ public class DynamicResourceExtension : IConcordionExtension, IConcordionBuildLi
 
     public void ConcordionBuilt(ConcordionBuildEvent buildEvent)
     {
-        m_Target = buildEvent.Target;
+        target = buildEvent.Target;
 
         // NOTE: normally this would be done during specification
         // processing, e.g. in an AssertEqualsListener
@@ -25,7 +23,8 @@ public class DynamicResourceExtension : IConcordionExtension, IConcordionBuildLi
 
     private void CreateResourceInTarget()
     {
-        m_Target?.CopyTo(new Api.Resource("/resource/my.txt"),
-            new StringReader("success"));
+        using var input = new MemoryStream("success"u8.ToArray());
+
+        target?.CopyTo(new Api.Resource("/resource/my.txt"), input);
     }
 }

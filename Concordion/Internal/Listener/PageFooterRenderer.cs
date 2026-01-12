@@ -31,7 +31,7 @@ public class PageFooterRenderer : ISpecificationProcessingListener
 
     #region Properties
 
-    private ITarget Target
+    private Target Target
     {
         get;
         set;
@@ -41,7 +41,7 @@ public class PageFooterRenderer : ISpecificationProcessingListener
 
     #region Constructors
 
-    public PageFooterRenderer(ITarget target)
+    public PageFooterRenderer(Target target)
     {
         Target = target;
     }
