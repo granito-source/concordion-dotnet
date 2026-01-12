@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Reflection;
 using Concordion.Api.Extension;
 
 namespace Concordion.Internal;
@@ -21,21 +20,18 @@ namespace Concordion.Internal;
 /// Loads the configuration file for a specification assembly
 /// </summary>
 public class SpecificationConfig {
-    #region Properties
-
     /// <summary>
     /// Gets or sets the base input directory.
     /// </summary>
     /// <value>The base input directory.</value>
-    public string? BaseInputDirectory { get; set; } =
-        null; //a value of null indicates that specifications are embedded in DLL file
+    public string? BaseInputDirectory { get; set; } //a value of null indicates that specifications are embedded in DLL file
 
     /// <summary>
     /// Gets or sets the base output directory.
     /// </summary>
     /// <value>The base output directory.</value>
-    public string? BaseOutputDirectory { get; set; } =
-        Environment.GetEnvironmentVariable("TEMP");
+    public string BaseOutputDirectory { get; set; } =
+        Path.TrimEndingDirectorySeparator(Path.GetTempPath());
 
     /// <summary>
     /// Gets or sets names of extensions.
@@ -51,10 +47,6 @@ public class SpecificationConfig {
     /// <value>The file suffix of specification documents (e.g. "html").</value>
     public List<string> SpecificationFileExtensions { get; set; } = ["html"];
 
-    #endregion
-
-    #region Methods
-
     /// <summary>
     /// Loads the specified type.
     /// </summary>
@@ -62,43 +54,20 @@ public class SpecificationConfig {
     /// <returns></returns>
     public SpecificationConfig Load(Type type)
     {
-        Load(type.Assembly);
+        Load(type.Assembly.Location);
 
         return this;
     }
 
-    /// <summary>
-    /// Loads the specified assembly.
-    /// </summary>
-    /// <param name="assembly">The assembly.</param>
-    /// <returns></returns>
-    public SpecificationConfig Load(Assembly assembly)
+    private void Load(string assembly)
     {
-        var assemblyCodebase = new Uri(assembly.CodeBase);
+        var config = Path.ChangeExtension(assembly, ".config");
 
-        if (assemblyCodebase.IsFile)
-            Load(assemblyCodebase.LocalPath);
+        if (!File.Exists(config))
+            return;
 
-        return this;
+        using var input = new StreamReader(config);
+
+        new SpecificationConfigParser(this).Parse(input);
     }
-
-    /// <summary>
-    /// Loads the specified path to assembly.
-    /// </summary>
-    /// <param name="pathToAssembly">The path to assembly.</param>
-    /// <returns></returns>
-    private SpecificationConfig Load(string pathToAssembly)
-    {
-        var configFileName = Path.ChangeExtension(pathToAssembly, ".config");
-
-        if (File.Exists(configFileName)) {
-            var specificationConfigParser = new SpecificationConfigParser(this);
-
-            specificationConfigParser.Parse(new StreamReader(configFileName));
-        }
-
-        return this;
-    }
-
-    #endregion
 }

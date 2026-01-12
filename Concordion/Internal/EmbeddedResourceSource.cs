@@ -28,7 +28,8 @@ public class EmbeddedResourceSource : Source
 
     private string ConvertPathToNamespace(string path)
     {
-        var dottedPath = path.Replace('\\', '.');
+        var dottedPath = path.Replace(Path.DirectorySeparatorChar, '.');
+
         if (dottedPath[0] == '.')
         {
             dottedPath = dottedPath.Remove(0, 1);

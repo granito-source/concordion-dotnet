@@ -111,7 +111,8 @@ public class DefaultConcordionRunner : IRunner
     {
         var hrefResource = resource.GetRelativeResource(href);
         var fixturePath = hrefResource.Path;
-        var fixtureFullyQualifiedPath = fixturePath.Replace("\\", ".");
+        var fixtureFullyQualifiedPath =
+            fixturePath.Replace(Path.DirectorySeparatorChar, '.');
         var fixtureName = fixtureFullyQualifiedPath.Replace(".html", "");
 
         if (fixtureName.StartsWith("."))

@@ -33,9 +33,9 @@ public class ClassNameBasedSpecificationLocator : ISpecificationLocator
     public Resource LocateSpecification(object fixture)
     {
         var fixtureName = fixture.GetType().ToString();
-        fixtureName = fixtureName.Replace(".", "\\");
+        fixtureName = fixtureName.Replace('.', Path.DirectorySeparatorChar);
 
-        //Add Test und Fixture -> Case Sensitive 
+        //Add Test und Fixture -> Case Sensitive
         fixtureName = Regex.Replace(fixtureName, "(Fixture|Test)$", "");
         //Suffix from Concordion.Specification.config
         var path = fixtureName + "." + m_SpecificationSuffix;

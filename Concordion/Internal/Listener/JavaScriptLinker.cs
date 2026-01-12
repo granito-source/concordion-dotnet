@@ -31,7 +31,7 @@ public class JavaScriptLinker(Resource? javaScriptResource)
         var resource = processingEvent.Resource;
         var javaScriptPath = resource
             .GetRelativePath(javaScriptResource)
-            .Replace("\\", "/");
+            .Replace(Path.DirectorySeparatorChar, '/');
 
         m_Script?.SetAttributeValue(XName.Get("src"), javaScriptPath);
     }

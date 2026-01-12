@@ -47,7 +47,9 @@ public class StylesheetLinker : IDocumentParsingListener, ISpecificationProcessi
     public void BeforeProcessingSpecification(SpecificationProcessingEvent processingEvent)
     {
         var resource = processingEvent.Resource;
-        var javaScriptPath = resource.GetRelativePath(m_StylesheetResource).Replace("\\", "/");
+        var javaScriptPath = resource
+            .GetRelativePath(m_StylesheetResource)
+            .Replace(Path.DirectorySeparatorChar, '/');
 
         m_Link.SetAttributeValue(XName.Get("href"), javaScriptPath);
     }

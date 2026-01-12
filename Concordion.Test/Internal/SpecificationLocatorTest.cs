@@ -28,7 +28,7 @@ public class SpecificationLocatorTest {
         var resource = locator.LocateSpecification(this);
 
         Assert.That(resource.Path,
-            Is.EqualTo(@"Concordion\Test\Internal\SpecificationLocator.html"));
+            Is.EqualTo("Concordion/Test/Internal/SpecificationLocator.html"));
     }
 
     [Test]
@@ -39,6 +39,6 @@ public class SpecificationLocatorTest {
             .LocateSpecification(new DummyContainingTestInNameTest());
 
         Assert.That(resource.Path,
-            Is.EqualTo(@"Concordion\Test\Internal\DummyContainingTestInName.html"));
+            Is.EqualTo("Concordion/Test/Internal/DummyContainingTestInName.html"));
     }
 }
