@@ -1,6 +1,6 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Command.AssertEquals.Whitespace;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class NormalizationTest : WhitespaceTest;

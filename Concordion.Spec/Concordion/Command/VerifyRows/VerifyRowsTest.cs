@@ -1,11 +1,11 @@
 ﻿using System.Xml.Linq;
-using Concordion.Integration;
 using Concordion.Internal.Util;
+using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Command.VerifyRows;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class VerifyRowsTest {
     public ICollection<string> usernames = new List<string>();
 
@@ -53,7 +53,7 @@ public class VerifyRowsTest {
         var c = new List<string>();
 
         foreach (var s in csv.Split([',', ' '],
-            StringSplitOptions.RemoveEmptyEntries))
+                     StringSplitOptions.RemoveEmptyEntries))
             c.Add(s);
 
         return c;

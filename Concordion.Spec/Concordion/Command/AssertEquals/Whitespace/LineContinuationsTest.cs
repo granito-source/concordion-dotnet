@@ -1,10 +1,10 @@
 ﻿using System.Text.RegularExpressions;
-using Concordion.Integration;
+using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Command.AssertEquals.Whitespace;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class LineContinuationsTest {
     private readonly List<string> snippets = [];
 

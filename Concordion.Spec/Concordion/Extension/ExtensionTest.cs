@@ -1,6 +1,6 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Extension;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class ExtensionTest;

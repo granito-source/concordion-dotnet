@@ -1,33 +1,40 @@
 ﻿using System.Collections;
-using Concordion.Integration;
+using System.Diagnostics.CodeAnalysis;
+using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Command;
 
-[ConcordionTest]
+[ConcordionFixture]
+[SuppressMessage("Performance", "CA1822")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class EvaluatingCommandsTest {
-    public static string assertEqualsResult = "assertequals";
+    private const string AssertEqualsResult = "assertequals";
 
-    public static bool assertTrueResult = true;
+    private const bool AssertTrueResult = true;
 
-    public static bool assertFalseResult = false;
+    private const bool AssertFalseResult = false;
 
-    public static Exception? exceptionResult;
+    private static readonly IList<string> VerifyRowsResult = [
+        "value1",
+        "value2"
+    ];
 
-    public static readonly IList<string> verifyRowsResult = ["value1", "value2"];
+    private Exception? exceptionResult;
 
     public string ForAssertEquals()
     {
-        return assertEqualsResult;
+        return AssertEqualsResult;
     }
 
     public bool ForAssertTrue()
     {
-        return assertTrueResult;
+        return AssertTrueResult;
     }
 
     public bool ForAssertFalse()
     {
-        return assertFalseResult;
+        return AssertFalseResult;
     }
 
     public void ForException()
@@ -38,6 +45,6 @@ public class EvaluatingCommandsTest {
 
     public IEnumerable ForVerifyRows()
     {
-        return verifyRowsResult;
+        return VerifyRowsResult;
     }
 }

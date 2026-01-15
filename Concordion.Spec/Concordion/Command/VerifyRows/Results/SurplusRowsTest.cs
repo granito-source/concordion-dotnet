@@ -1,8 +1,8 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Command.VerifyRows.Results;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class SurplusRowsTest : MissingRowsTest {
     public void addPerson(string firstName, string lastName)
     {

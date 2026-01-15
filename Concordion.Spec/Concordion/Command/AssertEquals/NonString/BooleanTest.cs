@@ -1,10 +1,10 @@
 ﻿using System.Text.RegularExpressions;
-using Concordion.Integration;
+using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Command.AssertEquals.NonString;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class BooleanTest {
     public string OutcomeOfPerformingAssertEquals(string fragment,
         bool boolValue, string boolString)

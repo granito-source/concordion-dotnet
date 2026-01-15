@@ -6,18 +6,18 @@
 
     <p>
         To make it easier to navigate around the results, and to remove
-        the headache of having to maintain upward links manually, 
-        breadcrumbs are automatically added to documents. 
+        the headache of having to maintain upward links manually,
+        breadcrumbs are automatically added to documents.
         The package structure provides the breadcrumb structure.
 	</p>
 
-    <div class="example">        
-    
+    <div class="example">
+
         <h3>Example</h3>
 
         <p>
             Given the following source files:
-        </p>            
+        </p>
 
         <table concordion:execute="setUpResource(#resourceName, #content)">
             <tr>
@@ -31,7 +31,7 @@
             <tr>
                 <td><code>/spec/admin/user/User.html</code></td>
                 <td><pre>&lt;html&gt;
-&lt;title&gt;Users&lt;/title&gt;                
+&lt;title&gt;Users&lt;/title&gt;
 &lt;/html&gt;</pre></td>
             </tr>
             <tr>
@@ -43,7 +43,7 @@
         <p>
             We expect these breadcrumbs to be generated:
         </p>
-                
+
         <table concordion:execute="#breadcrumbs = getBreadcrumbsFor(#resourceName)">
             <tr>
                 <th concordion:set="#resourceName">Resource Name</th>
@@ -59,23 +59,23 @@
                 <td><code>/spec/admin/user/User.html</code></td>
                 <td nowrap="nowrap">Admin &gt;</td>
                 <td><pre>
-&lt;span class="breadcrumbs"&gt;&lt;a href="..\Admin.html"&gt;Admin&lt;/a&gt; &amp;gt;&lt;/span&gt;
+&lt;span class="breadcrumbs"&gt;&lt;a href="../Admin.html"&gt;Admin&lt;/a&gt; &amp;gt;&lt;/span&gt;
 </pre></td>
             </tr>
             <tr>
                 <td><code>/spec/admin/user/DeletingUsers.html</code></td>
                 <td nowrap="nowrap">Admin &gt; Users &gt;</td>
                 <td><pre>
-&lt;span class="breadcrumbs"&gt;&lt;a href="..\Admin.html"&gt;Admin&lt;/a&gt; &amp;gt; &lt;a href="User.html"&gt;Users&lt;/a&gt; &amp;gt;&lt;/span&gt;
+&lt;span class="breadcrumbs"&gt;&lt;a href="../Admin.html"&gt;Admin&lt;/a&gt; &amp;gt; &lt;a href="User.html"&gt;Users&lt;/a&gt; &amp;gt;&lt;/span&gt;
 </pre></td>
             </tr>
         </table>
-        
-    </div>                        
 
-        
+    </div>
+
+
     <h2>Further Details</h2>
-    
+
     <ul>
         <li><a href="DeterminingBreadcrumbs.html">How are breadcrumbs determined?</a></li>
         <li><a href="Wording.html">Where does the text of the breadcrumb come from?</a></li>

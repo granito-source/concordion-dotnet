@@ -1,10 +1,10 @@
 ﻿using System.Xml.Linq;
-using Concordion.Integration;
+using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Command.Results.Stylesheet;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class StylesheetTest {
     private XElement? outputDocument;
 

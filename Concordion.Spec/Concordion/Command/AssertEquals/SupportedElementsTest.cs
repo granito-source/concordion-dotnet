@@ -1,9 +1,9 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Command.AssertEquals;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class SupportedElementsTest {
     public string process(string snippet)
     {

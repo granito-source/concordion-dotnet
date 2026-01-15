@@ -1,6 +1,6 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Command.VerifyRows;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class VerifyRowsXHTMLNamespaceTest : VerifyRowsTest;

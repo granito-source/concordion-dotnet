@@ -18,129 +18,89 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Commands;
 
-public class RunCommand : AbstractCommand
-{
-    private List<IRunListener> m_Listeners = new List<IRunListener>();
+public class RunCommand : AbstractCommand {
+    public Dictionary<string, IRunner> Runners { get; } = new();
 
-    #region Properties
-
-    public Dictionary<string, IRunner> Runners
-    {
-        get;
-        set;
-    }
-
-    #endregion
-
-    #region Methods
+    private readonly List<IRunListener> listeners = [];
 
     public void AddRunListener(IRunListener runListener)
     {
-        m_Listeners.Add(runListener);
+        listeners.Add(runListener);
     }
 
     public void RemoveRunListener(IRunListener runListener)
     {
-        m_Listeners.Remove(runListener);
+        listeners.Remove(runListener);
     }
 
     private void AnnounceIgnored(Element element)
     {
-        foreach (var listener in m_Listeners)
-        {
+        foreach (var listener in listeners)
             listener.IgnoredReported(new RunIgnoreEvent(element));
-        }
     }
 
     private void AnnounceSuccess(Element element)
     {
-        foreach (var listener in m_Listeners)
-        {
+        foreach (var listener in listeners)
             listener.SuccessReported(new RunSuccessEvent(element));
-        }
     }
 
     private void AnnounceFailure(Element element)
     {
-        foreach (var listener in m_Listeners)
-        {
+        foreach (var listener in listeners)
             listener.FailureReported(new RunFailureEvent(element));
-        }
     }
 
-    private void AnnounceError(Exception exception, Element element, string expression)
+    private void AnnounceError(Exception exception, Element element,
+        string expression)
     {
-        foreach (var listener in m_Listeners)
-        {
-            listener.ExceptionCaught(new ExceptionCaughtEvent(exception, element, expression));
-        }
+        foreach (var listener in listeners)
+            listener.ExceptionCaught(new ExceptionCaughtEvent(exception,
+                element, expression));
     }
 
-    #endregion
-
-    #region Constructors
-
-    public RunCommand()
+    public override void Execute(CommandCall commandCall,
+        IEvaluator evaluator, IResultRecorder resultRecorder)
     {
-        Runners = new Dictionary<string, IRunner>();
-    }
-
-    #endregion
-
-    #region ICommand Members
-
-    public override void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
-    {
-        Check.IsFalse(commandCall.HasChildCommands, "Nesting commands inside a 'run' is not supported");
+        Check.IsFalse(commandCall.HasChildCommands,
+            "Nesting commands inside a 'run' is not supported");
 
         var element = commandCall.Element;
         var href = element.GetAttributeValue("href");
 
-        Check.NotNull(href, "The 'href' attribute must be set for an element containing concordion:run");
+        Check.NotNull(href,
+            "The 'href' attribute must be set for an element containing concordion:run");
 
         var runnerType = commandCall.Expression;
         var expression = element.GetAttributeValue("params", "concordion");
 
         if (expression != null)
-        {
             evaluator.Evaluate(expression);
-        }
 
-        try
-        {
-            IRunner concordionRunner;
-            Runners.TryGetValue(runnerType, out concordionRunner);
+        try {
+            Runners.TryGetValue(runnerType, out var concordionRunner);
 
             // TODO - re-check this.
-            Check.NotNull(concordionRunner, "The runner '" + runnerType + "' cannot be found. "
-                                            + "Choices: (1) Use 'concordion' as your runner (2) Ensure that the 'concordion.runner." + runnerType
-                                            + "' System property is set to a name of an IRunner implementation "
-                                            + "(3) Specify an assembly fully qualified class name of an IRunner implementation");
+            Check.NotNull(concordionRunner,
+                $"The runner '{runnerType}' cannot be found. Choices: (1) Use 'concordion' as your runner (2) Ensure that the 'concordion.runner.{runnerType}' System property is set to a name of an IRunner implementation (3) Specify an assembly fully qualified class name of an IRunner implementation");
 
-            var result = concordionRunner.Execute(evaluator.Fixture, commandCall.Resource, href).Result;
+            var result = concordionRunner.Execute(evaluator.Fixture,
+                commandCall.Resource, href).Result;
 
-            if (result == Result.Success)
-            {
+            if (result == Result.Success) {
                 resultRecorder.Success();
                 AnnounceSuccess(element);
-            }
-            else if (result == Result.Ignored)
-            {
+            } else if (result == Result.Ignored) {
                 resultRecorder.Ignore();
                 AnnounceIgnored(element);
-            }
-            else
-            {
-                resultRecorder.Failure($"test {href} failed", commandCall.Element.ToXml());
+            } else {
+                resultRecorder.Failure($"test {href} failed",
+                    commandCall.Element.ToXml());
                 AnnounceFailure(element);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             resultRecorder.Error(e);
             AnnounceError(e, element, expression);
         }
     }
-
-    #endregion
 }

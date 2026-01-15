@@ -1,5 +1,4 @@
 ﻿using Concordion.Internal;
-using NUnit.Framework;
 
 namespace Concordion.Runners.NUnit;
 
@@ -15,12 +14,9 @@ public class ExecutableSpecification {
                 "Exception in Concordion test: please see Concordion test reports");
 
         if (concordionResult.HasFailures)
-
             Assert.Fail($"""
                 Concordion Test Failures: {concordionResult.FailureCount}
                 for stack trace, please see Concordion test reports
-            """);
-        else
-            Assert.Pass();
+                """);
     }
 }

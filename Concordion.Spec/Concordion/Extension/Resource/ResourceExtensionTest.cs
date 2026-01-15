@@ -1,8 +1,8 @@
-using Concordion.Integration;
+using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Extension.Resource;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class ResourceExtensionTest : AbstractExtensionTestCase {
     public void addResourceExtension()
     {

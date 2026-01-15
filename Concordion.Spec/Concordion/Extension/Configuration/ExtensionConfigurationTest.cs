@@ -1,10 +1,10 @@
-﻿using Concordion.Integration;
-using Concordion.Internal;
+﻿using Concordion.Internal;
+using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Extension.Configuration;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class ExtensionConfigurationTest {
     private SpecificationConfig Configuration { get; } = new();
 

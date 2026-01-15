@@ -1,6 +1,6 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Results.AssertEquals.Success;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class HasClassAttributeTest : SuccessTest;

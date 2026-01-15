@@ -1,11 +1,11 @@
 ﻿using System.Text.RegularExpressions;
-using Concordion.Integration;
 using Concordion.Internal;
+using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Command.AssertEquals.Whitespace;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class WhitespaceTest {
     public string whichSnippetsSucceed(string snippet1, string snippet2,
         string evaluationResult)

@@ -1,10 +1,10 @@
 ﻿using System.Text;
-using Concordion.Integration;
+using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Results.AssertFalse.Success;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class OnSuccessTest {
     public bool isPalindrome(string s)
     {

@@ -1,8 +1,8 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 
 namespace Concordion.Spec.Examples;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class PartialMatchesTest {
     private List<string> usernamesInSystem = [];
 

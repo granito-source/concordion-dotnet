@@ -1,9 +1,9 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Results.Breadcrumbs;
 
-[ConcordionTest]
-public class BreadcrumbsTest : AbstractBreadcrumbsTest {
+[ConcordionFixture]
+public class BreadcrumbsTest : BreadcrumbsBase {
     public override void setUpResource(string resourceName, string content)
     {
         base.setUpResource(resourceName, content);

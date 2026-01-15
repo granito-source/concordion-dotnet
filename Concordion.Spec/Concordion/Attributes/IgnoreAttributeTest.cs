@@ -1,5 +1,4 @@
-﻿//using Concordion.NUnit.Addin;
-//using NUnit.Core;
+﻿// using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Attributes;
 
@@ -7,7 +6,7 @@ namespace Concordion.Spec.Concordion.Attributes;
 // additionally comment in also the attributes on the class
 // "ExampleIgnoreTest.cs". The necessary reference on NUnit.core
 // prohibits running Concordion.NET tests with TestDriven.NET
-// [ConcordionTest]
+// [ConcordionFixture]
 public class IgnoreAttributeTest {
     //public bool IsExampleTestIgnored()
     //{

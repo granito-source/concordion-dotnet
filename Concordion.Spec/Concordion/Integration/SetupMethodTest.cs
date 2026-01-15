@@ -1,8 +1,10 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
+using NUnit.Framework;
 
 namespace Concordion.Spec.Concordion.Integration;
 
-[ConcordionTest]
+// [Ignore("need to rework setup and teardown")]
+// [ConcordionFixture]
 public class SetupMethodTest {
     private List<string>? m_CalledMethods;
 

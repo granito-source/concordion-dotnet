@@ -3,7 +3,6 @@ using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Integration;
 
-[TestFixture]
 public class NUnitRunnerTest : ExecutableSpecification {
     public bool GreetingsProcessed(string fragment)
     {

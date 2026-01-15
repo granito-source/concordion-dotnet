@@ -1,12 +1,12 @@
 ﻿using Concordion.Api;
 using Concordion.Api.Listener;
-using Concordion.Integration;
 using Concordion.Internal.Listener;
+using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Results.Exception;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class ExceptionTest {
     private List<string> stackTraceElements = [];
 

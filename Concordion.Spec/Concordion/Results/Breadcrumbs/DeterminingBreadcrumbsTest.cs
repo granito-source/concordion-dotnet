@@ -1,9 +1,9 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Results.Breadcrumbs;
 
-[ConcordionTest]
-public class DeterminingBreadcrumbsTest : AbstractBreadcrumbsTest {
+[ConcordionFixture]
+public class DeterminingBreadcrumbsTest : BreadcrumbsBase {
     public string getBreadcrumbTextFor(string resourceName)
     {
         return base.getBreadcrumbsFor(resourceName).text;

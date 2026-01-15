@@ -1,8 +1,8 @@
-using Concordion.Integration;
+using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Extension.Css;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class CssExtensionTest : AbstractExtensionTestCase {
     public static readonly string SourcePath = "/test/concordion/my.css";
 

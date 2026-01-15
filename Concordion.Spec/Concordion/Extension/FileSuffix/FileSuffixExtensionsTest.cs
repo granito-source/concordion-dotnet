@@ -1,9 +1,9 @@
 using Concordion.Api.Extension;
-using Concordion.Integration;
+using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Extension.FileSuffix;
 
-[ConcordionTest]
+[ConcordionFixture]
 [Extensions(typeof(XhtmlExtension))]
 public class FileSuffixExtensionsTest {
     public bool hasBeenProcessed()

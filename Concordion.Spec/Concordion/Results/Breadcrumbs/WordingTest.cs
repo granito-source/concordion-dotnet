@@ -1,10 +1,10 @@
 ﻿using System.Text.RegularExpressions;
-using Concordion.Integration;
+using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Results.Breadcrumbs;
 
-[ConcordionTest]
-public class WordingTest : AbstractBreadcrumbsTest {
+[ConcordionFixture]
+public class WordingTest : BreadcrumbsBase {
     public string getBreadcrumbWordingFor(string resourceName, string content)
     {
         var packageName = "/" + resourceName.Replace(".html", string.Empty) + "/";

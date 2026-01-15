@@ -1,8 +1,8 @@
-using Concordion.Integration;
+using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Extension.JavaScript;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class JavaScriptExtensionTest : AbstractExtensionTestCase {
     public const string SourcePath = "/test/concordion/my.js";
 

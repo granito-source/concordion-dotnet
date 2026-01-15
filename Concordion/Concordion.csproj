@@ -24,7 +24,6 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Ninject" />
-        <PackageReference Include="NUnit" />
         <PackageReference Include="System.Drawing.Common" />
         <PackageReference Include="System.Resources.Extensions" />
     </ItemGroup>

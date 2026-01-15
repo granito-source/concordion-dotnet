@@ -1,8 +1,8 @@
-using Concordion.Integration;
+using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Extension.Command;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class CustomCommandTest : AbstractExtensionTestCase {
     public void addCommandExtension()
     {

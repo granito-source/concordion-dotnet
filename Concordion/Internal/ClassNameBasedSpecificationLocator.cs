@@ -17,30 +17,25 @@ using Concordion.Api;
 
 namespace Concordion.Internal;
 
-public class ClassNameBasedSpecificationLocator : ISpecificationLocator
-{
-    #region ISpecificationLocator Members
-
-    private string m_SpecificationSuffix;
-
-    public ClassNameBasedSpecificationLocator() : this("html") { }
-
-    public ClassNameBasedSpecificationLocator(string mSpecificationSuffix)
+public class ClassNameBasedSpecificationLocator(string suffix) :
+    ISpecificationLocator {
+    public ClassNameBasedSpecificationLocator() : this("html")
     {
-        m_SpecificationSuffix = mSpecificationSuffix;
     }
 
-    public Resource LocateSpecification(object fixture)
+    public Resource LocateSpecification(object? fixture)
     {
-        var fixtureName = fixture.GetType().ToString();
-        fixtureName = fixtureName.Replace('.', Path.DirectorySeparatorChar);
+        var fixtureName = fixture
+            .GetType()
+            .ToString()
+            .Replace('.', Path.DirectorySeparatorChar);
 
-        //Add Test und Fixture -> Case Sensitive
+        // Add Test und Fixture -> Case Sensitive
         fixtureName = Regex.Replace(fixtureName, "(Fixture|Test)$", "");
+
         //Suffix from Concordion.Specification.config
-        var path = fixtureName + "." + m_SpecificationSuffix;
+        var path = fixtureName + "." + suffix;
+
         return new Resource(path, fixture.GetType().Assembly.GetName().Name);
     }
-
-    #endregion
 }

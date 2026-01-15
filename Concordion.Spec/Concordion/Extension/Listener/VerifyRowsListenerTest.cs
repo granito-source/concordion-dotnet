@@ -1,8 +1,8 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Extension.Listener;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class VerifyRowsListenerTest : AbstractExtensionTestCase {
     public void addLoggingExtension()
     {

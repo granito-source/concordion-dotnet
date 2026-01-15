@@ -1,17 +1,15 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Results.AssertEquals.Failure;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class NestedElementsTest : FailureTest {
     public string matchOrNotMatch(string snippet, string evaluationResult)
     {
         return new TestRig()
             .WithStubbedEvaluationResult(evaluationResult)
             .ProcessFragment(snippet)
-            .HasFailures
-            ? "not match"
-            : "match";
+            .HasFailures ? "not match" : "match";
     }
 }

@@ -1,6 +1,6 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Results;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class ResultsTest;

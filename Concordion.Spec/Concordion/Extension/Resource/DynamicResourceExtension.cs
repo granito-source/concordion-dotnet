@@ -4,7 +4,8 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Spec.Concordion.Extension.Resource;
 
-public class DynamicResourceExtension : IConcordionExtension, IConcordionBuildListener {
+public class DynamicResourceExtension : IConcordionExtension,
+    IConcordionBuildListener {
     private Target? target;
 
     public void AddTo(IConcordionExtender concordionExtender)

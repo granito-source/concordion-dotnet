@@ -16,10 +16,11 @@
   -->
 
 <Solution>
+    <Project Path="Concordion/Concordion.csproj" />
+    <Project Path="Concordion.NUnit/Concordion.NUnit.csproj" />
     <Project Path="Concordion.Runners/Concordion.Runners.csproj" />
     <Project Path="Concordion.Spec/Concordion.Spec.csproj" />
     <Project Path="Concordion.Test/Concordion.Test.csproj" />
-    <Project Path="Concordion/Concordion.csproj" />
     <Project Path="OGNL.Test/OGNL.Test.csproj" />
     <Project Path="OGNL/OGNL.csproj" />
 </Solution>

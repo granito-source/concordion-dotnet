@@ -22,4 +22,12 @@
     <ItemGroup>
         <ProjectReference Include="..\Concordion\Concordion.csproj" />
     </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="NUnit" />
+    </ItemGroup>
+    <ItemGroup>
+        <Using Include="NUnit.Framework" />
+        <Using Include="NUnit.Framework.Interfaces" />
+        <Using Include="NUnit.Framework.Internal" />
+    </ItemGroup>
 </Project>

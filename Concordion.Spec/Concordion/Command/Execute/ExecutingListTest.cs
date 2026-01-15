@@ -1,9 +1,9 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Command.Execute;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class ExecutingListTest {
     private readonly Queue<ParseParameters> nodes = new();
 

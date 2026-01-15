@@ -1,20 +1,20 @@
-﻿using Concordion.Integration;
-using Concordion.Internal;
+﻿using Concordion.Internal;
+using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Configuration;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class BaseInputDirectoryTest {
-    private static bool m_InTestRun = false;
+    private static bool inTestRun = false;
 
     public bool DirectoryBasedExecuted(string baseInputDirectory)
     {
-        if (m_InTestRun)
+        if (inTestRun)
             return true;
 
-        m_InTestRun = true;
+        inTestRun = true;
 
-        //work around for bug of NUnit GUI runner
+        // work around for bug of NUnit GUI runner
         baseInputDirectory = baseInputDirectory +
             Path.DirectorySeparatorChar +
             ".." +
@@ -28,7 +28,7 @@ public class BaseInputDirectoryTest {
         var fixtureRunner = new FixtureRunner(specificationConfig);
         var testResult = fixtureRunner.Run(this);
 
-        m_InTestRun = false;
+        inTestRun = false;
 
         foreach (var failureDetail in testResult.FailureDetails) {
             Console.WriteLine(failureDetail.Message);
@@ -46,10 +46,10 @@ public class BaseInputDirectoryTest {
 
     public bool EmbeddedExecuted()
     {
-        if (m_InTestRun)
+        if (inTestRun)
             return true;
 
-        m_InTestRun = true;
+        inTestRun = true;
 
         var specificationConfig = new SpecificationConfig().Load(GetType());
 
@@ -58,7 +58,7 @@ public class BaseInputDirectoryTest {
         var fixtureRunner = new FixtureRunner(specificationConfig);
         var testResult = fixtureRunner.Run(this);
 
-        m_InTestRun = false;
+        inTestRun = false;
 
         return !testResult.HasFailures && !testResult.HasExceptions;
     }

@@ -1,9 +1,9 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Command.Echo;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class DisplayingNullsTest {
     public string render(string fragment)
     {

@@ -1,9 +1,9 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Results.AssertEquals.Failure;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class FailureTest {
     public string? acronym;
 

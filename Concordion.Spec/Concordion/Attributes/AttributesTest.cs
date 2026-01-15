@@ -1,6 +1,6 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Attributes;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class AttributesTest;

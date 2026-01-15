@@ -1,9 +1,9 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Command;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class CaseInsensitiveCommands {
     public string process(string snippet, object stubbedResult)
     {

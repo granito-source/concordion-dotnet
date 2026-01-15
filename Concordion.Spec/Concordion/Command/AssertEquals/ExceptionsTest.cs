@@ -1,9 +1,9 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Command.AssertEquals;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class ExceptionsTest {
     public object countsFromExecutingSnippetWithSimulatedEvaluationResult(
         string snippet, string simulatedResult)

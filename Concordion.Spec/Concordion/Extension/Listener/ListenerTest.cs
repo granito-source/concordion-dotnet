@@ -1,9 +1,9 @@
 ﻿using System.Globalization;
-using Concordion.Integration;
+using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Extension.Listener;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class ListenerTest : AbstractExtensionTestCase {
     public void addLoggingExtension()
     {

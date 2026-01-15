@@ -16,111 +16,61 @@ using Concordion.Api;
 
 namespace Concordion.Internal.Runner;
 
-public class DefaultConcordionRunner : IRunner
-{
-    #region Properties
-
-    public Source Source
-    {
-        get;
-        private set;
-    }
-
-    public Target Target
-    {
-        get;
-        private set;
-    }
-
-    #endregion
-
-    #region Constructors
-
-    public DefaultConcordionRunner(Source source, Target target)
-    {
-        Source = source;
-        Target = target;
-    }
-
-    #endregion
-
-    #region Methods
-
-    private bool IsOnlySuccessfulBecauseItWasExpectedToFail(Type concordionClass)
-    {
-        //return concordionClass.getAnnotation(ExpectedToFail.class) != null;
-        return true;
-    }
-
-    #endregion
-
-    #region IRunner Members
-
-    public RunnerResult Execute(object callingFixture, Resource resource, string href)
+public class DefaultConcordionRunner(Source source, Target target) : IRunner {
+    public RunnerResult Execute(object callingFixture, Resource resource,
+        string href)
     {
         var runnerFixture = GetFixture(resource, href, callingFixture);
         var concordion = new ConcordionBuilder()
-            .WithSource(Source)
-            .WithTarget(Target)
+            .WithSource(source)
+            .WithTarget(target)
             .Build();
         var results = concordion.Process(runnerFixture);
-        Result result;
-
-        if (results.HasFailures)
-        {
-            result = Result.Failure;
-        }
-        else if (results.HasExceptions)
-        {
-            result = Result.Exception;
-        }
-        else
-        {
-            result = Result.Success;
-        }
+        var result = results.HasFailures ?
+            Result.Failure :
+            results.HasExceptions ?
+                Result.Exception :
+                Result.Success;
 
         return new RunnerResult(result);
     }
 
-    private static object? GetFixture(Resource resource, string href, object callingFixture)
+    private static object? GetFixture(Resource resource, string href,
+        object callingFixture)
     {
         var fixtureName = GetNameOfFixtureToRun(resource, href);
 
         return GetFixtureToRun(callingFixture, fixtureName);
     }
 
-    private static object? GetFixtureToRun(object fixture, string fixtureName)
+    private static object? GetFixtureToRun(object fixture,
+        string fixtureName)
     {
         var fixtureAssembly = fixture.GetType().Assembly;
         var fixtureType = fixtureAssembly.GetType(fixtureName, false, true);
 
         if (fixtureType == null)
-        {
-            fixtureType = fixtureAssembly.GetType(fixtureName+"Test", false, true);
-        }
+            fixtureType = fixtureAssembly.GetType(fixtureName + "Test",
+                false, true);
 
         if (fixtureType != null)
-        {
             return Activator.CreateInstance(fixtureType);
-        }
 
         return null;
     }
 
-    private static string GetNameOfFixtureToRun(Resource resource, string href)
+    private static string GetNameOfFixtureToRun(Resource resource,
+        string href)
     {
         var hrefResource = resource.GetRelativeResource(href);
         var fixturePath = hrefResource.Path;
-        var fixtureFullyQualifiedPath =
-            fixturePath.Replace(Path.DirectorySeparatorChar, '.');
+        var fixtureFullyQualifiedPath = fixturePath
+            .Replace(Path.DirectorySeparatorChar, '.');
         var fixtureName = fixtureFullyQualifiedPath.Replace(".html", "");
 
-        if (fixtureName.StartsWith("."))
-        {
+        if (fixtureName.StartsWith('.'))
             fixtureName = fixtureName.Remove(0, 1);
-        }
+
         return fixtureName;
     }
-
-    #endregion
 }

@@ -1,6 +1,6 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Results.AssertEquals.Failure;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class EmptyFailureTest : FailureTest;

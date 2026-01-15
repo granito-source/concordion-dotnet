@@ -1,12 +1,12 @@
 ﻿using Concordion.Api;
-using Concordion.Integration;
+using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Command.Run;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class RunTest {
-    public string successOrFailure(string fragment,
+    public string SuccessOrFailure(string fragment,
         string hardCodedTestResult, string evaluationResult)
     {
         RunTestRunner.Result = (Result)Enum.Parse(typeof(Result),

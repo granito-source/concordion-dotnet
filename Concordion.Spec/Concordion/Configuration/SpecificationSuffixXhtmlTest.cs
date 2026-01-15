@@ -1,8 +1,8 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Configuration;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class SpecificationSuffixXhtmlTest {
     public bool HasBeenProcessed()
     {

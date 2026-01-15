@@ -1,8 +1,8 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 
 namespace Concordion.Spec.Concordion.Command.AssertEquals;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class NestedActionsTest {
     // TODO - implement, also unimplemented in Java version
 }

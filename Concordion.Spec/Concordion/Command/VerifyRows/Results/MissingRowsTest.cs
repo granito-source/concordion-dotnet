@@ -1,9 +1,9 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Command.VerifyRows.Results;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class MissingRowsTest {
     private readonly List<Person> people = [];
 

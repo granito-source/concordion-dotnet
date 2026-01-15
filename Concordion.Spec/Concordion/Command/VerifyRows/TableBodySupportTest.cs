@@ -1,18 +1,19 @@
-﻿using Concordion.Integration;
+﻿using Concordion.NUnit;
 using Concordion.Spec.Support;
 
 namespace Concordion.Spec.Concordion.Command.VerifyRows;
 
-[ConcordionTest]
+[ConcordionFixture]
 public class TableBodySupportTest {
     private List<string> names = [];
 
     public void setUpNames(string namesAsCSV)
     {
-        foreach (var name in namesAsCSV.Split([',', ' '],
-            StringSplitOptions.RemoveEmptyEntries)) {
+        var parsed = namesAsCSV.Split([',', ' '],
+            StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var name in parsed)
             names.Add(name);
-        }
     }
 
     public List<string> getNames()
