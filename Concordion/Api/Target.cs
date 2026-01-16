@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Drawing;
-
 namespace Concordion.Api;
 
 /// <summary>
@@ -26,13 +24,6 @@ public interface Target {
     /// <param name="target">The resource.</param>
     /// <param name="content">The source.</param>
     void Write(Resource target, string content);
-
-    /// <summary>
-    /// Writes the specified resource.
-    /// </summary>
-    /// <param name="target">The resource.</param>
-    /// <param name="image">The image.</param>
-    void Write(Resource target, Bitmap image);
 
     void CopyTo(Resource target, Stream source);
 

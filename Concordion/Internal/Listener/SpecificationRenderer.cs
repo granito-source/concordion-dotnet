@@ -17,56 +17,28 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Internal.Listener;
 
-public class SpecificationRenderer : ISpecificationProcessingListener
-{
-    #region Fields
-
-    private static readonly string XML_DECLARATION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-
-    #endregion
-
-    #region Properties
-
-    private Target Target
-    {
-        get;
-        set;
-    }
-
-    #endregion
-
-    #region Constructors
-
-    public SpecificationRenderer(Target target)
-    {
-        Target = target;
-    }
-
-    #endregion
-
-    #region ISpecificationProcessingListener Members
+public class SpecificationRenderer(Target target) : ISpecificationProcessingListener {
+    private const string XmlDeclaration = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
     public void BeforeProcessingSpecification(SpecificationProcessingEvent processingEvent)
     {
         // No action required
     }
 
-    public void AfterProcessingSpecification(SpecificationProcessingEvent processingEvent)
+    public void AfterProcessingSpecification(
+        SpecificationProcessingEvent processingEvent)
     {
-        try
-        {
-            Target.Write(processingEvent.Resource, XML_DECLARATION + processingEvent.RootElement.ToXml());
-            var description = Target.ResolvedPathFor(processingEvent.Resource);
+        try {
+            target.Write(processingEvent.Resource, XmlDeclaration +
+                processingEvent.RootElement.ToXml());
+
+            var description = target.ResolvedPathFor(processingEvent.Resource);
+
             if (!string.IsNullOrEmpty(description))
-            {
-                Console.WriteLine("Processed: {0}", description);
-            }
-        }
-        catch (Exception e)
-        {
-            throw new Exception("Failed to write results to '" + processingEvent.Resource.Path + "'.", e);
+                Console.WriteLine(@"Processed: {0}", description);
+        } catch (Exception e) {
+            throw new Exception(
+                $"Failed to write results to '{processingEvent.Resource.Path}'.", e);
         }
     }
-
-    #endregion
 }

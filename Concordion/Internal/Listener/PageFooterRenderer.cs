@@ -17,92 +17,58 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Internal.Listener;
 
-public class PageFooterRenderer : ISpecificationProcessingListener
-{
-    #region Fields
+public class PageFooterRenderer(Target target) : ISpecificationProcessingListener {
+    private const string ConcordionWebsiteUrl = "https://concordion.org/";
 
-    private static readonly string CONCORDION_WEBSITE_URL = "http://www.concordion.org";
+    private static readonly Resource TargetLogoResource =
+        new("image/concordion-logo.png");
 
-    private static readonly Resource TARGET_LOGO_RESOURCE = new("image/concordion-logo.png");
-
-    private DateTime start;
-
-    #endregion
-
-    #region Properties
-
-    private Target Target
+    public void BeforeProcessingSpecification(
+        SpecificationProcessingEvent processingEvent)
     {
-        get;
-        set;
     }
 
-    #endregion
-
-    #region Constructors
-
-    public PageFooterRenderer(Target target)
+    public void AfterProcessingSpecification(
+        SpecificationProcessingEvent processingEvent)
     {
-        Target = target;
+        try {
+            CopyLogoToTarget();
+            AddFooterToDocument(processingEvent.RootElement,
+                processingEvent.Resource);
+        } catch (Exception e) {
+            Console.WriteLine(@"Failed to write page footer. {0}", e.Message);
+        }
     }
 
-    #endregion
-
-    #region Methods
-
-    private void CopyLogoToTarget()
-    {
-        Target.Write(TARGET_LOGO_RESOURCE, HtmlFramework.SOURCE_LOGO_RESOURCE_PATH);
-    }
-
-    private void AddFooterToDocument(Element rootElement, Resource resource, long timeTaken)
+    private void AddFooterToDocument(Element rootElement, Resource resource)
     {
         var body = rootElement.GetFirstChildElement("body");
 
-        if (body != null)
-        {
-            var footer = new Element("div");
+        if (body == null)
+            return;
 
-            footer.AddStyleClass("footer");
-            footer.AppendText("Powered by ");
+        var footer = new Element("div");
 
-            var link = new Element("a");
+        footer.AddStyleClass("footer");
+        footer.AppendText("Powered by ");
 
-            link.AddAttribute("href", CONCORDION_WEBSITE_URL);
-            footer.AppendChild(link);
+        var link = new Element("a");
 
-            var img = new Element("img");
+        link.AddAttribute("href", ConcordionWebsiteUrl);
+        footer.AppendChild(link);
 
-            img.AddAttribute("src", resource.GetRelativePath(TARGET_LOGO_RESOURCE));
-            img.AddAttribute("alt", "Concordion");
-            img.AddAttribute("border", "0");
-            link.AppendChild(img);
-            body.AppendChild(footer);
-        }
+        var img = new Element("img");
+
+        img.AddAttribute("src", resource.GetRelativePath(TargetLogoResource));
+        img.AddAttribute("alt", "Concordion");
+        img.AddAttribute("border", "0");
+        link.AppendChild(img);
+        body.AppendChild(footer);
     }
 
-    #endregion
-
-    #region ISpecificationProcessingListener Members
-
-    public void BeforeProcessingSpecification(SpecificationProcessingEvent processingEvent)
+    private void CopyLogoToTarget()
     {
-        start = DateTime.Now;
+        // XXX: disable for now, will review
+        // Target.Write(TargetLogoResource, HtmlFramework.SOURCE_LOGO_RESOURCE_PATH);
     }
-
-    public void AfterProcessingSpecification(SpecificationProcessingEvent processingEvent)
-    {
-        try
-        {
-            CopyLogoToTarget();
-            var span = new TimeSpan(DateTime.Now.Ticks).Subtract(new TimeSpan(start.Ticks));
-            AddFooterToDocument(processingEvent.RootElement, processingEvent.Resource, span.Ticks);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Failed to write page footer. {0}", e.Message);
-        }
-    }
-
-    #endregion
 }
