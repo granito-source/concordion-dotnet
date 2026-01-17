@@ -18,7 +18,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
         <ProjectReference Include="..\Concordion.NUnit\Concordion.NUnit.csproj" />
-        <ProjectReference Include="..\Concordion.Runners\Concordion.Runners.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="coverlet.collector" />

@@ -1,48 +1,85 @@
 <html xmlns:concordion="http://www.concordion.org/2007/concordion">
-
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-<title>AssertEquals</title>
-<link media="all" rel="stylesheet" type="text/css" href="../../concordion.css"/>
+    <link media="all" rel="stylesheet" type="text/css" href="../../concordion.css"/>
+    <title>Test Runner</title>
 </head>
 
 <body>
-  <h3>Test Runner</h3>
-  <p>To run Concordion.NET acceptance tests without the need for addins, you have to derive your 
-  test fixtures from the Concordion.Runners.NUnit.ExecutableSpecification class 
-  and annotate it with the standard NUnit [TestFixture] 
-  annotation.</p>
-  <p>The HelloWorldTest fixture from the
-  <a href="http://concordion.org/dotnet/GettingStarted.html" target="_top">Concordion.NET 
-  tutorial</a> would need to be adapted as follows:</p>
+<h3>Test Runner</h3>
+
+<p>
+    One can run Concordion.NET acceptance tests without using NUnit
+    integration DLL just by making them into NUnit fixtures by
+    adding a <code>[TestFixture]</code> attribute and a test
+    method that uses <code>FixtureRunner</code> to run the specification.
+</p>
+
+<p>
+    The HelloWorldTest fixture from the
+    <a href="https://concordion.org/tutorial/csharp/html/" target="_top">Concordion.NET
+    tutorial</a> would need to be adapted as follows:
+</p>
+
 <pre class="code">
-<strong>using Concordion.Runners.NUnit;</strong>
+using Concordion.Internal;
+using NUnit.Framework;
 
-namespace Kickstart.Spec.HelloWorld
-{
-    <strong>[TestFixture]</strong>
-    public class HelloWorldTest <strong>: ExecutableSpecification</strong>
+namespace Kickstart.Spec.HelloWorld;
+
+[TestFixture]
+public class NUnitRunnerTest {
+    [Test]
+    public void ConcordionTest()
     {
-        private readonly Greeter m_HelloWorldGreeter = new Greeter();
+        var concordionResult = new FixtureRunner().Run(this);
 
-        public string GetGreeting()
-        {
-            return m_HelloWorldGreeter.GetMessage();
-        }
-    } 
-}</pre>
+        if (concordionResult.HasExceptions)
+            throw new Exception(
+                "Exception in Concordion test: please see Concordion test reports");
 
-<p>When you execute the following instrumentation
-<a href="http://concordion.org/dotnet/RunningTests.html" target="_top">with the NUnit runner of your choice</a>:</p>
+        if (concordionResult.HasFailures)
+            Assert.Fail($"""
+                Concordion Test Failures: {concordionResult.FailureCount}
+                for stack trace, please see Concordion test reports
+                """);
+    }
+
+    public string GetGreeting()
+    {
+        return new Greeter().GetMessage();
+    }
+}
+
+public class Greeter {
+    public string GetMessage()
+    {
+        return "Hello World!";
+    }
+}
+</pre>
+
+<p>
+    If you plan to use this approach often, it would make sense to
+    create a base class for your fixtures and inherit from it.
+</p>
+
+<p>
+    When you execute the following instrumentation
+    <a href="http://concordion.org/dotnet/RunningTests.html" target="_top">with
+    the NUnit runner of your choice</a>:
+</p>
 
 <pre class="html">&lt;html <b>xmlns:concordion=&quot;http://www.concordion.org/2007/concordion&quot;</b>&gt;
     &lt;body&gt;
         <span concordion:set="#snippet">&lt;p <b>concordion:assertEquals=&quot;GetGreeting()&quot;</b>&gt;Hello World!&lt;/p&gt;</span>
-    &lt;/body&gt; 
+    &lt;/body&gt;
 &lt;/html&gt;
 </pre>
 
-<p>Your <span concordion:assertTrue="GreetingsProcessed(#snippet)">Concordion.NET tests are now run as a &quot;usual&quot; NUnit test</span>.</p>
+<p>
+    Your <span concordion:assertTrue="GreetingsProcessed(#snippet)">Concordion.NET
+    tests are now run as a &quot;usual&quot; NUnit test</span>.
+</p>
 
 </body>
 </html>
