@@ -10,13 +10,12 @@ on:
       - reopened
   push:
     branches:
-      - main
+      - master
       - release/*
       - feature/*
   release:
     types:
       - published
-  workflow_dispatch: {}
 
 jobs:
   build:
