@@ -18,41 +18,16 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Listener;
 
-public class StylesheetEmbedder : DocumentParsingListener
-{
-    #region Properties
-
-    private string StylesheetContent
-    {
-        get;
-        set;
-    }
-
-    #endregion
-
-    #region Constructors
-
-    public StylesheetEmbedder(string stylesheetContent)
-    {
-        StylesheetContent = stylesheetContent;
-    }
-
-    #endregion
-
-    #region IDocumentParsingListener Members
-
+public class StylesheetEmbedder(string stylesheet) : DocumentParsingListener {
     public void BeforeParsing(XDocument document)
     {
-        var html = document.Root;
-        var head = html.Element("head");
+        var head = document.Root?.Element("head");
 
         Check.NotNull(head, "<head> section is missing from document");
 
         var style = new XElement("style");
 
-        style.SetValue(StylesheetContent);
+        style.SetValue(stylesheet);
         head.AddFirst(style);
     }
-
-    #endregion
 }

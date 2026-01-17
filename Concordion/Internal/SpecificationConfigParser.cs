@@ -1,61 +1,33 @@
-﻿// Copyright 2009 Jeffrey Cameron
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+﻿/*
+ * Copyright 2026 Alexei Yashkov
+ * Copyright 2009 Jeffrey Cameron
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 using System.Xml.Linq;
+using Concordion.Internal.Util;
 
 namespace Concordion.Internal;
 
-/// <summary>
-/// 
-/// </summary>
-public class SpecificationConfigParser
-{
-    #region Properties
-        
-    /// <summary>
-    /// Gets or sets the config.
-    /// </summary>
-    /// <value>The config.</value>
-    public SpecificationConfig Config
-    {
-        get;
-        private set;
-    } 
-
-    #endregion
-
-    #region Constructors
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SpecificationConfigParser"/> class.
-    /// </summary>
-    /// <param name="config">The config.</param>
-    public SpecificationConfigParser(SpecificationConfig config)
-    {
-        Config = config;
-    } 
-
-    #endregion
-
+public class SpecificationConfigParser(SpecificationConfig config) {
     /// <summary>
     /// Parses the specified reader.
     /// </summary>
     /// <param name="reader">The reader.</param>
     public void Parse(TextReader reader)
     {
-        var document = XDocument.Load(reader);
-        LoadConfiguration(document);
+        LoadConfiguration(XDocument.Load(reader));
     }
 
     /// <summary>
@@ -66,13 +38,15 @@ public class SpecificationConfigParser
     {
         var configElement = document.Root;
 
-        if (configElement.Name == "Specification")
-        {
-            LoadBaseInputDirectory(configElement);
-            LoadBaseOutputDirectory(configElement);
-            LoadConcordionExtensions(configElement);
-            LoadSpecificationSuffix(configElement);
-        }
+        Check.NotNull(configElement, "root element may not be null");
+
+        if (configElement.Name != "Specification")
+            return;
+
+        LoadBaseInputDirectory(configElement);
+        LoadBaseOutputDirectory(configElement);
+        LoadConcordionExtensions(configElement);
+        LoadSpecificationSuffixes(configElement);
     }
 
     /// <summary>
@@ -82,16 +56,10 @@ public class SpecificationConfigParser
     private void LoadBaseOutputDirectory(XElement element)
     {
         var baseOutputDirectory = element.Element("BaseOutputDirectory");
+        var pathAttribute = baseOutputDirectory?.Attribute("path");
 
-        if (baseOutputDirectory != null)
-        {
-            var pathAttribute = baseOutputDirectory.Attribute("path");
-
-            if (pathAttribute != null)
-            {
-                Config.BaseOutputDirectory = pathAttribute.Value;
-            }
-        }
+        if (pathAttribute != null)
+            config.BaseOutputDirectory = pathAttribute.Value;
     }
 
     /// <summary>
@@ -101,39 +69,44 @@ public class SpecificationConfigParser
     private void LoadBaseInputDirectory(XElement element)
     {
         var baseInputDirectory = element.Element("BaseInputDirectory");
+        var pathAttribute = baseInputDirectory?.Attribute("path");
 
-        if (baseInputDirectory != null)
-        {
-            var pathAttribute = baseInputDirectory.Attribute("path");
-
-            if (pathAttribute != null)
-            {
-                Config.BaseInputDirectory = pathAttribute.Value;
-            }
-        }
+        if (pathAttribute != null)
+            config.BaseInputDirectory = pathAttribute.Value;
     }
 
     private void LoadConcordionExtensions(XElement element)
     {
-        var concordionExtensions = element.Element("ConcordionExtensions");
-        if (concordionExtensions == null) return;
+        var extensions = element.Element("ConcordionExtensions");
 
-        Config.ConcordionExtensions = new Dictionary<string, string>();
-        foreach (var extensionDefinition in concordionExtensions.Elements("Extension"))
-        {
-            var typeName = extensionDefinition.Attribute("type").Value;
-            var assemblyName = extensionDefinition.Attribute("assembly").Value;
-            Config.ConcordionExtensions.Add(typeName, assemblyName);
+        if (extensions == null)
+            return;
+
+        config.ConcordionExtensions.Clear();
+
+        foreach (var extensionDefinition in extensions.Elements("Extension")) {
+            var type = extensionDefinition.Attribute("type");
+            var assembly = extensionDefinition.Attribute("assembly");
+
+            if (assembly != null && type != null)
+                config.ConcordionExtensions.Add(type.Value, assembly.Value);
         }
     }
 
-    private void LoadSpecificationSuffix(XElement element)
+    private void LoadSpecificationSuffixes(XElement element)
     {
-        var specificationExtensions = element.Element("SpecificationFileExtensions");
-        if (specificationExtensions == null) return;
-        var extensionNames = (from extension in specificationExtensions.Elements("FileExtension").Attributes().ToList() 
-            where extension != null select extension.Value).ToList();
-            
-        Config.SpecificationFileExtensions = extensionNames;
+        var suffixes = element.Element("SpecificationFileExtensions");
+
+        if (suffixes == null)
+            return;
+
+        config.SpecificationFileExtensions.Clear();
+
+        foreach (var suffix in suffixes.Elements("FileExtension")) {
+            var name = suffix.Attribute("name");
+
+            if (name != null)
+                config.SpecificationFileExtensions.Add(name.Value);
+        }
     }
 }

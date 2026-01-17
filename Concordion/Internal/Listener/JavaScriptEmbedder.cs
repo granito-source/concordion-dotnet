@@ -4,38 +4,17 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Listener;
 
-public class JavaScriptEmbedder : DocumentParsingListener
-{
-    #region Fields
-
-    private readonly string m_JavaScript;
-
-    #endregion
-
-    #region Constructors
-
-    public JavaScriptEmbedder(string javaScript)
-    {
-        m_JavaScript = javaScript;
-    }
-
-    #endregion
-
-    #region IDocumentParsingListener Members
-
+public class JavaScriptEmbedder(string javaScript) : DocumentParsingListener {
     public void BeforeParsing(XDocument document)
     {
-        var html = document.Root;
-        var head = html.Element("head");
+        var head = document.Root?.Element("head");
 
         Check.NotNull(head, "<head> section is missing from document");
 
         var script = new XElement("script");
 
         script.SetAttributeValue(XName.Get("type"), "text/javascript");
-        script.Add(m_JavaScript);
+        script.Add(javaScript);
         head.AddFirst(script);
     }
-
-    #endregion
 }

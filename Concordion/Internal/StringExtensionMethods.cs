@@ -16,21 +16,21 @@ using System.Text;
 
 namespace Concordion.Internal;
 
-public static class StringExtensionMethods
-{
+public static class StringExtensionMethods {
     public static string RemoveFirst(this string str, string toRemove)
     {
-        if (string.IsNullOrEmpty(toRemove)) return string.Empty;
-        var index = str.IndexOf(toRemove);
+        if (string.IsNullOrEmpty(toRemove))
+            return string.Empty;
+
+        var index = str.IndexOf(toRemove, StringComparison.Ordinal);
         var builder = new StringBuilder();
 
-        if (index != -1)
-        {
-            builder.Append(str.Substring(0, index));
-            builder.Append(str.Substring(index + toRemove.Length));
-            return builder.ToString();
-        }
+        if (index == -1)
+            return str;
 
-        return str;
+        builder.Append(str.AsSpan(0, index));
+        builder.Append(str.AsSpan(index + toRemove.Length));
+
+        return builder.ToString();
     }
 }

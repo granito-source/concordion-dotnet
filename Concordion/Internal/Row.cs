@@ -16,69 +16,31 @@ using Concordion.Api;
 
 namespace Concordion.Internal;
 
-public class Row
-{
-    #region Properties
+public class Row(Element element) {
+    public Element RowElement { get; } = element;
 
-    public Element RowElement
-    {
-        get;
-        private set;
-    }
-
-    public bool IsHeaderRow
-    {
-        get
-        {
-            foreach (var cell in RowElement.GetChildElements())
-            {
-                if (cell.IsNamed("td")) return false;
-            }
-            return true;
-        }
-    }
-
-    #endregion
-
-    #region Constructors
-
-    public Row(Element element)
-    {
-        RowElement = element;
-    }
-
-    #endregion
-
-    #region Methods
+    public bool IsHeaderRow =>
+        RowElement.GetChildElements().All(cell => !cell.IsNamed("td"));
 
     public IList<Element> GetCells()
     {
-        var cells = new List<Element>();
-        foreach (var childElement in RowElement.GetChildElements())
-        {
-            if (childElement.IsNamed("td") || childElement.IsNamed("th")) 
-            {
-                cells.Add(childElement);
-            }
-        }
-        return cells;
+        return RowElement
+            .GetChildElements()
+            .Where(child => child.IsNamed("td") || child.IsNamed("th"))
+            .ToList();
     }
 
     public int GetIndexOfCell(Element element)
     {
         var index = 0;
-        foreach (var cell in RowElement.GetChildElements())
-        {
+
+        foreach (var cell in RowElement.GetChildElements()) {
             if (element.Text == cell.Text)
-            {
                 return index;
-            }
+
             index++;
         }
 
         return -1;
     }
-
-    #endregion
-
 }

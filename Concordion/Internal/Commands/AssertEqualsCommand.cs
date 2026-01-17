@@ -43,7 +43,7 @@ public class AssertEqualsCommand(IComparer<object> comparer) : AbstractCommand {
     }
 
     private void AnnounceFailure(Element element, string expected,
-        object actual)
+        object? actual)
     {
         foreach (var assertEqualsListener in listeners)
             assertEqualsListener.FailureReported(

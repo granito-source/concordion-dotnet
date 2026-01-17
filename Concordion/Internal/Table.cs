@@ -16,129 +16,74 @@ using Concordion.Api;
 
 namespace Concordion.Internal;
 
-public class Table
-{
-    #region Properties
-        
-    private Element TableElement
-    {
-        get;
-        set;
-    }
+public class Table {
+    private Element TableElement { get; }
 
-    private long ColumnCount
-    {
-        get
-        {
-            return GetFirstHeaderRow().GetCells().Count;
-        }
-    }
+    private long ColumnCount => GetFirstHeaderRow().GetCells().Count;
 
-    #endregion
-
-    #region Constructors
-        
     public Table(Element element)
     {
         if (!element.IsNamed("table"))
-        {
-            throw new ArgumentException("This strategy can only work on table elements", "element");
-        }
+            throw new ArgumentException(
+                @"This strategy can only work on table elements",
+                nameof(element));
 
         TableElement = element;
-    } 
-
-    #endregion
-
-    #region Methods
+    }
 
     public IList<Row> GetRows()
     {
-        IList<Row> rows = new List<Row>();
-
-        foreach (var rowElement in TableElement.GetDescendantElements("tr")) 
-        {
-            rows.Add(new Row(rowElement));
-        }
-
-        return rows;
+        return TableElement
+            .GetDescendantElements("tr")
+            .Select(rowElement => new Row(rowElement))
+            .ToList();
     }
 
     public IList<Row> GetHeaderRows()
     {
-        IList<Row> headerRows = new List<Row>();
-        foreach (var row in GetRows()) 
-        {
-            if (row.IsHeaderRow) 
-            {
-                headerRows.Add(row);
-            }
-        }
-        return headerRows;
+        return GetRows()
+            .Where(row => row.IsHeaderRow)
+            .ToList();
     }
 
     public IList<Row> GetDetailRows()
     {
-        IList<Row> detailRows = new List<Row>();
-        foreach (var row in GetRows())
-        {
-            if (!row.IsHeaderRow)
-            {
-                detailRows.Add(row);
-            }
-        }
-        return detailRows;
+        return GetRows()
+            .Where(row => !row.IsHeaderRow)
+            .ToList();
     }
 
     public Row GetLastHeaderRow()
     {
         var headerRows = GetHeaderRows();
 
-        if (headerRows.Count == 0)
-        {
-            throw new Exception("Table has no header row (i.e. no row containing only <th> elements)");
-        }
-        else
-        {
-            return headerRows[headerRows.Count - 1];
-        }
+        return headerRows.Count == 0 ?
+            throw new Exception("Table has no header row (i.e. no row containing only <th> elements)") :
+            headerRows[^1];
     }
 
     public Row GetFirstHeaderRow()
     {
         var headerRows = GetHeaderRows();
 
-        if (headerRows.Count == 0)
-        {
-            throw new Exception("Table has no header row (i.e. no row containing only <th> elements)");
-        }
-        else
-        {
-            return headerRows[0];
-        }
+        return headerRows.Count == 0 ?
+            throw new Exception("Table has no header row (i.e. no row containing only <th> elements)") :
+            headerRows[0];
     }
 
     public Row AddDetailRow()
     {
         var rowElement = new Element("tr");
-
         var tbody = TableElement.GetFirstChildElement("tbody");
+
         if (tbody != null)
-        {
             tbody.AppendChild(rowElement);
-        }
         else
-        {
             TableElement.AppendChild(rowElement);
-        }
 
         for (var i = 0; i < ColumnCount; i++)
-        {
             rowElement.AppendChild(new Element("td"));
-        }
 
         return new Row(rowElement);
     }
-
-    #endregion
 }

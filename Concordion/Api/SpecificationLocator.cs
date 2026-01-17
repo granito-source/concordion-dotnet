@@ -24,5 +24,5 @@ public interface SpecificationLocator {
     /// <param name="fixture">The fixture.</param>
     /// <returns>The resource representing where the specification is
     /// located, null otherwise.</returns>
-    Resource LocateSpecification(object? fixture);
+    Resource LocateSpecification(object fixture);
 }

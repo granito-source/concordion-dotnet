@@ -1,68 +1,49 @@
-﻿using System.Reflection;
+﻿/*
+ * Copyright 2026 Alexei Yashkov
+ * Copyright 2010-2015 concordion.org
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using System.Reflection;
 using Concordion.Api;
 
 namespace Concordion.Internal;
 
-public class EmbeddedResourceSource : Source
-{
-    #region Properties
-
-    public Assembly FixtureAssembly
+public class EmbeddedResourceSource(Assembly assembly) : Source {
+    private static string ConvertPathToNamespace(string path)
     {
-        get;
-        private set;
-    }
+        var name = path.Replace(Path.DirectorySeparatorChar, '.');
 
-    #endregion
+        if (name[0] == '.')
+            name = name.Remove(0, 1);
 
-    #region Constructors
-
-    public EmbeddedResourceSource(Assembly fixtureAssembly)
-    {
-        FixtureAssembly = fixtureAssembly;
-    }
-
-    #endregion
-
-    #region Methods
-
-    private string ConvertPathToNamespace(string path)
-    {
-        var dottedPath = path.Replace(Path.DirectorySeparatorChar, '.');
-
-        if (dottedPath[0] == '.')
-        {
-            dottedPath = dottedPath.Remove(0, 1);
-        }
-        return dottedPath;
-    }
-
-    #endregion
-
-    #region ISource Members
-
-    public TextReader CreateReader(Resource resource)
-    {
-        var fullyQualifiedTypeName = ConvertPathToNamespace(resource.Path);
-
-        if (CanFind(resource))
-        {
-            return new StreamReader(FixtureAssembly.GetManifestResourceStream(fullyQualifiedTypeName));
-        }
-
-        throw new InvalidOperationException(string.Format("Cannot open the resource {0}", fullyQualifiedTypeName));
+        return name;
     }
 
     public Stream CreateStream(Resource resource)
     {
-        throw new NotImplementedException();
+        var name = ConvertPathToNamespace(resource.Path);
+
+        return assembly.GetManifestResourceStream(name) ??
+            throw new InvalidOperationException(
+                $"Cannot open the resource {name}");
     }
 
     public bool CanFind(Resource resource)
     {
-        var fullyQualifiedTypeName = ConvertPathToNamespace(resource.Path);
-        return FixtureAssembly.GetManifestResourceInfo(fullyQualifiedTypeName) != null;
-    }
+        var name = ConvertPathToNamespace(resource.Path);
 
-    #endregion
+        return assembly.GetManifestResourceInfo(name) != null;
+    }
 }

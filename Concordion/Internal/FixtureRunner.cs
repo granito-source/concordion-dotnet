@@ -45,20 +45,19 @@ public class FixtureRunner(SpecificationConfig? config = null) {
     {
         try {
             runningFixture = fixture;
-            runningConfig ??= new SpecificationConfig()
-                .Load(fixture.GetType());
+            runningConfig ??= new SpecificationConfig().Load(fixture.GetType());
             runningSource = string.IsNullOrEmpty(runningConfig.BaseInputDirectory) ?
                 new EmbeddedResourceSource(fixture.GetType().Assembly) :
                 new FileSource(runningConfig.BaseInputDirectory);
             runningTarget = new FileTarget(runningConfig.BaseOutputDirectory);
 
-            var fileExtensions = runningConfig.SpecificationFileExtensions;
+            var fileSuffixes = runningConfig.SpecificationFileExtensions;
 
-            if (fileExtensions.Count > 1)
-                return RunAllSpecifications(fileExtensions);
+            if (fileSuffixes.Count > 1)
+                return RunAllSpecifications(fileSuffixes);
 
-            if (fileExtensions.Count == 1)
-                return RunSingleSpecification(fileExtensions.First());
+            if (fileSuffixes.Count == 1)
+                return RunSingleSpecification(fileSuffixes.First());
 
             throw new InvalidOperationException(
                 $"no specification extensions defined for: {runningConfig}");
@@ -74,63 +73,61 @@ public class FixtureRunner(SpecificationConfig? config = null) {
     }
 
     private SummarizingResultRecorder RunAllSpecifications(
-        IEnumerable<string> fileExtensions)
+        IEnumerable<string> suffixes)
     {
         Debug.Assert(runningConfig != null, nameof(runningConfig) + " != null");
         Debug.Assert(runningFixture != null, nameof(runningFixture) + " != null");
         Debug.Assert(runningSource != null, nameof(runningSource) + " != null");
 
-        var testSummary = new SummarizingResultRecorder();
+        var summary = new SummarizingResultRecorder();
         var anySpecExecuted = false;
 
-        foreach (var fileExtension in fileExtensions) {
-            var specLocator = new ClassNameBasedSpecificationLocator(fileExtension);
+        foreach (var suffix in suffixes) {
+            var specLocator = new ClassNameBasedSpecificationLocator(suffix);
             var specResource = specLocator.LocateSpecification(runningFixture);
 
 
             if (!runningSource.CanFind(specResource))
                 continue;
 
-            var fixtureResult = RunSingleSpecification(fileExtension);
+            var result = RunSingleSpecification(suffix);
 
-            AddToTestResults(fixtureResult, testSummary);
+            AddToTestResults(result, summary);
             anySpecExecuted = true;
         }
 
         if (anySpecExecuted)
-            return testSummary;
+            return summary;
 
         var specPath = !string.IsNullOrEmpty(runningConfig.BaseInputDirectory) ?
             $"directory {Path.GetFullPath(runningConfig.BaseInputDirectory)}" :
             $"assembly {runningFixture.GetType().Assembly.GetName().Name}";
 
-        testSummary.Error(new AssertionErrorException(
+        summary.Error(new AssertionErrorException(
             $"no active specification found for {runningFixture.GetType().Name} in {specPath}"));
 
-        return testSummary;
+        return summary;
     }
 
-    private ResultSummary RunSingleSpecification(string fileExtension)
+    private ResultSummary RunSingleSpecification(string suffix)
     {
         Debug.Assert(runningConfig != null, nameof(runningConfig) + " != null");
         Debug.Assert(runningFixture != null, nameof(runningFixture) + " != null");
         Debug.Assert(runningSource != null, nameof(runningSource) + " != null");
         Debug.Assert(runningTarget != null, nameof(runningTarget) + " != null");
 
-        var locator = new ClassNameBasedSpecificationLocator(fileExtension);
-        var concordionExtender = new ConcordionBuilder();
-
-        concordionExtender
+        var concordionBuilder = new ConcordionBuilder()
             .WithSource(runningSource)
             .WithTarget(runningTarget)
-            .WithSpecificationLocator(locator);
+            .WithSpecificationLocator(
+                new ClassNameBasedSpecificationLocator(suffix));
 
         var extensionLoader = new ExtensionLoader(runningConfig);
 
-        extensionLoader.AddExtensions(runningFixture, concordionExtender);
+        extensionLoader.AddExtensions(runningFixture, concordionBuilder);
 
-        var concordion = concordionExtender.Build();
-
-        return concordion.Process(runningFixture);
+        return concordionBuilder
+            .Build()
+            .Process(runningFixture);
     }
 }

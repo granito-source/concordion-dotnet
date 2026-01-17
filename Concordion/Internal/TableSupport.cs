@@ -14,46 +14,21 @@
 
 namespace Concordion.Internal;
 
-public class TableSupport
-{
-    #region Properties
+public class TableSupport {
+    public long ColumnCount => GetLastHeaderRow().GetCells().Count;
 
-    private CommandCall TableCommandCall
-    {
-        get;
-        set;
-    }
+    private CommandCall TableCommandCall { get; }
 
-    private Table Table
-    {
-        get;
-        set;
-    }
+    private Table Table { get; }
 
-    private IDictionary<int, CommandCall> CommandCallByColumn
-    {
-        get;
-        set;
-    }
-
-    public long ColumnCount
-    {
-        get
-        {
-            return GetLastHeaderRow().GetCells().Count;
-        }
-    }
-        
-    #endregion
-        
-    #region Constructors
+    private IDictionary<int, CommandCall> CommandCallByColumn { get; }
 
     public TableSupport(CommandCall tableCommandCall)
     {
         if (!tableCommandCall.Element.IsNamed("table"))
-        {
-            throw new ArgumentException("This strategy can only work on table elements", "tableCommandCall");
-        }
+            throw new ArgumentException(
+                @"This strategy can only work on table elements",
+                nameof(tableCommandCall));
 
         TableCommandCall = tableCommandCall;
         Table = new Table(tableCommandCall.Element);
@@ -62,21 +37,18 @@ public class TableSupport
         PopulateCommandCallByColumnMap();
     }
 
-    #endregion
-
-    #region Methods
-
     private void PopulateCommandCallByColumnMap()
     {
         var headerRow = GetLastHeaderRow();
         var children = TableCommandCall.Children;
-        foreach (var childCall in children)
-        {
+
+        foreach (var childCall in children) {
             var columnIndex = headerRow.GetIndexOfCell(childCall.Element);
+
             if (columnIndex == -1)
-            {
-                throw new Exception("Commands must be placed on <th> elements when using 'execute' or 'verifyRows' commands on a <table>.");
-            }
+                throw new Exception(
+                    "Commands must be placed on <th> elements when using 'execute' or 'verifyRows' commands on a <table>.");
+
             CommandCallByColumn.Add(columnIndex, childCall);
         }
     }
@@ -84,13 +56,11 @@ public class TableSupport
     public void CopyCommandCallsTo(Row detailRow)
     {
         var columnIndex = 0;
-        foreach (var cell in detailRow.GetCells()) 
-        {
-            CommandCall cellCall;
-            if (CommandCallByColumn.TryGetValue(columnIndex, out cellCall)) 
-            {
+
+        foreach (var cell in detailRow.GetCells()) {
+            if (CommandCallByColumn.TryGetValue(columnIndex, out var cellCall))
                 cellCall.Element = cell;
-            }
+
             columnIndex++;
         }
     }
@@ -109,7 +79,4 @@ public class TableSupport
     {
         return Table.GetLastHeaderRow();
     }
-
-    #endregion
-
 }

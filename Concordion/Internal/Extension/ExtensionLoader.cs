@@ -1,11 +1,29 @@
-﻿using System.Reflection;
+﻿/*
+ * Copyright 2026 Alexei Yashkov
+ * Copyright 2010-2015 concordion.org
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using System.Reflection;
 using Concordion.Api.Extension;
 using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Extension;
 
 public class ExtensionLoader(SpecificationConfig configuration) {
-    private static List<ConcordionExtension> GetExtensionsForFixture(object fixture)
+    private static List<ConcordionExtension> GetExtensionsForFixture(
+        object fixture)
     {
         var extensions = new List<ConcordionExtension>();
 
@@ -45,7 +63,8 @@ public class ExtensionLoader(SpecificationConfig configuration) {
         Type fixtureType)
     {
         return HasAttribute(fixtureType, typeof(ExtensionsAttribute), false) ? (
-            from attribute in fixtureType.GetCustomAttributes(typeof(ExtensionsAttribute), false)
+            from attribute in fixtureType
+                .GetCustomAttributes(typeof(ExtensionsAttribute), false)
             select attribute as ExtensionsAttribute
             into extensionsAttribute
             from extensionType in extensionsAttribute.ExtensionTypes
@@ -71,8 +90,11 @@ public class ExtensionLoader(SpecificationConfig configuration) {
     }
 
     private static ConcordionExtension CreateConcordionExtension(
-        string assembly, string type)
+        string? assembly, string? type)
     {
+        Check.NotNull(assembly, "assembly may not be null");
+        Check.NotNull(type, "type may not be null");
+
         var instance = Activator.CreateInstance(assembly, type)?.Unwrap();
 
         return instance switch {

@@ -16,27 +16,22 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal;
 
-public class BrowserStyleWhitespaceComparer : IComparer<object>
-{
-    private readonly ChainOfExpectationCheckers m_ChainOfCheckers = new ChainOfExpectationCheckers();
+public class BrowserStyleWhitespaceComparer : IComparer<object> {
+    private readonly ChainOfExpectationCheckers chainOfCheckers = new();
 
     public BrowserStyleWhitespaceComparer()
     {
-        m_ChainOfCheckers.Add(new DefaultExpectationChecker());
-        m_ChainOfCheckers.Add(new BooleanExpectationChecker());
+        chainOfCheckers.Add(new DefaultExpectationChecker());
+        chainOfCheckers.Add(new BooleanExpectationChecker());
     }
 
-    #region IComparer<object> Members
-
-    public int Compare(object x, object y)
+    public int Compare(object? x, object? y)
     {
         Check.IsTrue(y is string, "This comparator only supports comparisons with String objects");
-        if (m_ChainOfCheckers.IsAcceptable((string) y, x))
-        {
+
+        if (chainOfCheckers.IsAcceptable((string)y!, x))
             return 0;
-        }
+
         return -1;
     }
-
-    #endregion
 }

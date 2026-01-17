@@ -16,14 +16,9 @@ using Concordion.Api;
 
 namespace Concordion.Internal;
 
-public class SimpleEvaluatorFactory : EvaluatorFactory
-{
-    #region IEvaluatorFactory Members
-
+public class SimpleEvaluatorFactory : EvaluatorFactory {
     public Evaluator CreateEvaluator(object fixture)
     {
         return new SimpleEvaluator(fixture);
     }
-
-    #endregion
 }

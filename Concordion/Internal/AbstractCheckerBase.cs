@@ -2,46 +2,46 @@ using System.Text.RegularExpressions;
 
 namespace Concordion.Internal;
 
-public abstract class AbstractCheckerBase : ExpectationChecker
-{
-    public abstract bool IsAcceptable(string expected, object actual);
+public abstract partial class AbstractCheckerBase : ExpectationChecker {
+    [GeneratedRegex(@"[\s]+")]
+    private static partial Regex SpaceRegex();
 
-    public string Normalize(object obj)
+    [GeneratedRegex(@" _")]
+    private static partial Regex LineContinuation();
+
+    [GeneratedRegex(@"\r?\n")]
+    private static partial Regex NewLineRegex();
+
+    public abstract bool IsAcceptable(string expected, object? actual);
+
+    public string Normalize(object? obj)
     {
         var s = ConvertObjectToString(obj);
+
         s = ProcessLineContinuations(s);
         s = StripNewlines(s);
         s = ReplaceMultipleWhitespaceWithOneSpace(s);
+
         return s.Trim();
     }
 
     private string ReplaceMultipleWhitespaceWithOneSpace(string s)
     {
-        var lineContinuationRegex = new Regex(@"[\s]+");
-        var processedString = lineContinuationRegex.Replace(s, " ");
-
-        return processedString;
+        return SpaceRegex().Replace(s, " ");
     }
 
     private string ProcessLineContinuations(string s)
     {
-        var lineContinuationRegex = new Regex(@" _");
-        var processedString = lineContinuationRegex.Replace(s, string.Empty);
-
-        return processedString;
+        return LineContinuation().Replace(s, string.Empty);
     }
 
     private string StripNewlines(string s)
     {
-        var newlineRegex = new Regex(@"\r?\n");
-        var processedString = newlineRegex.Replace(s, string.Empty);
-
-        return processedString;
+        return NewLineRegex().Replace(s, string.Empty);
     }
 
-    private string ConvertObjectToString(object obj)
+    private string ConvertObjectToString(object? obj)
     {
-        if (obj == null) return "(null)";
-        else return obj.ToString();
+        return obj?.ToString() ?? "(null)";
     }
 }

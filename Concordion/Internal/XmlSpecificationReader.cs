@@ -17,53 +17,12 @@ using Concordion.Api;
 
 namespace Concordion.Internal;
 
-public class XmlSpecificationReader : SpecificationReader
-{
-    #region Properties
-
-    private Source Source
-    {
-        get;
-        set;
-    }
-
-    private DocumentParser DocumentParser
-    {
-        get;
-        set;
-    }
-
-    private Uri Location
-    {
-        get;
-        set;
-    }
-
-    #endregion
-
-    #region Constructors
-
-    public XmlSpecificationReader(Source source, DocumentParser documentParser)
-    {
-        Source = source;
-        DocumentParser = documentParser;
-    }
-
-    #endregion
-
-    #region ISpecificationReader Members
-
+public class XmlSpecificationReader(Source source, DocumentParser parser) :
+    SpecificationReader {
     public Specification ReadSpecification(Resource resource)
     {
-        XDocument document;
+        using var inputStream = source.CreateStream(resource);
 
-        using (var inputStream = Source.CreateStream(resource))
-        {
-            document = XDocument.Load(inputStream);
-        }
-
-        return DocumentParser.Parse(document, resource);
+        return parser.Parse(XDocument.Load(inputStream), resource);
     }
-
-    #endregion
 }

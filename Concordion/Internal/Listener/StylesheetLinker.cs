@@ -5,58 +5,40 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Listener;
 
-public class StylesheetLinker : DocumentParsingListener, SpecificationProcessingListener
-{
-    #region Fields
-
-    private readonly Resource m_StylesheetResource;
-
-    private XElement m_Link;
-
-    #endregion
-
-    #region Constructors
-
-    public StylesheetLinker(Resource stylesheetResource)
-    {
-        m_StylesheetResource = stylesheetResource;
-    }
-
-    #endregion
-
-    #region IDocumentParsingListener Memmbers
+public class StylesheetLinker(Resource stylesheet) :
+    DocumentParsingListener, SpecificationProcessingListener {
+    private XElement? link;
 
     public void BeforeParsing(XDocument document)
     {
         var html = document.Root;
+
+        Check.NotNull(html, "root element may not be null");
+
         var head = html.Element("head");
 
         Check.NotNull(head, "<head> section is missing from document");
 
-        m_Link = new XElement("link");
-        m_Link.SetAttributeValue(XName.Get("type"), "text/css");
-        m_Link.SetAttributeValue(XName.Get("rel"), "stylesheet");
-        m_Link.SetValue("");
-        head.Add(m_Link);
+        link = new XElement("link");
+        link.SetAttributeValue(XName.Get("type"), "text/css");
+        link.SetAttributeValue(XName.Get("rel"), "stylesheet");
+        link.SetValue("");
+        head.Add(link);
     }
 
-    #endregion
-
-    #region ISpecificationProcessingListener Members
-
-    public void BeforeProcessingSpecification(SpecificationProcessingEvent processingEvent)
+    public void BeforeProcessingSpecification(
+        SpecificationProcessingEvent processingEvent)
     {
         var resource = processingEvent.Resource;
         var javaScriptPath = resource
-            .GetRelativePath(m_StylesheetResource)
+            .GetRelativePath(stylesheet)
             .Replace(Path.DirectorySeparatorChar, '/');
 
-        m_Link.SetAttributeValue(XName.Get("href"), javaScriptPath);
+        link?.SetAttributeValue(XName.Get("href"), javaScriptPath);
     }
 
-    public void AfterProcessingSpecification(SpecificationProcessingEvent processingEvent)
+    public void AfterProcessingSpecification(
+        SpecificationProcessingEvent processingEvent)
     {
     }
-
-    #endregion
 }

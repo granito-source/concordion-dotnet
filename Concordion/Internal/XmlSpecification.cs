@@ -16,21 +16,9 @@ using Concordion.Api;
 
 namespace Concordion.Internal;
 
-public class XmlSpecification : Specification
-{
-    private CommandCall RootCommandNode
-    {
-        get;
-        set;
-    }
-
-    public XmlSpecification(CommandCall rootCommandNode)
-    {
-        RootCommandNode = rootCommandNode;
-    }
-
+public class XmlSpecification(CommandCall root) : Specification {
     public void Process(Evaluator evaluator, ResultRecorder resultRecorder)
     {
-        RootCommandNode.Execute(evaluator, resultRecorder);
+        root.Execute(evaluator, resultRecorder);
     }
 }

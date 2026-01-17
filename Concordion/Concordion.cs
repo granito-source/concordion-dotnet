@@ -20,13 +20,13 @@ namespace Concordion;
 public class Concordion(SpecificationLocator specificationLocator,
     SpecificationReader specificationReader,
     EvaluatorFactory evaluatorFactory) {
-    public ResultSummary Process(object? fixture)
+    public ResultSummary Process(object fixture)
     {
         return Process(specificationLocator.LocateSpecification(fixture),
             fixture);
     }
 
-    public ResultSummary Process(Resource resource, object? fixture)
+    public ResultSummary Process(Resource resource, object fixture)
     {
         var specification = specificationReader.ReadSpecification(resource);
         var resultRecorder = new SummarizingResultRecorder();

@@ -5,7 +5,7 @@ namespace Concordion.Internal;
 public class BooleanExpectationChecker : AbstractCheckerBase
 {
 
-    public override bool IsAcceptable(string expected, object actual)
+    public override bool IsAcceptable(string expected, object? actual)
     {
         if (!(actual is bool)) return false;
 

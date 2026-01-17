@@ -16,67 +16,46 @@ using System.Reflection;
 
 namespace Concordion.Internal;
 
-/// <summary>
-/// 
-/// </summary>
-public class ConcordionConfig
-{
-    #region Properties
-        
+public class ConcordionConfig {
     /// <summary>
     /// Gets or sets the runners.
     /// </summary>
     /// <value>The runners.</value>
-    public Dictionary<string, Api.Runner> Runners
-    {
-        get;
-        set;
-    } 
-
-    #endregion
-
-    #region Constructors
+    public Dictionary<string, Api.Runner> Runners { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConcordionConfig"/> class.
+    /// Initializes a new instance of the <see cref="ConcordionConfig"/>
+    /// class.
     /// </summary>
     public ConcordionConfig()
     {
         Runners = new Dictionary<string, Api.Runner>();
-    } 
+    }
 
-    #endregion
-
-    #region Methods
-        
     /// <summary>
     /// Loads this instance.
     /// </summary>
     public ConcordionConfig Load()
     {
-        var assemblyCodebase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
-        if (assemblyCodebase.IsFile)
-        {
-            var defaultConfigFile = Path.GetDirectoryName(assemblyCodebase.LocalPath) + @"\Concordion.config";
+        var assemblyCodebase = new Uri(Assembly.GetExecutingAssembly().Location);
+
+        if (assemblyCodebase.IsFile) {
+            var defaultConfigFile =
+                Path.GetDirectoryName(assemblyCodebase.LocalPath) +
+                @"\Concordion.config";
+
             Load(defaultConfigFile);
         }
+
         return this;
     }
 
-    /// <summary>
-    /// Loads the specified config path.
-    /// </summary>
-    /// <param name="configPath">The config path.</param>
-    public ConcordionConfig Load(string configPath)
+    private void Load(string configPath)
     {
-        if (File.Exists(configPath))
-        {
-            var parser = new ConcordionConfigParser(this);
-            parser.Parse(new StreamReader(configPath));
-        }
+        if (!File.Exists(configPath))
+            return;
 
-        return this;
-    } 
-
-    #endregion
+        new ConcordionConfigParser(this)
+            .Parse(new StreamReader(configPath));
+    }
 }

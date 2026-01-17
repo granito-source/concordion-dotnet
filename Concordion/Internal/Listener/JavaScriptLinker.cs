@@ -5,21 +5,20 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Listener;
 
-public class JavaScriptLinker(Resource? javaScriptResource)
-    : DocumentParsingListener, SpecificationProcessingListener {
-    private XElement? m_Script;
+public class JavaScriptLinker(Resource? javaScriptResource) :
+    DocumentParsingListener, SpecificationProcessingListener {
+    private XElement? script;
 
     public void BeforeParsing(XDocument document)
     {
-        var html = document.Root;
-        var head = html?.Element("head");
+        var head = document.Root?.Element("head");
 
         Check.NotNull(head, "<head> section is missing from document");
 
-        m_Script = new XElement("script");
-        m_Script.SetAttributeValue(XName.Get("type"), "text/javascript");
-        m_Script.SetValue("");
-        head!.Add(m_Script);
+        script = new XElement("script");
+        script.SetAttributeValue(XName.Get("type"), "text/javascript");
+        script.SetValue("");
+        head.Add(script);
     }
 
     public void BeforeProcessingSpecification(
@@ -33,7 +32,7 @@ public class JavaScriptLinker(Resource? javaScriptResource)
             .GetRelativePath(javaScriptResource)
             .Replace(Path.DirectorySeparatorChar, '/');
 
-        m_Script?.SetAttributeValue(XName.Get("src"), javaScriptPath);
+        script?.SetAttributeValue(XName.Get("src"), javaScriptPath);
     }
 
     public void AfterProcessingSpecification(

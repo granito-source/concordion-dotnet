@@ -2,72 +2,44 @@
 
 namespace Concordion.Internal;
 
-public class ListSupport
-{
-    #region Properties
-
-    private CommandCall ListCommandCall
-    {
-        get;
-        set;
-    }
-
-    #endregion
-
-    #region Constructors
+public class ListSupport {
+    private readonly CommandCall listCommandCall;
 
     public ListSupport(CommandCall listCommandCall)
     {
-        if (!(listCommandCall.Element.IsNamed("ol") || listCommandCall.Element.IsNamed("ul")))
-        {
-            throw new ArgumentException("This strategy can only work on list elements", "listCommandCall");
-        }
+        if (!(listCommandCall.Element.IsNamed("ol") ||
+                listCommandCall.Element.IsNamed("ul")))
+            throw new ArgumentException(
+                @"This strategy can only work on list elements",
+                nameof(listCommandCall));
 
-        ListCommandCall = listCommandCall;
+        this.listCommandCall = listCommandCall;
     }
-
-    #endregion
-
-    #region Methods
 
     public IList<Element> GetListItemElements()
     {
-        var listItemElements = new List<Element>();
-        foreach (var itemElement in ListCommandCall.Element.GetDescendantElements("li"))
-        {
-            listItemElements.Add(itemElement);
-        }
-        return listItemElements;
+        return listCommandCall
+            .Element
+            .GetDescendantElements("li")
+            .ToList();
     }
 
-    public List<Element> GetListElements()
+    public IList<Element> GetListElements()
     {
-        var listElements = new List<Element>();
-        foreach (var listElement in ListCommandCall.Element.GetDescendantElements("ul"))
-        {
-            listElements.Add(listElement);
-        }
-        foreach (var listElement in ListCommandCall.Element.GetDescendantElements("ol"))
-        {
-            listElements.Add(listElement);
-        }
-        return listElements;
+        return listCommandCall
+            .Element
+            .GetDescendantElements("ul")
+            .Concat(listCommandCall.Element.GetDescendantElements("ol"))
+            .ToList();
     }
 
-    public List<ListEntry> GetListEntries()
+    public IList<ListEntry> GetListEntries()
     {
-        var listEntries = new List<ListEntry>();
-        foreach (var listElement in ListCommandCall.Element.GetChildElements())
-        {
-            if (listElement.IsNamed("li") ||
-                listElement.IsNamed("ul") ||
-                listElement.IsNamed("ol"))
-            {
-                listEntries.Add(new ListEntry(listElement));
-            }
-        }
-        return listEntries;
+        return (
+            from listElement in listCommandCall.Element.GetChildElements()
+            where listElement.IsNamed("li") || listElement.IsNamed("ul") ||
+                listElement.IsNamed("ol")
+            select new ListEntry(listElement)
+        ).ToList();
     }
-
-    #endregion
 }

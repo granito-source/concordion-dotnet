@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-using System.Drawing;
 using Concordion.Api;
 
 namespace Concordion.Internal;
@@ -25,10 +24,6 @@ public class FileTarget(string baseDir) : Target {
     private const long FreshEnoughMillis = 2000; // 2 secs
 
     private const int BufferSize = 4096;
-
-    private string BaseDir { get; } =
-        Path.EndsInDirectorySeparator(baseDir) ? baseDir :
-            baseDir + Path.DirectorySeparatorChar;
 
     public void Write(Resource target, string content)
     {
@@ -39,18 +34,10 @@ public class FileTarget(string baseDir) : Target {
         writer.Write(content);
     }
 
-    public void Write(Resource target, Bitmap image)
-    {
-        MakeDirectories(target);
-
-        // image.Save(Path.Combine(BaseDir, resource.Path), ImageFormat.Png);
-    }
-
     public void CopyTo(Resource target, Stream source)
     {
         var outputFile = GetTargetPath(target);
 
-        // Do not overwrite if a recent copy already exists
         if (IsFreshEnough(outputFile))
             return;
 
@@ -83,7 +70,7 @@ public class FileTarget(string baseDir) : Target {
 
     private string GetTargetPath(Resource resource)
     {
-        return Path.Combine(BaseDir, resource.Path);
+        return Path.Combine(baseDir, resource.Path);
     }
 
     private void MakeDirectories(Resource resource)
