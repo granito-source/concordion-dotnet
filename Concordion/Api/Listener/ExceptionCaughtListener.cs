@@ -1,6 +1,5 @@
 ﻿namespace Concordion.Api.Listener;
 
-public interface IExceptionCaughtListener
-{
+public interface ExceptionCaughtListener {
     void ExceptionCaught(ExceptionCaughtEvent caughtEvent);
 }

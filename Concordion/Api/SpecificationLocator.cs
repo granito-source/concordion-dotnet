@@ -15,14 +15,14 @@
 namespace Concordion.Api;
 
 /// <summary>
-/// Parses and stores the specification at the location identified by the Resource object
+/// Locates specifications for concordion
 /// </summary>
-public interface ISpecificationReader
-{
+public interface SpecificationLocator {
     /// <summary>
-    /// Reads the specification.
+    /// Locates the specification.
     /// </summary>
-    /// <param name="resource">The resource.</param>
-    /// <returns></returns>
-    ISpecification ReadSpecification(Resource resource);
+    /// <param name="fixture">The fixture.</param>
+    /// <returns>The resource representing where the specification is
+    /// located, null otherwise.</returns>
+    Resource LocateSpecification(object? fixture);
 }

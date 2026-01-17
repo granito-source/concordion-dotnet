@@ -12,16 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Concordion.Internal.Util;
+namespace Concordion.Internal;
 
-public static class TypeInfo
-{
-    public static T CreateInstance<T>(string assemblyQualifiedName)
-    {
-        var concordionRunnerType = Type.GetType(assemblyQualifiedName);
-        var concordionRunnerTypeConstructor = concordionRunnerType.GetConstructor(Type.EmptyTypes);
-        var concordionRunnerImpl = (T)concordionRunnerTypeConstructor.Invoke(null);
-
-        return concordionRunnerImpl;
-    }
+internal interface ExpressionValidator {
+    void Validate(string expression);
 }

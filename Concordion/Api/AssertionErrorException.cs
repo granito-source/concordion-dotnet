@@ -3,10 +3,7 @@
 /// <summary>
 /// Signals that a specification has not processed properly
 /// </summary>
-public class AssertionErrorException : Exception
-{
-    #region Constructors
-
+public class AssertionErrorException : Exception {
     /// <summary>
     /// Initializes a new instance of the <see cref="AssertionErrorException"/> class.
     /// </summary>
@@ -18,8 +15,7 @@ public class AssertionErrorException : Exception
     /// Initializes a new instance of the <see cref="AssertionErrorException"/> class.
     /// </summary>
     /// <param name="message">The message.</param>
-    public AssertionErrorException(string message)
-        : base(message)
+    public AssertionErrorException(string message) : base(message)
     {
     }
 
@@ -32,6 +28,4 @@ public class AssertionErrorException : Exception
         : base(message, inner)
     {
     }
-
-    #endregion
 }

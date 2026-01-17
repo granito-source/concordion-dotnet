@@ -1,6 +1,5 @@
 ﻿namespace Concordion.Internal;
 
-public interface IExpectationChecker
-{
+public interface ExpectationChecker {
     bool IsAcceptable(string expected, object actual);
 }

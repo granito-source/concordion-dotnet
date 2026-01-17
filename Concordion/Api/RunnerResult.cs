@@ -15,34 +15,8 @@
 namespace Concordion.Api;
 
 /// <summary>
-/// A class to hold the result of running an <see cref="IRunner"/> object
+/// A class to hold the result of running an <see cref="Runner"/> object.
 /// </summary>
-public class RunnerResult
-{
-    #region Properties
-
-    /// <summary>
-    /// Gets or sets the result.
-    /// </summary>
-    /// <value>The result.</value>
-    public Result Result
-    {
-        get;
-        private set;
-    }
-
-    #endregion
-
-    #region Constructors
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RunnerResult"/> class.
-    /// </summary>
-    /// <param name="result">The result.</param>
-    public RunnerResult(Result result)
-    {
-        Result = result;
-    }
-
-    #endregion
+public class RunnerResult(Result result) {
+    public Result Result { get; } = result;
 }

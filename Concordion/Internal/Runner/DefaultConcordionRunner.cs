@@ -16,7 +16,7 @@ using Concordion.Api;
 
 namespace Concordion.Internal.Runner;
 
-public class DefaultConcordionRunner(Source source, Target target) : IRunner {
+public class DefaultConcordionRunner(Source source, Target target) : Api.Runner {
     public RunnerResult Execute(object callingFixture, Resource resource,
         string href)
     {

@@ -17,7 +17,7 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Internal.Listener;
 
-public class SpecificationRenderer(Target target) : ISpecificationProcessingListener {
+public class SpecificationRenderer(Target target) : SpecificationProcessingListener {
     private const string XmlDeclaration = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
     public void BeforeProcessingSpecification(SpecificationProcessingEvent processingEvent)

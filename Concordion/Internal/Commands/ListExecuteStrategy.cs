@@ -2,45 +2,45 @@
 
 namespace Concordion.Internal.Commands;
 
-class ListExecuteStrategy : IExecuteStrategy
-{
-    private static readonly string LEVEL_VARIABLE = "#LEVEL";
+internal class ListExecuteStrategy : ExecuteStrategy {
+    private const string LevelVariable = "#LEVEL";
 
-    public void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    private static int GetLevel(Evaluator evaluator)
     {
-        increaseLevel(evaluator);
+        return evaluator.GetVariable(LevelVariable) is int intValue ?
+            intValue : 0;
+    }
+
+    private static void IncreaseLevel(Evaluator evaluator)
+    {
+        if (evaluator.GetVariable(LevelVariable) == null)
+            evaluator.SetVariable(LevelVariable, 1);
+        else
+            evaluator.SetVariable(LevelVariable, 1 + GetLevel(evaluator));
+    }
+
+    private static void DecreaseLevel(Evaluator evaluator)
+    {
+        evaluator.SetVariable(LevelVariable, GetLevel(evaluator) - 1);
+    }
+
+    public void Execute(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
+    {
+        IncreaseLevel(evaluator);
 
         var listSupport = new ListSupport(commandCall);
 
-        foreach (var listEntry in listSupport.GetListEntries())
-        {
+        foreach (var listEntry in listSupport.GetListEntries()) {
             commandCall.Element = listEntry.Element;
+
             if (listEntry.IsItem)
-            {
                 commandCall.Execute(evaluator, resultRecorder);
-            }
+
             if (listEntry.IsList)
-            {
                 Execute(commandCall, evaluator, resultRecorder);
-            }
         }
-        decreaseLevel(evaluator);
-    }
 
-    private void increaseLevel(IEvaluator evaluator)
-    {
-        if (evaluator.GetVariable(LEVEL_VARIABLE) == null)
-        {
-            evaluator.SetVariable(LEVEL_VARIABLE, 1);
-        }
-        else
-        {
-            evaluator.SetVariable(LEVEL_VARIABLE, 1 + (int)evaluator.GetVariable(LEVEL_VARIABLE));
-        }
-    }
-
-    private void decreaseLevel(IEvaluator evaluator)
-    {
-        evaluator.SetVariable(LEVEL_VARIABLE, (int)evaluator.GetVariable(LEVEL_VARIABLE) - 1);
+        DecreaseLevel(evaluator);
     }
 }

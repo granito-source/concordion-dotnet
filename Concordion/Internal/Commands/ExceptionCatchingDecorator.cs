@@ -17,82 +17,61 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Internal.Commands;
 
-public class ExceptionCatchingDecorator : AbstractCommandDecorator
-{
-    private readonly List<IExceptionCaughtListener> m_Listeners;
+public class ExceptionCatchingDecorator(Command command) :
+    AbstractCommandDecorator(command) {
+    private readonly List<ExceptionCaughtListener> listeners = [];
 
-    #region Constructors
-
-    public ExceptionCatchingDecorator(ICommand command)
-        : base(command)
+    public void AddExceptionListener(ExceptionCaughtListener listener)
     {
-        m_Listeners = new List<IExceptionCaughtListener>();
+        listeners.Add(listener);
     }
 
-    #endregion
-
-    #region Methods
-
-    public void AddExceptionListener(IExceptionCaughtListener listener)
+    public void RemoveExceptionListener(ExceptionCaughtListener listener)
     {
-        m_Listeners.Add(listener);
+        listeners.Remove(listener);
     }
 
-    public void RemoveExceptionListener(IExceptionCaughtListener listener)
+    private void AnnounceThrowableCaught(Element element,
+        Exception exception, string expression)
     {
-        m_Listeners.Remove(listener);
+        foreach (var listener in listeners)
+            listener.ExceptionCaught(
+                new ExceptionCaughtEvent(exception, element, expression));
     }
 
-    private void AnnounceThrowableCaught(Element element, Exception exception, string expression)
+    public override void Setup(CommandCall commandCall,
+        Evaluator evaluator, ResultRecorder resultRecorder)
     {
-        foreach (var listener in m_Listeners)
-        {
-            listener.ExceptionCaught(new ExceptionCaughtEvent(exception, element, expression));
+        try {
+            Command.Setup(commandCall, evaluator, resultRecorder);
+        } catch (Exception ex) {
+            resultRecorder.Error(ex);
+            AnnounceThrowableCaught(commandCall.Element, ex,
+                commandCall.Expression);
         }
     }
 
-    #endregion
-
-    #region Override Methods
-
-    public override void Setup(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public override void Execute(CommandCall commandCall,
+        Evaluator evaluator, ResultRecorder resultRecorder)
     {
-        try
-        {
-            m_command.Setup(commandCall, evaluator, resultRecorder);
-        }
-        catch (Exception e)
-        {
-            resultRecorder.Error(e);
-            AnnounceThrowableCaught(commandCall.Element, e, commandCall.Expression);
+        try {
+            Command.Execute(commandCall, evaluator, resultRecorder);
+        } catch (Exception ex) {
+            resultRecorder.Error(ex);
+            AnnounceThrowableCaught(commandCall.Element, ex,
+                commandCall.Expression);
         }
     }
 
-    public override void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public override void Verify(CommandCall commandCall,
+        Evaluator evaluator, ResultRecorder resultRecorder)
     {
-        try
-        {
-            m_command.Execute(commandCall, evaluator, resultRecorder);
-        }
-        catch (Exception e)
-        {
-            resultRecorder.Error(e);
-            AnnounceThrowableCaught(commandCall.Element, e, commandCall.Expression);
+        try {
+            Command.Verify(commandCall, evaluator, resultRecorder);
+        } catch (Exception ex) {
+            resultRecorder.Error(ex);
+            AnnounceThrowableCaught(commandCall.Element, ex,
+                commandCall.Expression);
         }
     }
-
-    public override void Verify(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
-    {
-        try
-        {
-            m_command.Verify(commandCall, evaluator, resultRecorder);
-        }
-        catch (Exception e)
-        {
-            resultRecorder.Error(e);
-            AnnounceThrowableCaught(commandCall.Element, e, commandCall.Expression);
-        }
-    }
-
-    #endregion
 }

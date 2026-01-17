@@ -17,36 +17,33 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Commands;
 
-public class EchoCommand : ICommand
-{
-    #region ICommand Members
-
-    public void Setup(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+public class EchoCommand : Command {
+    public void Setup(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
     {
     }
 
-    public void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void Execute(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
     {
     }
 
-    public void Verify(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void Verify(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
     {
-        Check.IsFalse(commandCall.HasChildCommands, "Nesting commands inside an 'echo' is not supported");
+        Check.IsFalse(commandCall.HasChildCommands,
+            "Nesting commands inside an 'echo' is not supported");
 
-        var result = evaluator.Evaluate(commandCall.Expression);
         var element = commandCall.Element;
+        var result = evaluator.Evaluate(commandCall.Expression)?.ToString();
 
         if (result != null)
-        {
-            element.AppendText(result.ToString());
-        }
-        else
-        {
+            element.AppendText(result);
+        else {
             var child = new Element("em");
+
             child.AppendText("null");
             element.AppendChild(child);
         }
     }
-
-    #endregion
 }

@@ -16,27 +16,21 @@ using Concordion.Api;
 
 namespace Concordion.Internal.Commands;
 
-internal class TableExecuteStrategy : IExecuteStrategy
-{
-    #region IExecuteStrategy Members
-
-    public void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+internal class TableExecuteStrategy : ExecuteStrategy {
+    public void Execute(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
     {
         var tableSupport = new TableSupport(commandCall);
         var detailRows = tableSupport.GetDetailRows();
 
-        foreach (var detailRow in detailRows)
-        {
+        foreach (var detailRow in detailRows) {
             if (detailRow.GetCells().Count != tableSupport.ColumnCount)
-            {
-                throw new Exception("The <table> 'execute' command only supports rows with an equal number of columns.");
-            }
+                throw new Exception(
+                    "The <table> 'execute' command only supports rows with an equal number of columns.");
 
             commandCall.Element = detailRow.RowElement;
             tableSupport.CopyCommandCallsTo(detailRow);
             commandCall.Execute(evaluator, resultRecorder);
         }
     }
-
-    #endregion
 }

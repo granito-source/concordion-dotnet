@@ -18,7 +18,7 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Listener;
 
-public class StylesheetEmbedder : IDocumentParsingListener
+public class StylesheetEmbedder : DocumentParsingListener
 {
     #region Properties
 

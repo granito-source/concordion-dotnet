@@ -1,12 +1,6 @@
 ﻿namespace Concordion.Api.Extension;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class ExtensionsAttribute : Attribute
-{
-    public Type[] ExtensionTypes { get; set; }
-
-    public ExtensionsAttribute(params Type[] extensionTypes)
-    {
-        ExtensionTypes = extensionTypes;
-    }
+public class ExtensionsAttribute(params Type[] extensionTypes) : Attribute {
+    public Type[] ExtensionTypes { get; } = extensionTypes;
 }

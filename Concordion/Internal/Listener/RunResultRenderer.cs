@@ -16,7 +16,7 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Internal.Listener;
 
-public class RunResultRenderer : ExceptionRenderer, IRunListener
+public class RunResultRenderer : ExceptionRenderer, RunListener
 {
     #region IRunListener Members
 

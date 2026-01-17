@@ -17,94 +17,79 @@ using System.Text.RegularExpressions;
 namespace Concordion.Internal;
 
 public class SimpleEvaluator(object fixture) : OgnlEvaluator(fixture) {
-    #region Fields
+    private const string MethodNamePattern = "[a-z][a-zA-Z0-9_]*";
 
-    private static readonly string METHOD_NAME_PATTERN = "[a-z][a-zA-Z0-9_]*";
+    private const string PropertyNamePattern = "[a-z][a-zA-Z0-9_]*";
 
-    private static readonly string PROPERTY_NAME_PATTERN = "[a-z][a-zA-Z0-9_]*";
+    private const string StringPattern = "'[^']+'";
 
-    private static readonly string STRING_PATTERN = "'[^']+'";
+    private const string LhsVariablePattern = "#" + MethodNamePattern;
 
-    private static readonly string LHS_VARIABLE_PATTERN = "#" + METHOD_NAME_PATTERN;
+    private const string RhsVariablePattern = "(" + LhsVariablePattern +
+        "|#TEXT|#HREF|#LEVEL)";
 
-    private static readonly string RHS_VARIABLE_PATTERN = "(" + LHS_VARIABLE_PATTERN + "|#TEXT|#HREF|#LEVEL)";
-
-    #endregion
-
-    #region Methods
-
-    private void ValidateEvaluationExpression(string expression)
+    private static void ValidateEvaluationExpression(string expression)
     {
-        var METHOD_CALL_PARAMS = METHOD_NAME_PATTERN + " *\\( *" + RHS_VARIABLE_PATTERN + "(, *" +
-                                 RHS_VARIABLE_PATTERN + " *)*\\)";
-        var METHOD_CALL_NO_PARAMS = METHOD_NAME_PATTERN + " *\\( *\\)";
-        var TERNARY_STRING_RESULT = " \\? " + STRING_PATTERN + " : " + STRING_PATTERN;
-
-        var regexPatterns = new List<string>();
-        regexPatterns.Add(PROPERTY_NAME_PATTERN);
-        regexPatterns.Add(METHOD_CALL_NO_PARAMS);
-        regexPatterns.Add(METHOD_CALL_PARAMS);
-        regexPatterns.Add(RHS_VARIABLE_PATTERN);
-        regexPatterns.Add(LHS_VARIABLE_PATTERN + "(\\." + PROPERTY_NAME_PATTERN + ")+");
-        regexPatterns.Add(LHS_VARIABLE_PATTERN + " *= *" + PROPERTY_NAME_PATTERN);
-        regexPatterns.Add(LHS_VARIABLE_PATTERN + " *= *" + METHOD_CALL_NO_PARAMS);
-        regexPatterns.Add(LHS_VARIABLE_PATTERN + " *= *" + METHOD_CALL_PARAMS);
-        regexPatterns.Add(LHS_VARIABLE_PATTERN + TERNARY_STRING_RESULT);
-        regexPatterns.Add(PROPERTY_NAME_PATTERN + TERNARY_STRING_RESULT);
-        regexPatterns.Add(METHOD_CALL_NO_PARAMS + TERNARY_STRING_RESULT);
-        regexPatterns.Add(METHOD_CALL_PARAMS + TERNARY_STRING_RESULT);
-        regexPatterns.Add(LHS_VARIABLE_PATTERN + "\\." + METHOD_CALL_NO_PARAMS);
-        regexPatterns.Add(LHS_VARIABLE_PATTERN + "\\." + METHOD_CALL_PARAMS);
+        const string methodCallParams = MethodNamePattern +
+            " *\\( *" + RhsVariablePattern +
+            "(, *" + RhsVariablePattern + " *)*\\)";
+        const string methodCallNoParams = MethodNamePattern + " *\\( *\\)";
+        const string ternaryStringResult = " \\? " + StringPattern +
+            " : " + StringPattern;
+        var regexPatterns = new List<string> {
+            PropertyNamePattern,
+            methodCallNoParams,
+            methodCallParams,
+            RhsVariablePattern,
+            LhsVariablePattern + "(\\." + PropertyNamePattern + ")+",
+            LhsVariablePattern + " *= *" + PropertyNamePattern,
+            LhsVariablePattern + " *= *" + methodCallNoParams,
+            LhsVariablePattern + " *= *" + methodCallParams,
+            LhsVariablePattern + ternaryStringResult,
+            PropertyNamePattern + ternaryStringResult,
+            methodCallNoParams + ternaryStringResult,
+            methodCallParams + ternaryStringResult,
+            LhsVariablePattern + "\\." + methodCallNoParams,
+            LhsVariablePattern + "\\." + methodCallParams
+        };
 
         expression = expression.Trim();
 
-        foreach (var regexPattern in regexPatterns) {
-            if (Regex.IsMatch(expression, regexPattern)) {
-                return;
-            }
-        }
+        if (regexPatterns.Any(regex => Regex.IsMatch(expression, regex)))
+            return;
 
-        throw new InvalidOperationException("Invalid expression [" + expression + "]");
+        throw new InvalidOperationException($"Invalid expression [{expression}]");
     }
 
-    private void ValidateSetVariableExpression(string expression)
+    private static void ValidateSetVariableExpression(string expression)
     {
-        var regexPatterns = new List<string>();
-
-        regexPatterns.Add(RHS_VARIABLE_PATTERN);
-        regexPatterns.Add(LHS_VARIABLE_PATTERN + "\\." + PROPERTY_NAME_PATTERN);
-        regexPatterns.Add(LHS_VARIABLE_PATTERN + " *= *" + PROPERTY_NAME_PATTERN);
-        regexPatterns.Add(LHS_VARIABLE_PATTERN + " *= *" + METHOD_NAME_PATTERN + " *\\( *\\)");
-        regexPatterns.Add(LHS_VARIABLE_PATTERN + " *= *" + METHOD_NAME_PATTERN + " *\\( *" + RHS_VARIABLE_PATTERN +
-                          "(, *" + RHS_VARIABLE_PATTERN + " *)*\\)");
+        var regexPatterns = new List<string> {
+            RhsVariablePattern,
+            LhsVariablePattern + "\\." + PropertyNamePattern,
+            LhsVariablePattern + " *= *" + PropertyNamePattern,
+            LhsVariablePattern + " *= *" + MethodNamePattern + " *\\( *\\)",
+            LhsVariablePattern + " *= *" + MethodNamePattern + " *\\( *" +
+                RhsVariablePattern + "(, *" + RhsVariablePattern + " *)*\\)"
+        };
 
         expression = expression.Trim();
 
-        foreach (var regexPattern in regexPatterns) {
-            if (Regex.IsMatch(expression, regexPattern)) {
-                return;
-            }
-        }
+        if (regexPatterns.Any(regex => Regex.IsMatch(expression, regex)))
+            return;
 
-        throw new InvalidOperationException("Invalid expression [" + expression + "]");
+        throw new InvalidOperationException($"Invalid expression [{expression}]");
     }
 
-    #endregion
-
-    #region Override Methods
-
-    public override object Evaluate(string expression)
+    public override object? Evaluate(string expression)
     {
         ValidateEvaluationExpression(expression);
 
         return base.Evaluate(expression);
     }
 
-    public override void SetVariable(string expression, object value)
+    public override void SetVariable(string expression, object? value)
     {
         ValidateSetVariableExpression(expression);
         base.SetVariable(expression, value);
     }
-
-    #endregion
 }

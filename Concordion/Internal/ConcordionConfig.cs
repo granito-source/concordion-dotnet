@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Reflection;
-using Concordion.Api;
 
 namespace Concordion.Internal;
 
@@ -28,7 +27,7 @@ public class ConcordionConfig
     /// Gets or sets the runners.
     /// </summary>
     /// <value>The runners.</value>
-    public Dictionary<string, IRunner> Runners
+    public Dictionary<string, Api.Runner> Runners
     {
         get;
         set;
@@ -43,7 +42,7 @@ public class ConcordionConfig
     /// </summary>
     public ConcordionConfig()
     {
-        Runners = new Dictionary<string, IRunner>();
+        Runners = new Dictionary<string, Api.Runner>();
     } 
 
     #endregion

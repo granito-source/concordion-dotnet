@@ -2,7 +2,7 @@
 
 namespace Concordion.Internal;
 
-class ExpectedToPassFixtureState : IFixtureState
+class ExpectedToPassFixtureState : FixtureState
 {
     #region IFixtureState Members
 

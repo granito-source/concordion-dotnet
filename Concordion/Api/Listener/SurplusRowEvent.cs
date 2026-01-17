@@ -1,19 +1,5 @@
 ﻿namespace Concordion.Api.Listener;
 
-public class SurplusRowEvent
-{
-    #region Properties
-
-    public Element RowElement { get; private set; }
-
-    #endregion
-
-    #region Constructors
-
-    public SurplusRowEvent(Element rowElement)
-    {
-        RowElement = rowElement;
-    }
-
-    #endregion
+public class SurplusRowEvent(Element rowElement) {
+    public Element RowElement { get; } = rowElement;
 }

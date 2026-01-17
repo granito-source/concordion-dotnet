@@ -16,17 +16,19 @@ using Concordion.Api;
 
 namespace Concordion.Internal.Commands;
 
-public class AssertTrueCommand : BooleanCommand
-{
-    protected override void ProcessTrueResult(CommandCall commandCall, IResultRecorder resultRecorder)
+public class AssertTrueCommand : BooleanCommand {
+    protected override void ProcessTrueResult(CommandCall commandCall,
+        ResultRecorder resultRecorder)
     {
         resultRecorder.Success();
         AnnounceSuccess(commandCall.Element);
     }
 
-    protected override void ProcessFalseResult(CommandCall commandCall, IResultRecorder resultRecorder)
+    protected override void ProcessFalseResult(CommandCall commandCall,
+        ResultRecorder resultRecorder)
     {
-        resultRecorder.Failure("expected true but was false", commandCall.Element.ToXml());
+        resultRecorder.Failure("expected true but was false",
+            commandCall.Element.ToXml());
 
         var expected = commandCall.Element.Text;
 

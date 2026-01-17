@@ -3,7 +3,8 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Internal.Listener;
 
-class AssertResultRenderer : IAssertEqualsListener, IAssertTrueListener, IAssertFalseListener
+internal class AssertResultRenderer : AssertEqualsListener,
+    AssertTrueListener, AssertFalseListener
 {
     public void SuccessReported(AssertSuccessEvent successEvent)
     {
@@ -28,7 +29,7 @@ class AssertResultRenderer : IAssertEqualsListener, IAssertTrueListener, IAssert
         var spanActual = new Element("ins");
 
         spanActual.AddStyleClass("actual");
-        spanActual.AppendText(failureEvent.Actual != null ? failureEvent.Actual.ToString() : "(null)");
+        spanActual.AppendText(failureEvent.Actual?.ToString() ?? "(null)");
         spanActual.AppendNonBreakingSpaceIfBlank();
 
         element.AppendText("\n");

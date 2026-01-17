@@ -22,7 +22,7 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal;
 
-public class ConcordionBuilder : IConcordionExtender
+public class ConcordionBuilder : ConcordionExtender
 {
     private bool m_BuiltAlready = false;
 
@@ -52,7 +52,7 @@ public class ConcordionBuilder : IConcordionExtender
         set;
     }
 
-    private ISpecificationLocator SpecificationLocator
+    private SpecificationLocator SpecificationLocator
 
 
     {
@@ -72,13 +72,13 @@ public class ConcordionBuilder : IConcordionExtender
         set;
     }
 
-    private ISpecificationReader SpecificationReader
+    private SpecificationReader SpecificationReader
     {
         get;
         set;
     }
 
-    private IEvaluatorFactory EvaluatorFactory
+    private EvaluatorFactory EvaluatorFactory
     {
         get;
         set;
@@ -132,19 +132,19 @@ public class ConcordionBuilder : IConcordionExtender
         set;
     }
 
-    private List<IConcordionBuildListener> BuildListeners
+    private List<ConcordionBuildListener> BuildListeners
     {
         get;
         set;
     }
 
-    private List<ISpecificationProcessingListener> SpecificationProcessingListeners
+    private List<SpecificationProcessingListener> SpecificationProcessingListeners
     {
         get;
         set;
     }
 
-    private List<IExceptionCaughtListener> ExceptionListeners
+    private List<ExceptionCaughtListener> ExceptionListeners
     {
         get;
         set;
@@ -160,10 +160,10 @@ public class ConcordionBuilder : IConcordionExtender
 
     public ConcordionBuilder()
     {
-        BuildListeners = new List<IConcordionBuildListener>();
-        SpecificationProcessingListeners = new List<ISpecificationProcessingListener>();
+        BuildListeners = new List<ConcordionBuildListener>();
+        SpecificationProcessingListeners = new List<SpecificationProcessingListener>();
         ResourceToCopyMap = new Dictionary<string, Resource>();
-        ExceptionListeners = new List<IExceptionCaughtListener>();
+        ExceptionListeners = new List<ExceptionCaughtListener>();
 
         SpecificationLocator = new ClassNameBasedSpecificationLocator();
         Source = null;
@@ -200,13 +200,13 @@ public class ConcordionBuilder : IConcordionExtender
         WithEmbeddedCss(HtmlFramework.EMBEDDED_STYLESHEET_RESOURCE);
     }
 
-    public IConcordionExtender WithSource(Source source)
+    public ConcordionExtender WithSource(Source source)
     {
         Source = source;
         return this;
     }
 
-    public IConcordionExtender WithTarget(Target target)
+    public ConcordionExtender WithTarget(Target target)
     {
         Target = target;
         return this;
@@ -219,13 +219,13 @@ public class ConcordionBuilder : IConcordionExtender
     }
 
 
-    public IConcordionExtender WithSpecificationLocator(ISpecificationLocator specificationLocator)
+    public ConcordionExtender WithSpecificationLocator(SpecificationLocator specificationLocator)
     {
         SpecificationLocator = specificationLocator;
         return this;
     }
 
-    public IConcordionExtender WithEvaluatorFactory(IEvaluatorFactory evaluatorFactory)
+    public ConcordionExtender WithEvaluatorFactory(EvaluatorFactory evaluatorFactory)
     {
         EvaluatorFactory = evaluatorFactory;
         return this;
@@ -237,70 +237,70 @@ public class ConcordionBuilder : IConcordionExtender
         return this;
     }
 
-    public IConcordionExtender WithAssertEqualsListener(IAssertEqualsListener listener)
+    public ConcordionExtender WithAssertEqualsListener(AssertEqualsListener listener)
     {
         AssertEqualsCommand.AddAssertEqualsListener(listener);
         return this;
     }
 
-    public IConcordionExtender WithAssertTrueListener(IAssertTrueListener listener)
+    public ConcordionExtender WithAssertTrueListener(AssertTrueListener listener)
     {
         AssertTrueCommand.AddAssertListener(listener);
         return this;
     }
 
-    public IConcordionExtender WithAssertFalseListener(IAssertFalseListener listener)
+    public ConcordionExtender WithAssertFalseListener(AssertFalseListener listener)
     {
         AssertFalseCommand.AddAssertListener(listener);
         return this;
     }
 
-    private ConcordionBuilder WithApprovedCommand(string namespaceURI, string commandName, ICommand command)
+    private ConcordionBuilder WithApprovedCommand(string namespaceURI, string commandName, Command command)
     {
         var exceptionCatchingDecorator = new ExceptionCatchingDecorator(new LocalTextDecorator(command));
         ExceptionListeners.ForEach(exceptionCatchingDecorator.AddExceptionListener);
-        ICommand decoratedCommand = exceptionCatchingDecorator;
+        Command decoratedCommand = exceptionCatchingDecorator;
         CommandRegistry.Register(namespaceURI, commandName, decoratedCommand);
         return this;
     }
 
-    public IConcordionExtender WithVerifyRowsListener(IVerifyRowsListener listener)
+    public ConcordionExtender WithVerifyRowsListener(VerifyRowsListener listener)
     {
         VerifyRowsCommand.AddVerifyRowsListener(listener);
         return this;
     }
 
-    public IConcordionExtender WithRunListener(IRunListener listener)
+    public ConcordionExtender WithRunListener(RunListener listener)
     {
         RunCommand.AddRunListener(listener);
         return this;
     }
 
-    public IConcordionExtender WithExecuteListener(IExecuteListener listener)
+    public ConcordionExtender WithExecuteListener(ExecuteListener listener)
     {
         ExecuteCommand.AddExecuteListener(listener);
         return this;
     }
 
-    public IConcordionExtender WithDocumentParsingListener(IDocumentParsingListener listener)
+    public ConcordionExtender WithDocumentParsingListener(DocumentParsingListener listener)
     {
         DocumentParser.AddDocumentParsingListener(listener);
         return this;
     }
 
-    public IConcordionExtender WithSpecificationProcessingListener(ISpecificationProcessingListener listener)
+    public ConcordionExtender WithSpecificationProcessingListener(SpecificationProcessingListener listener)
     {
         SpecificationProcessingListeners.Add(listener);
         return this;
     }
 
-    public IConcordionExtender WithBuildListener(IConcordionBuildListener listener)
+    public ConcordionExtender WithBuildListener(ConcordionBuildListener listener)
     {
         BuildListeners.Add(listener);
         return this;
     }
 
-    public IConcordionExtender WithCommand(string namespaceURI, string commandName, ICommand command)
+    public ConcordionExtender WithCommand(string namespaceURI, string commandName, Command command)
     {
         Check.NotEmpty(namespaceURI, "Namespace URI is mandatory");
         Check.NotEmpty(commandName, "Command name is mandatory");
@@ -311,20 +311,20 @@ public class ConcordionBuilder : IConcordionExtender
         return WithApprovedCommand(namespaceURI, commandName, command);
     }
 
-    public IConcordionExtender WithResource(string sourcePath, Resource targetResource)
+    public ConcordionExtender WithResource(string sourcePath, Resource targetResource)
     {
         ResourceToCopyMap.Add(sourcePath, targetResource);
         return this;
     }
 
-    public IConcordionExtender WithEmbeddedCss(string css)
+    public ConcordionExtender WithEmbeddedCss(string css)
     {
         var embedder = new StylesheetEmbedder(css);
         WithDocumentParsingListener(embedder);
         return this;
     }
 
-    public IConcordionExtender WithLinkedCss(string cssPath, Resource targetResource)
+    public ConcordionExtender WithLinkedCss(string cssPath, Resource targetResource)
     {
         WithResource(cssPath, targetResource);
         var cssLinker = new StylesheetLinker(targetResource);
@@ -333,14 +333,14 @@ public class ConcordionBuilder : IConcordionExtender
         return this;
     }
 
-    public IConcordionExtender WithEmbeddedJavaScript(string javaScript)
+    public ConcordionExtender WithEmbeddedJavaScript(string javaScript)
     {
         var embedder = new JavaScriptEmbedder(javaScript);
         WithDocumentParsingListener(embedder);
         return this;
     }
 
-    public IConcordionExtender WithLinkedJavaScript(string jsPath, Resource targetResource)
+    public ConcordionExtender WithLinkedJavaScript(string jsPath, Resource targetResource)
     {
         WithResource(jsPath, targetResource);
         var javaScriptLinker = new JavaScriptLinker(targetResource);
@@ -426,7 +426,7 @@ public class ConcordionBuilder : IConcordionExtender
         }
     }
 
-    public IConcordionExtender WithExceptionListener(IExceptionCaughtListener listener)
+    public ConcordionExtender WithExceptionListener(ExceptionCaughtListener listener)
     {
         ExceptionListeners.Add(listener);
         return this;

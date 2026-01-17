@@ -2,8 +2,8 @@
 
 namespace Concordion.Spec.Concordion.Extension.Listener;
 
-public class AssertLogger : IAssertEqualsListener, IAssertTrueListener,
-    IAssertFalseListener {
+public class AssertLogger : AssertEqualsListener, AssertTrueListener,
+    AssertFalseListener {
     private readonly TextWriter m_LogWriter;
 
     public AssertLogger(TextWriter logWriter)

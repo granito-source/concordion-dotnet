@@ -17,8 +17,7 @@ namespace Concordion.Api;
 /// <summary>
 /// Represents the source for specifications (aka The BaseInputDirectory)
 /// </summary>
-public interface Source
-{
+public interface Source {
     Stream CreateStream(Resource resource);
 
     /// <summary>
@@ -26,7 +25,8 @@ public interface Source
     /// </summary>
     /// <param name="resource">The resource.</param>
     /// <returns>
-    /// 	<c>true</c> if this instance can find the specified resource; otherwise, <c>false</c>.
+    /// 	<c>true</c> if this instance can find the specified resource;
+    /// otherwise, <c>false</c>.
     /// </returns>
     bool CanFind(Resource resource);
 }

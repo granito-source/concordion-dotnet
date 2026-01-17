@@ -15,16 +15,14 @@
 namespace Concordion.Api;
 
 /// <summary>
-/// Runs concordion on a particular specification
+/// Parses and stores the specification at the location identified by
+/// the Resource object.
 /// </summary>
-public interface IRunner
-{
+public interface SpecificationReader {
     /// <summary>
-    /// Executes the specified resource.
+    /// Reads the specification.
     /// </summary>
-    /// <param name="fixture">The fixture.</param>
     /// <param name="resource">The resource.</param>
-    /// <param name="href">The href.</param>
-    /// <returns>A result indicating how the specification ran.</returns>
-    RunnerResult Execute(object fixture, Resource resource, string href);
+    /// <returns></returns>
+    Specification ReadSpecification(Resource resource);
 }

@@ -19,15 +19,15 @@ namespace Concordion.Api;
 /// <summary>
 /// Represents a concordion command from the specification
 /// </summary>
-public interface ICommand
-{
+public interface Command {
     /// <summary>
     /// Setups the specified command call.
     /// </summary>
     /// <param name="commandCall">The command call.</param>
     /// <param name="evaluator">The evaluator.</param>
     /// <param name="resultRecorder">The result recorder.</param>
-    void Setup(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
+    void Setup(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder);
 
     /// <summary>
     /// Executes the specified command call.
@@ -35,7 +35,8 @@ public interface ICommand
     /// <param name="commandCall">The command call.</param>
     /// <param name="evaluator">The evaluator.</param>
     /// <param name="resultRecorder">The result recorder.</param>
-    void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
+    void Execute(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder);
 
     /// <summary>
     /// Verifies the specified command call.
@@ -43,5 +44,6 @@ public interface ICommand
     /// <param name="commandCall">The command call.</param>
     /// <param name="evaluator">The evaluator.</param>
     /// <param name="resultRecorder">The result recorder.</param>
-    void Verify(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
+    void Verify(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder);
 }

@@ -15,25 +15,14 @@
 namespace Concordion.Api;
 
 /// <summary>
-///
+/// A factory to create command objects
 /// </summary>
-public interface IContext : IResultRecorder, IEvaluator
-{
-    Resource Resource { get; }
-
-    Element Element { get; }
-
-    string Expression { get; }
-
-    object EvaluateExpression();
-
-    void ProcessChildCommandsSequentially();
-
-    bool HasChildCommands();
-
-    void SetupChildCommands();
-
-    void ExecuteChildCommands();
-
-    void VerifyChildCommands();
+public interface CommandFactory {
+    /// <summary>
+    /// Creates the command.
+    /// </summary>
+    /// <param name="namespaceUri">The namespace URI.</param>
+    /// <param name="commandName">Name of the command.</param>
+    /// <returns></returns>
+    Command CreateCommand(string namespaceUri, string commandName);
 }

@@ -48,7 +48,7 @@ public class CommandCallList : IList<CommandCall>
 
     #region Methods
 
-    public void ProcessSequentially(IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void ProcessSequentially(Evaluator evaluator, ResultRecorder resultRecorder)
     {
         foreach (var commandCall in CommandCalls)
         {
@@ -58,7 +58,7 @@ public class CommandCallList : IList<CommandCall>
         }
     }
 
-    public void SetUp(IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void SetUp(Evaluator evaluator, ResultRecorder resultRecorder)
     {
         foreach (var commandCall in CommandCalls)
         {
@@ -66,7 +66,7 @@ public class CommandCallList : IList<CommandCall>
         }
     }
 
-    public void Execute(IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void Execute(Evaluator evaluator, ResultRecorder resultRecorder)
     {
         foreach (var commandCall in CommandCalls)
         {
@@ -74,7 +74,7 @@ public class CommandCallList : IList<CommandCall>
         }
     }
 
-    public void Verify(IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void Verify(Evaluator evaluator, ResultRecorder resultRecorder)
     {
         foreach (var commandCall in CommandCalls)
         {

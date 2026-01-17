@@ -26,7 +26,7 @@ public class CommandCall
         private set;
     }
 
-    public ICommand Command
+    public Command Command
     {
         get;
         private set;
@@ -62,7 +62,7 @@ public class CommandCall
 
     #region Constructors
         
-    public CommandCall(ICommand command, Element element, string expression, Resource resource)
+    public CommandCall(Command command, Element element, string expression, Resource resource)
     {
         Children = new CommandCallList();
         Command = command;
@@ -75,17 +75,17 @@ public class CommandCall
 
     #region Methods
 
-    public void SetUp(IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void SetUp(Evaluator evaluator, ResultRecorder resultRecorder)
     {
         Command.Setup(this, evaluator, resultRecorder);
     }
 
-    public void Execute(IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void Execute(Evaluator evaluator, ResultRecorder resultRecorder)
     {
         Command.Execute(this, evaluator, resultRecorder);
     }
 
-    public void Verify(IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void Verify(Evaluator evaluator, ResultRecorder resultRecorder)
     {
         Command.Verify(this, evaluator, resultRecorder);
     }

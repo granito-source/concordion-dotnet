@@ -17,23 +17,24 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Commands;
 
-public class SetCommand : ICommand
-{
-    #region ICommand Members
-
-    public void Setup(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+public class SetCommand : Command {
+    public void Setup(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
     {
-        Check.IsFalse(commandCall.HasChildCommands, "Nesting commands inside a 'set' is not supported");
-        evaluator.SetVariable(commandCall.Expression, commandCall.Element.Text);
+        Check.IsFalse(commandCall.HasChildCommands,
+            "Nesting commands inside a 'set' is not supported");
+
+        evaluator.SetVariable(commandCall.Expression,
+            commandCall.Element.Text);
     }
 
-    public void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
-    {
-    }
-
-    public void Verify(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void Execute(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
     {
     }
 
-    #endregion
+    public void Verify(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
+    {
+    }
 }

@@ -16,27 +16,17 @@ using Concordion.Api;
 
 namespace Concordion.Internal.Commands;
 
-internal class DefaultExecuteStrategy : IExecuteStrategy
-{
-    private readonly ExecuteCommand m_ExecuteCommand;
-
-    public DefaultExecuteStrategy(ExecuteCommand executeCommand)
-    {
-        m_ExecuteCommand = executeCommand;
-    }
-
-    #region IExecuteStrategy Members
-
-    public void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+internal class DefaultExecuteStrategy(ExecuteCommand executeCommand) :
+    ExecuteStrategy {
+    public void Execute(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
     {
         var childCommands = commandCall.Children;
 
         childCommands.SetUp(evaluator, resultRecorder);
         evaluator.Evaluate(commandCall.Expression);
         childCommands.Execute(evaluator, resultRecorder);
-        m_ExecuteCommand.AnnounceExecuteCompleted(commandCall.Element);
+        executeCommand.AnnounceExecuteCompleted(commandCall.Element);
         childCommands.Verify(evaluator, resultRecorder);
     }
-
-    #endregion
 }

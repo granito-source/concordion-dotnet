@@ -16,81 +16,63 @@ using Concordion.Api;
 
 namespace Concordion.Internal.Commands;
 
-public class LocalTextDecorator : AbstractCommandDecorator
-{
-    private static readonly string TEXT_VARIABLE = "#TEXT";
+public class LocalTextDecorator(Command command) :
+    AbstractCommandDecorator(command) {
+    private const string TextVariable = "#TEXT";
 
-    private static readonly string HREF_VARIABLE = "#HREF";
+    private const string HrefVariable = "#HREF";
 
-    public LocalTextDecorator(ICommand command) : base(command)
+    public override void Setup(CommandCall commandCall,
+        Evaluator evaluator, ResultRecorder resultRecorder)
     {
-    }
+        var savedTextValue = evaluator.GetVariable(TextVariable);
+        var savedHrefValue = evaluator.GetVariable(HrefVariable);
 
-    public override void Setup(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
-    {
-        var savedTextValue = evaluator.GetVariable(TEXT_VARIABLE);
-        var savedHrefValue = evaluator.GetVariable(HREF_VARIABLE);
-        try
-        {
-            evaluator.SetVariable(TEXT_VARIABLE, commandCall.Element.Text);
-            evaluator.SetVariable(HREF_VARIABLE, getHref(commandCall.Element));
-            m_command.Setup(commandCall, evaluator, resultRecorder);
-        }
-        finally
-        {
-            evaluator.SetVariable(TEXT_VARIABLE, savedTextValue);
-            evaluator.SetVariable(HREF_VARIABLE, savedHrefValue);
+        try {
+            evaluator.SetVariable(TextVariable, commandCall.Element.Text);
+            evaluator.SetVariable(HrefVariable, GetHref(commandCall.Element));
+            Command.Setup(commandCall, evaluator, resultRecorder);
+        } finally {
+            evaluator.SetVariable(TextVariable, savedTextValue);
+            evaluator.SetVariable(HrefVariable, savedHrefValue);
         }
     }
 
-    public override void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public override void Execute(CommandCall commandCall,
+        Evaluator evaluator, ResultRecorder resultRecorder)
     {
-        var savedTextValue = evaluator.GetVariable(TEXT_VARIABLE);
-        var savedHrefValue = evaluator.GetVariable(HREF_VARIABLE);
-        try
-        {
-            evaluator.SetVariable(TEXT_VARIABLE, commandCall.Element.Text);
-            evaluator.SetVariable(HREF_VARIABLE, getHref(commandCall.Element));
-            m_command.Execute(commandCall, evaluator, resultRecorder);
-        }
-        finally
-        {
-            evaluator.SetVariable(TEXT_VARIABLE, savedTextValue);
-            evaluator.SetVariable(HREF_VARIABLE, savedHrefValue);
+        var savedTextValue = evaluator.GetVariable(TextVariable);
+        var savedHrefValue = evaluator.GetVariable(HrefVariable);
+
+        try {
+            evaluator.SetVariable(TextVariable, commandCall.Element.Text);
+            evaluator.SetVariable(HrefVariable, GetHref(commandCall.Element));
+            Command.Execute(commandCall, evaluator, resultRecorder);
+        } finally {
+            evaluator.SetVariable(TextVariable, savedTextValue);
+            evaluator.SetVariable(HrefVariable, savedHrefValue);
         }
     }
 
-    public override void Verify(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public override void Verify(CommandCall commandCall,
+        Evaluator evaluator, ResultRecorder resultRecorder)
     {
-        var savedTextValue = evaluator.GetVariable(TEXT_VARIABLE);
-        var savedHrefValue = evaluator.GetVariable(HREF_VARIABLE);
-        try
-        {
-            evaluator.SetVariable(TEXT_VARIABLE, commandCall.Element.Text);
-            evaluator.SetVariable(HREF_VARIABLE, getHref(commandCall.Element));
-            m_command.Verify(commandCall, evaluator, resultRecorder);
-        }
-        finally
-        {
-            evaluator.SetVariable(TEXT_VARIABLE, savedTextValue);
-            evaluator.SetVariable(HREF_VARIABLE, savedHrefValue);
+        var savedTextValue = evaluator.GetVariable(TextVariable);
+        var savedHrefValue = evaluator.GetVariable(HrefVariable);
+
+        try {
+            evaluator.SetVariable(TextVariable, commandCall.Element.Text);
+            evaluator.SetVariable(HrefVariable, GetHref(commandCall.Element));
+            Command.Verify(commandCall, evaluator, resultRecorder);
+        } finally {
+            evaluator.SetVariable(TextVariable, savedTextValue);
+            evaluator.SetVariable(HrefVariable, savedHrefValue);
         }
     }
 
-    private string? getHref(Element element)
+    private static string? GetHref(Element element)
     {
-        var href = element.GetAttributeValue("href");
-
-        if (href == null)
-        {
-            var a = element.GetFirstChildElement("a");
-
-            if (a != null)
-            {
-                href = a.GetAttributeValue("href");
-            }
-        }
-
-        return href;
+        return element.GetAttributeValue("href") ??
+            element.GetFirstChildElement("a")?.GetAttributeValue("href");
     }
 }

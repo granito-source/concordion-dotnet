@@ -16,7 +16,7 @@ using Concordion.Api;
 
 namespace Concordion.Internal.Commands;
 
-internal interface IExecuteStrategy
-{
-    void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
+internal interface ExecuteStrategy {
+    void Execute(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder);
 }

@@ -17,7 +17,7 @@ using Concordion.Api;
 
 namespace Concordion.Internal;
 
-public class XmlSpecificationReader : ISpecificationReader
+public class XmlSpecificationReader : SpecificationReader
 {
     #region Properties
 
@@ -53,7 +53,7 @@ public class XmlSpecificationReader : ISpecificationReader
 
     #region ISpecificationReader Members
 
-    public ISpecification ReadSpecification(Resource resource)
+    public Specification ReadSpecification(Resource resource)
     {
         XDocument document;
 

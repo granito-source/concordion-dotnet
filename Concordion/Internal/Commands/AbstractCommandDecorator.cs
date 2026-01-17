@@ -16,36 +16,15 @@ using Concordion.Api;
 
 namespace Concordion.Internal.Commands;
 
-public abstract class AbstractCommandDecorator : ICommand
-{
-    #region Fields
+public abstract class AbstractCommandDecorator(Command command) : Command {
+    protected readonly Command Command = command;
 
-    protected readonly ICommand m_command;
+    public abstract void Setup(CommandCall commandCall,
+        Evaluator evaluator, ResultRecorder resultRecorder);
 
-    #endregion
+    public abstract void Execute(CommandCall commandCall,
+        Evaluator evaluator, ResultRecorder resultRecorder);
 
-    #region Constructors
-
-    public AbstractCommandDecorator(ICommand command)
-    {
-        m_command = command;
-    }
-
-    #endregion
-
-    #region Methods
-
-    //protected abstract void Process(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder, Thread runner);
-
-    #endregion
-
-    #region ICommand Members
-
-    public abstract void Setup(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
-
-    public abstract void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
-
-    public abstract void Verify(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder);
-
-    #endregion
+    public abstract void Verify(CommandCall commandCall,
+        Evaluator evaluator, ResultRecorder resultRecorder);
 }

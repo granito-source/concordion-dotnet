@@ -17,55 +17,48 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Internal.Commands;
 
-public class ExecuteCommand : ICommand
-{
-    private readonly List<IExecuteListener> m_Listeners = new List<IExecuteListener>();
+public class ExecuteCommand : Command {
+    private readonly List<ExecuteListener> listeners = [];
 
-    public void AddExecuteListener(IExecuteListener listener)
+    public void AddExecuteListener(ExecuteListener listener)
     {
-        m_Listeners.Add(listener);
+        listeners.Add(listener);
     }
 
-    public void RemoveExecuteListener(IExecuteListener listener)
+    public void RemoveExecuteListener(ExecuteListener listener)
     {
-        m_Listeners.Remove(listener);
+        listeners.Remove(listener);
     }
 
     public void AnnounceExecuteCompleted(Element element)
     {
-        foreach (var listener in m_Listeners)
-        {
+        foreach (var listener in listeners)
             listener.ExecuteCompleted(new ExecuteEvent(element));
-        }
     }
 
-    #region ICommand Members
-
-    public void Setup(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void Setup(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
     {
     }
 
-    public void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void Execute(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
     {
-        IExecuteStrategy strategy;
+        ExecuteStrategy strategy;
+
         if (commandCall.Element.IsNamed("table"))
-        {
             strategy = new TableExecuteStrategy();
-        }
-        else if (commandCall.Element.IsNamed("ol") || commandCall.Element.IsNamed("ul"))
-        {
+        else if (commandCall.Element.IsNamed("ol") ||
+            commandCall.Element.IsNamed("ul"))
             strategy = new ListExecuteStrategy();
-        }
         else
-        {
             strategy = new DefaultExecuteStrategy(this);
-        }
+
         strategy.Execute(commandCall, evaluator, resultRecorder);
     }
 
-    public void Verify(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void Verify(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
     {
     }
-
-    #endregion
 }

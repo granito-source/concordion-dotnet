@@ -17,7 +17,7 @@ namespace Concordion.Api;
 /// <summary>
 /// Evaluates OGNL expressions
 /// </summary>
-public interface IEvaluator {
+public interface Evaluator {
     /// <summary>
     /// Gets the variable.
     /// </summary>
@@ -30,7 +30,7 @@ public interface IEvaluator {
     /// </summary>
     /// <param name="variableName">Name of the variable.</param>
     /// <param name="value">The value.</param>
-    void SetVariable(string variableName, object value);
+    void SetVariable(string variableName, object? value);
 
     /// <summary>
     /// Evaluates the specified expression.
@@ -40,8 +40,9 @@ public interface IEvaluator {
     object? Evaluate(string expression);
 
     /// <summary>
-    /// Gets the fixture that concordion uses to evaluate expressions against
+    /// Gets the fixture that concordion uses to evaluate expressions
+    /// against.
     /// </summary>
     /// <value>The fixture.</value>
-    object? Fixture { get; }
+    object Fixture { get; }
 }

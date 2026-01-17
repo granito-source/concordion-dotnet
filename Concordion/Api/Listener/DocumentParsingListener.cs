@@ -2,7 +2,6 @@
 
 namespace Concordion.Api.Listener;
 
-public interface IDocumentParsingListener
-{
+public interface DocumentParsingListener {
     void BeforeParsing(XDocument document);
 }

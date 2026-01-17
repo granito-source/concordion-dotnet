@@ -21,11 +21,11 @@ namespace Concordion.Internal;
 
 public class DocumentParser
 {
-    private readonly List<IDocumentParsingListener> m_Listeners = new List<IDocumentParsingListener>();
+    private readonly List<DocumentParsingListener> m_Listeners = new List<DocumentParsingListener>();
 
     #region Properties
 
-    private ICommandFactory CommandFactory
+    private CommandFactory CommandFactory
     {
         get;
         set;
@@ -35,7 +35,7 @@ public class DocumentParser
 
     #region Constructors
 
-    public DocumentParser(ICommandFactory commandFactory)
+    public DocumentParser(CommandFactory commandFactory)
     {
         CommandFactory = commandFactory;
     }
@@ -44,12 +44,12 @@ public class DocumentParser
 
     #region Methods
 
-    public void AddDocumentParsingListener(IDocumentParsingListener listener)
+    public void AddDocumentParsingListener(DocumentParsingListener listener)
     {
         m_Listeners.Add(listener);
     }
 
-    public void RemoveDocumentParsingListener(IDocumentParsingListener listener)
+    public void RemoveDocumentParsingListener(DocumentParsingListener listener)
     {
         m_Listeners.Remove(listener);
     }
@@ -62,7 +62,7 @@ public class DocumentParser
         }
     }
 
-    public ISpecification Parse(XDocument document, Resource resource)
+    public Specification Parse(XDocument document, Resource resource)
     {
         AnnounceBeforeParsing(document);
         var rootElement = document.Root;
@@ -71,13 +71,13 @@ public class DocumentParser
         return new XmlSpecification(rootCommandCall);
     }
 
-    private ICommand CreateSpecificationCommand()
+    private Command CreateSpecificationCommand()
     {
         var specCmd = CreateCommand("", "specification");
         return specCmd;
     }
 
-    private ICommand CreateCommand(string namespaceURI, string commandName)
+    private Command CreateCommand(string namespaceURI, string commandName)
     {
         return CommandFactory.CreateCommand(namespaceURI, commandName);
     }

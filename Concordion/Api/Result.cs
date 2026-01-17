@@ -14,11 +14,7 @@
 
 namespace Concordion.Api;
 
-/// <summary>
-///
-/// </summary>
-public enum Result
-{
+public enum Result {
     /// <summary>
     /// Indicates a specification assertion was successful
     /// </summary>

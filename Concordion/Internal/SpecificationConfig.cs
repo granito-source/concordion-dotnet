@@ -36,7 +36,7 @@ public class SpecificationConfig {
     /// <summary>
     /// Gets or sets names of extensions.
     /// </summary>
-    /// <seealso cref="IConcordionExtension"/>
+    /// <seealso cref="ConcordionExtension"/>
     /// <value>Qualified type names together with assembly names of Concordion extensions.</value>
     public IDictionary<string, string> ConcordionExtensions { get; set; } =
         new Dictionary<string, string>();

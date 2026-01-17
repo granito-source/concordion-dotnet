@@ -17,7 +17,7 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Internal.Listener;
 
-public class PageFooterRenderer(Target target) : ISpecificationProcessingListener {
+public class PageFooterRenderer(Target target) : SpecificationProcessingListener {
     private const string ConcordionWebsiteUrl = "https://concordion.org/";
 
     private static readonly Resource TargetLogoResource =

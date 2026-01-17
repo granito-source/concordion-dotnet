@@ -18,16 +18,15 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Listener;
 
-public class DocumentStructureImprover : IDocumentParsingListener
+public class DocumentStructureImprover : DocumentParsingListener
 {
-    #region Methods
-
-    private bool HasHeadSection(XElement html)
+    private static bool HasHeadSection(XElement html)
     {
         return html.Element(XName.Get("head", "")) != null;
     }
 
-    private void CopyNodesBeforeBodyIntoHead(XElement html, XElement head)
+    private static void CopyNodesBeforeBodyIntoHead(XElement html,
+        XElement head)
     {
         foreach (var child in NodesBeforeBody(html))
         {
@@ -36,47 +35,33 @@ public class DocumentStructureImprover : IDocumentParsingListener
         }
     }
 
-    private IEnumerable<XElement> NodesBeforeBody(XElement html)
+    private static List<XElement> NodesBeforeBody(XElement html)
     {
-        var nodes = new List<XElement>();
-
-        foreach (var child in html.Elements())
-        {
-            if (isBodySection(child))
-            {
-                break;
-            }
-
-            nodes.Add(child);
-        }
-
-        return nodes;
+        return html
+            .Elements()
+            .TakeWhile(child => !IsBodySection(child))
+            .ToList();
     }
 
-    private bool isBodySection(XElement child)
+    private static bool IsBodySection(XElement child)
     {
         return child.Name.LocalName == "body";
     }
-
-    #endregion
-
-    #region IDocumentParsingListener Members
 
     public void BeforeParsing(XDocument document)
     {
         var html = document.Root;
 
+        Check.NotNull(html, "document root may not be null");
         Check.IsTrue("html".Equals(html.Name.LocalName),
-            "Only <html> documents are supported (<" + html.Name.LocalName + "> is not)");
+            $"Only <html> documents are supported (<{html.Name.LocalName}> is not)");
 
-        if (!HasHeadSection(html))
-        {
-            var head = new XElement("head");
+        if (HasHeadSection(html))
+            return;
 
-            CopyNodesBeforeBodyIntoHead(html, head);
-            html.AddFirst(head);
-        }
+        var head = new XElement("head");
+
+        CopyNodesBeforeBodyIntoHead(html, head);
+        html.AddFirst(head);
     }
-
-    #endregion
 }

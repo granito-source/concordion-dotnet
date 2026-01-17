@@ -15,14 +15,15 @@
 namespace Concordion.Api;
 
 /// <summary>
-/// Locates specifications for concordion
+/// Runs concordion on a particular specification
 /// </summary>
-public interface ISpecificationLocator
-{
+public interface Runner {
     /// <summary>
-    /// Locates the specification.
+    /// Executes the specified resource.
     /// </summary>
     /// <param name="fixture">The fixture.</param>
-    /// <returns>The resource representing where the specification is located, null otherwise.</returns>
-    Resource LocateSpecification(object? fixture);
+    /// <param name="resource">The resource.</param>
+    /// <param name="href">The href.</param>
+    /// <returns>A result indicating how the specification ran.</returns>
+    RunnerResult Execute(object fixture, Resource resource, string href);
 }

@@ -1,6 +1,5 @@
 ﻿namespace Concordion.Api.Listener;
 
-public interface IConcordionBuildListener
-{
+public interface ConcordionBuildListener {
     void ConcordionBuilt(ConcordionBuildEvent buildEvent);
 }

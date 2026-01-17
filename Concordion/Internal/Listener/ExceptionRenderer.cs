@@ -18,7 +18,7 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Listener;
 
-public class ExceptionRenderer : IExceptionCaughtListener
+public class ExceptionRenderer : ExceptionCaughtListener
 {
     #region Fields
 

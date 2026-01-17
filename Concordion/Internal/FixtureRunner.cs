@@ -15,118 +15,122 @@
  * limitations under the License.
  */
 
+using System.Diagnostics;
 using Concordion.Api;
 using Concordion.Internal.Extension;
 
 namespace Concordion.Internal;
 
-public class FixtureRunner {
-    private object? m_Fixture;
-
-    private Source? m_Source;
-
-    private FileTarget? m_Target;
-
-    private SpecificationConfig? m_SpecificationConfig;
-
-    public string? ResultPath { get; private set; }
-
-    public FixtureRunner()
+public class FixtureRunner(SpecificationConfig? config = null) {
+    private static void AddToTestResults(ResultSummary singleResult,
+        SummarizingResultRecorder resultSummary)
     {
+        if (singleResult.HasExceptions)
+            resultSummary.AddResultDetails(singleResult.ErrorDetails);
+        else if (singleResult.HasFailures)
+            resultSummary.AddResultDetails(singleResult.FailureDetails);
+        else
+            resultSummary.Success();
     }
 
-    public FixtureRunner(SpecificationConfig specificationConfig) : this()
-    {
-        m_SpecificationConfig = specificationConfig;
-    }
+    private SpecificationConfig? runningConfig = config;
 
-    public IResultSummary Run(object fixture)
+    private object? runningFixture;
+
+    private Source? runningSource;
+
+    private FileTarget? runningTarget;
+
+    public ResultSummary Run(object fixture)
     {
         try {
-            m_Fixture = fixture;
-            m_SpecificationConfig ??=
-                new SpecificationConfig().Load(fixture.GetType());
-            m_Source = string.IsNullOrEmpty(m_SpecificationConfig.BaseInputDirectory) ?
+            runningFixture = fixture;
+            runningConfig ??= new SpecificationConfig()
+                .Load(fixture.GetType());
+            runningSource = string.IsNullOrEmpty(runningConfig.BaseInputDirectory) ?
                 new EmbeddedResourceSource(fixture.GetType().Assembly) :
-                new FileSource(m_SpecificationConfig.BaseInputDirectory);
+                new FileSource(runningConfig.BaseInputDirectory);
+            runningTarget = new FileTarget(runningConfig.BaseOutputDirectory);
 
-            m_Target = new FileTarget(m_SpecificationConfig.BaseOutputDirectory);
+            var fileExtensions = runningConfig.SpecificationFileExtensions;
 
-            var fileExtensions = m_SpecificationConfig.SpecificationFileExtensions;
-            if (fileExtensions.Count > 1) {
+            if (fileExtensions.Count > 1)
                 return RunAllSpecifications(fileExtensions);
-            } else if (fileExtensions.Count == 1) {
+
+            if (fileExtensions.Count == 1)
                 return RunSingleSpecification(fileExtensions.First());
-            } else {
-                throw new InvalidOperationException(string.Format("no specification extensions defined for: {0}",
-                    m_SpecificationConfig));
-            }
-        } catch (Exception e) {
-            Console.WriteLine(e);
+
+            throw new InvalidOperationException(
+                $"no specification extensions defined for: {runningConfig}");
+        } catch (Exception ex) {
+            Console.WriteLine(ex);
+
             var exceptionResult = new SummarizingResultRecorder();
-            exceptionResult.Error(e);
+
+            exceptionResult.Error(ex);
+
             return exceptionResult;
         }
     }
 
-    private IResultSummary RunAllSpecifications(IEnumerable<string> fileExtensions)
+    private SummarizingResultRecorder RunAllSpecifications(
+        IEnumerable<string> fileExtensions)
     {
+        Debug.Assert(runningConfig != null, nameof(runningConfig) + " != null");
+        Debug.Assert(runningFixture != null, nameof(runningFixture) + " != null");
+        Debug.Assert(runningSource != null, nameof(runningSource) + " != null");
+
         var testSummary = new SummarizingResultRecorder();
         var anySpecExecuted = false;
+
         foreach (var fileExtension in fileExtensions) {
             var specLocator = new ClassNameBasedSpecificationLocator(fileExtension);
-            var specResource = specLocator.LocateSpecification(m_Fixture);
-            if (m_Source.CanFind(specResource)) {
-                var fixtureResult = RunSingleSpecification(fileExtension);
-                AddToTestResults(fixtureResult, testSummary);
-                anySpecExecuted = true;
-            }
+            var specResource = specLocator.LocateSpecification(runningFixture);
+
+
+            if (!runningSource.CanFind(specResource))
+                continue;
+
+            var fixtureResult = RunSingleSpecification(fileExtension);
+
+            AddToTestResults(fixtureResult, testSummary);
+            anySpecExecuted = true;
         }
 
-        if (!anySpecExecuted) {
-            string specPath;
-            if (!string.IsNullOrEmpty(m_SpecificationConfig.BaseInputDirectory)) {
-                specPath = string.Format("directory {0}",
-                    Path.GetFullPath(m_SpecificationConfig.BaseInputDirectory));
-            } else {
-                specPath = string.Format("assembly {0}",
-                    m_Fixture.GetType().Assembly.GetName().Name);
-            }
+        if (anySpecExecuted)
+            return testSummary;
 
-            testSummary.Error(new AssertionErrorException(string.Format(
-                "no active specification found for {0} in {1}",
-                m_Fixture.GetType().Name,
-                specPath)));
-        }
+        var specPath = !string.IsNullOrEmpty(runningConfig.BaseInputDirectory) ?
+            $"directory {Path.GetFullPath(runningConfig.BaseInputDirectory)}" :
+            $"assembly {runningFixture.GetType().Assembly.GetName().Name}";
+
+        testSummary.Error(new AssertionErrorException(
+            $"no active specification found for {runningFixture.GetType().Name} in {specPath}"));
 
         return testSummary;
     }
 
-    private IResultSummary RunSingleSpecification(string fileExtension)
+    private ResultSummary RunSingleSpecification(string fileExtension)
     {
-        var specificationLocator = new ClassNameBasedSpecificationLocator(fileExtension);
-        ResultPath = m_Target.ResolvedPathFor(specificationLocator.LocateSpecification(m_Fixture));
+        Debug.Assert(runningConfig != null, nameof(runningConfig) + " != null");
+        Debug.Assert(runningFixture != null, nameof(runningFixture) + " != null");
+        Debug.Assert(runningSource != null, nameof(runningSource) + " != null");
+        Debug.Assert(runningTarget != null, nameof(runningTarget) + " != null");
+
+        var locator = new ClassNameBasedSpecificationLocator(fileExtension);
         var concordionExtender = new ConcordionBuilder();
+
         concordionExtender
-            .WithSource(m_Source)
-            .WithTarget(m_Target)
-            .WithSpecificationLocator(specificationLocator);
-        var extensionLoader = new ExtensionLoader(m_SpecificationConfig);
-        extensionLoader.AddExtensions(m_Fixture, concordionExtender);
+            .WithSource(runningSource)
+            .WithTarget(runningTarget)
+            .WithSpecificationLocator(locator);
+
+        var extensionLoader = new ExtensionLoader(runningConfig);
+
+        extensionLoader.AddExtensions(runningFixture, concordionExtender);
+
         var concordion = concordionExtender.Build();
-        return concordion.Process(m_Fixture);
-    }
 
-    private void AddToTestResults(IResultSummary singleResult, IResultRecorder resultSummary)
-    {
-        if (resultSummary == null) return;
-
-        if (singleResult.HasExceptions) {
-            resultSummary.AddResultDetails(singleResult.ErrorDetails);
-        } else if (singleResult.HasFailures) {
-            resultSummary.AddResultDetails(singleResult.FailureDetails);
-        } else {
-            resultSummary.Success();
-        }
+        return concordion.Process(runningFixture);
     }
 }

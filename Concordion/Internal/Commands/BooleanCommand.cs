@@ -18,47 +18,41 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Internal.Commands;
 
-public abstract class BooleanCommand : AbstractCommand
-{
-    private readonly List<IAssertListener> m_Listeners = [];
+public abstract class BooleanCommand : AbstractCommand {
+    private readonly List<AssertListener> listeners = [];
 
-    #region Methods
-
-    public void AddAssertListener(IAssertListener listener)
+    public void AddAssertListener(AssertListener listener)
     {
-        m_Listeners.Add(listener);
+        listeners.Add(listener);
     }
 
-    public void RemoveAssertListener(IAssertListener listener)
+    public void RemoveAssertListener(AssertListener listener)
     {
-        m_Listeners.Remove(listener);
+        listeners.Remove(listener);
     }
 
     protected void AnnounceSuccess(Element element)
     {
-        foreach (var assertListener in m_Listeners)
-        {
+        foreach (var assertListener in listeners)
             assertListener.SuccessReported(new AssertSuccessEvent(element));
-        }
     }
 
-    protected void AnnounceFailure(Element element, string expected, object actual)
+    protected void AnnounceFailure(Element element, string expected,
+        object actual)
     {
-        foreach (var assertListener in m_Listeners)
-        {
-            assertListener.FailureReported(new AssertFailureEvent(element, expected, actual));
-        }
+        foreach (var assertListener in listeners)
+            assertListener.FailureReported(
+                new AssertFailureEvent(element, expected, actual));
     }
 
-    protected abstract void ProcessFalseResult(CommandCall commandCall,IResultRecorder resultRecorder);
+    protected abstract void ProcessFalseResult(CommandCall commandCall,
+        ResultRecorder resultRecorder);
 
-    protected abstract void ProcessTrueResult(CommandCall commandCall, IResultRecorder resultRecorder);
+    protected abstract void ProcessTrueResult(CommandCall commandCall,
+        ResultRecorder resultRecorder);
 
-    #endregion
-
-    #region ICommand Members
-
-    public override void Verify(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public override void Verify(CommandCall commandCall,
+        Evaluator evaluator, ResultRecorder resultRecorder)
     {
         var childCommands = commandCall.Children;
 
@@ -69,22 +63,13 @@ public abstract class BooleanCommand : AbstractCommand
         var expression = commandCall.Expression;
         var result = evaluator.Evaluate(expression);
 
-        if (result != null && result is bool)
-        {
-            if ((bool) result)
-            {
-                ProcessTrueResult(commandCall, resultRecorder);
-            }
-            else
-            {
-                ProcessFalseResult(commandCall, resultRecorder);
-            }
-        }
-        else
-        {
-            throw new InvalidExpressionException("Expression '" + expression + "' did not produce a boolean result (needed for assertTrue).");
-        }
-    }
+        if (result is not bool boolResult)
+            throw new InvalidExpressionException(
+                $"Expression '{expression}' did not produce a boolean result (needed for assertTrue).");
 
-    #endregion
+        if (boolResult)
+            ProcessTrueResult(commandCall, resultRecorder);
+        else
+            ProcessFalseResult(commandCall, resultRecorder);
+    }
 }

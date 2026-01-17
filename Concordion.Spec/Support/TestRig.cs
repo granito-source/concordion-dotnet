@@ -10,14 +10,14 @@ public class TestRig {
 
     private readonly StubSource source = new();
 
-    private IEvaluatorFactory evaluatorFactory =
+    private EvaluatorFactory evaluatorFactory =
         new SimpleEvaluatorFactory();
 
     private object? fixture;
 
     private StubTarget? target;
 
-    private IConcordionExtension? extension;
+    private ConcordionExtension? extension;
 
     public bool HasCopiedResource(Resource resource)
     {
@@ -31,7 +31,7 @@ public class TestRig {
         return this;
     }
 
-    public TestRig WithExtension(IConcordionExtension extension)
+    public TestRig WithExtension(ConcordionExtension extension)
     {
         this.extension = extension;
 
@@ -48,7 +48,7 @@ public class TestRig {
     public TestRig WithStubbedEvaluationResult(object? evaluationResult)
     {
         evaluatorFactory = new StubEvaluator(fixture)
-            .withStubbedResult(evaluationResult);
+            .WithStubbedResult(evaluationResult);
 
         return this;
     }

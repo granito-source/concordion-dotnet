@@ -15,15 +15,14 @@
 namespace Concordion.Api;
 
 /// <summary>
-/// A factory to create command objects
+/// An HTML specification that is input into Concordion
 /// </summary>
-public interface ICommandFactory
-{
+public interface Specification {
     /// <summary>
-    /// Creates the command.
+    /// Processes the specification using the expression evaluator and
+    /// writing the results to the result recorder.
     /// </summary>
-    /// <param name="namespaceUri">The namespace URI.</param>
-    /// <param name="commandName">Name of the command.</param>
-    /// <returns></returns>
-    ICommand CreateCommand(string namespaceUri, string commandName);
+    /// <param name="evaluator">The evaluator.</param>
+    /// <param name="resultRecorder">The result recorder.</param>
+    void Process(Evaluator evaluator, ResultRecorder resultRecorder);
 }

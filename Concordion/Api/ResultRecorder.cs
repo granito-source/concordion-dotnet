@@ -15,16 +15,10 @@
 namespace Concordion.Api;
 
 /// <summary>
-/// Records the results of running a specification and indicates whether or not the specification passed or failed
+/// Records the results of running a specification and indicates
+/// whether the specification passed or failed
 /// </summary>
-public interface IResultRecorder
-{
-    /// <summary>
-    /// Records the specified result.
-    /// </summary>
-    /// <param name="result">The result.</param>
-    void Record(Result result);
-
+public interface ResultRecorder {
     /// <summary>
     /// Indicate a successful assert.
     /// </summary>

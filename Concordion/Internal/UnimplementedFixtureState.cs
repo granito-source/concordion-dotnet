@@ -2,7 +2,7 @@
 
 namespace Concordion.Internal;
 
-class UnimplementedFixtureState : IFixtureState
+class UnimplementedFixtureState : FixtureState
 {
     #region IFixtureState Members
 

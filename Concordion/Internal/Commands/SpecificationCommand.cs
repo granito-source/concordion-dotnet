@@ -17,62 +17,58 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Internal.Commands;
 
-public class SpecificationCommand : AbstractCommand
-{
-    #region Fields
+public class SpecificationCommand : AbstractCommand {
+    private readonly List<SpecificationProcessingListener> listeners = [];
 
-    private readonly List<ISpecificationProcessingListener> m_Listeners = new List<ISpecificationProcessingListener>();
-
-    #endregion
-
-    #region Methods
-
-    public void AddSpecificationListener(ISpecificationProcessingListener listener)
+    public void AddSpecificationListener(
+        SpecificationProcessingListener listener)
     {
-        m_Listeners.Add(listener);
+        listeners.Add(listener);
     }
 
-    public void RemoveSpecificationListener(ISpecificationProcessingListener listener)
+    public void RemoveSpecificationListener(
+        SpecificationProcessingListener listener)
     {
-        m_Listeners.Remove(listener);
+        listeners.Remove(listener);
     }
 
-    private void AnnounceAfterProcessingEvent(Resource resource, Element element)
+    private void AnnounceAfterProcessingEvent(Resource resource,
+        Element element)
     {
-        foreach (var listener in m_Listeners)
-        {
-            listener.AfterProcessingSpecification(new SpecificationProcessingEvent(resource, element));
-        }
+        foreach (var listener in listeners)
+            listener.AfterProcessingSpecification(
+                new SpecificationProcessingEvent(resource, element));
     }
 
-    private void AnnounceBeforeProcessingEvent(Resource resource, Element element)
+    private void AnnounceBeforeProcessingEvent(Resource resource,
+        Element element)
     {
-        foreach (var listener in m_Listeners)
-        {
-            listener.BeforeProcessingSpecification(new SpecificationProcessingEvent(resource, element));
-        }
+        foreach (var listener in listeners)
+            listener.BeforeProcessingSpecification(
+                new SpecificationProcessingEvent(resource, element));
     }
 
-    #endregion
-
-    #region ICommand Members
-
-    public override void Setup(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public override void Setup(CommandCall commandCall,
+        Evaluator evaluator, ResultRecorder resultRecorder)
     {
-        throw new InvalidOperationException("Unexpected call to SpecificationCommand's SetUp() method. Only the Execute() method should be called.");
+        throw new InvalidOperationException(
+            "Unexpected call to SpecificationCommand's SetUp() method. Only the Execute() method should be called.");
     }
 
-    public override void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public override void Execute(CommandCall commandCall,
+        Evaluator evaluator, ResultRecorder resultRecorder)
     {
-        AnnounceBeforeProcessingEvent(commandCall.Resource, commandCall.Element);
+        AnnounceBeforeProcessingEvent(commandCall.Resource,
+            commandCall.Element);
         commandCall.Children.ProcessSequentially(evaluator, resultRecorder);
-        AnnounceAfterProcessingEvent(commandCall.Resource, commandCall.Element);
+        AnnounceAfterProcessingEvent(commandCall.Resource,
+            commandCall.Element);
     }
 
-    public override void Verify(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public override void Verify(CommandCall commandCall,
+        Evaluator evaluator, ResultRecorder resultRecorder)
     {
-        throw new InvalidOperationException("Unexpected call to SpecificationCommand's Verify() method. Only the Execute() method should be called.");
+        throw new InvalidOperationException(
+            "Unexpected call to SpecificationCommand's Verify() method. Only the Execute() method should be called.");
     }
-
-    #endregion
 }

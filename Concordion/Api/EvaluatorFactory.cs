@@ -12,6 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Concordion.Internal.Util;
+namespace Concordion.Api;
 
-public class Announcer<T>;
+/// <summary>
+/// Creates <see cref="Evaluator"/> objects
+/// </summary>
+public interface EvaluatorFactory {
+    /// <summary>
+    /// Creates the evaluator.
+    /// </summary>
+    /// <param name="fixture">The fixture.</param>
+    /// <returns></returns>
+    Evaluator CreateEvaluator(object fixture);
+}

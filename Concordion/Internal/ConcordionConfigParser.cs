@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Xml.Linq;
-using Concordion.Api;
 
 namespace Concordion.Internal;
 
@@ -97,9 +96,9 @@ public class ConcordionConfigParser
                     if (runnerType != null)
                     {
                         var runnerObject = Activator.CreateInstance(runnerType);
-                        if (runnerObject != null && runnerObject is IRunner)
+                        if (runnerObject != null && runnerObject is Api.Runner)
                         {
-                            Config.Runners.Add(alias.Value, runnerObject as IRunner);
+                            Config.Runners.Add(alias.Value, runnerObject as Api.Runner);
                         }
                     }
                 }

@@ -2,7 +2,7 @@
 
 namespace Concordion.Spec.Concordion.Command.Run;
 
-class RunTestRunner : IRunner {
+class RunTestRunner : Runner {
     public static Result Result;
 
     public RunnerResult Execute(object fixture, Resource resource,

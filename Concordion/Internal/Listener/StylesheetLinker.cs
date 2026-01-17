@@ -5,7 +5,7 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Listener;
 
-public class StylesheetLinker : IDocumentParsingListener, ISpecificationProcessingListener
+public class StylesheetLinker : DocumentParsingListener, SpecificationProcessingListener
 {
     #region Fields
 

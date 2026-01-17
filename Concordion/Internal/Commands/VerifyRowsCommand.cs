@@ -20,67 +20,57 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Commands;
 
-public class VerifyRowsCommand : ICommand
-{
-    private List<IVerifyRowsListener> m_Listeners = [];
+public class VerifyRowsCommand : Command {
+    private readonly List<VerifyRowsListener> listeners = [];
 
-    #region Methods
-
-    public void AddVerifyRowsListener(IVerifyRowsListener listener)
+    public void AddVerifyRowsListener(VerifyRowsListener listener)
     {
-        m_Listeners.Add(listener);
+        listeners.Add(listener);
     }
 
-    public void RemoveVerifyRowsListener(IVerifyRowsListener listener)
+    public void RemoveVerifyRowsListener(VerifyRowsListener listener)
     {
-        m_Listeners.Remove(listener);
+        listeners.Remove(listener);
     }
 
     private void AnnounceExpressionEvaluated(Element element)
     {
-        foreach (var listener in m_Listeners)
-        {
-            listener.ExpressionEvaluated(new ExpressionEvaluatedEvent(element));
-        }
+        foreach (var listener in listeners)
+            listener.ExpressionEvaluated(
+                new ExpressionEvaluatedEvent(element));
     }
 
     private void AnnounceMissingRow(Element element)
     {
-        foreach (var listener in m_Listeners)
-        {
+        foreach (var listener in listeners)
             listener.MissingRow(new MissingRowEvent(element));
-        }
     }
 
     private void AnnounceSurplusRow(Element element)
     {
-        foreach (var listener in m_Listeners)
-        {
+        foreach (var listener in listeners)
             listener.SurplusRow(new SurplusRowEvent(element));
-        }
     }
 
-    #endregion
-
-    #region ICommand Members
-
-    public void Setup(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void Setup(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
     {
     }
 
-    public void Execute(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void Execute(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
     {
     }
 
-    public void Verify(CommandCall commandCall, IEvaluator evaluator, IResultRecorder resultRecorder)
+    public void Verify(CommandCall commandCall, Evaluator evaluator,
+        ResultRecorder resultRecorder)
     {
         var pattern = new Regex("(#.+?) *: *(.+)");
         var matcher = pattern.Match(commandCall.Expression);
 
         if (!matcher.Success)
-        {
-            throw new InvalidOperationException("The expression for a \"verifyRows\" should be of the form: #var : collectionExpr");
-        }
+            throw new InvalidOperationException(
+                "The expression for a \"verifyRows\" should be of the form: #var : collectionExpr");
 
         var loopVariableName = matcher.Groups[1].Value;
         var iterableExpression = matcher.Groups[2].Value;
@@ -98,18 +88,14 @@ public class VerifyRowsCommand : ICommand
 
         var index = 0;
 
-        foreach (var loopVar in iterable)
-        {
+        foreach (var loopVar in iterable) {
             evaluator.SetVariable(loopVariableName, loopVar);
 
             Row detailRow;
 
             if (detailRows.Count > index)
-            {
                 detailRow = detailRows[index];
-            }
-            else
-            {
+            else {
                 detailRow = tableSupport.AddDetailRow();
                 AnnounceSurplusRow(detailRow.RowElement);
             }
@@ -122,10 +108,9 @@ public class VerifyRowsCommand : ICommand
         for (; index < detailRows.Count; index++) {
             var detailRow = detailRows[index];
 
-            resultRecorder.Failure($"missing row {detailRow}", commandCall.Element.ToXml());
+            resultRecorder.Failure($"missing row {detailRow}",
+                commandCall.Element.ToXml());
             AnnounceMissingRow(detailRow.RowElement);
         }
     }
-
-    #endregion
 }

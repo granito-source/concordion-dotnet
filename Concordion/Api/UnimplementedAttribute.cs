@@ -1,4 +1,7 @@
-﻿// you may not use this file except in compliance with the License.
+﻿// Copyright 2009 Jeffrey Cameron
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
 //   http://www.apache.org/licenses/LICENSE-2.0
@@ -12,7 +15,8 @@
 namespace Concordion.Api;
 
 /// <summary>
-/// Indicates to Concordion if a Class is not yet implemented and should have no assertions
+/// Indicates to Concordion if a Class is not yet implemented and should
+/// have no assertions.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class)]
 public class UnimplementedAttribute : Attribute;

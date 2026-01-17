@@ -2,10 +2,10 @@
 
 namespace Concordion.Spec.Support;
 
-public class StubEvaluator(object? fixture) : IEvaluator, IEvaluatorFactory {
+public class StubEvaluator(object fixture) : Evaluator, EvaluatorFactory {
     private object? evaluationResult;
 
-    public IEvaluator CreateEvaluator(object? fixture)
+    public Evaluator CreateEvaluator(object fixture)
     {
         return this;
     }
@@ -23,13 +23,13 @@ public class StubEvaluator(object? fixture) : IEvaluator, IEvaluatorFactory {
         return null;
     }
 
-    public void SetVariable(string variableName, object value)
+    public void SetVariable(string variableName, object? value)
     {
     }
 
-    public object? Fixture { get; } = fixture;
+    public object Fixture { get; } = fixture;
 
-    public IEvaluatorFactory withStubbedResult(object? result)
+    public EvaluatorFactory WithStubbedResult(object? result)
     {
         evaluationResult = result;
 

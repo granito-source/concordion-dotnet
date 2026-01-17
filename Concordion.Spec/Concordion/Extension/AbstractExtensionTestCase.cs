@@ -4,7 +4,7 @@ using Concordion.Spec.Support;
 namespace Concordion.Spec.Concordion.Extension;
 
 public class AbstractExtensionTestCase {
-    protected IConcordionExtension Extension { get; set; }
+    protected ConcordionExtension Extension { get; set; }
 
     protected TestRig? TestRig { get; set; }
 

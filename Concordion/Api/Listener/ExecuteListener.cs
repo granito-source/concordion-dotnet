@@ -1,6 +1,5 @@
 ﻿namespace Concordion.Api.Listener;
 
-public interface IExecuteListener
-{
+public interface ExecuteListener {
     void ExecuteCompleted(ExecuteEvent executeEvent);
 }

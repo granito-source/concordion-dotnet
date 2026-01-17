@@ -14,7 +14,7 @@
 
 namespace Concordion.Internal;
 
-public class BannedWordsValidator : IExpressionValidator
+public class BannedWordsValidator : ExpressionValidator
 {
     #region Properties
 

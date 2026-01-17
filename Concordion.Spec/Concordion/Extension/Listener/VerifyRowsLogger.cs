@@ -2,7 +2,7 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Spec.Concordion.Extension.Listener;
 
-public class VerifyRowsLogger : IVerifyRowsListener {
+public class VerifyRowsLogger : VerifyRowsListener {
     private readonly TextWriter m_LogWriter;
 
     public VerifyRowsLogger(TextWriter logWriter)

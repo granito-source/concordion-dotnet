@@ -2,14 +2,14 @@
 
 namespace Concordion.Spec.Concordion.Extension.Listener;
 
-public class LoggingExtension(TextWriter logWriter) : IConcordionExtension {
+public class LoggingExtension(TextWriter logWriter) : ConcordionExtension {
     private readonly AssertLogger m_AssertLogger = new(logWriter);
 
     private readonly ExecuteLogger m_ExecuteLogger = new(logWriter);
 
     private readonly VerifyRowsLogger m_VerifyRowsLogger = new(logWriter);
 
-    public void AddTo(IConcordionExtender concordionExtender)
+    public void AddTo(ConcordionExtender concordionExtender)
     {
         concordionExtender.WithAssertEqualsListener(m_AssertLogger);
         concordionExtender.WithAssertTrueListener(m_AssertLogger);

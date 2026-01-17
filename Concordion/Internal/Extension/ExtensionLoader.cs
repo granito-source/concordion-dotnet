@@ -4,66 +4,63 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Extension;
 
-public class ExtensionLoader
-{
-    private SpecificationConfig Configuration { get; set; }
-
-    public ExtensionLoader(SpecificationConfig configuration)
+public class ExtensionLoader(SpecificationConfig configuration) {
+    private static List<ConcordionExtension> GetExtensionsForFixture(object fixture)
     {
-        Configuration = configuration;
-    }
+        var extensions = new List<ConcordionExtension>();
 
-    public void AddExtensions(object fixture, IConcordionExtender concordionExtender)
-    {
-        foreach (var concordionExtension in GetExtensionsFromConfiguration())
-        {
-            concordionExtension.AddTo(concordionExtender);
-        }
-
-        foreach (var concordionExtension in GetExtensionsForFixture(fixture))
-        {
-            concordionExtension.AddTo(concordionExtender);
-        }
-    }
-
-    private IEnumerable<IConcordionExtension> GetExtensionsFromConfiguration()
-    {
-        if (Configuration == null)
-            return [];
-
-        var extensions = new List<IConcordionExtension>();
-
-        foreach (var extension in Configuration.ConcordionExtensions)
-        {
-            var extensionTypeName = extension.Key;
-            var extensionAsseblyName = extension.Value;
-
-            extensions.Add(CreateConcordionExtension(extensionTypeName, extensionAsseblyName));
+        foreach (var type in GetClassHierarchyParentFirst(fixture.GetType())) {
+            extensions.AddRange(GetExtensionsFromFieldAttributes(fixture, type));
+            extensions.AddRange(GetExtensionsFromClassAttributes(type));
         }
 
         return extensions;
     }
 
-    private IEnumerable<IConcordionExtension> GetExtensionsForFixture(object fixture)
+    private static List<ConcordionExtension> GetExtensionsFromFieldAttributes(
+        object fixture, Type fixtureType)
     {
-        var extensions = new List<IConcordionExtension>();
+        var extensions = new List<ConcordionExtension>();
+        var fieldInfos = fixtureType.GetFields(
+            BindingFlags.Public |
+            BindingFlags.DeclaredOnly |
+            BindingFlags.Instance |
+            BindingFlags.Static);
 
-        foreach (var fixtureType in GetClassHierarchyParentFirst(fixture.GetType()))
-        {
-            extensions.AddRange(GetExtensionsFromFieldAttributes(fixture, fixtureType));
-            extensions.AddRange(GetExtensionsFromClassAttributes(fixtureType));
+        foreach (var fieldInfo in fieldInfos) {
+            if (!HasAttribute(fieldInfo, typeof(ExtensionAttribute), false))
+                continue;
+
+            var extension = fieldInfo.GetValue(fixture) as ConcordionExtension;
+
+            Check.NotNull(extension, $"Extension field '{fieldInfo.Name}' must be non-null");
+
+            extensions.Add(extension);
         }
 
         return extensions;
     }
 
-    private IEnumerable<Type> GetClassHierarchyParentFirst(Type fixtureType)
+    private static List<ConcordionExtension> GetExtensionsFromClassAttributes(
+        Type fixtureType)
+    {
+        return HasAttribute(fixtureType, typeof(ExtensionsAttribute), false) ? (
+            from attribute in fixtureType.GetCustomAttributes(typeof(ExtensionsAttribute), false)
+            select attribute as ExtensionsAttribute
+            into extensionsAttribute
+            from extensionType in extensionsAttribute.ExtensionTypes
+            select CreateConcordionExtension(
+                extensionType.Assembly.GetName().Name,
+                extensionType.FullName)
+        ).ToList() : [];
+    }
+
+    private static List<Type> GetClassHierarchyParentFirst(Type fixtureType)
     {
         var fixtureTypes = new List<Type>();
         var current = fixtureType;
 
-        while (current != null && current != typeof(object))
-        {
+        while (current != null && current != typeof(object)) {
             fixtureTypes.Add(current);
             current = current.BaseType;
         }
@@ -73,73 +70,42 @@ public class ExtensionLoader
         return fixtureTypes;
     }
 
-    private IEnumerable<IConcordionExtension> GetExtensionsFromFieldAttributes(object fixture, Type fixtureType)
+    private static ConcordionExtension CreateConcordionExtension(
+        string assembly, string type)
     {
-        var extensions = new List<IConcordionExtension>();
+        var instance = Activator.CreateInstance(assembly, type)?.Unwrap();
 
-        var fieldInfos = fixtureType.GetFields(BindingFlags.Public | BindingFlags.DeclaredOnly |
-                                               BindingFlags.Instance | BindingFlags.Static);
-        foreach (var fieldInfo in fieldInfos)
-        {
-            if (HasAttribute(fieldInfo, typeof(ExtensionAttribute), false))
-            {
-                var extension = fieldInfo.GetValue(fixture) as IConcordionExtension;
-                Check.NotNull(extension, string.Format("Extension field '{0}' must be non-null", fieldInfo.Name));
-                extensions.Add(extension);
-            }
-        }
-
-        return extensions;
+        return instance switch {
+            ConcordionExtension extension => extension,
+            ConcordionExtensionFactory factory => factory.CreateExtension(),
+            _ => throw new InvalidCastException(
+                $"Extension {type} must implement {typeof(ConcordionExtension)} or {typeof(ConcordionExtensionFactory)}")
+        };
     }
 
-    private IEnumerable<IConcordionExtension> GetExtensionsFromClassAttributes(Type fixtureType)
+    private static bool HasAttribute(MemberInfo memberInfo,
+        Type attributeType, bool inherit)
     {
-        if (!HasAttribute(fixtureType, typeof(ExtensionsAttribute), false)) return Enumerable.Empty<IConcordionExtension>();
-
-        var extensions = new List<IConcordionExtension>();
-
-        foreach (var attribute in fixtureType.GetCustomAttributes(typeof(ExtensionsAttribute), false))
-        {
-            var extensionsAttribute = attribute as ExtensionsAttribute;
-
-            foreach (var extensionType in extensionsAttribute.ExtensionTypes)
-            {
-                var extensionTypeName = extensionType.FullName;
-                var extensionAssemblyName = extensionType.Assembly.GetName().Name;
-
-                extensions.Add(CreateConcordionExtension(extensionTypeName, extensionAssemblyName));
-            }
-        }
-
-        return extensions;
+        return memberInfo
+            .GetCustomAttributes(attributeType, inherit)
+            .Any(attribute => attribute.GetType() == attributeType);
     }
 
-    private static IConcordionExtension? CreateConcordionExtension(string typeName, string assemblyName)
+    public void AddExtensions(object fixture,
+        ConcordionExtender concordionExtender)
     {
-        IConcordionExtension extension;
-        var instance = Activator.CreateInstance(assemblyName, typeName).Unwrap();
+        foreach (var concordionExtension in GetExtensionsFromConfiguration())
+            concordionExtension.AddTo(concordionExtender);
 
-        if (instance is IConcordionExtension)
-        {
-            extension = instance as IConcordionExtension;
-        }
-        else if(instance is IConcordionExtensionFactory)
-        {
-            var extensionFactory = instance as IConcordionExtensionFactory;
-
-            extension = extensionFactory.CreateExtension();
-        }
-        else
-        {
-            throw new InvalidCastException(
-                $"Extension {typeName} must implement {typeof(IConcordionExtension)} or {typeof(IConcordionExtensionFactory)}");
-        }
-
-        return extension;
+        foreach (var concordionExtension in GetExtensionsForFixture(fixture))
+            concordionExtension.AddTo(concordionExtender);
     }
 
-    private bool HasAttribute(MemberInfo memberInfo, Type attributeType, bool inherit)
+    private List<ConcordionExtension> GetExtensionsFromConfiguration()
     {
-        return memberInfo.GetCustomAttributes(attributeType, inherit).Any(attribute => attribute.GetType() == attributeType);
+        return (
+            from extension in configuration.ConcordionExtensions
+            select CreateConcordionExtension(extension.Value, extension.Key)
+        ).ToList();
     }
 }

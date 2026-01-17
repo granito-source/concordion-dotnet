@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace Concordion.Internal;
 
-public abstract class AbstractCheckerBase : IExpectationChecker
+public abstract class AbstractCheckerBase : ExpectationChecker
 {
     public abstract bool IsAcceptable(string expected, object actual);
 

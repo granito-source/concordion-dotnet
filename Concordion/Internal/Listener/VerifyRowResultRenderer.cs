@@ -16,7 +16,7 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Internal.Listener;
 
-public class VerifyRowResultRenderer : IVerifyRowsListener
+public class VerifyRowResultRenderer : VerifyRowsListener
 {
     #region IVerifyRowsListener Members
 

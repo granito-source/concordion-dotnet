@@ -5,7 +5,7 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Spec.Support;
 
-public class ProcessingResult(IResultSummary resultSummary,
+public class ProcessingResult(ResultSummary resultSummary,
     EventRecorder eventRecorder, string documentXml) {
     public long SuccessCount {
         get { return resultSummary.SuccessCount; }

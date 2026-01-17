@@ -4,7 +4,7 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Listener;
 
-public class JavaScriptEmbedder : IDocumentParsingListener
+public class JavaScriptEmbedder : DocumentParsingListener
 {
     #region Fields
 

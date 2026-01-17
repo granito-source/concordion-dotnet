@@ -16,11 +16,11 @@ using Concordion.Api;
 
 namespace Concordion.Internal;
 
-public class CommandRegistry : ICommandFactory
+public class CommandRegistry : CommandFactory
 {
     #region Fields
         
-    private IDictionary<string, ICommand> m_commandMap; 
+    private IDictionary<string, Command> m_commandMap; 
 
     #endregion
 
@@ -28,14 +28,14 @@ public class CommandRegistry : ICommandFactory
         
     public CommandRegistry()
     {
-        m_commandMap = new Dictionary<string, ICommand>();
+        m_commandMap = new Dictionary<string, Command>();
     } 
 
     #endregion
 
     #region Methods
         
-    public CommandRegistry Register(string namespaceURI, string commandName, ICommand command)
+    public CommandRegistry Register(string namespaceURI, string commandName, Command command)
     {
         m_commandMap.Add(MakeKey(namespaceURI, commandName), command);
         return this;
@@ -50,7 +50,7 @@ public class CommandRegistry : ICommandFactory
 
     #region ICommandFactory Members
 
-    public ICommand CreateCommand(string namespaceUri, string commandName)
+    public Command CreateCommand(string namespaceUri, string commandName)
     {
         return m_commandMap[MakeKey(namespaceUri, commandName)];
     }

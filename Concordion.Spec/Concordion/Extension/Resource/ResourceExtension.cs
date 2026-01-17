@@ -2,10 +2,10 @@ using Concordion.Api.Extension;
 
 namespace Concordion.Spec.Concordion.Extension.Resource;
 
-public class ResourceExtension : IConcordionExtension {
+public class ResourceExtension : ConcordionExtension {
     public const string SourcePath = "/test/concordion/o.png";
 
-    public void AddTo(IConcordionExtender concordionExtender)
+    public void AddTo(ConcordionExtender concordionExtender)
     {
         concordionExtender.WithResource(
             SourcePath,

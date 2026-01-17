@@ -2,7 +2,7 @@
 
 namespace Concordion.Spec.Support;
 
-public class EventRecorder : IAssertEqualsListener, IExceptionCaughtListener {
+public class EventRecorder : AssertEqualsListener, ExceptionCaughtListener {
     private readonly List<object> m_Events;
 
     public EventRecorder()

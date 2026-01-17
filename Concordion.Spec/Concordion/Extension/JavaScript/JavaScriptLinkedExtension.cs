@@ -2,8 +2,8 @@ using Concordion.Api.Extension;
 
 namespace Concordion.Spec.Concordion.Extension.JavaScript;
 
-class JavaScriptLinkedExtension : IConcordionExtension {
-    public void AddTo(IConcordionExtender concordionExtender)
+class JavaScriptLinkedExtension : ConcordionExtension {
+    public void AddTo(ConcordionExtender concordionExtender)
     {
         concordionExtender.WithLinkedJavaScript(
             JavaScriptExtensionTest.SourcePath,

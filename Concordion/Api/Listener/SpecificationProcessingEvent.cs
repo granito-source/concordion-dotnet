@@ -1,30 +1,8 @@
 ﻿namespace Concordion.Api.Listener;
 
-public class SpecificationProcessingEvent
-{
-    #region Properties
+public class SpecificationProcessingEvent(Resource resource,
+    Element rootElement) {
+    public Element RootElement { get; } = rootElement;
 
-    public Element RootElement
-    {
-        get;
-        private set;
-    }
-
-    public Resource Resource
-    {
-        get;
-        private set;
-    }
-
-    #endregion
-
-    #region Constructors
-
-    public SpecificationProcessingEvent(Resource resource, Element rootElement)
-    {
-        Resource = resource;
-        RootElement = rootElement;
-    }
-
-    #endregion
+    public Resource Resource { get; } = resource;
 }

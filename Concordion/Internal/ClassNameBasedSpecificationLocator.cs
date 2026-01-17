@@ -18,7 +18,7 @@ using Concordion.Api;
 namespace Concordion.Internal;
 
 public class ClassNameBasedSpecificationLocator(string suffix) :
-    ISpecificationLocator {
+    SpecificationLocator {
     public ClassNameBasedSpecificationLocator() : this("html")
     {
     }

@@ -4,7 +4,7 @@ using Concordion.Internal.Util;
 
 namespace Concordion.Internal.Listener;
 
-public class MetadataCreator : IDocumentParsingListener
+public class MetadataCreator : DocumentParsingListener
 {
     #region Methods
 

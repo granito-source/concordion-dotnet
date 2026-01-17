@@ -6,7 +6,7 @@ using Concordion.Internal.Util;
 namespace Concordion.Internal.Listener;
 
 public class JavaScriptLinker(Resource? javaScriptResource)
-    : IDocumentParsingListener, ISpecificationProcessingListener {
+    : DocumentParsingListener, SpecificationProcessingListener {
     private XElement? m_Script;
 
     public void BeforeParsing(XDocument document)

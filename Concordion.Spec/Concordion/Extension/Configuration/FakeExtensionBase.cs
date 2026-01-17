@@ -5,7 +5,7 @@ using Concordion.Api.Listener;
 
 namespace Concordion.Spec.Concordion.Extension.Configuration;
 
-public class FakeExtensionBase : IConcordionExtension, IDocumentParsingListener {
+public class FakeExtensionBase : ConcordionExtension, DocumentParsingListener {
     public static readonly string FakeExtensionAttrName = "fake.extensions";
 
     private readonly string m_Text;
@@ -37,7 +37,7 @@ public class FakeExtensionBase : IConcordionExtension, IDocumentParsingListener 
         rootElement.AddAttribute(FakeExtensionAttrName, newValue);
     }
 
-    public void AddTo(IConcordionExtender concordionExtender)
+    public void AddTo(ConcordionExtender concordionExtender)
     {
         concordionExtender.WithDocumentParsingListener(this);
     }

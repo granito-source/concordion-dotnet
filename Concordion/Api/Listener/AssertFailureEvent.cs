@@ -1,36 +1,10 @@
 ﻿namespace Concordion.Api.Listener;
 
-public class AssertFailureEvent
-{
-    #region Properties
+public class AssertFailureEvent(Element element, string expected,
+    object? actual) {
+    public Element Element { get; } = element;
 
-    public Element Element
-    {
-        get;
-        private set;
-    }
+    public string Expected { get; } = expected;
 
-    public string Expected
-    {
-        get;
-        private set;
-    }
-
-    public object Actual
-    {
-        get;
-        private set;
-    }
-
-    #endregion
-
-    #region Constructors
-
-    public AssertFailureEvent(Element element, string expected, object actual) {
-        Element = element;
-        Expected = expected;
-        Actual = actual;
-    }
-
-    #endregion
+    public object? Actual { get; } = actual;
 }

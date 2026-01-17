@@ -2,7 +2,7 @@
 
 namespace Concordion.Spec.Concordion.Extension.Listener;
 
-public class ExecuteLogger : IExecuteListener {
+public class ExecuteLogger : ExecuteListener {
     private readonly TextWriter m_LogWriter;
 
     public ExecuteLogger(TextWriter logWriter)

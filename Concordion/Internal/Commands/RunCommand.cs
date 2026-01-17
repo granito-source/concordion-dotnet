@@ -19,16 +19,16 @@ using Concordion.Internal.Util;
 namespace Concordion.Internal.Commands;
 
 public class RunCommand : AbstractCommand {
-    public Dictionary<string, IRunner> Runners { get; } = new();
+    public Dictionary<string, Api.Runner> Runners { get; } = new();
 
-    private readonly List<IRunListener> listeners = [];
+    private readonly List<RunListener> listeners = [];
 
-    public void AddRunListener(IRunListener runListener)
+    public void AddRunListener(RunListener runListener)
     {
         listeners.Add(runListener);
     }
 
-    public void RemoveRunListener(IRunListener runListener)
+    public void RemoveRunListener(RunListener runListener)
     {
         listeners.Remove(runListener);
     }
@@ -52,15 +52,15 @@ public class RunCommand : AbstractCommand {
     }
 
     private void AnnounceError(Exception exception, Element element,
-        string expression)
+        string? expression)
     {
         foreach (var listener in listeners)
-            listener.ExceptionCaught(new ExceptionCaughtEvent(exception,
-                element, expression));
+            listener.ExceptionCaught(
+                new ExceptionCaughtEvent(exception, element, expression));
     }
 
     public override void Execute(CommandCall commandCall,
-        IEvaluator evaluator, IResultRecorder resultRecorder)
+        Evaluator evaluator, ResultRecorder resultRecorder)
     {
         Check.IsFalse(commandCall.HasChildCommands,
             "Nesting commands inside a 'run' is not supported");
@@ -98,9 +98,9 @@ public class RunCommand : AbstractCommand {
                     commandCall.Element.ToXml());
                 AnnounceFailure(element);
             }
-        } catch (Exception e) {
-            resultRecorder.Error(e);
-            AnnounceError(e, element, expression);
+        } catch (Exception ex) {
+            resultRecorder.Error(ex);
+            AnnounceError(ex, element, expression);
         }
     }
 }

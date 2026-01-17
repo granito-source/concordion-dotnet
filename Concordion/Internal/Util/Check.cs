@@ -12,29 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Concordion.Internal.Util;
 
-public class Check
-{
-    public static void IsTrue(bool expression, string message, params object[] args)
+public static class Check {
+    public static void IsTrue(bool expression, string message,
+        params object[] args)
     {
         if (!expression)
-        {
             throw new Exception(string.Format(message, args));
-        }
     }
 
-    public static void IsFalse(bool expression, string message, params object[] args)
+    public static void IsFalse(bool expression, string message,
+        params object[] args)
     {
         IsTrue(!expression, message, args);
     }
 
-    public static void NotNull(object? obj, string message, params object[] args)
+    public static void NotNull([NotNull] object? obj, string message,
+        params object[] args)
     {
-        IsTrue(obj != null, message, args);
+        if (obj == null)
+            throw new Exception(string.Format(message, args));
     }
 
-    public static void NotEmpty(string str, string message, params object[] args)
+    public static void NotEmpty(string str, string message,
+        params object[] args)
     {
         IsTrue(!string.IsNullOrEmpty(str), message, args);
     }

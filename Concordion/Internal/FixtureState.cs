@@ -1,6 +1,5 @@
 ﻿namespace Concordion.Internal;
 
-interface IFixtureState
-{
+internal interface FixtureState {
     void AssertIsSatisfied(long successCount, long failureCount, long exceptionCount);
 }

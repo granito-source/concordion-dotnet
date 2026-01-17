@@ -17,8 +17,7 @@ namespace Concordion.Api;
 /// <summary>
 /// The results of running a Concordion specification
 /// </summary>
-public interface IResultSummary
-{
+public interface ResultSummary {
     /// <summary>
     /// Gets the success count.
     /// </summary>

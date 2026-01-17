@@ -1,10 +1,10 @@
 ﻿namespace Concordion.Internal;
 
-public class ChainOfExpectationCheckers : IExpectationChecker
+public class ChainOfExpectationCheckers : ExpectationChecker
 {
-    private List<IExpectationChecker> checkers = new List<IExpectationChecker>();
+    private List<ExpectationChecker> checkers = new List<ExpectationChecker>();
 
-    public ChainOfExpectationCheckers Add(IExpectationChecker checker)
+    public ChainOfExpectationCheckers Add(ExpectationChecker checker)
     {
         checkers.Add(checker);
         return this;

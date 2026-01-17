@@ -1,7 +1,6 @@
 ﻿namespace Concordion.Api.Listener;
 
-public interface IVerifyRowsListener
-{
+public interface VerifyRowsListener {
     void ExpressionEvaluated(ExpressionEvaluatedEvent expressionEvaluatedEvent);
 
     void MissingRow(MissingRowEvent missingRowEvent);
