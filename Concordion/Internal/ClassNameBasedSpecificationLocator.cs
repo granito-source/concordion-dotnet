@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Concordion.Api;
 
@@ -35,15 +34,12 @@ public partial class ClassNameBasedSpecificationLocator(string suffix) :
         var fixtureName = fixture
             .GetType()
             .ToString()
-            .Replace('.', Path.DirectorySeparatorChar);
+            .Replace('.', '/');
 
         fixtureName = FixtureRegex().Replace(fixtureName, "");
 
         var path = "/" + fixtureName + "." + suffix;
-        var assembly = fixture.GetType().Assembly.GetName().Name;
 
-        Debug.Assert(assembly != null, nameof(assembly) + " != null");
-
-        return new Resource(path, assembly);
+        return new Resource(path);
     }
 }

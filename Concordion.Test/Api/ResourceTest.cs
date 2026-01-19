@@ -53,35 +53,6 @@ public class ResourceTest {
     }
 
     [Test]
-    public void CanTellItsOwnReducedPathWhenAssemblyIsSet()
-    {
-        using (Assert.EnterMultipleScope()) {
-            Assert.That(Resource("/", "Fixtures").ReducedPath,
-                Is.EqualTo("/"));
-            Assert.That(Resource("/Fixtures/", "Fixtures").ReducedPath,
-                Is.EqualTo("/"));
-            Assert.That(
-                Resource("/Fixtures/file.txt", "Fixtures").ReducedPath,
-                Is.EqualTo("/file.txt"));
-            Assert.That(
-                Resource("/path/Fixtures/", "Fixtures").ReducedPath,
-                Is.EqualTo("/path/"));
-            Assert.That(
-                Resource("/path/Fixtures/file.txt", "Fixtures")
-                    .ReducedPath,
-                Is.EqualTo("/path/file.txt"));
-            Assert.That(
-                Resource("/path/Test/Fixtures/", "Test.Fixtures")
-                    .ReducedPath,
-                Is.EqualTo("/path/"));
-            Assert.That(
-                Resource("/path/Test/Fixtures/file.txt", "Test.Fixtures")
-                    .ReducedPath,
-                Is.EqualTo("/path/file.txt"));
-        }
-    }
-
-    [Test]
     public void CanTellItsParent()
     {
         using (Assert.EnterMultipleScope()) {
@@ -194,7 +165,6 @@ public class ResourceTest {
             Assert.That(resource.Equals(resource), Is.True);
             Assert.That(resource.Equals(path), Is.False);
             Assert.That(resource.Equals(Resource(path)), Is.True);
-            Assert.That(resource.Equals(Resource(path, "Fixture")), Is.True);
             Assert.That(resource.Equals(Resource("/different")), Is.False);
             Assert.That(resource.Equals(null), Is.False);
         }
@@ -218,10 +188,5 @@ public class ResourceTest {
     private Resource Resource(string path)
     {
         return new Resource(path);
-    }
-
-    private Resource Resource(string path, string assemblyName)
-    {
-        return new Resource(path, assemblyName);
     }
 }

@@ -14,13 +14,6 @@ public class BaseInputDirectoryTest {
 
         inTestRun = true;
 
-        // work around for bug of NUnit GUI runner
-        baseInputDirectory = baseInputDirectory +
-            Path.DirectorySeparatorChar +
-            ".." +
-            Path.DirectorySeparatorChar +
-            GetType().Assembly.GetName().Name;
-
         var specificationConfig = new SpecificationConfig().Load(GetType());
 
         specificationConfig.BaseInputDirectory = baseInputDirectory;

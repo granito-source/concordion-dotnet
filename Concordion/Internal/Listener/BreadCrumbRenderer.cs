@@ -1,16 +1,19 @@
-// Copyright 2009 Jeffrey Cameron
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * Copyright 2026 Alexei Yashkov
+ * Copyright 2009 Jeffrey Cameron
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -108,56 +111,44 @@ public partial class BreadCrumbRenderer(Source source) :
     public void AfterProcessingSpecification(
         SpecificationProcessingEvent processingEvent)
     {
-        try {
-            var span = new Element("span").AddStyleClass("breadcrumbs");
+        var breadcrumbs = new Element("span").AddStyleClass("breadcrumbs");
 
-            AppendBreadcrumbsTo(span, processingEvent.Resource);
+        AppendBreadcrumbsTo(breadcrumbs, processingEvent.Resource);
 
-            if (span.HasChildren)
-                GetDocumentBody(processingEvent.RootElement)
-                    .PrependChild(span);
-        } catch (Exception e) {
-            Console.WriteLine(e.ToString());
+        if (breadcrumbs.HasChildren)
+            GetDocumentBody(processingEvent.RootElement).PrependChild(breadcrumbs);
+    }
+
+    private void AppendBreadcrumbsTo(Element breadcrumbs, Resource document)
+    {
+        var parent = document.Parent;
+
+        while (parent != null) {
+            var indexPage = parent
+                .GetRelativeResource(GetIndexPageName(parent));
+
+            if (!indexPage.Equals(document) && source.CanFind(indexPage))
+                PrependBreadcrumb(breadcrumbs,
+                    CreateBreadcrumbElement(document, indexPage));
+
+            parent = parent.Parent;
         }
     }
 
-    private void AppendBreadcrumbsTo(Element breadcrumbSpan,
-        Resource documentResource)
+    private Element CreateBreadcrumbElement(Resource document,
+        Resource indexPage)
     {
-        var packageResource = documentResource.Parent;
-
-        while (packageResource != null) {
-            var indexPageResource = packageResource
-                .GetRelativeResource(GetIndexPageName(packageResource));
-
-            if (!indexPageResource.Equals(documentResource) &&
-                source.CanFind(indexPageResource))
-                try {
-                    PrependBreadcrumb(breadcrumbSpan,
-                        CreateBreadcrumbElement(documentResource,
-                            indexPageResource));
-                } catch (Exception e) {
-                    throw new Exception("Trouble appending a breadcrumb", e);
-                }
-
-            packageResource = packageResource.Parent;
-        }
-    }
-
-    private Element CreateBreadcrumbElement(Resource documentResource,
-        Resource indexPageResource)
-    {
-        using var inputStream = source.CreateStream(indexPageResource);
+        using var inputStream = source.CreateStream(indexPage);
         var root = XDocument.Load(inputStream).Root;
 
         Check.NotNull(root, "root may not be null");
 
         var breadcrumbWording = GetBreadcrumbWording(new Element(root),
-            indexPageResource);
+            indexPage);
         var a = new Element("a");
 
         a.AddAttribute("href",
-            documentResource.GetRelativePath(indexPageResource));
+            document.GetRelativePath(indexPage));
         a.AppendText(breadcrumbWording);
 
         return a;

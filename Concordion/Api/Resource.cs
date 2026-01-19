@@ -33,33 +33,27 @@ public class Resource {
 
     private readonly Uri uri;
 
-    private readonly string assemblyName;
-
     public string Path => uri.AbsolutePath;
 
     public string Name => StripSeparator(uri.Segments[^1]);
-
-    public string ReducedPath => Path.RemoveFirst(
-        assemblyName.Replace('.', Separator) + Separator);
 
     public Resource? Parent {
         get {
             var segments = uri.Segments[..^1];
 
             return segments.Length > 0 ?
-                new Resource(string.Join(null, segments), assemblyName) :
+                new Resource(string.Join(null, segments)) :
                 null;
         }
     }
 
-    public Resource(string path, string assemblyName = "")
+    public Resource(string path)
     {
         if (!path.StartsWith(Separator))
             throw new ArgumentException(@"resource path must be absolute",
                 nameof(path));
 
         uri = new Uri($"file://{path}");
-        this.assemblyName = assemblyName;
     }
 
     /// <summary>
@@ -69,8 +63,7 @@ public class Resource {
     /// <returns></returns>
     public Resource GetRelativeResource(string relativePath)
     {
-        return new Resource(new Uri(uri, relativePath).AbsolutePath,
-            assemblyName);
+        return new Resource(new Uri(uri, relativePath).AbsolutePath);
     }
 
     public string GetRelativePath(Resource resource)

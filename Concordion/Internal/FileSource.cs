@@ -43,11 +43,6 @@ public class FileSource(string baseDirectory) : Source {
     {
         var path = Path.Combine(baseDirectory, resource.Path[1..]);
 
-        if (File.Exists(path))
-            return path;
-
-        path = Path.Combine(baseDirectory, resource.ReducedPath[1..]);
-
         return File.Exists(path) ? path : null;
     }
 }
