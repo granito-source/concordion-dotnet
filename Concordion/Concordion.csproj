@@ -23,7 +23,6 @@
         <ProjectReference Include="..\OGNL\OGNL.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Ninject" />
         <PackageReference Include="System.Drawing.Common" />
         <PackageReference Include="System.Resources.Extensions" />
     </ItemGroup>

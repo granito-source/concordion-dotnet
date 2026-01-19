@@ -16,8 +16,6 @@
  * limitations under the License.
  */
 
-using Concordion.Internal;
-
 namespace Concordion.Api;
 
 /// <summary>
