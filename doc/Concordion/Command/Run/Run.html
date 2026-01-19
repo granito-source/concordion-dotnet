@@ -24,11 +24,11 @@
 <p>
     The <i>runner-name</i> should normally be <code>"concordion"</code>.
     However, it is possible to implement your own runners (e.g. to run
-    tests implemented in another tool) by subclassing
-    <code>org.concordion.api.Runner</code> and then either specifying
-    the full name of your Runner class, or an alias with the full class
-    name specified as a System parameter
-    (concordion.runner.<i>alias</i> = <i>full-class-name</i>).
+    tests implemented in another tool) by implementing
+    <code>Concordion.Api.Runner</code> interface and then either
+    specifying the full name of your Runner class, or an alias with
+    the full class name specified in <code>Concordion.Runners.Runner</code>
+    element in <strong>Concordion.conf</strong> file.
 </p>
 
 <div class="example">
@@ -54,9 +54,7 @@
 
 <pre concordion:set="#snippet">
 &lt;p&gt;
-   &lt;a concordion:run="runtestrunner" href="PassingSpec.html"&gt;
-      My spec
-   &lt;/a&gt;
+   &lt;a concordion:run="runtestrunner" href="PassingSpec.html"&gt;My spec&lt;/a&gt;
 &lt;/p&gt;
 </pre>
 

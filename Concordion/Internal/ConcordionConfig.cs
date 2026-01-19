@@ -37,25 +37,22 @@ public class ConcordionConfig {
     /// </summary>
     public ConcordionConfig Load()
     {
-        var assemblyCodebase = new Uri(Assembly.GetExecutingAssembly().Location);
+        var assembly = Assembly.GetExecutingAssembly().Location;
+        var config = Path.Combine(Path.GetDirectoryName(assembly)!,
+            "Concordion.config");
 
-        if (assemblyCodebase.IsFile) {
-            var defaultConfigFile =
-                Path.GetDirectoryName(assemblyCodebase.LocalPath) +
-                @"\Concordion.config";
-
-            Load(defaultConfigFile);
-        }
+        Load(config);
 
         return this;
     }
 
-    private void Load(string configPath)
+    private void Load(string config)
     {
-        if (!File.Exists(configPath))
+        if (!File.Exists(config))
             return;
 
-        new ConcordionConfigParser(this)
-            .Parse(new StreamReader(configPath));
+        using var stream = new StreamReader(config);
+
+        new ConcordionConfigParser(this).Parse(stream);
     }
 }

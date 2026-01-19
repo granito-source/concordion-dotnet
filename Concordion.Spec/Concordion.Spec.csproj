@@ -25,6 +25,9 @@
         <PackageReference Include="NUnit3TestAdapter" />
     </ItemGroup>
     <ItemGroup>
+        <Content Include="Concordion.config">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
         <Content Include="Concordion.Spec.config">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>

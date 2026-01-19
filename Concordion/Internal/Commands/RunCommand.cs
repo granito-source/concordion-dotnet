@@ -78,13 +78,18 @@ public class RunCommand : AbstractCommand {
             evaluator.Evaluate(expression);
 
         try {
-            Runners.TryGetValue(runnerType, out var concordionRunner);
+            Runners.TryGetValue(runnerType, out var runner);
 
-            // TODO - re-check this.
-            Check.NotNull(concordionRunner,
-                $"The runner '{runnerType}' cannot be found. Choices: (1) Use 'concordion' as your runner (2) Ensure that the 'concordion.runner.{runnerType}' System property is set to a name of an IRunner implementation (3) Specify an assembly fully qualified class name of an IRunner implementation");
+            Check.NotNull(runner, $"""
+                The runner '{runnerType}' cannot be found. Choices:
+                (1) Use 'concordion' as your runner
+                (2) Ensure that the 'concordion.runner.{runnerType}'
+                System property is set to a name of an Runner implementation
+                (3) Specify an assembly fully qualified class name of an
+                Runner implementation
+                """);
 
-            var result = concordionRunner.Execute(evaluator.Fixture,
+            var result = runner.Execute(evaluator.Fixture,
                 commandCall.Resource, href).Result;
 
             if (result == Result.Success) {
