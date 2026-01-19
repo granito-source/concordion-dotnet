@@ -1,13 +1,11 @@
 ﻿using Concordion.Internal;
 using Concordion.NUnit;
-using NUnit.Framework;
 
 namespace Concordion.Spec.Concordion.Configuration;
 
-// [Ignore("address failures to find HTML")]
-// [ConcordionFixture]
+[ConcordionFixture]
 public class BaseInputDirectoryTest {
-    private static bool inTestRun = false;
+    private static bool inTestRun;
 
     public bool DirectoryBasedExecuted(string baseInputDirectory)
     {
@@ -27,8 +25,7 @@ public class BaseInputDirectoryTest {
 
         specificationConfig.BaseInputDirectory = baseInputDirectory;
 
-        var fixtureRunner = new FixtureRunner(specificationConfig);
-        var testResult = fixtureRunner.Run(this);
+        var testResult = new FixtureRunner(specificationConfig).Run(this);
 
         inTestRun = false;
 
