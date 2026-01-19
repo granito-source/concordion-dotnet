@@ -36,7 +36,7 @@ public class FileTarget(string baseDir) : Target {
 
     public void CopyTo(Resource target, Stream source)
     {
-        var outputFile = GetTargetPath(target);
+        var outputFile = ResolvedPathFor(target);
 
         if (IsFreshEnough(outputFile))
             return;
@@ -50,7 +50,7 @@ public class FileTarget(string baseDir) : Target {
 
     public string ResolvedPathFor(Resource resource)
     {
-        return GetTargetPath(resource);
+        return Path.Combine(baseDir, resource.Path[1..]);
     }
 
     protected virtual void CreateDirectory(string path)
@@ -68,11 +68,6 @@ public class FileTarget(string baseDir) : Target {
         return new FileStream(file, mode);
     }
 
-    private string GetTargetPath(Resource resource)
-    {
-        return Path.Combine(baseDir, resource.Path);
-    }
-
     private void MakeDirectories(Resource resource)
     {
         var parent = resource.Parent;
@@ -80,14 +75,14 @@ public class FileTarget(string baseDir) : Target {
         if (parent == null)
             return;
 
-        var dir = Path.TrimEndingDirectorySeparator(GetTargetPath(parent));
+        var dir = Path.TrimEndingDirectorySeparator(ResolvedPathFor(parent));
 
         CreateDirectory(dir);
     }
 
     private StreamWriter CreateWriter(Resource resource)
     {
-        var stream = NewFileStream(GetTargetPath(resource), FileMode.Create);
+        var stream = NewFileStream(ResolvedPathFor(resource), FileMode.Create);
 
         return new StreamWriter(stream);
     }

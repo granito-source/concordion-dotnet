@@ -21,7 +21,7 @@ public class PageFooterRenderer(Target target) : SpecificationProcessingListener
     private const string ConcordionWebsiteUrl = "https://concordion.org/";
 
     private static readonly Resource TargetLogoResource =
-        new("image/concordion-logo.png");
+        new("/image/concordion-logo.png");
 
     public void BeforeProcessingSpecification(
         SpecificationProcessingEvent processingEvent)

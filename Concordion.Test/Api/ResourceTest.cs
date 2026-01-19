@@ -23,6 +23,16 @@ namespace Concordion.Test.Api;
 [TestFixture]
 public class ResourceTest {
     [Test]
+    public void RequiresAbsolutePath()
+    {
+        using (Assert.EnterMultipleScope()) {
+            Assert.Throws<ArgumentException>(() => Resource(""));
+            Assert.Throws<ArgumentException>(() => Resource("one"));
+            Assert.Throws<ArgumentException>(() => Resource("one/two"));
+        }
+    }
+
+    [Test]
     public void CanTellItsOwnPath()
     {
         using (Assert.EnterMultipleScope()) {
@@ -89,8 +99,8 @@ public class ResourceTest {
         using (Assert.EnterMultipleScope()) {
             Assert.That(RelativePath("/", "/spec/x.html"),
                 Is.EqualTo("spec/x.html"));
-            Assert.That(RelativePath("/spec/x.html", "/spec/x.html"),
-                Is.EqualTo("x.html"));
+            Assert.That(RelativePath("/spec/x.html", "/spec/y.html"),
+                Is.EqualTo("y.html"));
             Assert.That(RelativePath("/spec/", "/spec/blah"),
                 Is.EqualTo("blah"));
             Assert.That(RelativePath("/a/b/c/", "/a/b/x/"),
@@ -162,10 +172,14 @@ public class ResourceTest {
     [Test]
     public void ReturnsHashCodeBasedOnPath()
     {
-        const string path = "/some/path/file.txt";
-        var resource = Resource(path);
+        var resource = Resource("/file.txt");
 
-        Assert.That(resource.GetHashCode(), Is.EqualTo(path.GetHashCode()));
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(resource.GetHashCode(),
+                Is.EqualTo(Resource("/file.txt").GetHashCode()));
+            Assert.That(resource.GetHashCode(),
+                Is.Not.EqualTo("/file.png".GetHashCode()));
+        }
     }
 
     [Test]

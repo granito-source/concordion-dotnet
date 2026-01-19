@@ -21,24 +21,29 @@ namespace Concordion.Test.Internal;
 
 [TestFixture]
 public class SpecificationLocatorTest {
+    private readonly ClassNameBasedSpecificationLocator locator = new();
+
     [Test]
-    public void ShouldRemoveTestSuffixes()
+    public void RemovesTestSuffix()
     {
-        var locator = new ClassNameBasedSpecificationLocator();
-        var resource = locator.LocateSpecification(this);
+        var resource = locator
+            .LocateSpecification(new DummyWithTestInNameTest());
 
         Assert.That(resource.Path,
-            Is.EqualTo("Concordion/Test/Internal/SpecificationLocator.html"));
+            Is.EqualTo("/Concordion/Test/Internal/DummyWithTestInName.html"));
     }
 
     [Test]
-    public void ShouldNotRemoveWordTestInBetween()
+    public void RemovesFixtureSuffix()
     {
-        var locator = new ClassNameBasedSpecificationLocator();
         var resource = locator
-            .LocateSpecification(new DummyContainingTestInNameTest());
+            .LocateSpecification(new DummyWithFixtureInNameFixture());
 
         Assert.That(resource.Path,
-            Is.EqualTo("Concordion/Test/Internal/DummyContainingTestInName.html"));
+            Is.EqualTo("/Concordion/Test/Internal/DummyWithFixtureInName.html"));
     }
 }
+
+public class DummyWithFixtureInNameFixture;
+
+public class DummyWithTestInNameTest;

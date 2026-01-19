@@ -29,7 +29,7 @@ public class FileTargetTest {
     public void CanWriteStringContentToFile()
     {
         const string content = "file content";
-        var resource = new Resource("path/to/file.txt");
+        var resource = new Resource("/path/to/file.txt");
 
         target.Write(resource, content);
 
@@ -40,28 +40,6 @@ public class FileTargetTest {
         }
 
         var stream = target.Files["/base/directory/path/to/file.txt"];
-
-        using (Assert.EnterMultipleScope()) {
-            Assert.That(stream.IsClosed, Is.True);
-            Assert.That(stream.ToArray(), Is.EqualTo(UTF8.GetBytes(content)));
-        }
-    }
-
-    [Test]
-    public void UsesResourcePathToWriteWhenItIsAbsolute()
-    {
-        const string content = "file content";
-        var resource = new Resource("/path/to/file.txt");
-
-        target.Write(resource, content);
-
-        using (Assert.EnterMultipleScope()) {
-            Assert.That(target.CreateDirectoryCalls,
-                Is.EquivalentTo(["/path/to"]));
-            Assert.That(target.Files, Has.Count.EqualTo(1));
-        }
-
-        var stream = target.Files["/path/to/file.txt"];
 
         using (Assert.EnterMultipleScope()) {
             Assert.That(stream.IsClosed, Is.True);
@@ -73,7 +51,7 @@ public class FileTargetTest {
     public void CanCopyStreamContentToFile()
     {
         var content = "text content"u8.ToArray();
-        var resource = new Resource("path/to/file.txt");
+        var resource = new Resource("/path/to/file.txt");
 
         target.CopyTo(resource, new MemoryStream(content));
 
@@ -92,32 +70,10 @@ public class FileTargetTest {
     }
 
     [Test]
-    public void UsesResourcePathToCopyWhenItIsAbsolute()
-    {
-        var content = "text content"u8.ToArray();
-        var resource = new Resource("/path/to/file.txt");
-
-        target.CopyTo(resource, new MemoryStream(content));
-
-        using (Assert.EnterMultipleScope()) {
-            Assert.That(target.CreateDirectoryCalls,
-                Is.EquivalentTo(["/path/to"]));
-            Assert.That(target.Files, Has.Count.EqualTo(1));
-        }
-
-        var stream = target.Files["/path/to/file.txt"];
-
-        using (Assert.EnterMultipleScope()) {
-            Assert.That(stream.IsClosed, Is.True);
-            Assert.That(stream.ToArray(), Is.EqualTo(content));
-        }
-    }
-
-    [Test]
     public void SkipsCopyingWhenTargetIsFreshEnough()
     {
         var content = "text content"u8.ToArray();
-        var resource = new Resource("path/to/fresh.txt");
+        var resource = new Resource("/path/to/fresh.txt");
 
         target.CopyTo(resource, new MemoryStream(content));
 
@@ -131,7 +87,7 @@ public class FileTargetTest {
     public void DoesCopyStreamWhenTargetIsStale()
     {
         var content = "text content"u8.ToArray();
-        var resource = new Resource("path/to/stale.txt");
+        var resource = new Resource("/path/to/stale.txt");
 
         target.CopyTo(resource, new MemoryStream(content));
 

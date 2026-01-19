@@ -37,11 +37,9 @@ public partial class ClassNameBasedSpecificationLocator(string suffix) :
             .ToString()
             .Replace('.', Path.DirectorySeparatorChar);
 
-        // Add Test und Fixture -> Case Sensitive
         fixtureName = FixtureRegex().Replace(fixtureName, "");
 
-        // Suffix from Concordion.Specification.config
-        var path = fixtureName + "." + suffix;
+        var path = "/" + fixtureName + "." + suffix;
         var assembly = fixture.GetType().Assembly.GetName().Name;
 
         Debug.Assert(assembly != null, nameof(assembly) + " != null");

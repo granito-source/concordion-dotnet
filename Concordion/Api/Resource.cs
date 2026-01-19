@@ -17,35 +17,49 @@
  */
 
 using Concordion.Internal;
-using static System.IO.Path;
 
 namespace Concordion.Api;
 
 /// <summary>
 /// Represents a physical file on the filesystem.
 /// </summary>
-public class Resource(string path, string assemblyName = "") {
-    public string Path { get; } = path;
+public class Resource {
+    private const char Separator = '/';
 
-    public string Name => GetFileName(TrimEndingDirectorySeparator(Path));
+    private static string StripSeparator(string name)
+    {
+        return name.EndsWith(Separator) ? name[..^1] : name;
+    }
+
+    private readonly Uri uri;
+
+    private readonly string assemblyName;
+
+    public string Path => uri.AbsolutePath;
+
+    public string Name => StripSeparator(uri.Segments[^1]);
 
     public string ReducedPath => Path.RemoveFirst(
-        assemblyName.Replace('.', DirectorySeparatorChar) +
-        DirectorySeparatorChar);
+        assemblyName.Replace('.', Separator) + Separator);
 
     public Resource? Parent {
         get {
-            if (Path.Equals(GetPathRoot(Path)))
-                return null;
+            var segments = uri.Segments[..^1];
 
-            var parent = GetDirectoryName(
-                TrimEndingDirectorySeparator(Path));
-
-            if (!EndsInDirectorySeparator(parent))
-                parent += DirectorySeparatorChar;
-
-            return new Resource(parent, assemblyName);
+            return segments.Length > 0 ?
+                new Resource(string.Join(null, segments), assemblyName) :
+                null;
         }
+    }
+
+    public Resource(string path, string assemblyName = "")
+    {
+        if (!path.StartsWith(Separator))
+            throw new ArgumentException(@"resource path must be absolute",
+                nameof(path));
+
+        uri = new Uri($"file://{path}");
+        this.assemblyName = assemblyName;
     }
 
     /// <summary>
@@ -55,18 +69,13 @@ public class Resource(string path, string assemblyName = "") {
     /// <returns></returns>
     public Resource GetRelativeResource(string relativePath)
     {
-        var package = EndsInDirectorySeparator(Path) ? this : Parent;
-        var relative = GetFullPath(Combine(package!.Path, relativePath));
-
-        return new Resource(relative, assemblyName);
+        return new Resource(new Uri(uri, relativePath).AbsolutePath,
+            assemblyName);
     }
 
     public string GetRelativePath(Resource resource)
     {
-        var root = GetPathRoot(Path);
-        var dir = Path.Equals(root) ? root : GetDirectoryName(Path);
-
-        return System.IO.Path.GetRelativePath(dir!, resource.Path);
+        return uri.MakeRelativeUri(resource.uri).OriginalString;
     }
 
     public override bool Equals(object? obj)
@@ -79,11 +88,11 @@ public class Resource(string path, string assemblyName = "") {
 
         var other = (Resource)obj;
 
-        return Path.Equals(other.Path);
+        return uri.Equals(other.uri);
     }
 
     public override int GetHashCode()
     {
-        return Path.GetHashCode();
+        return uri.GetHashCode();
     }
 }
