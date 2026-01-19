@@ -5,9 +5,9 @@ namespace Concordion.Spec.Concordion;
 
 [ConcordionFixture]
 public class ExampleTest {
-    public string greeting = "Hello World!";
+    public string Greeting => "Hello World!";
 
-    public string process(string html)
+    public string Process(string html)
     {
         return new TestRig()
             .WithFixture(this)
