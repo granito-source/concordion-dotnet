@@ -20,7 +20,13 @@ namespace Concordion.Internal.Listener;
 public class PageFooterRenderer(Target target) : SpecificationProcessingListener {
     private const string ConcordionWebsiteUrl = "https://concordion.org/";
 
-    private static readonly Resource TargetLogoResource =
+    private static readonly EmbeddedResourceSource Source =
+        new(System.Reflection.Assembly.GetExecutingAssembly());
+
+    private static readonly Resource SourceLogo =
+        new("/Concordion/Resources/logo.png");
+
+    private static readonly Resource TargetLogo =
         new("/image/concordion-logo.png");
 
     public void BeforeProcessingSpecification(
@@ -59,7 +65,7 @@ public class PageFooterRenderer(Target target) : SpecificationProcessingListener
 
         var img = new Element("img");
 
-        img.AddAttribute("src", resource.GetRelativePath(TargetLogoResource));
+        img.AddAttribute("src", resource.GetRelativePath(TargetLogo));
         img.AddAttribute("alt", "Concordion");
         img.AddAttribute("border", "0");
         link.AppendChild(img);
@@ -68,7 +74,8 @@ public class PageFooterRenderer(Target target) : SpecificationProcessingListener
 
     private void CopyLogoToTarget()
     {
-        // XXX: disable for now, will review
-        // Target.Write(TargetLogoResource, HtmlFramework.SOURCE_LOGO_RESOURCE_PATH);
+        using var stream = Source.CreateStream(SourceLogo);
+
+        target.CopyTo(TargetLogo, stream);
     }
 }
