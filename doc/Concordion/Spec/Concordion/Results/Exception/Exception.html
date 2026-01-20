@@ -8,14 +8,14 @@
     <h1>Exceptions</h1>
 
     <p>
-        If an exception (or any Throwable) occurs during processing, the 
+        If an exception (or any Throwable) occurs during processing, the
         exception message is displayed along with a stack trace. The stack trace's
         visibility can be toggled by a button. The expected value is wrapped in
-        a span, and the actual value is shown as the exception message. 
-    </p>    
-    
-    <div class="example">        
-    
+        a span, and the actual value is shown as the exception message.
+    </p>
+
+    <div class="example">
+
         <h3>Example</h3>
 
         <p>
@@ -33,22 +33,22 @@
                 <th concordion:set="#lineNumber">Line Number</th>
             </tr>
             <tr>
-                <td>com.mycompany.MyClass</td>  
-                <td>myMethod</td>   
-                <td>MyClass.java</td>   
-                <td>4</td>  
+                <td>com.mycompany.MyClass</td>
+                <td>myMethod</td>
+                <td>MyClass.java</td>
+                <td>4</td>
             </tr>
             <tr>
-                <td>sun.reflect.NativeMethodAccessorImpl</td>   
-                <td>invoke0</td>    
-                <td>null</td>   
-                <td>1</td>  
+                <td>sun.reflect.NativeMethodAccessorImpl</td>
+                <td>invoke0</td>
+                <td>null</td>
+                <td>1</td>
             </tr>
             <tr>
-                <td>junit.framework.TestCase</td>   
-                <td>runTest</td>    
-                <td>TestCase.java</td>  
-                <td>164</td>    
+                <td>junit.framework.TestCase</td>
+                <td>runTest</td>
+                <td>TestCase.java</td>
+                <td>164</td>
             </tr>
         </table>
 
@@ -67,21 +67,20 @@
   &lt;/span&gt;
   &lt;span class="exceptionMessage"&gt;My error message&lt;/span&gt;
   &lt;input class="stackTraceButton" id="stackTraceButton1" type="button" onclick="javascript:toggleStackTrace('1')" value="View Stack" /&gt;
-  &lt;span class="stackTrace" id="stackTrace1"&gt;
+  &lt;div class="stackTrace" id="stackTrace1"&gt;
     &lt;p&gt;While evaluating expression: &lt;code&gt;myMethod()&lt;/code&gt;&lt;/p&gt;
-    &lt;span class="stackTraceEntry"&gt;Concordion.Spec.Support.StackTraceSettingException: My error message&lt;/span&gt;
+    &lt;div class="stackTraceExceptionMessage"&gt;StackTraceSettingException: My error message&lt;/div&gt;
     &lt;span class="stackTraceEntry"&gt;at com.mycompany.MyClass.myMethod in MyClass.java:line 4&lt;/span&gt;
     &lt;span class="stackTraceEntry"&gt;at sun.reflect.NativeMethodAccessorImpl.invoke0 in null:line 1&lt;/span&gt;
     &lt;span class="stackTraceEntry"&gt;at junit.framework.TestCase.runTest in TestCase.java:line 164&lt;/span&gt;
-  &lt;/span&gt;
+  &lt;/div&gt;
 &lt;/p&gt;
 </pre>
-
 
     </div>
 
     <h2>Further Details</h2>
-    
+
     <ul>
         <li><a href="TODO.html">TODO: Where is the toggleStackTrace() script defined?</a></li>
         <li><a href="TODO.html">TODO: How are multiple stack traces dealt with?</a></li>
@@ -91,7 +90,7 @@
         <li><a href="TODO.html">TODO: Any special handling for exceptions with a 'cause'?</a></li>
         <li><a href="TODO.html">TODO: Any special handling for SQL exceptions?</a></li>
         <li><a href="TODO.html">TODO: Is the stack trace filtered at all?</a></li>
-    </ul>        
+    </ul>
 
 </body>
 </html>

@@ -110,7 +110,7 @@ public class TestRig {
     private string WrapWithNamespaceDeclaration(string fragment)
     {
         return "<html xmlns:concordion='" +
-            HtmlFramework.NAMESPACE_CONCORDION_2007 + "'>" +
+            ConcordionBuilder.ConcordionNamespace + "'>" +
             fragment +
             "</html>";
     }

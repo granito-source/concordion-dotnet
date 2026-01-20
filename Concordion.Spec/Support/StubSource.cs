@@ -30,17 +30,23 @@ internal class StubSource : Source {
 
     public Stream CreateStream(Resource resource)
     {
+        return new MemoryStream(
+            Encoding.UTF8.GetBytes(ReadResourceAsString(resource)));
+    }
+
+    public bool CanFind(Resource resource)
+    {
+        return resources.ContainsKey(resource);
+    }
+
+    public string ReadResourceAsString(Resource resource)
+    {
         resources.TryGetValue(resource, out var content);
 
         if (content == null)
             throw new InvalidOperationException(
                 $"Cannot open the resource {resource.Path}");
 
-        return new MemoryStream(Encoding.UTF8.GetBytes(content));
-    }
-
-    public bool CanFind(Resource resource)
-    {
-        return resources.ContainsKey(resource);
+        return content;
     }
 }

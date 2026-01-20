@@ -1,4 +1,5 @@
 using Concordion.Api.Listener;
+using Concordion.Internal;
 
 namespace Concordion.Spec.Concordion.Extension.Listener;
 
@@ -17,7 +18,7 @@ public class VerifyRowsLogger : VerifyRowsListener {
             expressionEvaluatedEvent
                 .Element
                 .GetAttributeValue("verifyRows",
-                    HtmlFramework.NAMESPACE_CONCORDION_2007));
+                    ConcordionBuilder.ConcordionNamespace));
     }
 
     public void MissingRow(MissingRowEvent missingRowEvent)

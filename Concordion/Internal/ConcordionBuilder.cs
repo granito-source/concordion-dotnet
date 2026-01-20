@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System.Reflection;
 using Concordion.Api;
 using Concordion.Api.Extension;
 using Concordion.Api.Listener;
@@ -26,6 +27,18 @@ using Concordion.Internal.Util;
 namespace Concordion.Internal;
 
 public class ConcordionBuilder : ConcordionExtender {
+    public const string ConcordionNamespace =
+        "http://www.concordion.org/2007/concordion";
+
+    internal static readonly EmbeddedResourceSource AssemblySource =
+        new(Assembly.GetExecutingAssembly());
+
+    internal static readonly Resource TogglingScript =
+        new("/Concordion/Resources/visibility-toggler.js");
+
+    private static readonly Resource EmbeddedStylesheet =
+        new("/Concordion/Resources/embedded.css");
+
     private bool builtAlready;
 
     private ExceptionRenderer exceptionRenderer;
@@ -104,7 +117,7 @@ public class ConcordionBuilder : ConcordionExtender {
         WithRunListener(new RunResultRenderer());
         WithDocumentParsingListener(new DocumentStructureImprover());
         WithDocumentParsingListener(new MetadataCreator());
-        WithEmbeddedCss(HtmlFramework.EMBEDDED_STYLESHEET_RESOURCE);
+        WithEmbeddedCss(AssemblySource.ReadResourceAsString(EmbeddedStylesheet));
     }
 
     public ConcordionExtender WithSource(Source aSource)
@@ -296,22 +309,18 @@ public class ConcordionBuilder : ConcordionExtender {
 
         builtAlready = true;
 
-        WithApprovedCommand(HtmlFramework.NAMESPACE_CONCORDION_2007,
-            "run", runCommand);
-        WithApprovedCommand(HtmlFramework.NAMESPACE_CONCORDION_2007,
-            "execute", executeCommand);
-        WithApprovedCommand(HtmlFramework.NAMESPACE_CONCORDION_2007,
-            "set", new SetCommand());
-        WithApprovedCommand(HtmlFramework.NAMESPACE_CONCORDION_2007,
-            "assertEquals", assertEqualsCommand);
-        WithApprovedCommand(HtmlFramework.NAMESPACE_CONCORDION_2007,
-            "assertTrue", assertTrueCommand);
-        WithApprovedCommand(HtmlFramework.NAMESPACE_CONCORDION_2007,
-            "assertFalse", assertFalseCommand);
-        WithApprovedCommand(HtmlFramework.NAMESPACE_CONCORDION_2007,
-            "verifyRows", verifyRowsCommand);
-        WithApprovedCommand(HtmlFramework.NAMESPACE_CONCORDION_2007,
-            "echo", echoCommand);
+        WithApprovedCommand(ConcordionNamespace, "run", runCommand);
+        WithApprovedCommand(ConcordionNamespace, "execute", executeCommand);
+        WithApprovedCommand(ConcordionNamespace, "set", new SetCommand());
+        WithApprovedCommand(ConcordionNamespace, "assertEquals",
+            assertEqualsCommand);
+        WithApprovedCommand(ConcordionNamespace, "assertTrue",
+            assertTrueCommand);
+        WithApprovedCommand(ConcordionNamespace, "assertFalse",
+            assertFalseCommand);
+        WithApprovedCommand(ConcordionNamespace, "verifyRows",
+            verifyRowsCommand);
+        WithApprovedCommand(ConcordionNamespace, "echo", echoCommand);
 
         SetAllRunners();
 

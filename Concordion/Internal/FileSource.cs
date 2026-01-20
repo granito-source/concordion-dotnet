@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System.Text;
 using Concordion.Api;
 
 namespace Concordion.Internal;
@@ -37,6 +38,14 @@ public class FileSource(string baseDirectory) : Source {
     public bool CanFind(Resource resource)
     {
         return ExistingFilePath(resource) != null;
+    }
+
+    public string ReadResourceAsString(Resource resource)
+    {
+        using var reader = new StreamReader(CreateStream(resource),
+            Encoding.UTF8);
+
+        return reader.ReadToEnd();
     }
 
     private string? ExistingFilePath(Resource resource)

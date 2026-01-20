@@ -46,4 +46,11 @@ public class EmbeddedResourceSource(Assembly assembly) : Source {
 
         return assembly.GetManifestResourceInfo(name) != null;
     }
+
+    public string ReadResourceAsString(Resource resource)
+    {
+        using var reader = new StreamReader(CreateStream(resource));
+
+        return reader.ReadToEnd();
+    }
 }

@@ -22,44 +22,15 @@ using Concordion.Internal.Util;
 namespace Concordion.Internal.Listener;
 
 public class ExceptionRenderer : ExceptionCaughtListener {
-    private long buttonId;
-
     private readonly HashSet<Element> rootElementsWithScript = [];
 
-    private static Element ExpectedSpan(Element element)
+    private int buttonId;
+
+    public void ExceptionCaught(ExceptionCaughtEvent exceptionEvent)
     {
-        var expected = new Element("del").AddStyleClass("expected");
+        var element = exceptionEvent.Element;
 
-        element.MoveChildrenTo(expected);
-        expected.AppendNonBreakingSpaceIfBlank();
-
-        var failure = new Element("span").AddStyleClass("failure");
-
-        failure.AppendChild(expected);
-
-        return failure;
-    }
-
-    private static Element ExceptionMessage(string exceptionMessage)
-    {
-        return new Element("span")
-            .AddStyleClass("exceptionMessage")
-            .AppendText(exceptionMessage);
-    }
-
-    private static Element StackTraceElement(string stackTraceText)
-    {
-        return new Element("span")
-            .AddStyleClass("stackTraceEntry")
-            .AppendText(stackTraceText);
-    }
-
-    public void ExceptionCaught(ExceptionCaughtEvent caughtEvent)
-    {
         buttonId++;
-
-        var element = caughtEvent.Element;
-
         element.AppendChild(ExpectedSpan(element));
 
         // Special handling for <a> tags to avoid the stack-trace being
@@ -71,14 +42,56 @@ public class ExceptionRenderer : ExceptionCaughtListener {
             element = div;
         }
 
-        var expression = caughtEvent.Expression ?? "(null)";
-
-        element.AppendChild(
-            ExceptionMessage(caughtEvent.CaughtException.Message));
+        element.AppendChild(ExceptionMessage(
+            exceptionEvent.CaughtException.Message));
         element.AppendChild(StackTraceTogglingButton());
-        element.AppendChild(
-            StackTrace(caughtEvent.CaughtException, expression));
+        element.AppendChild(StackTrace(exceptionEvent.CaughtException,
+            exceptionEvent.Expression));
+
         EnsureDocumentHasTogglingScript(element);
+    }
+
+    private void EnsureDocumentHasTogglingScript(Element element)
+    {
+        var rootElement = element.GetRootElement();
+
+        if (!rootElementsWithScript.Add(rootElement))
+            return;
+
+        var head = rootElement.GetFirstDescendantNamed("head");
+
+        if (head == null)
+            Console.WriteLine(rootElement.ToXml());
+
+        Check.NotNull(head, "Document <head> section is missing");
+
+        var script = new Element("script")
+            .AddAttribute("type", "text/javascript");
+
+        head.PrependChild(script);
+        script.AppendText(ConcordionBuilder.AssemblySource
+            .ReadResourceAsString(ConcordionBuilder.TogglingScript));
+    }
+
+    private Element ExpectedSpan(Element element)
+    {
+        var spanExpected = new Element("del").AddStyleClass("expected");
+
+        element.MoveChildrenTo(spanExpected);
+        spanExpected.AppendNonBreakingSpaceIfBlank();
+
+        var spanFailure = new Element("span").AddStyleClass("failure");
+
+        spanFailure.AppendChild(spanExpected);
+
+        return spanFailure;
+    }
+
+    private Element ExceptionMessage(string exceptionMessage)
+    {
+        return new Element("span")
+            .AddStyleClass("exceptionMessage")
+            .AppendText(exceptionMessage);
     }
 
     private Element StackTraceTogglingButton()
@@ -92,50 +105,46 @@ public class ExceptionRenderer : ExceptionCaughtListener {
             .AddAttribute("value", "View Stack");
     }
 
-    private Element StackTrace(Exception exception, string expression)
+    private Element StackTrace(Exception exception, string? expression)
     {
-        var span = new Element("span").AddStyleClass("stackTrace");
+        var stackTrace = new Element("div").AddStyleClass("stackTrace");
 
-        span.SetId("stackTrace" + buttonId);
+        stackTrace.SetId("stackTrace" + buttonId);
 
-        var p = new Element("p")
-            .AppendText("While evaluating expression: ");
+        var p = new Element("p").AppendText("While evaluating expression: ");
 
-        p.AppendChild(new Element("code").AppendText(expression));
-        span.AppendChild(p);
+        p.AppendChild(new Element("code").AppendText(expression ?? "(null)"));
+        stackTrace.AppendChild(p);
 
-        var stackTrace = exception.StackTrace ?? "";
-        var stackTraceItems = new List<string> {
-            $"{exception.GetType()}: {exception.Message}"
-        };
+        RecursivelyAppendStackTrace(exception, stackTrace);
 
-        stackTraceItems.AddRange(stackTrace.Split(['\r', '\n'],
-            StringSplitOptions.RemoveEmptyEntries));
-
-        foreach (var item in stackTraceItems)
-            span.AppendChild(StackTraceElement(item));
-
-        return span;
+        return stackTrace;
     }
 
-    private void EnsureDocumentHasTogglingScript(Element element)
+    private void RecursivelyAppendStackTrace(Exception exception,
+        Element stackTrace)
     {
-        var root = element.GetRootElement();
+        var stackTraceExceptionMessage = new Element("div")
+            .AddStyleClass("stackTraceExceptionMessage")
+            .AppendText(exception.GetType().Name + ": " + exception.Message);
 
-        if (!rootElementsWithScript.Add(root))
-            return;
+        stackTrace.AppendChild(stackTraceExceptionMessage);
 
-        var head = root.GetFirstDescendantNamed("head");
+        var stackTraceText = exception.StackTrace ?? "";
+        var stackTraceItems = stackTraceText.Split(['\r', '\n'],
+            StringSplitOptions.RemoveEmptyEntries);
 
-        if (head == null)
-            Console.WriteLine(root.ToXml());
+        foreach (var item in stackTraceItems)
+            stackTrace.AppendChild(StackTraceElement(item));
 
-        Check.NotNull(head, "Document <head> section is missing");
+        if (exception.InnerException != null)
+            RecursivelyAppendStackTrace(exception.InnerException, stackTrace);
+    }
 
-        var script = new Element("script")
-            .AddAttribute("type", "text/javascript");
-
-        head.PrependChild(script);
-        script.AppendText(HtmlFramework.TOGGLING_SCRIPT_RESOURCE);
+    private Element StackTraceElement(string stackTraceText)
+    {
+        return new Element("span")
+            .AddStyleClass("stackTraceEntry")
+            .AppendText(stackTraceText);
     }
 }

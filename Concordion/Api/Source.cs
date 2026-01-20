@@ -29,4 +29,6 @@ public interface Source {
     /// otherwise, <c>false</c>.
     /// </returns>
     bool CanFind(Resource resource);
+
+    string ReadResourceAsString(Resource resource);
 }
