@@ -10,8 +10,8 @@
 
 namespace Concordion {
     using System;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,15 +23,15 @@ namespace Concordion {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class HtmlFramework {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal HtmlFramework() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -45,7 +45,7 @@ namespace Concordion {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -59,13 +59,13 @@ namespace Concordion {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to * {
         ///  font-family: Arial;
         ///}
         ///body {
-        ///  padding: 32px;  
+        ///  padding: 32px;
         ///}
         ///pre {
         ///  padding: 6px 28px 6px 28px;
@@ -76,7 +76,7 @@ namespace Concordion {
         ///  font-size: 10pt;
         ///}
         ///h1, h1 * {
-        ///  font-size: 24pt;	
+        ///  font-size: 24pt;
         ///}
         ///p, td, th, li, .breadcrumbs {
         ///  font-size: 10pt;
@@ -101,7 +101,7 @@ namespace Concordion {
                 return ResourceManager.GetString("EMBEDDED_STYLESHEET_RESOURCE", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to http://www.concordion.org/2007/concordion.
         /// </summary>
@@ -110,14 +110,7 @@ namespace Concordion {
                 return ResourceManager.GetString("NAMESPACE_CONCORDION_2007", resourceCulture);
             }
         }
-        
-        public static System.Drawing.Bitmap SOURCE_LOGO_RESOURCE_PATH {
-            get {
-                object obj = ResourceManager.GetObject("SOURCE_LOGO_RESOURCE_PATH", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to /* Stack Trace Toggling */
         ///

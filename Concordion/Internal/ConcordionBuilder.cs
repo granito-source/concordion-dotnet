@@ -316,7 +316,7 @@ public class ConcordionBuilder : ConcordionExtender {
         SetAllRunners();
 
         specificationCommand.AddSpecificationListener(new BreadCrumbRenderer(source));
-        specificationCommand.AddSpecificationListener(new PageFooterRenderer(target));
+        specificationCommand.AddSpecificationListener(new PageFooterRenderer());
         specificationCommand.AddSpecificationListener(new SpecificationRenderer(target));
 
         CopyResources();
