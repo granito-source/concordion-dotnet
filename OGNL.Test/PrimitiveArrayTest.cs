@@ -1,6 +1,3 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,28 +28,31 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
+
 namespace OGNL.Test;
 
-public class PrimitiveArrayTest : OgnlTestCase
-{
-    private static Root             ROOT = new();
+public class PrimitiveArrayTest : OgnlTestCase {
+    private static readonly Root Root = new();
 
-    private static object[][]       TESTS = [
+    private static readonly object[][] Tests = [
         // Primitive array creation
-        [ROOT, "new bool[5]",                   new bool[5]],
-        [ROOT, "new bool[] { true, false }",    new bool[] { true, false }],
-        [ROOT, "new bool[] { 0, 1, 5.5 }",      new bool[] { false, true, true }],
-        [ROOT, "new char[] { 'a', 'b' }",          new char[] { 'a', 'b' }],
-        [ROOT, "new char[] { 10, 11 }",            new char[] { (char)10, (char)11 }],
-        [ROOT, "new byte[] { 1, 2 }",              new byte[] { 1, 2 }],
-        [ROOT, "new short[] { 1, 2 }",             new short[] { 1, 2 }],
-        [ROOT, "new int[six]",                     new int[ROOT.six]],
-        [ROOT, "new int[#root.six]",               new int[ROOT.six]],
-        [ROOT, "new int[6]",                       new int[6]],
-        [ROOT, "new int[] { 1, 2 }",               new int[] { 1, 2 }],
-        [ROOT, "new long[] { 1, 2 }",              new long[] { 1, 2 }],
-        [ROOT, "new float[] { 1, 2 }",             new float[] { 1, 2 }],
-        [ROOT, "new double[] { 1, 2 }",            new double[] { 1, 2 }]
+        [Root, "new bool[5]", new bool[5]],
+        [Root, "new bool[] { true, false }", new[] { true, false }],
+        [Root, "new bool[] { 0, 1, 5.5 }", new[] { false, true, true }],
+        [Root, "new char[] { 'a', 'b' }", new[] { 'a', 'b' }],
+        [Root, "new char[] { 10, 11 }", new[] { (char)10, (char)11 }],
+        [Root, "new byte[] { 1, 2 }", new byte[] { 1, 2 }],
+        [Root, "new short[] { 1, 2 }", new short[] { 1, 2 }],
+        [Root, "new int[six]", new int[Root.six]],
+        [Root, "new int[#root.six]", new int[Root.six]],
+        [Root, "new int[6]", new int[6]],
+        [Root, "new int[] { 1, 2 }", new[] { 1, 2 }],
+        [Root, "new long[] { 1, 2 }", new long[] { 1, 2 }],
+        [Root, "new float[] { 1, 2 }", new float[] { 1, 2 }],
+        [Root, "new double[] { 1, 2 }", new double[] { 1, 2 }]
     ];
 
     /*===================================================================
@@ -60,33 +60,27 @@ public class PrimitiveArrayTest : OgnlTestCase
       ===================================================================*/
     public override TestSuite suite()
     {
-        var       result = new TestSuite();
+        var result = new TestSuite();
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new PrimitiveArrayTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new PrimitiveArrayTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new PrimitiveArrayTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
+        for (var i = 0; i < Tests.Length; i++) {
+            if (Tests[i].Length == 3) {
+                result.addTest(new PrimitiveArrayTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                    Tests[i][2]));
+            } else {
+                if (Tests[i].Length == 4) {
+                    result.addTest(new PrimitiveArrayTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                        Tests[i][2], Tests[i][3]));
+                } else {
+                    if (Tests[i].Length == 5) {
+                        result.addTest(new PrimitiveArrayTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                            Tests[i][2], Tests[i][3], Tests[i][4]));
+                    } else {
                         throw new Exception("don't understand TEST format");
                     }
                 }
             }
         }
+
         return result;
     }
 
@@ -95,35 +89,34 @@ public class PrimitiveArrayTest : OgnlTestCase
       ===================================================================*/
     public PrimitiveArrayTest()
     {
-	    
     }
 
     public PrimitiveArrayTest(string name) : base(name)
     {
-	    
     }
 
-    public PrimitiveArrayTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    public PrimitiveArrayTest(string name, object root,
+        string expressionString, object expectedResult, object setValue,
+        object expectedAfterSetResult) : base(name, root,
+        expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        
     }
 
-    public PrimitiveArrayTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
+    public PrimitiveArrayTest(string name, object root,
+        string expressionString, object expectedResult, object setValue) :
+        base(name, root, expressionString, expectedResult, setValue)
     {
-        
     }
 
-    public PrimitiveArrayTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
+    public PrimitiveArrayTest(string name, object root,
+        string expressionString, object expectedResult) : base(name, root,
+        expressionString, expectedResult)
     {
-        
     }
 
     [Test]
-    public void Test7 ()
+    public void Test7()
     {
-        suite () [7].runTest ();
+        suite()[7].RunTest();
     }
 }

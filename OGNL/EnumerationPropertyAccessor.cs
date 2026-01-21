@@ -33,13 +33,13 @@ using System.Collections;
 
 namespace OGNL;
 
-///<summary>
-///Implementation of PropertyAccessor that provides "property" reference to
-///"nextElement" (aliases to "next" also) and "hasMoreElements" (also aliased
-///to "hasNext").
-///</summary>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
+/// <summary>
+/// Implementation of PropertyAccessor that provides "property" reference
+/// to "nextElement" (aliases to "next" also) and "hasMoreElements" (also
+/// aliased to "hasNext").
+/// </summary>
+/// @author Luke Blanshard (blanshlu@netscape.net)
+/// @author Drew Davidson (drew@ognl.org)
 ///
 public class EnumerationPropertyAccessor : ObjectPropertyAccessor {
     /// <summary>
@@ -54,26 +54,18 @@ public class EnumerationPropertyAccessor : ObjectPropertyAccessor {
     public override object? GetProperty(OgnlContext context,
         object target, object name)
     {
-        object? result;
         var e = (IEnumerator)target;
 
-        if (name is string) {
-            if (name.Equals("next") || name.Equals("nextElement")) {
-                // todo: try to move next first??
-                e.MoveNext();
-                result = e.Current;
-            } else {
-                if (name.Equals("hasNext") || name.Equals("hasMoreElements")) {
-                    result = e.MoveNext(); // ? Boolean.TRUE : Boolean.FALSE;
-                } else {
-                    result = base.GetProperty(context, target, name);
-                }
-            }
-        } else {
-            result = base.GetProperty(context, target, name);
+        if (name.Equals("next") || name.Equals("nextElement")) {
+            // todo: try to move next first??
+            e.MoveNext();
+            return e.Current;
         }
 
-        return result;
+        if (name.Equals("hasNext") || name.Equals("hasMoreElements"))
+            return e.MoveNext();
+
+        return base.GetProperty(context, target, name);
     }
 
     public override void SetProperty(OgnlContext context, object target,

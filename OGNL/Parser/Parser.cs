@@ -14,34 +14,26 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
     /**
      * This is the top-level construct of OGNL.
      */
-    public Node topLevelExpression()
+    public Node TopLevelExpression()
     {
-        expression();
+        Expression();
         jj_consume_token(0);
-        {
-            if (true) return jjtree.RootNode();
-        }
 
-        throw new Exception("Missing return statement in function");
+        return jjtree.RootNode();
     }
 
-// sequence (level 14)
-    public void expression()
+    // sequence (level 14)
+    private void Expression()
     {
-        assignmentExpression();
-        label_1:
+        AssignmentExpression();
 
         while (true) {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 1:
-                    ;
-
                     break;
                 default:
-                    jj_la1[0] = jj_gen;
+                    jjLa1[0] = jjGen;
 
-                    // goto label_1;
-                    // Just return ;
                     return;
             }
 
@@ -51,41 +43,28 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
             jjtree.OpenNodeScope(jjtn001);
 
             try {
-                assignmentExpression();
-            } catch (Exception jjte001) {
+                AssignmentExpression();
+            } catch (Exception) {
                 if (jjtc001) {
                     jjtree.ClearNodeScope();
                     jjtc001 = false;
-                } else {
+                } else
                     jjtree.PopNode();
-                }
 
-                /*if (jjte001 is Exception) {
-                  {if (true) throw jjte001;}
-                }*/
-                if (jjte001 is ParseException) {
-                    {
-                        if (true) throw (ParseException)jjte001;
-                    }
-                }
-
-                {
-                    if (true) throw;
-                }
+                throw;
             } finally {
-                if (jjtc001) {
+                if (jjtc001)
                     jjtree.CloseNodeScope(jjtn001, 2);
-                }
             }
         }
     }
 
-// assignment expression (level 13)
-    public void assignmentExpression()
+    // assignment expression (level 13)
+    private void AssignmentExpression()
     {
-        conditionalTestExpression();
+        ConditionalTestExpression();
 
-        switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+        switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
             case 2:
                 jj_consume_token(2);
                 var jjtn001 = new ASTAssign(JJTASSIGN);
@@ -93,111 +72,82 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                 jjtree.OpenNodeScope(jjtn001);
 
                 try {
-                    assignmentExpression();
-                } catch (Exception jjte001) {
+                    AssignmentExpression();
+                } catch (Exception) {
                     if (jjtc001) {
                         jjtree.ClearNodeScope();
                         jjtc001 = false;
-                    } else {
+                    } else
                         jjtree.PopNode();
-                    }
 
-                    /*if (jjte001 is Exception) {
-                      {if (true) throw jjte001;}
-                    }*/
-                    if (jjte001 is ParseException) {
-                        {
-                            if (true) throw (ParseException)jjte001;
-                        }
-                    }
-
-                    {
-                        if (true) throw;
-                    }
+                    throw;
                 } finally {
-                    if (jjtc001) {
+                    if (jjtc001)
                         jjtree.CloseNodeScope(jjtn001, 2);
-                    }
                 }
 
                 break;
             default:
-                jj_la1[1] = jj_gen;
+                jjLa1[1] = jjGen;
 
                 break;
         }
     }
 
-// conditional test (level 12)
-    public void conditionalTestExpression()
+    // conditional test (level 12)
+    private void ConditionalTestExpression()
     {
-        logicalOrExpression();
+        LogicalOrExpression();
 
-        switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+        switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
             case 3:
                 jj_consume_token(3);
-                conditionalTestExpression();
+                ConditionalTestExpression();
                 jj_consume_token(4);
                 var jjtn001 = new ASTTest(JJTTEST);
                 var jjtc001 = true;
                 jjtree.OpenNodeScope(jjtn001);
 
                 try {
-                    conditionalTestExpression();
-                } catch (Exception jjte001) {
+                    ConditionalTestExpression();
+                } catch (Exception) {
                     if (jjtc001) {
                         jjtree.ClearNodeScope();
                         jjtc001 = false;
-                    } else {
+                    } else
                         jjtree.PopNode();
-                    }
 
-                    /* if (jjte001 is Exception) {
-                       {if (true) throw jjte001;}
-                     }*/
-                    if (jjte001 is ParseException) {
-                        {
-                            if (true) throw (ParseException)jjte001;
-                        }
-                    }
-
-                    {
-                        if (true) throw;
-                    }
+                    throw;
                 } finally {
-                    if (jjtc001) {
+                    if (jjtc001)
                         jjtree.CloseNodeScope(jjtn001, 3);
-                    }
                 }
 
                 break;
             default:
-                jj_la1[2] = jj_gen;
+                jjLa1[2] = jjGen;
 
                 break;
         }
     }
 
-// logical or (||)  (level 11)
-    public void logicalOrExpression()
+    // logical or (||)  (level 11)
+    private void LogicalOrExpression()
     {
-        logicalAndExpression();
-        label_2:
+        LogicalAndExpression();
 
         while (true) {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 5:
                 case 6:
-                    ;
-
                     break;
                 default:
-                    jj_la1[3] = jj_gen;
+                    jjLa1[3] = jjGen;
 
-                    return; // goto label_2;
+                    return;
             }
 
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 5:
                     jj_consume_token(5);
 
@@ -207,7 +157,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                     break;
                 default:
-                    jj_la1[4] = jj_gen;
+                    jjLa1[4] = jjGen;
                     jj_consume_token(-1);
 
                     throw new ParseException();
@@ -218,55 +168,39 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
             jjtree.OpenNodeScope(jjtn001);
 
             try {
-                logicalAndExpression();
-            } catch (Exception jjte001) {
+                LogicalAndExpression();
+            } catch (Exception) {
                 if (jjtc001) {
                     jjtree.ClearNodeScope();
                     jjtc001 = false;
-                } else {
+                } else
                     jjtree.PopNode();
-                }
 
-                /*if (jjte001 is Exception) {
-                  {if (true) throw jjte001;}
-                }*/
-                if (jjte001 is ParseException) {
-                    {
-                        if (true) throw (ParseException)jjte001;
-                    }
-                }
-
-                {
-                    if (true) throw;
-                }
+                throw;
             } finally {
-                if (jjtc001) {
+                if (jjtc001)
                     jjtree.CloseNodeScope(jjtn001, 2);
-                }
             }
         }
     }
 
-// logical and (&&)  (level 10)
-    public void logicalAndExpression()
+    // logical and (&&)  (level 10)
+    private void LogicalAndExpression()
     {
-        inclusiveOrExpression();
-        label_3:
+        InclusiveOrExpression();
 
         while (true) {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 7:
                 case 8:
-                    ;
-
                     break;
                 default:
-                    jj_la1[5] = jj_gen;
+                    jjLa1[5] = jjGen;
 
-                    return; // goto label_3;
+                    return;
             }
 
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 7:
                     jj_consume_token(7);
 
@@ -276,7 +210,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                     break;
                 default:
-                    jj_la1[6] = jj_gen;
+                    jjLa1[6] = jjGen;
                     jj_consume_token(-1);
 
                     throw new ParseException();
@@ -287,55 +221,39 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
             jjtree.OpenNodeScope(jjtn001);
 
             try {
-                inclusiveOrExpression();
-            } catch (Exception jjte001) {
+                InclusiveOrExpression();
+            } catch (Exception) {
                 if (jjtc001) {
                     jjtree.ClearNodeScope();
                     jjtc001 = false;
-                } else {
+                } else
                     jjtree.PopNode();
-                }
 
-                /*if (jjte001 is Exception) {
-                   {if (true) throw jjte001;}
-                 }*/
-                if (jjte001 is ParseException) {
-                    {
-                        if (true) throw (ParseException)jjte001;
-                    }
-                }
-
-                {
-                    if (true) throw;
-                }
+                throw;
             } finally {
-                if (jjtc001) {
+                if (jjtc001)
                     jjtree.CloseNodeScope(jjtn001, 2);
-                }
             }
         }
     }
 
-// bitwise or non-short-circuiting or (|)  (level 9)
-    public void inclusiveOrExpression()
+    // bitwise or non-short-circuiting or (|)  (level 9)
+    private void InclusiveOrExpression()
     {
-        exclusiveOrExpression();
-        label_4:
+        ExclusiveOrExpression();
 
         while (true) {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 9:
                 case 10:
-                    ;
-
                     break;
                 default:
-                    jj_la1[7] = jj_gen;
+                    jjLa1[7] = jjGen;
 
-                    return; // goto label_4;
+                    return;
             }
 
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 9:
                     jj_consume_token(9);
 
@@ -345,7 +263,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                     break;
                 default:
-                    jj_la1[8] = jj_gen;
+                    jjLa1[8] = jjGen;
                     jj_consume_token(-1);
 
                     throw new ParseException();
@@ -356,55 +274,40 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
             jjtree.OpenNodeScope(jjtn001);
 
             try {
-                exclusiveOrExpression();
-            } catch (Exception jjte001) {
+                ExclusiveOrExpression();
+            } catch (Exception) {
                 if (jjtc001) {
                     jjtree.ClearNodeScope();
                     jjtc001 = false;
-                } else {
+                } else
                     jjtree.PopNode();
-                }
 
-                /*if (jjte001 is Exception) {
-                  {if (true) throw jjte001;}
-                }*/
-                if (jjte001 is ParseException) {
-                    {
-                        if (true) throw (ParseException)jjte001;
-                    }
-                }
-
-                {
-                    if (true) throw;
-                }
+                throw;
             } finally {
-                if (jjtc001) {
+                if (jjtc001)
                     jjtree.CloseNodeScope(jjtn001, 2);
-                }
             }
         }
     }
 
-// exclusive or (^)  (level 8)
-    public void exclusiveOrExpression()
+    // exclusive or (^)  (level 8)
+    private void ExclusiveOrExpression()
     {
-        andExpression();
-        label_5:
+        AndExpression();
 
         while (true) {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 11:
                 case 12:
-                    ;
 
                     break;
                 default:
-                    jj_la1[9] = jj_gen;
+                    jjLa1[9] = jjGen;
 
-                    return; // goto label_5;
+                    return;
             }
 
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 11:
                     jj_consume_token(11);
 
@@ -414,7 +317,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                     break;
                 default:
-                    jj_la1[10] = jj_gen;
+                    jjLa1[10] = jjGen;
                     jj_consume_token(-1);
 
                     throw new ParseException();
@@ -425,55 +328,40 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
             jjtree.OpenNodeScope(jjtn001);
 
             try {
-                andExpression();
-            } catch (Exception jjte001) {
+                AndExpression();
+            } catch (Exception) {
                 if (jjtc001) {
                     jjtree.ClearNodeScope();
                     jjtc001 = false;
-                } else {
+                } else
                     jjtree.PopNode();
-                }
 
-                /*if (jjte001 is Exception) {
-                  {if (true) throw jjte001;}
-                }*/
-                if (jjte001 is ParseException) {
-                    {
-                        if (true) throw (ParseException)jjte001;
-                    }
-                }
-
-                {
-                    if (true) throw;
-                }
+                throw;
             } finally {
-                if (jjtc001) {
+                if (jjtc001)
                     jjtree.CloseNodeScope(jjtn001, 2);
-                }
             }
         }
     }
 
-// bitwise or non-short-circuiting and (&)  (level 7)
-    public void andExpression() /* throws ParseException */
+    // bitwise or non-short-circuiting and (&)  (level 7)
+    private void AndExpression()
     {
-        equalityExpression();
-        label_6:
+        EqualityExpression();
 
         while (true) {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 13:
                 case 14:
-                    ;
 
                     break;
                 default:
-                    jj_la1[11] = jj_gen;
+                    jjLa1[11] = jjGen;
 
                     return; // goto label_6;
             }
 
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 13:
                     jj_consume_token(13);
 
@@ -483,7 +371,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                     break;
                 default:
-                    jj_la1[12] = jj_gen;
+                    jjLa1[12] = jjGen;
                     jj_consume_token(-1);
 
                     throw new ParseException();
@@ -494,57 +382,44 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
             jjtree.OpenNodeScope(jjtn001);
 
             try {
-                equalityExpression();
-            } catch (Exception jjte001) {
+                EqualityExpression();
+            } catch (Exception) {
                 if (jjtc001) {
                     jjtree.ClearNodeScope();
                     jjtc001 = false;
-                } else {
+                } else
                     jjtree.PopNode();
-                }
 
-                if (jjte001 is ParseException) {
-                    {
-                        if (true) throw (ParseException)jjte001;
-                    }
-                }
-
-                {
-                    if (true) throw;
-                }
+                throw;
             } finally {
-                if (jjtc001) {
+                if (jjtc001)
                     jjtree.CloseNodeScope(jjtn001, 2);
-                }
             }
         }
     }
 
-// equality/inequality (==/!=) (level 6)
-    public void equalityExpression() /* throws ParseException */
+    // equality/inequality (==/!=) (level 6)
+    private void EqualityExpression()
     {
-        relationalExpression();
-        label_7:
+        RelationalExpression();
 
         while (true) {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 15:
                 case 16:
                 case 17:
                 case 18:
-                    ;
-
                     break;
                 default:
-                    jj_la1[13] = jj_gen;
+                    jjLa1[13] = jjGen;
 
-                    return; // goto label_7;
+                    return;
             }
 
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 15:
                 case 16:
-                    switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                    switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                         case 15:
                             jj_consume_token(15);
 
@@ -554,7 +429,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                             break;
                         default:
-                            jj_la1[14] = jj_gen;
+                            jjLa1[14] = jjGen;
                             jj_consume_token(-1);
 
                             throw new ParseException();
@@ -565,37 +440,24 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn001);
 
                     try {
-                        relationalExpression();
-                    } catch (Exception jjte001) {
+                        RelationalExpression();
+                    } catch (Exception) {
                         if (jjtc001) {
                             jjtree.ClearNodeScope();
                             jjtc001 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /*if (jjte001 is Exception) {
-                          {if (true) throw jjte001;}
-                        }*/
-                        if (jjte001 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte001;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc001) {
+                        if (jjtc001)
                             jjtree.CloseNodeScope(jjtn001, 2);
-                        }
                     }
 
                     break;
                 case 17:
                 case 18:
-                    switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                    switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                         case 17:
                             jj_consume_token(17);
 
@@ -605,7 +467,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                             break;
                         default:
-                            jj_la1[15] = jj_gen;
+                            jjLa1[15] = jjGen;
                             jj_consume_token(-1);
 
                             throw new ParseException();
@@ -616,36 +478,23 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn002);
 
                     try {
-                        relationalExpression();
-                    } catch (Exception jjte002) {
+                        RelationalExpression();
+                    } catch (Exception) {
                         if (jjtc002) {
                             jjtree.ClearNodeScope();
                             jjtc002 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /*if (jjte002 is Exception) {
-                          {if (true) throw jjte002;}
-                        }*/
-                        if (jjte002 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte002;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc002) {
+                        if (jjtc002)
                             jjtree.CloseNodeScope(jjtn002, 2);
-                        }
                     }
 
                     break;
                 default:
-                    jj_la1[16] = jj_gen;
+                    jjLa1[16] = jjGen;
                     jj_consume_token(-1);
 
                     throw new ParseException();
@@ -653,14 +502,13 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
         }
     }
 
-// bool relational expressions (level 5)
-    public void relationalExpression() /* throws ParseException */
+    // bool relational expressions (level 5)
+    private void RelationalExpression()
     {
-        shiftExpression();
-        label_8:
+        ShiftExpression();
 
         while (true) {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 19:
                 case 20:
                 case 21:
@@ -671,19 +519,17 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                 case 26:
                 case 27:
                 case 28:
-                    ;
-
                     break;
                 default:
-                    jj_la1[17] = jj_gen;
+                    jjLa1[17] = jjGen;
 
-                    return; // goto label_8;
+                    return;
             }
 
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 19:
                 case 20:
-                    switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                    switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                         case 19:
                             jj_consume_token(19);
 
@@ -693,7 +539,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                             break;
                         default:
-                            jj_la1[18] = jj_gen;
+                            jjLa1[18] = jjGen;
                             jj_consume_token(-1);
 
                             throw new ParseException();
@@ -704,37 +550,24 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn001);
 
                     try {
-                        shiftExpression();
-                    } catch (Exception jjte001) {
+                        ShiftExpression();
+                    } catch (Exception) {
                         if (jjtc001) {
                             jjtree.ClearNodeScope();
                             jjtc001 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /*if (jjte001 is Exception) {
-                          {if (true) throw jjte001;}
-                        }*/
-                        if (jjte001 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte001;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc001) {
+                        if (jjtc001)
                             jjtree.CloseNodeScope(jjtn001, 2);
-                        }
                     }
 
                     break;
                 case 21:
                 case 22:
-                    switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                    switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                         case 21:
                             jj_consume_token(21);
 
@@ -744,7 +577,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                             break;
                         default:
-                            jj_la1[19] = jj_gen;
+                            jjLa1[19] = jjGen;
                             jj_consume_token(-1);
 
                             throw new ParseException();
@@ -755,37 +588,24 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn002);
 
                     try {
-                        shiftExpression();
-                    } catch (Exception jjte002) {
+                        ShiftExpression();
+                    } catch (Exception) {
                         if (jjtc002) {
                             jjtree.ClearNodeScope();
                             jjtc002 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /*if (jjte002 is Exception) {
-                          {if (true) throw jjte002;}
-                        }*/
-                        if (jjte002 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte002;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc002) {
+                        if (jjtc002)
                             jjtree.CloseNodeScope(jjtn002, 2);
-                        }
                     }
 
                     break;
                 case 23:
                 case 24:
-                    switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                    switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                         case 23:
                             jj_consume_token(23);
 
@@ -795,7 +615,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                             break;
                         default:
-                            jj_la1[20] = jj_gen;
+                            jjLa1[20] = jjGen;
                             jj_consume_token(-1);
 
                             throw new ParseException();
@@ -806,37 +626,24 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn003);
 
                     try {
-                        shiftExpression();
-                    } catch (Exception jjte003) {
+                        ShiftExpression();
+                    } catch (Exception) {
                         if (jjtc003) {
                             jjtree.ClearNodeScope();
                             jjtc003 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /*if (jjte003 is Exception) {
-                          {if (true) throw jjte003;}
-                        }*/
-                        if (jjte003 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte003;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc003) {
+                        if (jjtc003)
                             jjtree.CloseNodeScope(jjtn003, 2);
-                        }
                     }
 
                     break;
                 case 25:
                 case 26:
-                    switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                    switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                         case 25:
                             jj_consume_token(25);
 
@@ -846,7 +653,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                             break;
                         default:
-                            jj_la1[21] = jj_gen;
+                            jjLa1[21] = jjGen;
                             jj_consume_token(-1);
 
                             throw new ParseException();
@@ -857,31 +664,18 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn004);
 
                     try {
-                        shiftExpression();
-                    } catch (Exception jjte004) {
+                        ShiftExpression();
+                    } catch (Exception) {
                         if (jjtc004) {
                             jjtree.ClearNodeScope();
                             jjtc004 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /*if (jjte004 is Exception) {
-                          {if (true) throw jjte004;}
-                        }*/
-                        if (jjte004 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte004;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc004) {
+                        if (jjtc004)
                             jjtree.CloseNodeScope(jjtn004, 2);
-                        }
                     }
 
                     break;
@@ -892,31 +686,18 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn005);
 
                     try {
-                        shiftExpression();
-                    } catch (Exception jjte005) {
+                        ShiftExpression();
+                    } catch (Exception) {
                         if (jjtc005) {
                             jjtree.ClearNodeScope();
                             jjtc005 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /* if (jjte005 is Exception) {
-                           {if (true) throw jjte005;}
-                         }*/
-                        if (jjte005 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte005;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc005) {
+                        if (jjtc005)
                             jjtree.CloseNodeScope(jjtn005, 2);
-                        }
                     }
 
                     break;
@@ -928,36 +709,23 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn006);
 
                     try {
-                        shiftExpression();
-                    } catch (Exception jjte006) {
+                        ShiftExpression();
+                    } catch (Exception) {
                         if (jjtc006) {
                             jjtree.ClearNodeScope();
                             jjtc006 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /*if (jjte006 is Exception) {
-                          {if (true) throw jjte006;}
-                        }*/
-                        if (jjte006 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte006;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc006) {
+                        if (jjtc006)
                             jjtree.CloseNodeScope(jjtn006, 2);
-                        }
                     }
 
                     break;
                 default:
-                    jj_la1[22] = jj_gen;
+                    jjLa1[22] = jjGen;
                     jj_consume_token(-1);
 
                     throw new ParseException();
@@ -965,33 +733,30 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
         }
     }
 
-// bit shift expressions (level 4)
-    public void shiftExpression() /* throws ParseException */
+    // bit shift expressions (level 4)
+    private void ShiftExpression()
     {
-        additiveExpression();
-        label_9:
+        AdditiveExpression();
 
         while (true) {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 29:
                 case 30:
                 case 31:
                 case 32:
                 case 33:
                 case 34:
-                    ;
-
                     break;
                 default:
-                    jj_la1[23] = jj_gen;
+                    jjLa1[23] = jjGen;
 
-                    return; // goto label_9;
+                    return;
             }
 
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 29:
                 case 30:
-                    switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                    switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                         case 29:
                             jj_consume_token(29);
 
@@ -1001,7 +766,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                             break;
                         default:
-                            jj_la1[24] = jj_gen;
+                            jjLa1[24] = jjGen;
                             jj_consume_token(-1);
 
                             throw new ParseException();
@@ -1012,37 +777,24 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn001);
 
                     try {
-                        additiveExpression();
-                    } catch (Exception jjte001) {
+                        AdditiveExpression();
+                    } catch (Exception) {
                         if (jjtc001) {
                             jjtree.ClearNodeScope();
                             jjtc001 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /*if (jjte001 is Exception) {
-                          {if (true) throw jjte001;}
-                        }*/
-                        if (jjte001 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte001;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc001) {
+                        if (jjtc001)
                             jjtree.CloseNodeScope(jjtn001, 2);
-                        }
                     }
 
                     break;
                 case 31:
                 case 32:
-                    switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                    switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                         case 31:
                             jj_consume_token(31);
 
@@ -1052,7 +804,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                             break;
                         default:
-                            jj_la1[25] = jj_gen;
+                            jjLa1[25] = jjGen;
                             jj_consume_token(-1);
 
                             throw new ParseException();
@@ -1063,37 +815,24 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn002);
 
                     try {
-                        additiveExpression();
-                    } catch (Exception jjte002) {
+                        AdditiveExpression();
+                    } catch (Exception) {
                         if (jjtc002) {
                             jjtree.ClearNodeScope();
                             jjtc002 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /* if (jjte002 is Exception) {
-                           {if (true) throw jjte002;}
-                         }*/
-                        if (jjte002 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte002;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc002) {
+                        if (jjtc002)
                             jjtree.CloseNodeScope(jjtn002, 2);
-                        }
                     }
 
                     break;
                 case 33:
                 case 34:
-                    switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                    switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                         case 33:
                             jj_consume_token(33);
 
@@ -1103,7 +842,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                             break;
                         default:
-                            jj_la1[26] = jj_gen;
+                            jjLa1[26] = jjGen;
                             jj_consume_token(-1);
 
                             throw new ParseException();
@@ -1114,36 +853,23 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn003);
 
                     try {
-                        additiveExpression();
-                    } catch (Exception jjte003) {
+                        AdditiveExpression();
+                    } catch (Exception) {
                         if (jjtc003) {
                             jjtree.ClearNodeScope();
                             jjtc003 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /*if (jjte003 is Exception) {
-                          {if (true) throw jjte003;}
-                        }*/
-                        if (jjte003 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte003;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc003) {
+                        if (jjtc003)
                             jjtree.CloseNodeScope(jjtn003, 2);
-                        }
                     }
 
                     break;
                 default:
-                    jj_la1[27] = jj_gen;
+                    jjLa1[27] = jjGen;
                     jj_consume_token(-1);
 
                     throw new ParseException();
@@ -1151,26 +877,23 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
         }
     }
 
-// binary addition/subtraction (level 3)
-    public void additiveExpression() /* throws ParseException */
+    // binary addition/subtraction (level 3)
+    private void AdditiveExpression()
     {
-        multiplicativeExpression();
-        label_10:
+        MultiplicativeExpression();
 
         while (true) {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 35:
                 case 36:
-                    ;
-
                     break;
                 default:
-                    jj_la1[28] = jj_gen;
+                    jjLa1[28] = jjGen;
 
                     return; // goto label_10;
             }
 
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 35:
                     jj_consume_token(35);
                     var jjtn001 = new ASTAdd(JJTADD);
@@ -1178,31 +901,18 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn001);
 
                     try {
-                        multiplicativeExpression();
-                    } catch (Exception jjte001) {
+                        MultiplicativeExpression();
+                    } catch (Exception) {
                         if (jjtc001) {
                             jjtree.ClearNodeScope();
                             jjtc001 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /*if (jjte001 is Exception) {
-                          {if (true) throw jjte001;}
-                        }*/
-                        if (jjte001 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte001;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc001) {
+                        if (jjtc001)
                             jjtree.CloseNodeScope(jjtn001, 2);
-                        }
                     }
 
                     break;
@@ -1213,36 +923,23 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn002);
 
                     try {
-                        multiplicativeExpression();
-                    } catch (Exception jjte002) {
+                        MultiplicativeExpression();
+                    } catch (Exception) {
                         if (jjtc002) {
                             jjtree.ClearNodeScope();
                             jjtc002 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /*if (jjte002 is Exception) {
-                          {if (true) throw jjte002;}
-                        }*/
-                        if (jjte002 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte002;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc002) {
+                        if (jjtc002)
                             jjtree.CloseNodeScope(jjtn002, 2);
-                        }
                     }
 
                     break;
                 default:
-                    jj_la1[29] = jj_gen;
+                    jjLa1[29] = jjGen;
                     jj_consume_token(-1);
 
                     throw new ParseException();
@@ -1250,27 +947,24 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
         }
     }
 
-// multiplication/division/remainder (level 2)
-    public void multiplicativeExpression() /* throws ParseException */
+    // multiplication/division/remainder (level 2)
+    private void MultiplicativeExpression()
     {
-        unaryExpression();
-        label_11:
+        UnaryExpression();
 
         while (true) {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 37:
                 case 38:
                 case 39:
-                    ;
-
                     break;
                 default:
-                    jj_la1[30] = jj_gen;
+                    jjLa1[30] = jjGen;
 
-                    return; // goto label_11;
+                    return;
             }
 
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 37:
                     jj_consume_token(37);
                     var jjtn001 = new ASTMultiply(JJTMULTIPLY);
@@ -1278,31 +972,18 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn001);
 
                     try {
-                        unaryExpression();
-                    } catch (Exception jjte001) {
+                        UnaryExpression();
+                    } catch (Exception) {
                         if (jjtc001) {
                             jjtree.ClearNodeScope();
                             jjtc001 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /* if (jjte001 is Exception) {
-                           {if (true) throw jjte001;}
-                         }*/
-                        if (jjte001 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte001;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc001) {
+                        if (jjtc001)
                             jjtree.CloseNodeScope(jjtn001, 2);
-                        }
                     }
 
                     break;
@@ -1313,31 +994,18 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn002);
 
                     try {
-                        unaryExpression();
-                    } catch (Exception jjte002) {
+                        UnaryExpression();
+                    } catch (Exception) {
                         if (jjtc002) {
                             jjtree.ClearNodeScope();
                             jjtc002 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /*if (jjte002 is Exception) {
-                          {if (true) throw jjte002;}
-                        }*/
-                        if (jjte002 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte002;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc002) {
+                        if (jjtc002)
                             jjtree.CloseNodeScope(jjtn002, 2);
-                        }
                     }
 
                     break;
@@ -1348,36 +1016,23 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn003);
 
                     try {
-                        unaryExpression();
-                    } catch (Exception jjte003) {
+                        UnaryExpression();
+                    } catch (Exception) {
                         if (jjtc003) {
                             jjtree.ClearNodeScope();
                             jjtc003 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /*if (jjte003 is Exception) {
-                          {if (true) throw jjte003;}
-                        }*/
-                        if (jjte003 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte003;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc003) {
+                        if (jjtc003)
                             jjtree.CloseNodeScope(jjtn003, 2);
-                        }
                     }
 
                     break;
                 default:
-                    jj_la1[31] = jj_gen;
+                    jjLa1[31] = jjGen;
                     jj_consume_token(-1);
 
                     throw new ParseException();
@@ -1385,14 +1040,14 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
         }
     }
 
-// unary (level 1)
-    public void unaryExpression() /* throws ParseException */
+    // unary (level 1)
+    private void UnaryExpression()
     {
         StringBuilder sb;
         Token t;
         ASTInstanceof ionode;
 
-        switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+        switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
             case 36:
                 jj_consume_token(36);
                 var jjtn001 = new ASTNegate(JJTNEGATE);
@@ -1400,37 +1055,24 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                 jjtree.OpenNodeScope(jjtn001);
 
                 try {
-                    unaryExpression();
-                } catch (Exception jjte001) {
+                    UnaryExpression();
+                } catch (Exception) {
                     if (jjtc001) {
                         jjtree.ClearNodeScope();
                         jjtc001 = false;
-                    } else {
+                    } else
                         jjtree.PopNode();
-                    }
 
-                    /*if (jjte001 is Exception) {
-                      {if (true) throw jjte001;}
-                    }*/
-                    if (jjte001 is ParseException) {
-                        {
-                            if (true) throw (ParseException)jjte001;
-                        }
-                    }
-
-                    {
-                        if (true) throw;
-                    }
+                    throw;
                 } finally {
-                    if (jjtc001) {
+                    if (jjtc001)
                         jjtree.CloseNodeScope(jjtn001, 1);
-                    }
                 }
 
                 break;
             case 35:
                 jj_consume_token(35);
-                unaryExpression();
+                UnaryExpression();
 
                 break;
             case 40:
@@ -1440,37 +1082,24 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                 jjtree.OpenNodeScope(jjtn002);
 
                 try {
-                    unaryExpression();
-                } catch (Exception jjte002) {
+                    UnaryExpression();
+                } catch (Exception) {
                     if (jjtc002) {
                         jjtree.ClearNodeScope();
                         jjtc002 = false;
-                    } else {
+                    } else
                         jjtree.PopNode();
-                    }
 
-                    /*if (jjte002 is Exception) {
-                      {if (true) throw jjte002;}
-                    }*/
-                    if (jjte002 is ParseException) {
-                        {
-                            if (true) throw (ParseException)jjte002;
-                        }
-                    }
-
-                    {
-                        if (true) throw;
-                    }
+                    throw;
                 } finally {
-                    if (jjtc002) {
+                    if (jjtc002)
                         jjtree.CloseNodeScope(jjtn002, 1);
-                    }
                 }
 
                 break;
             case 28:
             case 41:
-                switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                     case 41:
                         jj_consume_token(41);
 
@@ -1480,7 +1109,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                         break;
                     default:
-                        jj_la1[32] = jj_gen;
+                        jjLa1[32] = jjGen;
                         jj_consume_token(-1);
 
                         throw new ParseException();
@@ -1491,31 +1120,18 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                 jjtree.OpenNodeScope(jjtn003);
 
                 try {
-                    unaryExpression();
-                } catch (Exception jjte003) {
+                    UnaryExpression();
+                } catch (Exception) {
                     if (jjtc003) {
                         jjtree.ClearNodeScope();
                         jjtc003 = false;
-                    } else {
+                    } else
                         jjtree.PopNode();
-                    }
 
-                    /*if (jjte003 is Exception) {
-                      {if (true) throw jjte003;}
-                    }*/
-                    if (jjte003 is ParseException) {
-                        {
-                            if (true) throw (ParseException)jjte003;
-                        }
-                    }
-
-                    {
-                        if (true) throw;
-                    }
+                    throw;
                 } finally {
-                    if (jjtc003) {
+                    if (jjtc003)
                         jjtree.CloseNodeScope(jjtn003, 1);
-                    }
                 }
 
                 break;
@@ -1531,19 +1147,19 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
             case 54:
             case 56:
             case 57:
-            case IDENT:
-            case DYNAMIC_SUBSCRIPT:
-            case CHAR_LITERAL:
-            case BACK_CHAR_LITERAL:
-            case STRING_LITERAL:
-            case INT_LITERAL:
-            case FLT_LITERAL:
-                navigationChain();
+            case Ident:
+            case DynamicSubscript:
+            case CharLiteral:
+            case BackCharLiteral:
+            case StringLiteral:
+            case IntLiteral:
+            case FltLiteral:
+                NavigationChain();
 
-                switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                     case 42:
                         jj_consume_token(42);
-                        t = jj_consume_token(IDENT);
+                        t = jj_consume_token(Ident);
                         var jjtn004 = new ASTInstanceof(JJTINSTANCEOF);
                         var jjtc004 = true;
                         jjtree.OpenNodeScope(jjtn004);
@@ -1554,26 +1170,24 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                             sb = new StringBuilder(t.Image);
                             ionode = jjtn004;
                         } finally {
-                            if (jjtc004) {
+                            if (jjtc004)
                                 jjtree.CloseNodeScope(jjtn004, 1);
-                            }
                         }
 
                         // label_12: // move to end of loop.
                         while (true) {
-                            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                                 case 43:
-                                    ;
 
                                     break;
                                 default:
-                                    jj_la1[33] = jj_gen;
+                                    jjLa1[33] = jjGen;
 
                                     goto label_12;
                             }
 
                             jj_consume_token(43);
-                            t = jj_consume_token(IDENT);
+                            t = jj_consume_token(Ident);
                             sb.Append('.').Append(t.Image);
                         }
 
@@ -1582,44 +1196,39 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                         break;
                     default:
-                        jj_la1[34] = jj_gen;
+                        jjLa1[34] = jjGen;
 
                         break;
                 }
 
                 break;
             default:
-                jj_la1[35] = jj_gen;
+                jjLa1[35] = jjGen;
                 jj_consume_token(-1);
 
                 throw new ParseException();
         }
     }
 
-// navigation chain: property references, method calls, projections, selections, etc.
-    public void navigationChain() /* throws ParseException */
+    // navigation chain: property references, method calls, projections, selections, etc.
+    private void NavigationChain()
     {
-        primaryExpression();
-        label_13:
+        PrimaryExpression();
 
         while (true) {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 43:
                 case 44:
                 case 52:
-                case DYNAMIC_SUBSCRIPT:
-                    ;
-
+                case DynamicSubscript:
                     break;
                 default:
-                    jj_la1[36] = jj_gen;
+                    jjLa1[36] = jjGen;
 
-                    // goto label_13;
-                    // just Return ;
                     return;
             }
 
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 43:
                     jj_consume_token(43);
                     var jjtn001 = new ASTChain(JJTCHAIN);
@@ -1627,18 +1236,18 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     jjtree.OpenNodeScope(jjtn001);
 
                     try {
-                        switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
-                            case IDENT:
+                        switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
+                            case Ident:
                                 if (jj_2_1(2)) {
-                                    methodCall();
+                                    MethodCall();
                                 } else {
-                                    switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
-                                        case IDENT:
-                                            propertyName();
+                                    switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
+                                        case Ident:
+                                            PropertyName();
 
                                             break;
                                         default:
-                                            jj_la1[37] = jj_gen;
+                                            jjLa1[37] = jjGen;
                                             jj_consume_token(-1);
 
                                             throw new ParseException();
@@ -1648,15 +1257,15 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                                 break;
                             case 54:
                                 if (jj_2_2(2)) {
-                                    projection();
+                                    Projection();
                                 } else {
-                                    switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                                    switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                                         case 54:
-                                            selection();
+                                            Selection();
 
                                             break;
                                         default:
-                                            jj_la1[38] = jj_gen;
+                                            jjLa1[38] = jjGen;
                                             jj_consume_token(-1);
 
                                             throw new ParseException();
@@ -1666,96 +1275,72 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                                 break;
                             case 44:
                                 jj_consume_token(44);
-                                expression();
+                                Expression();
                                 jj_consume_token(45);
 
                                 break;
                             default:
-                                jj_la1[39] = jj_gen;
+                                jjLa1[39] = jjGen;
                                 jj_consume_token(-1);
 
                                 throw new ParseException();
                         }
-                    } catch (Exception jjte001) {
+                    } catch (Exception) {
                         if (jjtc001) {
                             jjtree.ClearNodeScope();
                             jjtc001 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /* if (jjte001 is Exception) {
-                           {if (true) throw jjte001;}
-                         }*/
-                        if (jjte001 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte001;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc001) {
+                        if (jjtc001)
                             jjtree.CloseNodeScope(jjtn001, 2);
-                        }
                     }
 
                     break;
                 case 52:
-                case DYNAMIC_SUBSCRIPT:
+                case DynamicSubscript:
                     var jjtn002 = new ASTChain(JJTCHAIN);
                     var jjtc002 = true;
+
                     jjtree.OpenNodeScope(jjtn002);
 
                     try {
-                        index();
-                    } catch (Exception jjte002) {
+                        Index();
+                    } catch (Exception) {
                         if (jjtc002) {
                             jjtree.ClearNodeScope();
                             jjtc002 = false;
-                        } else {
+                        } else
                             jjtree.PopNode();
-                        }
 
-                        /* if (jjte002 is Exception) {
-                           {if (true) throw jjte002;}
-                         }*/
-                        if (jjte002 is ParseException) {
-                            {
-                                if (true) throw (ParseException)jjte002;
-                            }
-                        }
-
-                        {
-                            if (true) throw;
-                        }
+                        throw;
                     } finally {
-                        if (jjtc002) {
+                        if (jjtc002)
                             jjtree.CloseNodeScope(jjtn002, 2);
-                        }
                     }
 
                     break;
                 case 44:
                     jj_consume_token(44);
-                    expression();
+                    Expression();
+
                     var jjtn003 = new ASTEval(JJTEVAL);
                     var jjtc003 = true;
+
                     jjtree.OpenNodeScope(jjtn003);
 
                     try {
                         jj_consume_token(45);
                     } finally {
-                        if (jjtc003) {
+                        if (jjtc003)
                             jjtree.CloseNodeScope(jjtn003, 2);
-                        }
                     }
 
                     break;
                 default:
-                    jj_la1[40] = jj_gen;
+                    jjLa1[40] = jjGen;
                     jj_consume_token(-1);
 
                     throw new ParseException();
@@ -1763,40 +1348,40 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
         }
     }
 
-    public void primaryExpression() /* throws ParseException */
+    private void PrimaryExpression()
     {
         Token t;
-        string className = null;
+        string? className = null;
 
-        switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
-            case CHAR_LITERAL:
-            case BACK_CHAR_LITERAL:
-            case STRING_LITERAL:
-            case INT_LITERAL:
-            case FLT_LITERAL:
-                switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
-                    case CHAR_LITERAL:
-                        jj_consume_token(CHAR_LITERAL);
-
-                        break;
-                    case BACK_CHAR_LITERAL:
-                        jj_consume_token(BACK_CHAR_LITERAL);
+        switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
+            case CharLiteral:
+            case BackCharLiteral:
+            case StringLiteral:
+            case IntLiteral:
+            case FltLiteral:
+                switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
+                    case CharLiteral:
+                        jj_consume_token(CharLiteral);
 
                         break;
-                    case STRING_LITERAL:
-                        jj_consume_token(STRING_LITERAL);
+                    case BackCharLiteral:
+                        jj_consume_token(BackCharLiteral);
 
                         break;
-                    case INT_LITERAL:
-                        jj_consume_token(INT_LITERAL);
+                    case StringLiteral:
+                        jj_consume_token(StringLiteral);
 
                         break;
-                    case FLT_LITERAL:
-                        jj_consume_token(FLT_LITERAL);
+                    case IntLiteral:
+                        jj_consume_token(IntLiteral);
+
+                        break;
+                    case FltLiteral:
+                        jj_consume_token(FltLiteral);
 
                         break;
                     default:
-                        jj_la1[41] = jj_gen;
+                        jjLa1[41] = jjGen;
                         jj_consume_token(-1);
 
                         throw new ParseException();
@@ -1804,69 +1389,71 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
                 var jjtn001 = new ASTConst(JJTCONST);
                 var jjtc001 = true;
+
                 jjtree.OpenNodeScope(jjtn001);
 
                 try {
                     jjtree.CloseNodeScope(jjtn001, 0);
                     jjtc001 = false;
-                    jjtn001.setValue(token_source.literalValue);
+                    jjtn001.Value = tokenSource.literalValue;
                 } finally {
-                    if (jjtc001) {
+                    if (jjtc001)
                         jjtree.CloseNodeScope(jjtn001, 0);
-                    }
                 }
 
                 break;
             case 46:
                 jj_consume_token(46);
+
                 var jjtn002 = new ASTConst(JJTCONST);
                 var jjtc002 = true;
+
                 jjtree.OpenNodeScope(jjtn002);
 
                 try {
                     jjtree.CloseNodeScope(jjtn002, 0);
                     jjtc002 = false;
-                    jjtn002.setValue(true);
+                    jjtn002.Value = true;
                 } finally {
-                    if (jjtc002) {
+                    if (jjtc002)
                         jjtree.CloseNodeScope(jjtn002, 0);
-                    }
                 }
 
                 break;
             case 47:
                 jj_consume_token(47);
+
                 var jjtn003 = new ASTConst(JJTCONST);
                 var jjtc003 = true;
+
                 jjtree.OpenNodeScope(jjtn003);
 
                 try {
                     jjtree.CloseNodeScope(jjtn003, 0);
                     jjtc003 = false;
-                    jjtn003.setValue(false);
+                    jjtn003.Value = false;
                 } finally {
-                    if (jjtc003) {
+                    if (jjtc003)
                         jjtree.CloseNodeScope(jjtn003, 0);
-                    }
                 }
 
                 break;
             case 48:
                 var jjtn004 = new ASTConst(JJTCONST);
                 var jjtc004 = true;
+
                 jjtree.OpenNodeScope(jjtn004);
 
                 try {
                     jj_consume_token(48);
                 } finally {
-                    if (jjtc004) {
+                    if (jjtc004)
                         jjtree.CloseNodeScope(jjtn004, 0);
-                    }
                 }
 
                 break;
             default:
-                jj_la1[48] = jj_gen;
+                jjLa1[48] = jjGen;
 
                 if (jj_2_4(2)) {
                     jj_consume_token(49);
@@ -1879,14 +1466,15 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                         jjtc005 = false;
                         jjtn005.setName("this");
                     } finally {
-                        if (jjtc005) {
+                        if (jjtc005)
                             jjtree.CloseNodeScope(jjtn005, 0);
-                        }
                     }
                 } else if (jj_2_5(2)) {
                     jj_consume_token(50);
+
                     var jjtn006 = new ASTRootVarRef(JJTROOTVARREF);
                     var jjtc006 = true;
+
                     jjtree.OpenNodeScope(jjtn006);
 
                     try {
@@ -1894,15 +1482,16 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                         jjtc006 = false;
                         jjtn006.setName("root");
                     } finally {
-                        if (jjtc006) {
+                        if (jjtc006)
                             jjtree.CloseNodeScope(jjtn006, 0);
-                        }
                     }
                 } else if (jj_2_6(2)) {
                     jj_consume_token(51);
-                    t = jj_consume_token(IDENT);
+                    t = jj_consume_token(Ident);
+
                     var jjtn007 = new ASTVarRef(JJTVARREF);
                     var jjtc007 = true;
+
                     jjtree.OpenNodeScope(jjtn007);
 
                     try {
@@ -1910,78 +1499,79 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                         jjtc007 = false;
                         jjtn007.setName(t.Image);
                     } finally {
-                        if (jjtc007) {
+                        if (jjtc007)
                             jjtree.CloseNodeScope(jjtn007, 0);
-                        }
                     }
                 } else if (jj_2_7(2)) {
                     jj_consume_token(4);
                     jj_consume_token(52);
-                    expression();
+                    Expression();
                     jj_consume_token(53);
+
                     var jjtn008 = new ASTConst(JJTCONST);
                     var jjtc008 = true;
+
                     jjtree.OpenNodeScope(jjtn008);
 
                     try {
                         jjtree.CloseNodeScope(jjtn008, 1);
                         jjtc008 = false;
-                        jjtn008.setValue(jjtn008.GetChild(0));
+                        jjtn008.Value = jjtn008.GetChild(0);
                     } finally {
-                        if (jjtc008) {
+                        if (jjtc008)
                             jjtree.CloseNodeScope(jjtn008, 1);
-                        }
                     }
                 } else {
-                    switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                    switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                         case 56:
-                            staticReference();
+                            StaticReference();
 
                             break;
                         default:
-                            jj_la1[49] = jj_gen;
+                            jjLa1[49] = jjGen;
 
                             if (jj_2_8(2)) {
-                                constructorCall();
+                                ConstructorCall();
                             } else {
-                                switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
-                                    case IDENT:
-                                        if (jj_2_3(2)) {
-                                            methodCall();
-                                        } else {
-                                            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
-                                                case IDENT:
-                                                    propertyName();
+                                switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
+                                    case Ident:
+                                        if (jj_2_3(2))
+                                            MethodCall();
+                                        else
+                                            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
+                                                case Ident:
+                                                    PropertyName();
 
                                                     break;
                                                 default:
-                                                    jj_la1[42] = jj_gen;
+                                                    jjLa1[42] = jjGen;
                                                     jj_consume_token(-1);
 
                                                     throw new ParseException();
                                             }
-                                        }
 
                                         break;
                                     case 52:
-                                    case DYNAMIC_SUBSCRIPT:
-                                        index();
+                                    case DynamicSubscript:
+                                        Index();
 
                                         break;
                                     case 44:
                                         jj_consume_token(44);
-                                        expression();
+                                        Expression();
                                         jj_consume_token(45);
 
                                         break;
                                     case 54:
                                         jj_consume_token(54);
+
                                         var jjtn009 = new ASTList(JJTLIST);
                                         var jjtc009 = true;
+
                                         jjtree.OpenNodeScope(jjtn009);
 
                                         try {
-                                            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                                            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                                                 case 4:
                                                 case 28:
                                                 case 35:
@@ -1999,71 +1589,57 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                                                 case 54:
                                                 case 56:
                                                 case 57:
-                                                case IDENT:
-                                                case DYNAMIC_SUBSCRIPT:
-                                                case CHAR_LITERAL:
-                                                case BACK_CHAR_LITERAL:
-                                                case STRING_LITERAL:
-                                                case INT_LITERAL:
-                                                case FLT_LITERAL:
-                                                    assignmentExpression();
+                                                case Ident:
+                                                case DynamicSubscript:
+                                                case CharLiteral:
+                                                case BackCharLiteral:
+                                                case StringLiteral:
+                                                case IntLiteral:
+                                                case FltLiteral:
+                                                    AssignmentExpression();
 
                                                     // label_14:
                                                     while (true) {
-                                                        switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                                                        switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                                                             case 1:
-                                                                ;
 
                                                                 break;
                                                             default:
-                                                                jj_la1[43] = jj_gen;
+                                                                jjLa1[43] = jjGen;
 
                                                                 goto label_14;
                                                         }
 
                                                         jj_consume_token(1);
-                                                        assignmentExpression();
+                                                        AssignmentExpression();
                                                     }
 
                                                     label_14:
 
                                                     break;
                                                 default:
-                                                    jj_la1[44] = jj_gen;
+                                                    jjLa1[44] = jjGen;
 
                                                     break;
                                             }
-                                        } catch (Exception jjte009) {
+                                        } catch (Exception) {
                                             if (jjtc009) {
                                                 jjtree.ClearNodeScope();
                                                 jjtc009 = false;
-                                            } else {
+                                            } else
                                                 jjtree.PopNode();
-                                            }
 
-                                            /*if (jjte009 is Exception) {
-                                              {if (true) throw jjte009;}
-                                            }*/
-                                            if (jjte009 is ParseException) {
-                                                {
-                                                    if (true) throw (ParseException)jjte009;
-                                                }
-                                            }
-
-                                            {
-                                                if (true) throw;
-                                            }
+                                            throw;
                                         } finally {
-                                            if (jjtc009) {
+                                            if (jjtc009)
                                                 jjtree.CloseNodeScope(jjtn009, true);
-                                            }
                                         }
 
                                         jj_consume_token(55);
 
                                         break;
                                     default:
-                                        jj_la1[50] = jj_gen;
+                                        jjLa1[50] = jjGen;
 
                                         if (jj_2_9(2)) {
                                             var jjtn010 = new ASTMap(JJTMAP);
@@ -2073,20 +1649,20 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                                             try {
                                                 jj_consume_token(51);
 
-                                                switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                                                switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                                                     case 56:
-                                                        className = classReference();
+                                                        className = ClassReference();
 
                                                         break;
                                                     default:
-                                                        jj_la1[45] = jj_gen;
+                                                        jjLa1[45] = jjGen;
 
                                                         break;
                                                 }
 
                                                 jj_consume_token(54);
 
-                                                switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                                                switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                                                     case 4:
                                                     case 28:
                                                     case 35:
@@ -2104,67 +1680,53 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                                                     case 54:
                                                     case 56:
                                                     case 57:
-                                                    case IDENT:
-                                                    case DYNAMIC_SUBSCRIPT:
-                                                    case CHAR_LITERAL:
-                                                    case BACK_CHAR_LITERAL:
-                                                    case STRING_LITERAL:
-                                                    case INT_LITERAL:
-                                                    case FLT_LITERAL:
-                                                        keyValueExpression();
+                                                    case Ident:
+                                                    case DynamicSubscript:
+                                                    case CharLiteral:
+                                                    case BackCharLiteral:
+                                                    case StringLiteral:
+                                                    case IntLiteral:
+                                                    case FltLiteral:
+                                                        KeyValueExpression();
 
                                                         // label_15:
                                                         while (true) {
-                                                            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                                                            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                                                                 case 1:
-                                                                    ;
 
                                                                     break;
                                                                 default:
-                                                                    jj_la1[46] = jj_gen;
+                                                                    jjLa1[46] = jjGen;
 
                                                                     goto label_15;
                                                             }
 
                                                             jj_consume_token(1);
-                                                            keyValueExpression();
+                                                            KeyValueExpression();
                                                         }
 
                                                         label_15:
 
                                                         break;
                                                     default:
-                                                        jj_la1[47] = jj_gen;
+                                                        jjLa1[47] = jjGen;
 
                                                         break;
                                                 }
 
                                                 jjtn010.SetTypeName(className);
                                                 jj_consume_token(55);
-                                            } catch (Exception jjte010) {
+                                            } catch (Exception) {
                                                 if (jjtc010) {
                                                     jjtree.ClearNodeScope();
                                                     jjtc010 = false;
-                                                } else {
+                                                } else
                                                     jjtree.PopNode();
-                                                }
 
-                                                /* if (jjte010 is Exception) {
-                                                   {if (true) throw jjte010;}
-                                                 }*/
-                                                if (jjte010 is ParseException) {
-                                                    {
-                                                        if (true) throw (ParseException)jjte010;
-                                                    }
-                                                }
-
-                                                {
-                                                    if (true) throw;
-                                                }
+                                                throw;
                                             } finally {
-                                                if (jjtc010) {
+                                                if (jjtc010)
                                                     jjtree.CloseNodeScope(jjtn010, true);
-                                                }
                                             }
                                         } else {
                                             jj_consume_token(-1);
@@ -2184,65 +1746,52 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
         }
     }
 
-    public void keyValueExpression() /* throws ParseException */
+    private void KeyValueExpression()
     {
         var jjtn001 = new ASTKeyValue(JJTKEYVALUE);
         var jjtc001 = true;
+
         jjtree.OpenNodeScope(jjtn001);
 
         try {
-            assignmentExpression();
+            AssignmentExpression();
 
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 4:
                     jj_consume_token(4);
-                    assignmentExpression();
+                    AssignmentExpression();
 
                     break;
                 default:
-                    jj_la1[51] = jj_gen;
+                    jjLa1[51] = jjGen;
 
                     break;
             }
-        } catch (Exception jjte001) {
+        } catch (Exception) {
             if (jjtc001) {
                 jjtree.ClearNodeScope();
                 jjtc001 = false;
-            } else {
+            } else
                 jjtree.PopNode();
-            }
 
-            /* if (jjte001 is Exception) {
-               {if (true) throw jjte001;}
-             }*/
-            if (jjte001 is ParseException) {
-                {
-                    if (true) throw (ParseException)jjte001;
-                }
-            }
-
-            {
-                if (true) throw;
-            }
+            throw;
         } finally {
-            if (jjtc001) {
+            if (jjtc001)
                 jjtree.CloseNodeScope(jjtn001, true);
-            }
         }
     }
 
-    public void staticReference() /* throws ParseException */
+    private void StaticReference()
     {
-        var className = "System.Math";
+        var className = ClassReference();
         Token t;
-        className = classReference();
 
-        if (jj_2_10(2)) {
-            staticMethodCall(className);
-        } else {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
-                case IDENT:
-                    t = jj_consume_token(IDENT);
+        if (jj_2_10(2))
+            StaticMethodCall(className);
+        else
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
+                case Ident:
+                    t = jj_consume_token(Ident);
                     var jjtn001 = new ASTStaticField(JJTSTATICFIELD);
                     var jjtc001 = true;
                     jjtree.OpenNodeScope(jjtn001);
@@ -2252,96 +1801,86 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                         jjtc001 = false;
                         jjtn001.init(className, t.Image);
                     } finally {
-                        if (jjtc001) {
+                        if (jjtc001)
                             jjtree.CloseNodeScope(jjtn001, 0);
-                        }
                     }
 
                     break;
                 default:
-                    jj_la1[52] = jj_gen;
+                    jjLa1[52] = jjGen;
                     jj_consume_token(-1);
 
                     throw new ParseException();
             }
-        }
     }
 
-    public string classReference() /* throws ParseException */
+    private string ClassReference()
     {
         var result = "System.Math";
+
         jj_consume_token(56);
 
-        switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
-            case IDENT:
-                result = className();
+        switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
+            case Ident:
+                result = ClassName();
 
                 break;
             default:
-                jj_la1[53] = jj_gen;
+                jjLa1[53] = jjGen;
 
                 break;
         }
 
         jj_consume_token(56);
-        {
-            if (true) return result;
-        }
 
-        throw new Exception("Missing return statement in function");
+        return result;
     }
 
-    public string className() /* throws ParseException */
+    private string ClassName()
     {
-        Token t;
-        StringBuilder result;
-        t = jj_consume_token(IDENT);
-        result = new StringBuilder(t.Image);
+        var t = jj_consume_token(Ident);
+        var result = new StringBuilder(t.Image);
 
         // label_16:
         while (true) {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 43:
-                    ;
 
                     break;
                 default:
-                    jj_la1[54] = jj_gen;
+                    jjLa1[54] = jjGen;
 
                     goto label_16;
             }
 
             jj_consume_token(43);
-            t = jj_consume_token(IDENT);
+            t = jj_consume_token(Ident);
             result.Append('.').Append(t.Image);
         }
 
         label_16:
-        {
-            if (true) return result.ToString();
-        }
 
-        throw new Exception("Missing return statement in function");
+        return result.ToString();
     }
 
-    public void constructorCall() /* throws ParseException */
+    private void ConstructorCall()
     {
         /*@bgen(jjtree) Ctor */
         var jjtn000 = new ASTCtor(JJTCTOR);
         var jjtc000 = true;
+
         jjtree.OpenNodeScope(jjtn000);
+
         string className;
-        Token t;
-        StringBuilder sb;
 
         try {
             jj_consume_token(57);
-            className = this.className();
+            className = ClassName();
 
             if (jj_2_11(2)) {
                 jj_consume_token(44);
 
-                switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                     case 4:
                     case 28:
                     case 35:
@@ -2359,36 +1898,35 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                     case 54:
                     case 56:
                     case 57:
-                    case IDENT:
-                    case DYNAMIC_SUBSCRIPT:
-                    case CHAR_LITERAL:
-                    case BACK_CHAR_LITERAL:
-                    case STRING_LITERAL:
-                    case INT_LITERAL:
-                    case FLT_LITERAL:
-                        assignmentExpression();
+                    case Ident:
+                    case DynamicSubscript:
+                    case CharLiteral:
+                    case BackCharLiteral:
+                    case StringLiteral:
+                    case IntLiteral:
+                    case FltLiteral:
+                        AssignmentExpression();
 
                         while (true) {
-                            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                                 case 1:
-                                    ;
 
                                     break;
                                 default:
-                                    jj_la1[55] = jj_gen;
+                                    jjLa1[55] = jjGen;
 
                                     goto label_17;
                             }
 
                             jj_consume_token(1);
-                            assignmentExpression();
+                            AssignmentExpression();
                         }
 
                         label_17:
 
                         break;
                     default:
-                        jj_la1[56] = jj_gen;
+                        jjLa1[56] = jjGen;
 
                         break;
                 }
@@ -2396,17 +1934,19 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                 jj_consume_token(45);
                 jjtree.CloseNodeScope(jjtn000, true);
                 jjtc000 = false;
-                jjtn000.setClassName(className);
+                jjtn000.SetClassName(className);
             } else if (jj_2_12(2)) {
                 jj_consume_token(52);
                 jj_consume_token(53);
                 jj_consume_token(54);
+
                 var jjtn001 = new ASTList(JJTLIST);
                 var jjtc001 = true;
+
                 jjtree.OpenNodeScope(jjtn001);
 
                 try {
-                    switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                    switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                         case 4:
                         case 28:
                         case 35:
@@ -2424,154 +1964,128 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                         case 54:
                         case 56:
                         case 57:
-                        case IDENT:
-                        case DYNAMIC_SUBSCRIPT:
-                        case CHAR_LITERAL:
-                        case BACK_CHAR_LITERAL:
-                        case STRING_LITERAL:
-                        case INT_LITERAL:
-                        case FLT_LITERAL:
-                            assignmentExpression();
+                        case Ident:
+                        case DynamicSubscript:
+                        case CharLiteral:
+                        case BackCharLiteral:
+                        case StringLiteral:
+                        case IntLiteral:
+                        case FltLiteral:
+                            AssignmentExpression();
 
                             // label_18:
                             while (true) {
-                                switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                                switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                                     case 1:
-                                        ;
 
                                         break;
                                     default:
-                                        jj_la1[57] = jj_gen;
+                                        jjLa1[57] = jjGen;
 
                                         goto label_18;
                                 }
 
                                 jj_consume_token(1);
-                                assignmentExpression();
+                                AssignmentExpression();
                             }
 
                             label_18:
 
                             break;
                         default:
-                            jj_la1[58] = jj_gen;
+                            jjLa1[58] = jjGen;
 
                             break;
                     }
-                } catch (Exception jjte001) {
+                } catch (Exception) {
                     if (jjtc001) {
                         jjtree.ClearNodeScope();
                         jjtc001 = false;
-                    } else {
+                    } else
                         jjtree.PopNode();
-                    }
 
-                    /*if (jjte001 is Exception) {
-                      {if (true) throw jjte001;}
-                    }*/
-                    if (jjte001 is ParseException) {
-                        {
-                            if (true) throw (ParseException)jjte001;
-                        }
-                    }
-
-                    {
-                        if (true) throw;
-                    }
+                    throw;
                 } finally {
-                    if (jjtc001) {
+                    if (jjtc001)
                         jjtree.CloseNodeScope(jjtn001, true);
-                    }
                 }
 
                 jj_consume_token(55);
                 jjtree.CloseNodeScope(jjtn000, true);
                 jjtc000 = false;
-                jjtn000.setClassName(className);
-                jjtn000.setArray(true);
+                jjtn000.SetClassName(className);
+                jjtn000.SetArray(true);
             } else if (jj_2_13(2)) {
                 jj_consume_token(52);
-                assignmentExpression();
+                AssignmentExpression();
                 jj_consume_token(53);
                 jjtree.CloseNodeScope(jjtn000, true);
                 jjtc000 = false;
-                jjtn000.setClassName(className);
-                jjtn000.setArray(true);
+                jjtn000.SetClassName(className);
+                jjtn000.SetArray(true);
             } else {
                 jj_consume_token(-1);
 
                 throw new ParseException();
             }
-        } catch (Exception jjte000) {
+        } catch (Exception) {
             if (jjtc000) {
                 jjtree.ClearNodeScope();
                 jjtc000 = false;
-            } else {
+            } else
                 jjtree.PopNode();
-            }
 
-            /* if (jjte000 is Exception) {
-               {if (true) throw jjte000;}
-             }*/
-            if (jjte000 is ParseException) {
-                {
-                    if (true) throw (ParseException)jjte000;
-                }
-            }
-
-            {
-                if (true) throw;
-            }
+            throw;
         } finally {
-            if (jjtc000) {
+            if (jjtc000)
                 jjtree.CloseNodeScope(jjtn000, true);
-            }
         }
     }
 
-    public void propertyName() /* throws ParseException */
+    private void PropertyName()
     {
         /*@bgen(jjtree) Property */
         var jjtn000 = new ASTProperty(JJTPROPERTY);
         var jjtc000 = true;
+
         jjtree.OpenNodeScope(jjtn000);
-        Token t;
 
         try {
-            t = jj_consume_token(IDENT);
+            var t = jj_consume_token(Ident);
+
             var jjtn001 = new ASTConst(JJTCONST);
             var jjtc001 = true;
+
             jjtree.OpenNodeScope(jjtn001);
 
             try {
                 jjtree.CloseNodeScope(jjtn001, true);
                 jjtc001 = false;
-                jjtn001.setValue(t.Image);
+                jjtn001.Value = t.Image;
             } finally {
-                if (jjtc001) {
+                if (jjtc001)
                     jjtree.CloseNodeScope(jjtn001, true);
-                }
             }
         } finally {
-            if (jjtc000) {
+            if (jjtc000)
                 jjtree.CloseNodeScope(jjtn000, true);
-            }
         }
     }
 
-    public void staticMethodCall(string className) /* throws ParseException */
+    private void StaticMethodCall(string className)
     {
         /*@bgen(jjtree) StaticMethod */
         var jjtn000 = new ASTStaticMethod(JJTSTATICMETHOD);
         var jjtc000 = true;
+
         jjtree.OpenNodeScope(jjtn000);
-        Token t;
 
         try {
-            t = jj_consume_token(IDENT);
+            var t = jj_consume_token(Ident);
+
             jj_consume_token(44);
 
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 4:
                 case 28:
                 case 35:
@@ -2589,37 +2103,36 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                 case 54:
                 case 56:
                 case 57:
-                case IDENT:
-                case DYNAMIC_SUBSCRIPT:
-                case CHAR_LITERAL:
-                case BACK_CHAR_LITERAL:
-                case STRING_LITERAL:
-                case INT_LITERAL:
-                case FLT_LITERAL:
-                    assignmentExpression();
+                case Ident:
+                case DynamicSubscript:
+                case CharLiteral:
+                case BackCharLiteral:
+                case StringLiteral:
+                case IntLiteral:
+                case FltLiteral:
+                    AssignmentExpression();
 
                     // label_19:
                     while (true) {
-                        switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                        switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                             case 1:
-                                ;
 
                                 break;
                             default:
-                                jj_la1[59] = jj_gen;
+                                jjLa1[59] = jjGen;
 
                                 goto label_19;
                         }
 
                         jj_consume_token(1);
-                        assignmentExpression();
+                        AssignmentExpression();
                     }
 
                     label_19:
 
                     break;
                 default:
-                    jj_la1[60] = jj_gen;
+                    jjLa1[60] = jjGen;
 
                     break;
             }
@@ -2628,46 +2141,34 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
             jjtree.CloseNodeScope(jjtn000, true);
             jjtc000 = false;
             jjtn000.init(className, t.Image);
-        } catch (Exception jjte000) {
+        } catch (Exception) {
             if (jjtc000) {
                 jjtree.ClearNodeScope();
                 jjtc000 = false;
-            } else {
+            } else
                 jjtree.PopNode();
-            }
 
-            /* if (jjte000 is Exception) {
-               {if (true) throw jjte000;}
-             }*/
-            if (jjte000 is ParseException) {
-                {
-                    if (true) throw (ParseException)jjte000;
-                }
-            }
-
-            {
-                if (true) throw;
-            }
+            throw;
         } finally {
-            if (jjtc000) {
+            if (jjtc000)
                 jjtree.CloseNodeScope(jjtn000, true);
-            }
         }
     }
 
-    public void methodCall() /* throws ParseException */
+    private void MethodCall()
     {
         /*@bgen(jjtree) Method */
         var jjtn000 = new ASTMethod(JJTMETHOD);
         var jjtc000 = true;
+
         jjtree.OpenNodeScope(jjtn000);
-        Token t;
 
         try {
-            t = jj_consume_token(IDENT);
+            var t = jj_consume_token(Ident);
+
             jj_consume_token(44);
 
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 4:
                 case 28:
                 case 35:
@@ -2685,37 +2186,36 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
                 case 54:
                 case 56:
                 case 57:
-                case IDENT:
-                case DYNAMIC_SUBSCRIPT:
-                case CHAR_LITERAL:
-                case BACK_CHAR_LITERAL:
-                case STRING_LITERAL:
-                case INT_LITERAL:
-                case FLT_LITERAL:
-                    assignmentExpression();
+                case Ident:
+                case DynamicSubscript:
+                case CharLiteral:
+                case BackCharLiteral:
+                case StringLiteral:
+                case IntLiteral:
+                case FltLiteral:
+                    AssignmentExpression();
 
                     // label_20:
                     while (true) {
-                        switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+                        switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                             case 1:
-                                ;
 
                                 break;
                             default:
-                                jj_la1[61] = jj_gen;
+                                jjLa1[61] = jjGen;
 
                                 goto label_20;
                         }
 
                         jj_consume_token(1);
-                        assignmentExpression();
+                        AssignmentExpression();
                     }
 
                     label_20:
 
                     break;
                 default:
-                    jj_la1[62] = jj_gen;
+                    jjLa1[62] = jjGen;
 
                     break;
             }
@@ -2724,84 +2224,59 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
             jjtree.CloseNodeScope(jjtn000, true);
             jjtc000 = false;
             jjtn000.setMethodName(t.Image);
-        } catch (Exception jjte000) {
+        } catch (Exception) {
             if (jjtc000) {
                 jjtree.ClearNodeScope();
                 jjtc000 = false;
-            } else {
+            } else
                 jjtree.PopNode();
-            }
 
-            /*if (jjte000 is Exception) {
-              {if (true) throw jjte000;}
-            }*/
-            if (jjte000 is ParseException) {
-                {
-                    if (true) throw (ParseException)jjte000;
-                }
-            }
-
-            {
-                if (true) throw;
-            }
+            throw;
         } finally {
-            if (jjtc000) {
+            if (jjtc000)
                 jjtree.CloseNodeScope(jjtn000, true);
-            }
         }
     }
 
     /**
-     * Apply an expression to all elements of a collection, creating a new collection
-     * as the result.
+     * Apply an expression to all elements of a collection, creating
+     * a new collection as the result.
      */
-    public void projection() /* throws ParseException */
+    private void Projection()
     {
         /*@bgen(jjtree) Project */
         var jjtn000 = new ASTProject(JJTPROJECT);
         var jjtc000 = true;
+
         jjtree.OpenNodeScope(jjtn000);
 
         try {
             jj_consume_token(54);
-            expression();
+            Expression();
             jj_consume_token(55);
-        } catch (Exception jjte000) {
+        } catch (Exception) {
             if (jjtc000) {
                 jjtree.ClearNodeScope();
                 jjtc000 = false;
-            } else {
+            } else
                 jjtree.PopNode();
-            }
 
-            /* if (jjte000 is Exception) {
-               {if (true) throw jjte000;}
-             }*/
-            if (jjte000 is ParseException) {
-                {
-                    if (true) throw (ParseException)jjte000;
-                }
-            }
-
-            {
-                if (true) throw;
-            }
+            throw;
         } finally {
-            if (jjtc000) {
+            if (jjtc000)
                 jjtree.CloseNodeScope(jjtn000, true);
-            }
         }
     }
 
-    public void selection() /* throws ParseException */
+    private void Selection()
     {
-        if (jj_2_14(2)) {
-            selectAll();
-        } else if (jj_2_15(2)) {
-            selectFirst();
-        } else if (jj_2_16(2)) {
-            selectLast();
-        } else {
+        if (jj_2_14(2))
+            SelectAll();
+        else if (jj_2_15(2))
+            SelectFirst();
+        else if (jj_2_16(2))
+            SelectLast();
+        else {
             jj_consume_token(-1);
 
             throw new ParseException();
@@ -2809,214 +2284,170 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
     }
 
     /**
-     * Apply a bool expression to all elements of a collection, creating a new collection
-     * containing those elements for which the expression returned true.
+     * Apply a bool expression to all elements of a collection, creating
+     * a new collection containing those elements for which the expression
+     * returned true.
      */
-    public void selectAll() /* throws ParseException */
+    private void SelectAll()
     {
         /*@bgen(jjtree) Select */
         var jjtn000 = new ASTSelect(JJTSELECT);
         var jjtc000 = true;
+
         jjtree.OpenNodeScope(jjtn000);
 
         try {
             jj_consume_token(54);
             jj_consume_token(3);
-            expression();
+            Expression();
             jj_consume_token(55);
-        } catch (Exception jjte000) {
+        } catch (Exception) {
             if (jjtc000) {
                 jjtree.ClearNodeScope();
                 jjtc000 = false;
-            } else {
+            } else
                 jjtree.PopNode();
-            }
 
-            /* if (jjte000 is Exception) {
-               {if (true) throw jjte000;}
-             }*/
-            if (jjte000 is ParseException) {
-                {
-                    if (true) throw (ParseException)jjte000;
-                }
-            }
-
-            {
-                if (true) throw;
-            }
+            throw;
         } finally {
-            if (jjtc000) {
+            if (jjtc000)
                 jjtree.CloseNodeScope(jjtn000, true);
-            }
         }
     }
 
     /**
-     * Apply a bool expression to all elements of a collection, creating a new collection
-     * containing those elements for the first element for which the expression returned true.
+     * Apply a bool expression to all elements of a collection, creating
+     * a new collection containing those elements for the first element
+     * for which the expression returned true.
      */
-    public void selectFirst() /* throws ParseException */
+    private void SelectFirst()
     {
         /*@bgen(jjtree) SelectFirst */
         var jjtn000 = new ASTSelectFirst(JJTSELECTFIRST);
         var jjtc000 = true;
+
         jjtree.OpenNodeScope(jjtn000);
 
         try {
             jj_consume_token(54);
             jj_consume_token(11);
-            expression();
+            Expression();
             jj_consume_token(55);
-        } catch (Exception jjte000) {
+        } catch (Exception) {
             if (jjtc000) {
                 jjtree.ClearNodeScope();
                 jjtc000 = false;
-            } else {
+            } else
                 jjtree.PopNode();
-            }
 
-            /*if (jjte000 is Exception) {
-              {if (true) throw jjte000;}
-            }*/
-            if (jjte000 is ParseException) {
-                {
-                    if (true) throw (ParseException)jjte000;
-                }
-            }
-
-            {
-                if (true) throw;
-            }
+            throw;
         } finally {
-            if (jjtc000) {
+            if (jjtc000)
                 jjtree.CloseNodeScope(jjtn000, true);
-            }
         }
     }
 
     /**
-     * Apply a bool expression to all elements of a collection, creating a new collection
-     * containing those elements for the first element for which the expression returned true.
+     * Apply a bool expression to all elements of a collection, creating
+     * a new collection containing those elements for the first element
+     * for which the expression returned true.
      */
-    public void selectLast() /* throws ParseException */
+    private void SelectLast()
     {
         /*@bgen(jjtree) SelectLast */
         var jjtn000 = new ASTSelectLast(JJTSELECTLAST);
         var jjtc000 = true;
+
         jjtree.OpenNodeScope(jjtn000);
 
         try {
             jj_consume_token(54);
             jj_consume_token(58);
-            expression();
+            Expression();
             jj_consume_token(55);
-        } catch (Exception jjte000) {
+        } catch (Exception) {
             if (jjtc000) {
                 jjtree.ClearNodeScope();
                 jjtc000 = false;
-            } else {
+            } else
                 jjtree.PopNode();
-            }
 
-            /*if (jjte000 is Exception) {
-              {if (true) throw jjte000;}
-            }*/
-            if (jjte000 is ParseException) {
-                {
-                    if (true) throw (ParseException)jjte000;
-                }
-            }
-
-            {
-                if (true) throw;
-            }
+            throw;
         } finally {
-            if (jjtc000) {
+            if (jjtc000)
                 jjtree.CloseNodeScope(jjtn000, true);
-            }
         }
     }
 
-    public void index() /* throws ParseException */
+    private void Index()
     {
         /*@bgen(jjtree) Property */
         var jjtn000 = new ASTProperty(JJTPROPERTY);
         var jjtc000 = true;
+
         jjtree.OpenNodeScope(jjtn000);
 
         try {
-            switch (f_jj_ntk == -1 ? jj_ntk() : f_jj_ntk) {
+            switch (fJjNtk == -1 ? jj_ntk() : fJjNtk) {
                 case 52:
                     jj_consume_token(52);
-                    expression();
+                    Expression();
                     jj_consume_token(53);
                     jjtree.CloseNodeScope(jjtn000, true);
                     jjtc000 = false;
-                    jjtn000.setIndexedAccess(true);
+                    jjtn000.IndexedAccess = true;
 
                     break;
-                case DYNAMIC_SUBSCRIPT:
-                    jj_consume_token(DYNAMIC_SUBSCRIPT);
+                case DynamicSubscript:
+                    jj_consume_token(DynamicSubscript);
+
                     var jjtn001 = new ASTConst(JJTCONST);
                     var jjtc001 = true;
+
                     jjtree.OpenNodeScope(jjtn001);
 
                     try {
                         jjtree.CloseNodeScope(jjtn001, true);
                         jjtc001 = false;
-                        jjtn001.setValue(token_source.literalValue);
+                        jjtn001.Value = tokenSource.literalValue;
                     } finally {
-                        if (jjtc001) {
+                        if (jjtc001)
                             jjtree.CloseNodeScope(jjtn001, true);
-                        }
                     }
 
                     jjtree.CloseNodeScope(jjtn000, true);
                     jjtc000 = false;
-                    jjtn000.setIndexedAccess(true);
+                    jjtn000.IndexedAccess = true;
 
                     break;
                 default:
-                    jj_la1[63] = jj_gen;
+                    jjLa1[63] = jjGen;
                     jj_consume_token(-1);
 
                     throw new ParseException();
             }
-        } catch (Exception jjte000) {
+        } catch (Exception) {
             if (jjtc000) {
                 jjtree.ClearNodeScope();
                 jjtc000 = false;
-            } else {
+            } else
                 jjtree.PopNode();
-            }
 
-            /* if (jjte000 is Exception) {
-               {if (true) throw jjte000;}
-             }*/
-            if (jjte000 is ParseException) {
-                {
-                    if (true) throw (ParseException)jjte000;
-                }
-            }
-
-            {
-                if (true) throw;
-            }
+            throw;
         } finally {
-            if (jjtc000) {
+            if (jjtc000)
                 jjtree.CloseNodeScope(jjtn000, true);
-            }
         }
     }
 
     private bool jj_2_1(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_1();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(0, xla);
@@ -3025,12 +2456,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_2(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_2();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(1, xla);
@@ -3039,12 +2470,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_3(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_3();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(2, xla);
@@ -3053,12 +2484,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_4(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_4();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(3, xla);
@@ -3067,12 +2498,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_5(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_5();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(4, xla);
@@ -3081,12 +2512,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_6(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_6();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(5, xla);
@@ -3095,12 +2526,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_7(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_7();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(6, xla);
@@ -3109,12 +2540,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_8(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_8();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(7, xla);
@@ -3123,12 +2554,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_9(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_9();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(8, xla);
@@ -3137,12 +2568,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_10(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_10();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(9, xla);
@@ -3151,12 +2582,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_11(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_11();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(10, xla);
@@ -3165,12 +2596,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_12(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_12();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(11, xla);
@@ -3179,12 +2610,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_13(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_13();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(12, xla);
@@ -3193,12 +2624,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_14(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_14();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(13, xla);
@@ -3207,12 +2638,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_15(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_15();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(14, xla);
@@ -3221,12 +2652,12 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_2_16(int xla)
     {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
+        jjLa = xla;
+        jjLastpos = jjScanpos = token;
 
         try {
             return !jj_3_16();
-        } catch (LookaheadSuccess ls) {
+        } catch (LookaheadSuccess) {
             return true;
         } finally {
             jj_save(15, xla);
@@ -3235,93 +2666,72 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_3_5()
     {
-        if (jj_scan_token(50)) return true;
-
-        return false;
+        return jj_scan_token(50);
     }
 
     private bool jj_3_4()
     {
-        if (jj_scan_token(49)) return true;
-
-        return false;
+        return jj_scan_token(49);
     }
 
     private bool jj_3R_27()
     {
-        if (jj_3R_34()) return true;
-
-        return false;
+        return jj_3R_34();
     }
 
     private bool jj_3R_65()
     {
-        if (jj_scan_token(IDENT)) return true;
-
-        return false;
+        return jj_scan_token(Ident);
     }
 
     private bool jj_3R_43()
     {
-        if (jj_3R_44()) return true;
-
-        return false;
+        return jj_3R_44();
     }
 
     private bool jj_3R_56()
     {
-        if (jj_scan_token(48)) return true;
-
-        return false;
+        return jj_scan_token(48);
     }
 
     private bool jj_3R_55()
     {
-        if (jj_scan_token(47)) return true;
-
-        return false;
+        return jj_scan_token(47);
     }
 
     private bool jj_3R_54()
     {
-        if (jj_scan_token(46)) return true;
-
-        return false;
+        return jj_scan_token(46);
     }
 
     private bool jj_3R_31()
     {
-        if (jj_3R_27()) return true;
-
-        return false;
+        return jj_3R_27();
     }
 
     private bool jj_3_13()
     {
-        if (jj_scan_token(52)) return true;
-        if (jj_3R_27()) return true;
-
-        return false;
+        return jj_scan_token(52) || jj_3R_27();
     }
 
     private bool jj_3R_53()
     {
-        Token xsp;
-        xsp = jj_scanpos;
+        var xsp = jjScanpos;
 
         if (jj_scan_token(73)) {
-            jj_scanpos = xsp;
+            jjScanpos = xsp;
 
             if (jj_scan_token(76)) {
-                jj_scanpos = xsp;
+                jjScanpos = xsp;
 
                 if (jj_scan_token(79)) {
-                    jj_scanpos = xsp;
+                    jjScanpos = xsp;
 
                     if (jj_scan_token(80)) {
-                        jj_scanpos = xsp;
+                        jjScanpos = xsp;
 
-                        if (jj_scan_token(81)) return true;
+                        if (jj_scan_token(81))
+                            return true;
                     }
                 }
             }
@@ -3332,57 +2742,54 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_3R_26()
     {
-        if (jj_3R_27()) return true;
-
-        return false;
+        return jj_3R_27();
     }
 
     private bool jj_3R_52()
     {
-        Token xsp;
-        xsp = jj_scanpos;
+        var xsp = jjScanpos;
 
         if (jj_3R_53()) {
-            jj_scanpos = xsp;
+            jjScanpos = xsp;
 
             if (jj_3R_54()) {
-                jj_scanpos = xsp;
+                jjScanpos = xsp;
 
                 if (jj_3R_55()) {
-                    jj_scanpos = xsp;
+                    jjScanpos = xsp;
 
                     if (jj_3R_56()) {
-                        jj_scanpos = xsp;
+                        jjScanpos = xsp;
 
                         if (jj_3_4()) {
-                            jj_scanpos = xsp;
+                            jjScanpos = xsp;
 
                             if (jj_3_5()) {
-                                jj_scanpos = xsp;
+                                jjScanpos = xsp;
 
                                 if (jj_3_6()) {
-                                    jj_scanpos = xsp;
+                                    jjScanpos = xsp;
 
                                     if (jj_3_7()) {
-                                        jj_scanpos = xsp;
+                                        jjScanpos = xsp;
 
                                         if (jj_3R_57()) {
-                                            jj_scanpos = xsp;
+                                            jjScanpos = xsp;
 
                                             if (jj_3_8()) {
-                                                jj_scanpos = xsp;
+                                                jjScanpos = xsp;
 
                                                 if (jj_3R_58()) {
-                                                    jj_scanpos = xsp;
+                                                    jjScanpos = xsp;
 
                                                     if (jj_3R_59()) {
-                                                        jj_scanpos = xsp;
+                                                        jjScanpos = xsp;
 
                                                         if (jj_3R_60()) {
-                                                            jj_scanpos = xsp;
+                                                            jjScanpos = xsp;
 
                                                             if (jj_3R_61()) {
-                                                                jj_scanpos = xsp;
+                                                                jjScanpos = xsp;
 
                                                                 if (jj_3_9()) return true;
                                                             }
@@ -3405,62 +2812,51 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_3R_42()
     {
-        if (jj_3R_43()) return true;
-
-        return false;
+        return jj_3R_43();
     }
 
     private bool jj_3_12()
     {
-        if (jj_scan_token(52)) return true;
-        if (jj_scan_token(53)) return true;
-
-        return false;
+        return jj_scan_token(52) || jj_scan_token(53);
     }
 
     private bool jj_3_11()
     {
-        if (jj_scan_token(44)) return true;
+        if (jj_scan_token(44))
+            return true;
 
-        Token xsp;
-        xsp = jj_scanpos;
-        if (jj_3R_26()) jj_scanpos = xsp;
+        var xsp = jjScanpos;
 
-        if (jj_scan_token(45)) return true;
+        if (jj_3R_26())
+            jjScanpos = xsp;
 
-        return false;
+        return jj_scan_token(45);
     }
 
     private bool jj_3R_67()
     {
-        if (jj_scan_token(DYNAMIC_SUBSCRIPT)) return true;
-
-        return false;
+        return jj_scan_token(DynamicSubscript);
     }
 
     private bool jj_3_2()
     {
-        if (jj_3R_22()) return true;
-
-        return false;
+        return jj_3R_22();
     }
 
     private bool jj_3R_66()
     {
-        if (jj_scan_token(52)) return true;
-
-        return false;
+        return jj_scan_token(52);
     }
 
     private bool jj_3R_64()
     {
-        Token xsp;
-        xsp = jj_scanpos;
+        var xsp = jjScanpos;
 
         if (jj_3R_66()) {
-            jj_scanpos = xsp;
+            jjScanpos = xsp;
 
-            if (jj_3R_67()) return true;
+            if (jj_3R_67())
+                return true;
         }
 
         return false;
@@ -3468,122 +2864,88 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_3_1()
     {
-        if (jj_3R_21()) return true;
-
-        return false;
+        return jj_3R_21();
     }
 
     private bool jj_3R_23()
     {
-        if (jj_scan_token(57)) return true;
-        if (jj_3R_32()) return true;
-
-        return false;
+        return jj_scan_token(57) || jj_3R_32();
     }
 
     private bool jj_3R_41()
     {
-        if (jj_3R_42()) return true;
-
-        return false;
+        return jj_3R_42();
     }
 
     private bool jj_3R_30()
     {
-        if (jj_scan_token(54)) return true;
-        if (jj_scan_token(58)) return true;
-
-        return false;
+        return jj_scan_token(54) || jj_scan_token(58);
     }
 
     private bool jj_3R_32()
     {
-        if (jj_scan_token(IDENT)) return true;
-
-        return false;
+        return jj_scan_token(Ident);
     }
 
     private bool jj_3R_51()
     {
-        if (jj_3R_52()) return true;
-
-        return false;
+        return jj_3R_52();
     }
 
     private bool jj_3R_29()
     {
-        if (jj_scan_token(54)) return true;
-        if (jj_scan_token(11)) return true;
-
-        return false;
+        return jj_scan_token(54) || jj_scan_token(11);
     }
 
     private bool jj_3R_40()
     {
-        if (jj_3R_41()) return true;
-
-        return false;
+        return jj_3R_41();
     }
 
     private bool jj_3R_33()
     {
-        if (jj_scan_token(56)) return true;
-
-        return false;
+        return jj_scan_token(56);
     }
 
     private bool jj_3R_63()
     {
-        if (jj_3R_65()) return true;
-
-        return false;
+        return jj_3R_65();
     }
 
     private bool jj_3R_28()
     {
-        if (jj_scan_token(54)) return true;
-        if (jj_scan_token(3)) return true;
-
-        return false;
+        return jj_scan_token(54) || jj_scan_token(3);
     }
 
     private bool jj_3R_50()
     {
-        if (jj_3R_51()) return true;
-
-        return false;
+        return jj_3R_51();
     }
 
     private bool jj_3R_39()
     {
-        if (jj_3R_40()) return true;
-
-        return false;
+        return jj_3R_40();
     }
 
     private bool jj_3_10()
     {
-        if (jj_3R_25()) return true;
-
-        return false;
+        return jj_3R_25();
     }
 
     private bool jj_3R_24()
     {
-        if (jj_3R_33()) return true;
-
-        return false;
+        return jj_3R_33();
     }
 
     private bool jj_3R_49()
     {
-        Token xsp;
-        xsp = jj_scanpos;
+        var xsp = jjScanpos;
 
         if (jj_scan_token(41)) {
-            jj_scanpos = xsp;
+            jjScanpos = xsp;
 
-            if (jj_scan_token(28)) return true;
+            if (jj_scan_token(28))
+                return true;
         }
 
         return false;
@@ -3591,78 +2953,62 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_3R_48()
     {
-        if (jj_scan_token(40)) return true;
-
-        return false;
+        return jj_scan_token(40);
     }
 
     private bool jj_3_16()
     {
-        if (jj_3R_30()) return true;
-
-        return false;
+        return jj_3R_30();
     }
 
     private bool jj_3R_47()
     {
-        if (jj_scan_token(35)) return true;
-
-        return false;
+        return jj_scan_token(35);
     }
 
     private bool jj_3_15()
     {
-        if (jj_3R_29()) return true;
-
-        return false;
+        return jj_3R_29();
     }
 
     private bool jj_3R_38()
     {
-        if (jj_3R_39()) return true;
-
-        return false;
+        return jj_3R_39();
     }
 
     private bool jj_3R_46()
     {
-        if (jj_scan_token(36)) return true;
-
-        return false;
+        return jj_scan_token(36);
     }
 
     private bool jj_3_14()
     {
-        if (jj_3R_28()) return true;
-
-        return false;
+        return jj_3R_28();
     }
 
     private bool jj_3R_62()
     {
-        if (jj_3R_33()) return true;
-
-        return false;
+        return jj_3R_33();
     }
 
     private bool jj_3R_45()
     {
-        Token xsp;
-        xsp = jj_scanpos;
+        var xsp = jjScanpos;
 
         if (jj_3R_46()) {
-            jj_scanpos = xsp;
+            jjScanpos = xsp;
 
             if (jj_3R_47()) {
-                jj_scanpos = xsp;
+                jjScanpos = xsp;
 
                 if (jj_3R_48()) {
-                    jj_scanpos = xsp;
+                    jjScanpos = xsp;
 
                     if (jj_3R_49()) {
-                        jj_scanpos = xsp;
+                        jjScanpos = xsp;
 
-                        if (jj_3R_50()) return true;
+                        if (jj_3R_50())
+                            return true;
                     }
                 }
             }
@@ -3673,84 +3019,66 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_3R_37()
     {
-        if (jj_3R_38()) return true;
-
-        return false;
+        return jj_3R_38();
     }
 
     private bool jj_3R_22()
     {
-        if (jj_scan_token(54)) return true;
-        if (jj_3R_31()) return true;
-
-        return false;
+        return jj_scan_token(54) || jj_3R_31();
     }
 
     private bool jj_3_9()
     {
-        if (jj_scan_token(51)) return true;
+        if (jj_scan_token(51))
+            return true;
 
-        Token xsp;
-        xsp = jj_scanpos;
-        if (jj_3R_24()) jj_scanpos = xsp;
+        var xsp = jjScanpos;
 
-        if (jj_scan_token(54)) return true;
+        if (jj_3R_24())
+            jjScanpos = xsp;
 
-        return false;
+        return jj_scan_token(54);
     }
 
     private bool jj_3R_36()
     {
-        if (jj_3R_37()) return true;
-
-        return false;
+        return jj_3R_37();
     }
 
     private bool jj_3R_61()
     {
-        if (jj_scan_token(54)) return true;
-
-        return false;
+        return jj_scan_token(54);
     }
 
     private bool jj_3R_60()
     {
-        if (jj_scan_token(44)) return true;
-
-        return false;
+        return jj_scan_token(44);
     }
 
     private bool jj_3R_59()
     {
-        if (jj_3R_64()) return true;
-
-        return false;
+        return jj_3R_64();
     }
 
     private bool jj_3_3()
     {
-        if (jj_3R_21()) return true;
-
-        return false;
+        return jj_3R_21();
     }
 
     private bool jj_3R_21()
     {
-        if (jj_scan_token(IDENT)) return true;
-        if (jj_scan_token(44)) return true;
-
-        return false;
+        return jj_scan_token(Ident) || jj_scan_token(44);
     }
 
     private bool jj_3R_58()
     {
-        Token xsp;
-        xsp = jj_scanpos;
+        var xsp = jjScanpos;
 
         if (jj_3_3()) {
-            jj_scanpos = xsp;
+            jjScanpos = xsp;
 
-            if (jj_3R_63()) return true;
+            if (jj_3R_63())
+                return true;
         }
 
         return false;
@@ -3758,88 +3086,69 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private bool jj_3R_35()
     {
-        if (jj_3R_36()) return true;
-
-        return false;
+        return jj_3R_36();
     }
 
     private bool jj_3R_44()
     {
-        if (jj_3R_45()) return true;
-
-        return false;
+        return jj_3R_45();
     }
 
     private bool jj_3_8()
     {
-        if (jj_3R_23()) return true;
-
-        return false;
+        return jj_3R_23();
     }
 
     private bool jj_3R_57()
     {
-        if (jj_3R_62()) return true;
-
-        return false;
+        return jj_3R_62();
     }
 
     private bool jj_3R_34()
     {
-        if (jj_3R_35()) return true;
-
-        return false;
+        return jj_3R_35();
     }
 
     private bool jj_3_7()
     {
-        if (jj_scan_token(4)) return true;
-        if (jj_scan_token(52)) return true;
-
-        return false;
+        return jj_scan_token(4) || jj_scan_token(52);
     }
 
     private bool jj_3R_25()
     {
-        if (jj_scan_token(IDENT)) return true;
-        if (jj_scan_token(44)) return true;
-
-        return false;
+        return jj_scan_token(Ident) || jj_scan_token(44);
     }
 
     private bool jj_3_6()
     {
-        if (jj_scan_token(51)) return true;
-        if (jj_scan_token(IDENT)) return true;
-
-        return false;
+        return jj_scan_token(51) || jj_scan_token(Ident);
     }
 
-    public ParserTokenManager token_source;
+    private ParserTokenManager tokenSource;
 
-    JavaCharStream jj_input_stream;
+    private readonly JavaCharStream jjInputStream;
 
-    public Token token, jj_nt;
+    private Token token;
 
-    private int f_jj_ntk;
+    private Token jjNt;
 
-    private Token jj_scanpos, jj_lastpos;
+    private int fJjNtk;
 
-    private int jj_la;
+    private Token jjScanpos, jjLastpos;
 
-    public bool lookingAhead = false;
+    private int jjLa;
 
-    private bool jj_semLA;
+    private const bool LookingAhead = false;
 
-    private int jj_gen;
+    private int jjGen;
 
-    private int[] jj_la1 = new int[64];
+    private readonly int[] jjLa1 = new int[64];
 
-    static private uint[] f_jj_la1_0;
+    private static uint[] fJjLa10;
 
-    static private uint[] f_jj_la1_1;
+    private static uint[] fJjLa11;
 
-    static private uint[] f_jj_la1_2;
+    private static uint[] fJjLa12;
 
     static Parser()
     {
@@ -3850,7 +3159,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private static void jj_la1_0()
     {
-        f_jj_la1_0 = [
+        fJjLa10 = [
             0x2, 0x4, 0x8, 0x60, 0x60, 0x180, 0x180, 0x600, 0x600, 0x1800, 0x1800, 0x6000, 0x6000, 0x78000, 0x18000,
             0x60000, 0x78000, 0x1ff80000, 0x180000, 0x600000, 0x1800000, 0x6000000, 0x1ff80000, 0xe0000000, 0x60000000,
             0x80000000, 0x0, 0xe0000000, 0x0, 0x0, 0x0, 0x0, 0x10000000, 0x0, 0x0, 0x10000010, 0x0, 0x0, 0x0, 0x0, 0x0,
@@ -3861,7 +3170,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private static void jj_la1_1()
     {
-        f_jj_la1_1 = [
+        fJjLa11 = [
             0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
             0x0, 0x0, 0x7, 0x0, 0x1, 0x6, 0x7, 0x18, 0x18, 0xe0, 0xe0, 0x200, 0x800, 0x400, 0x35fd318, 0x101800, 0x0,
             0x400000, 0x401000, 0x101800, 0x0, 0x0, 0x0, 0x35fd318, 0x1000000, 0x0, 0x35fd318, 0x1c000, 0x1000000,
@@ -3871,7 +3180,7 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private static void jj_la1_2()
     {
-        f_jj_la1_2 = [
+        fJjLa12 = [
             0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
             0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x39209, 0x8, 0x1, 0x0, 0x1, 0x8,
             0x39200, 0x1, 0x0, 0x39209, 0x0, 0x0, 0x39209, 0x39200, 0x0, 0x9, 0x0, 0x1, 0x1, 0x0, 0x0, 0x39209, 0x0,
@@ -3879,97 +3188,49 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
         ];
     }
 
-    private JJCalls[] jj_2_rtns = new JJCalls[16];
+    private readonly JjCalls[] jj2Rtns = new JjCalls[16];
 
-    private bool jj_rescan = false;
+    private bool jjRescan;
 
-    private int jj_gc = 0;
-
-    public Parser(Stream stream)
-    {
-        jj_input_stream = new JavaCharStream(stream, 1, 1);
-        token_source = new ParserTokenManager(jj_input_stream);
-        token = new Token();
-        f_jj_ntk = -1;
-        jj_gen = 0;
-        for (var i = 0; i < 64; i++) jj_la1[i] = -1;
-        for (var i = 0; i < jj_2_rtns.Length; i++) jj_2_rtns[i] = new JJCalls();
-    }
-
-    public void ReInit(Stream stream)
-    {
-        jj_input_stream.ReInit(stream, 1, 1);
-        token_source.ReInit(jj_input_stream);
-        token = new Token();
-        f_jj_ntk = -1;
-        jjtree.Reset();
-        jj_gen = 0;
-        for (var i = 0; i < 64; i++) jj_la1[i] = -1;
-        for (var i = 0; i < jj_2_rtns.Length; i++) jj_2_rtns[i] = new JJCalls();
-    }
+    private int jjGc;
 
     public Parser(TextReader stream)
     {
-        jj_input_stream = new JavaCharStream(stream, 1, 1);
-        token_source = new ParserTokenManager(jj_input_stream);
+        jjInputStream = new JavaCharStream(stream, 1, 1);
+        tokenSource = new ParserTokenManager(jjInputStream);
         token = new Token();
-        f_jj_ntk = -1;
-        jj_gen = 0;
-        for (var i = 0; i < 64; i++) jj_la1[i] = -1;
-        for (var i = 0; i < jj_2_rtns.Length; i++) jj_2_rtns[i] = new JJCalls();
+        fJjNtk = -1;
+        jjGen = 0;
+
+        for (var i = 0; i < 64; i++)
+            jjLa1[i] = -1;
+
+        for (var i = 0; i < jj2Rtns.Length; i++)
+            jj2Rtns[i] = new JjCalls();
     }
 
-    public void ReInit(TextReader stream)
-    {
-        jj_input_stream.ReInit(stream, 1, 1);
-        token_source.ReInit(jj_input_stream);
-        token = new Token();
-        f_jj_ntk = -1;
-        jjtree.Reset();
-        jj_gen = 0;
-        for (var i = 0; i < 64; i++) jj_la1[i] = -1;
-        for (var i = 0; i < jj_2_rtns.Length; i++) jj_2_rtns[i] = new JJCalls();
-    }
-
-    public Parser(ParserTokenManager tm)
-    {
-        token_source = tm;
-        token = new Token();
-        f_jj_ntk = -1;
-        jj_gen = 0;
-        for (var i = 0; i < 64; i++) jj_la1[i] = -1;
-        for (var i = 0; i < jj_2_rtns.Length; i++) jj_2_rtns[i] = new JJCalls();
-    }
-
-    public void ReInit(ParserTokenManager tm)
-    {
-        token_source = tm;
-        token = new Token();
-        f_jj_ntk = -1;
-        jjtree.Reset();
-        jj_gen = 0;
-        for (var i = 0; i < 64; i++) jj_la1[i] = -1;
-        for (var i = 0; i < jj_2_rtns.Length; i++) jj_2_rtns[i] = new JJCalls();
-    }
-
-    private Token jj_consume_token(int kind) /* throws ParseException */
+    private Token jj_consume_token(int kind)
     {
         Token oldToken;
-        if ((oldToken = token).Next != null) token = token.Next;
-        else token = token.Next = token_source.GetNextToken();
-        f_jj_ntk = -1;
+
+        if ((oldToken = token).Next != null)
+            token = token.Next;
+        else
+            token = token.Next = tokenSource.GetNextToken();
+
+        fJjNtk = -1;
 
         if (token.Kind == kind) {
-            jj_gen++;
+            jjGen++;
 
-            if (++jj_gc > 100) {
-                jj_gc = 0;
+            if (++jjGc > 100) {
+                jjGc = 0;
 
-                for (var i = 0; i < jj_2_rtns.Length; i++) {
-                    var c = jj_2_rtns[i];
+                for (var i = 0; i < jj2Rtns.Length; i++) {
+                    var c = jj2Rtns[i];
 
                     while (c != null) {
-                        if (c.gen < jj_gen) c.first = null;
+                        if (c.gen < jjGen) c.first = null;
                         c = c.next;
                     }
                 }
@@ -3979,198 +3240,191 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
         }
 
         token = oldToken;
-        jj_kind = kind;
+        jjKind = kind;
 
-        throw generateParseException();
+        throw GenerateParseException();
     }
 
-    private class LookaheadSuccess : Exception {
-    }
+    private class LookaheadSuccess : Exception;
 
-    private LookaheadSuccess jj_ls = new();
+    private readonly LookaheadSuccess jjLs = new();
 
     private bool jj_scan_token(int kind)
     {
-        if (jj_scanpos == jj_lastpos) {
-            jj_la--;
+        if (jjScanpos == jjLastpos) {
+            jjLa--;
 
-            if (jj_scanpos.Next == null) {
-                jj_lastpos = jj_scanpos = jj_scanpos.Next = token_source.GetNextToken();
-            } else {
-                jj_lastpos = jj_scanpos = jj_scanpos.Next;
-            }
-        } else {
-            jj_scanpos = jj_scanpos.Next;
-        }
+            if (jjScanpos.Next == null)
+                jjLastpos = jjScanpos = jjScanpos.Next = tokenSource.GetNextToken();
+            else
+                jjLastpos = jjScanpos = jjScanpos.Next;
+        } else
+            jjScanpos = jjScanpos.Next;
 
-        if (jj_rescan) {
+        if (jjRescan) {
             var i = 0;
             var tok = token;
 
-            while (tok != null && tok != jj_scanpos) {
+            while (tok != null && tok != jjScanpos) {
                 i++;
                 tok = tok.Next;
             }
 
-            if (tok != null) jj_add_error_token(kind, i);
+            if (tok != null)
+                jj_add_error_token(kind, i);
         }
 
-        if (jj_scanpos.Kind != kind) return true;
+        if (jjScanpos.Kind != kind)
+            return true;
 
-        if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
+        if (jjLa == 0 && jjScanpos == jjLastpos)
+            throw jjLs;
 
         return false;
     }
 
-    public Token getNextToken()
+    public Token GetNextToken()
     {
-        if (token.Next != null) token = token.Next;
-        else token = token.Next = token_source.GetNextToken();
-        f_jj_ntk = -1;
-        jj_gen++;
+        if (token.Next != null)
+            token = token.Next;
+        else
+            token = token.Next = tokenSource.GetNextToken();
+
+        fJjNtk = -1;
+        jjGen++;
 
         return token;
     }
 
-    public Token getToken(int index)
+    public Token GetToken(int index)
     {
-        var t = lookingAhead ? jj_scanpos : token;
+        var t = token;
 
-        for (var i = 0; i < index; i++) {
-            if (t.Next != null) t = t.Next;
-            else t = t.Next = token_source.GetNextToken();
-        }
+        for (var i = 0; i < index; i++)
+            if (t.Next != null)
+                t = t.Next;
+            else
+                t = t.Next = tokenSource.GetNextToken();
 
         return t;
     }
 
     private int jj_ntk()
     {
-        if ((jj_nt = token.Next) == null)
-            return f_jj_ntk = (token.Next = token_source.GetNextToken()).Kind;
-        else
-            return f_jj_ntk = jj_nt.Kind;
+        if ((jjNt = token.Next) == null)
+            return fJjNtk = (token.Next = tokenSource.GetNextToken()).Kind;
+
+        return fJjNtk = jjNt.Kind;
     }
 
-    private ArrayList jj_expentries = new();
+    private readonly ArrayList jjExpentries = new();
 
-    private int[] jj_expentry;
+    private int[] jjExpentry;
 
-    private int jj_kind = -1;
+    private int jjKind = -1;
 
-    private int[] jj_lasttokens = new int[100];
+    private readonly int[] jjLasttokens = new int[100];
 
-    private int jj_endpos;
+    private int jjEndpos;
 
     private void jj_add_error_token(int kind, int pos)
     {
-        if (pos >= 100) return;
+        if (pos >= 100)
+            return;
 
-        if (pos == jj_endpos + 1) {
-            jj_lasttokens[jj_endpos++] = kind;
-        } else if (jj_endpos != 0) {
-            jj_expentry = new int[jj_endpos];
+        if (pos == jjEndpos + 1)
+            jjLasttokens[jjEndpos++] = kind;
+        else if (jjEndpos != 0) {
+            jjExpentry = new int[jjEndpos];
 
-            for (var i = 0; i < jj_endpos; i++) {
-                jj_expentry[i] = jj_lasttokens[i];
-            }
+            for (var i = 0; i < jjEndpos; i++)
+                jjExpentry[i] = jjLasttokens[i];
 
             var exists = false;
 
-            for (var e = jj_expentries.GetEnumerator(); e.MoveNext();) {
+            for (var e = jjExpentries.GetEnumerator(); e.MoveNext();) {
                 var oldentry = (int[])e.Current;
 
-                if (oldentry.Length == jj_expentry.Length) {
+                if (oldentry.Length == jjExpentry.Length) {
                     exists = true;
 
-                    for (var i = 0; i < jj_expentry.Length; i++) {
-                        if (oldentry[i] != jj_expentry[i]) {
+                    for (var i = 0; i < jjExpentry.Length; i++)
+                        if (oldentry[i] != jjExpentry[i]) {
                             exists = false;
 
                             break;
                         }
-                    }
 
-                    if (exists) break;
+                    if (exists)
+                        break;
                 }
             }
 
-            if (!exists) jj_expentries.Add(jj_expentry);
-            if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
+            if (!exists)
+                jjExpentries.Add(jjExpentry);
+
+            if (pos != 0)
+                jjLasttokens[(jjEndpos = pos) - 1] = kind;
         }
     }
 
-    public ParseException generateParseException()
+    private ParseException GenerateParseException()
     {
-        jj_expentries.Clear();
-        var la1tokens = new bool[86];
+        jjExpentries.Clear();
 
-        for (var i = 0; i < 86; i++) {
-            la1tokens[i] = false;
+        var la1Tokens = new bool[86];
+
+        for (var i = 0; i < 86; i++)
+            la1Tokens[i] = false;
+
+        if (jjKind >= 0) {
+            la1Tokens[jjKind] = true;
+            jjKind = -1;
         }
 
-        if (jj_kind >= 0) {
-            la1tokens[jj_kind] = true;
-            jj_kind = -1;
-        }
-
-        for (var i = 0; i < 64; i++) {
-            if (jj_la1[i] == jj_gen) {
+        for (var i = 0; i < 64; i++)
+            if (jjLa1[i] == jjGen)
                 for (var j = 0; j < 32; j++) {
-                    if ((f_jj_la1_0[i] & (1 << j)) != 0) {
-                        la1tokens[j] = true;
-                    }
+                    if ((fJjLa10[i] & (1 << j)) != 0)
+                        la1Tokens[j] = true;
 
-                    if ((f_jj_la1_1[i] & (1 << j)) != 0) {
-                        la1tokens[32 + j] = true;
-                    }
+                    if ((fJjLa11[i] & (1 << j)) != 0)
+                        la1Tokens[32 + j] = true;
 
-                    if ((f_jj_la1_2[i] & (1 << j)) != 0) {
-                        la1tokens[64 + j] = true;
-                    }
+                    if ((fJjLa12[i] & (1 << j)) != 0)
+                        la1Tokens[64 + j] = true;
                 }
-            }
-        }
 
-        for (var i = 0; i < 86; i++) {
-            if (la1tokens[i]) {
-                jj_expentry = new int[1];
-                jj_expentry[0] = i;
-                jj_expentries.Add(jj_expentry);
+        for (var i = 0; i < 86; i++)
+            if (la1Tokens[i]) {
+                jjExpentry = new int[1];
+                jjExpentry[0] = i;
+                jjExpentries.Add(jjExpentry);
             }
-        }
 
-        jj_endpos = 0;
+        jjEndpos = 0;
         jj_rescan_token();
         jj_add_error_token(0, 0);
-        var exptokseq = new int[jj_expentries.Count][];
 
-        for (var i = 0; i < jj_expentries.Count; i++) {
-            exptokseq[i] = (int[])jj_expentries[i];
-        }
+        var exptokseq = new int[jjExpentries.Count][];
 
-        return new ParseException(token, exptokseq, tokenImage);
-    }
+        for (var i = 0; i < jjExpentries.Count; i++)
+            exptokseq[i] = (int[])jjExpentries[i];
 
-    public void enable_tracing()
-    {
-    }
-
-    public void disable_tracing()
-    {
+        return new ParseException(token, exptokseq, TokenImage);
     }
 
     private void jj_rescan_token()
     {
-        jj_rescan = true;
+        jjRescan = true;
 
         for (var i = 0; i < 16; i++) {
-            var p = jj_2_rtns[i];
+            var p = jj2Rtns[i];
 
             do {
-                if (p.gen > jj_gen) {
-                    jj_la = p.arg;
-                    jj_lastpos = jj_scanpos = p.first;
+                if (p.gen > jjGen) {
+                    jjLa = p.arg;
+                    jjLastpos = jjScanpos = p.first;
 
                     switch (i) {
                         case 0: jj_3_1(); break;
@@ -4196,16 +3450,16 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
             } while (p != null);
         }
 
-        jj_rescan = false;
+        jjRescan = false;
     }
 
     private void jj_save(int index, int xla)
     {
-        var p = jj_2_rtns[index];
+        var p = jj2Rtns[index];
 
-        while (p.gen > jj_gen) {
+        while (p.gen > jjGen) {
             if (p.next == null) {
-                p = p.next = new JJCalls();
+                p = p.next = new JjCalls();
 
                 break;
             }
@@ -4213,18 +3467,18 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
             p = p.next;
         }
 
-        p.gen = jj_gen + xla - jj_la;
+        p.gen = jjGen + xla - jjLa;
         p.first = token;
         p.arg = xla;
     }
 
-    class JJCalls {
+    private class JjCalls {
         internal int gen;
 
         internal Token first;
 
         internal int arg;
 
-        internal JJCalls next;
+        internal JjCalls next;
     }
 }

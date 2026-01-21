@@ -38,25 +38,25 @@ namespace OGNL.Test;
 
 [TestFixture]
 public abstract class OgnlTestCase : ITestSuiteProvider {
-    protected string name;
+    private readonly string name;
 
-    protected OgnlContext context;
+    protected OgnlContext Context;
 
-    private string expressionString;
+    private readonly string expressionString;
 
     private SimpleNode expression;
 
-    private object expectedResult;
+    private readonly object expectedResult;
 
-    private object root;
+    private readonly object root;
 
-    private bool hasSetValue;
+    private readonly bool hasSetValue;
 
-    private object setValue;
+    private readonly object setValue;
 
-    private bool hasExpectedAfterSetResult;
+    private readonly bool hasExpectedAfterSetResult;
 
-    private object expectedAfterSetResult;
+    private readonly object expectedAfterSetResult;
 
     public static bool isEqual(object object1, object object2)
     {
@@ -105,70 +105,57 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
         return result;
     }
 
-    public OgnlTestCase()
+    protected OgnlTestCase()
     {
     }
 
-    public OgnlTestCase(string name)
+    protected OgnlTestCase(string name)
     {
         this.name = name;
     }
 
-    public OgnlTestCase(string name, object? root, string expressionString, object? expectedResult, object? setValue,
-        object? expectedAfterSetResult)
-        : this(name, root, expressionString, expectedResult, setValue)
+    protected OgnlTestCase(string name, object? root,
+        string expressionString, object? expectedResult, object? setValue,
+        object? expectedAfterSetResult) : this(name, root,
+        expressionString, expectedResult, setValue)
     {
         hasExpectedAfterSetResult = true;
         this.expectedAfterSetResult = expectedAfterSetResult;
     }
 
-    public OgnlTestCase(string name, object? root, string expressionString, object? expectedResult, object? setValue)
-        : this(name, root, expressionString, expectedResult)
+    protected OgnlTestCase(string name, object? root,
+        string expressionString, object? expectedResult,
+        object? setValue) : this(name, root, expressionString,
+        expectedResult)
     {
-        ;
         hasSetValue = true;
         this.setValue = setValue;
     }
 
-    public OgnlTestCase(string name, object? root, string expressionString, object? expectedResult)
-        : this(name)
+    protected OgnlTestCase(string name, object? root,
+        string expressionString, object? expectedResult) : this(name)
     {
         this.root = root;
         this.expressionString = expressionString;
         this.expectedResult = expectedResult;
     }
 
-    public string getExpressionDump(SimpleNode node)
+    protected SimpleNode GetExpression()
     {
-        var writer = new StringWriter();
-
-        node.Dump(writer, "   ");
-
-        return writer.ToString();
-    }
-
-    public string getExpressionString()
-    {
-        return expressionString;
-    }
-
-    public SimpleNode getExpression() // throws OgnlException
-    {
-        if (expression == null) {
+        if (expression == null)
             expression = (SimpleNode)Ognl.parseExpression(expressionString);
-        }
 
         return expression;
     }
 
-    public object getExpectedResult()
+    protected object GetExpectedResult()
     {
         return expectedResult;
     }
 
-    protected internal virtual void runTest() // throws Exception
+    protected internal virtual void RunTest()
     {
-        object testedResult = null;
+        object? testedResult = null;
 
         setUp();
 
@@ -176,17 +163,17 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
             SimpleNode expr;
 
             testedResult = expectedResult;
-            expr = getExpression();
+            expr = GetExpression();
 
             Assert.That(
-                isEqual(Ognl.getValue(expr, context, root), expectedResult),
+                isEqual(Ognl.getValue(expr, Context, root), expectedResult),
                 Is.True);
 
             if (hasSetValue) {
                 testedResult = hasExpectedAfterSetResult ? expectedAfterSetResult : setValue;
-                Ognl.setValue(expr, context, root, setValue);
+                Ognl.setValue(expr, Context, root, setValue);
                 Assert.That(
-                    isEqual(Ognl.getValue(expr, context, root), testedResult),
+                    isEqual(Ognl.getValue(expr, Context, root), testedResult),
                     Is.True);
             }
         } catch (Exception ex) {
@@ -197,7 +184,7 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
             } else {
                 Console.WriteLine(ex);
 
-                throw ex;
+                throw;
             }
         }
     }
@@ -205,7 +192,7 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
     [SetUp]
     public virtual void setUp()
     {
-        context = Ognl.createDefaultContext(null);
+        Context = Ognl.createDefaultContext(null);
     }
 
     public abstract TestSuite suite();
@@ -226,12 +213,11 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
 
             try {
                 Console.Write("Run TestCase " + index + " [  " + test.name + "  ] ...");
-                test.runTest();
+                test.RunTest();
                 Console.WriteLine("SUCCESS.");
             } catch (Exception ex) {
                 errors.Add(new Error(test, ex, index));
 
-                // throw ex ;
                 Console.WriteLine("Falied!");
                 Console.WriteLine(ex);
             }

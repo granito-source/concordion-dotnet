@@ -1,5 +1,3 @@
-using System.Collections;
-
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,6 +28,9 @@ using System.Collections;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Collections;
+
 namespace OGNL.Parser;
 
 /**
@@ -42,12 +43,12 @@ internal class ASTCtor(int id) : SimpleNode(id) {
     private bool isArray;
 
     /** Called from parser action. */
-    internal void setClassName(string name)
+    internal void SetClassName(string name)
     {
         className = name;
     }
 
-    internal void setArray(bool value)
+    internal void SetArray(bool value)
     {
         isArray = value;
     }
@@ -55,14 +56,15 @@ internal class ASTCtor(int id) : SimpleNode(id) {
     protected override object? GetValueBody(OgnlContext context,
         object source)
     {
-        object result, root = context.Root;
+        var root = context.Root;
         var count = GetNumChildren();
         var args = OgnlRuntime.ObjectArrayPool.Create(count);
 
         try {
-            for (var i = 0; i < count; ++i) {
+            for (var i = 0; i < count; ++i)
                 args[i] = Children[i].GetValue(context, root);
-            }
+
+            object result;
 
             if (isArray) {
                 if (args.Length == 1) {
@@ -114,28 +116,20 @@ internal class ASTCtor(int id) : SimpleNode(id) {
     {
         var result = "new " + className;
 
-        if (isArray) {
-            if (Children[0] is ASTConst) {
-                result = result + "[" + Children[0] + "]";
-            } else {
-                result = result + "[] " + Children[0];
-            }
-        } else {
-            result = result + "(";
+        if (isArray)
+            return Children[0] is ASTConst ?
+                result + "[" + Children[0] + "]" :
+                result + "[] " + Children[0];
 
-            if (Children != null && Children.Length > 0) {
-                for (var i = 0; i < Children.Length; i++) {
-                    if (i > 0) {
-                        result = result + ", ";
-                    }
+        result += "(";
 
-                    result = result + Children[i];
-                }
-            }
+        for (var i = 0; i < Children.Length; i++) {
+            if (i > 0)
+                result += ", ";
 
-            result = result + ")";
+            result += Children[i];
         }
 
-        return result;
+        return result + ")";
     }
 }

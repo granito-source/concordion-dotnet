@@ -34,7 +34,7 @@ namespace OGNL.Test.Objects;
 public class OtherObjectIndexed : BaseObjectIndexed {
     public OtherObjectIndexed()
     {
-        setAttribute("foo", "bar");
-        setAttribute("bar", "baz");
+        SetAttribute("foo", "bar");
+        SetAttribute("bar", "baz");
     }
 }

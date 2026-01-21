@@ -87,6 +87,6 @@ public class ClassMethodTest : OgnlTestCase {
     [Test]
     public void Test4()
     {
-        suite()[4].runTest();
+        suite()[4].RunTest();
     }
 }

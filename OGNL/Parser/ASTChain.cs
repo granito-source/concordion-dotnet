@@ -52,13 +52,13 @@ internal class ASTChain(int id) : SimpleNode(id) {
             if (i < ilast) {
                 if (Children[i] is ASTProperty) {
                     var propertyNode = (ASTProperty)Children[i];
-                    var indexType = propertyNode.getIndexedPropertyType(context, result);
+                    var indexType = propertyNode.GetIndexedPropertyType(context, result);
 
                     if (indexType != OgnlRuntime.IndexedPropertyNone && Children[i + 1] is ASTProperty) {
                         var indexNode = (ASTProperty)Children[i + 1];
 
-                        if (indexNode.isIndexedAccess()) {
-                            var index = indexNode.getProperty(context, result);
+                        if (indexNode.IndexedAccess) {
+                            var index = indexNode.GetProperty(context);
 
                             if (index is DynamicSubscript) {
                                 if (indexType == OgnlRuntime.IndexedPropertyInt) {
@@ -97,7 +97,7 @@ internal class ASTChain(int id) : SimpleNode(id) {
 
                             if (!handled) {
                                 result = OgnlRuntime.GetIndexedProperty(context, result,
-                                    propertyNode.getProperty(context, result).ToString(), index);
+                                    propertyNode.GetProperty(context).ToString(), index);
                                 handled = true;
                                 i++;
                             }
@@ -123,13 +123,13 @@ internal class ASTChain(int id) : SimpleNode(id) {
             if (i == ilast) {
                 if (Children[i] is ASTProperty) {
                     var propertyNode = (ASTProperty)Children[i];
-                    var indexType = propertyNode.getIndexedPropertyType(context, target);
+                    var indexType = propertyNode.GetIndexedPropertyType(context, target);
 
                     if (indexType != OgnlRuntime.IndexedPropertyNone && Children[i + 1] is ASTProperty) {
                         var indexNode = (ASTProperty)Children[i + 1];
 
-                        if (indexNode.isIndexedAccess()) {
-                            var index = indexNode.getProperty(context, target);
+                        if (indexNode.IndexedAccess) {
+                            var index = indexNode.GetProperty(context);
 
                             if (index is DynamicSubscript) {
                                 if (indexType == OgnlRuntime.IndexedPropertyInt) {
@@ -167,7 +167,7 @@ internal class ASTChain(int id) : SimpleNode(id) {
 
                             if (!handled) {
                                 OgnlRuntime.SetIndexedProperty(context, target,
-                                    propertyNode.getProperty(context, target).ToString(), index, value);
+                                    propertyNode.GetProperty(context).ToString(), index, value);
                                 handled = true;
                                 i++;
                             }
@@ -212,7 +212,7 @@ internal class ASTChain(int id) : SimpleNode(id) {
         if (Children != null && Children.Length > 0) {
             for (var i = 0; i < Children.Length; i++) {
                 if (i > 0) {
-                    if (!(Children[i] is ASTProperty) || !((ASTProperty)Children[i]).isIndexedAccess()) {
+                    if (!(Children[i] is ASTProperty) || !((ASTProperty)Children[i]).IndexedAccess) {
                         result = result + ".";
                     }
                 }

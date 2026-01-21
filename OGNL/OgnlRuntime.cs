@@ -449,16 +449,15 @@ public static class OgnlRuntime {
                 var arg = args[i];
                 var type = parameterTypes[i];
 
-                if (IsTypeCompatible(arg, type)) {
+                if (IsTypeCompatible(arg, type))
                     newArgs[i] = arg;
-                } else {
+                else {
                     var v = GetConvertedType(context, target, member, propertyName, arg, type);
 
-                    if (v == NoConversionPossible) {
+                    if (v == NoConversionPossible)
                         result = false;
-                    } else {
+                    else
                         newArgs[i] = v;
-                    }
                 }
             }
         }
@@ -500,9 +499,9 @@ public static class OgnlRuntime {
                 var ctor = (ConstructorInfo)constructors[i];
                 var parameterTypes = GetParameterTypes(ctor);
 
-                if (GetConvertedTypes(context, target, ctor, null, parameterTypes, args, newArgs)) {
+                if (GetConvertedTypes(context, target, ctor, null,
+                    parameterTypes, args, newArgs))
                     result = ctor;
-                }
             }
         }
 
@@ -666,24 +665,18 @@ public static class OgnlRuntime {
         object? result = null;
         var method = GetGetMethod(target.GetType(), propertyName);
 
-        // check accessible, IGNORED.
-        if (checkAccessAndExistence) {
-            if (method == null
-                /* || !context.getMemberAccess().isAccessible(context, target, m, propertyName) */) {
-                result = NotFound;
-            }
-        }
+        if (checkAccessAndExistence && method == null)
+            result = NotFound;
 
         if (result == null) {
-            if (method != null) {
+            if (method != null)
                 try {
                     result = method.Invoke(target, NoArguments);
                 } catch (TargetInvocationException ex) {
                     throw new OgnlException(propertyName, ex.InnerException);
                 }
-            } else {
+            else
                 throw new MissingMethodException(propertyName);
-            }
         }
 
         return result;
@@ -1219,11 +1212,8 @@ public static class OgnlRuntime {
                     outer: ;
                 }
 
-                if (answer != null) {
-                    if (keyFound != forClass) {
-                        handlers.Put(forClass, answer);
-                    }
-                }
+                if (answer != null && keyFound != forClass)
+                    handlers.Put(forClass, answer);
             }
         }
 

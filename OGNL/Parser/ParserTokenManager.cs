@@ -1749,10 +1749,10 @@ internal class ParserTokenManager(JavaCharStream stream) : ParserConstants {
                     image.Append(inputStream.GetSuffix(jjimageLen + jjmatchedPos + 1));
 
                 literalValue = image[1] switch {
-                    '^' => DynamicSubscript.First,
-                    '|' => DynamicSubscript.Mid,
-                    '$' => DynamicSubscript.Last,
-                    '*' => DynamicSubscript.All,
+                    '^' => OGNL.DynamicSubscript.First,
+                    '|' => OGNL.DynamicSubscript.Mid,
+                    '$' => OGNL.DynamicSubscript.Last,
+                    '*' => OGNL.DynamicSubscript.All,
                     _ => literalValue
                 };
 

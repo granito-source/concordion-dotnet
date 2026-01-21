@@ -155,11 +155,6 @@ public abstract class SimpleNode(int id) : Node {
 
         try {
             return EvaluateGetValueBody(context, source);
-        } catch (OgnlException ex) {
-            evalException = ex;
-            ex.setEvaluation(evaluation);
-
-            throw;
         } catch (Exception ex) {
             evalException = ex;
 
@@ -196,11 +191,6 @@ public abstract class SimpleNode(int id) : Node {
 
             try {
                 EvaluateSetValueBody(context, target, value);
-            } catch (OgnlException ex) {
-                evalException = ex;
-                ex.setEvaluation(evaluation);
-
-                throw;
             } catch (Exception ex) {
                 evalException = ex;
 

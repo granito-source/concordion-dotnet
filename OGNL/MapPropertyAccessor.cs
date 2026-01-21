@@ -58,7 +58,7 @@ public class MapPropertyAccessor : PropertyAccessor {
         }
 
         if (currentNode is ASTProperty) {
-            indexedAccess = ((ASTProperty)currentNode).isIndexedAccess();
+            indexedAccess = ((ASTProperty)currentNode).IndexedAccess;
         }
 
         if (name is string && !indexedAccess) {

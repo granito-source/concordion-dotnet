@@ -1,5 +1,3 @@
-using System.Collections;
-
 //--------------------------------------------------------------------------
 //	Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,46 +28,22 @@ using System.Collections;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Collections;
+
 namespace OGNL.Test.Objects;
 
 public class BaseObjectIndexed {
-    private IDictionary attributes = new Hashtable();
+    private readonly Hashtable attributes = new();
 
-    public IDictionary getAttributes()
-    {
-        return attributes;
-    }
-
-    public object getAttribute(string name)
-    {
-        return attributes[name];
-    }
-
-    public void setAttribute(string name, object value)
+    protected void SetAttribute(string name, object? value)
     {
         attributes.Add(name, value);
     }
 
-    /* allow testing property name where types do not match */
-    public object getOtherAttribute(string name)
-    {
-        return null;
-    }
+    public object? this[object name] {
+        get => attributes[name];
 
-    public void setOtherAttribute(object someObject, object foo)
-    {
-        /* do nothing */
-    }
-
-    /* test whether get only is found */
-    public object getSecondaryAttribute(object name)
-    {
-        return attributes[name];
-    }
-
-    public object this[object name] {
-        get { return attributes[name]; }
-
-        set { attributes[name] = value; }
+        set => attributes[name] = value;
     }
 }

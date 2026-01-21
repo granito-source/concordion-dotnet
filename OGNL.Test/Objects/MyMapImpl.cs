@@ -1,5 +1,3 @@
-using System.Collections;
-
 //--------------------------------------------------------------------------
 //	Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,6 +28,9 @@ using System.Collections;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Collections;
+
 namespace OGNL.Test.Objects;
 
 /**
@@ -38,28 +39,20 @@ namespace OGNL.Test.Objects;
     MapPropertyAccessor instead of ObjectPropertyAccessor.
  */
 public class MyMapImpl : MyMap {
-    public ICollection Keys {
-        get { return map.Keys; }
-    }
+    public ICollection Keys => map.Keys;
 
-    public ICollection Values {
-        get { return map.Values; }
-    }
+    public ICollection Values => map.Values;
 
-    public bool IsReadOnly {
-        get { return map.IsReadOnly; }
-    }
+    public bool IsReadOnly => map.IsReadOnly;
 
-    public bool IsFixedSize {
-        get { return map.IsFixedSize; }
-    }
+    public bool IsFixedSize => map.IsFixedSize;
 
     public bool Contains(object key)
     {
         return map.Contains(key);
     }
 
-    public void Add(object key, object value)
+    public void Add(object key, object? value)
     {
         map.Add(key, value);
     }
@@ -84,32 +77,26 @@ public class MyMapImpl : MyMap {
         map.Remove(key);
     }
 
-    public object this[object key] {
-        get { return map[key]; }
+    public object? this[object key] {
+        get => map[key];
 
-        set { map[key] = value; }
+        set => map[key] = value;
     }
 
-    public int Count {
-        get { return map.Count; }
-    }
+    public int Count => map.Count;
 
-    public object SyncRoot {
-        get { return map.SyncRoot; }
-    }
+    public object SyncRoot => map.SyncRoot;
 
-    public bool IsSynchronized {
-        get { return map.IsSynchronized; }
-    }
+    public bool IsSynchronized => map.IsSynchronized;
 
     public void CopyTo(Array array, int index)
     {
         map.CopyTo(array, index);
     }
 
-    private IDictionary map = new Hashtable();
+    private readonly Hashtable map = new();
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return map.Equals(obj);
     }

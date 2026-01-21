@@ -98,7 +98,7 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
             currentNode = currentNode.GetParent();
 
         var indexed = currentNode is ASTProperty astProperty &&
-            astProperty.isIndexedAccess() &&
+            astProperty.IndexedAccess &&
             OgnlRuntime.HasGetIndexer(context, target, target.GetType(), 1);
 
         if (!indexed && name is string plainName && IsPropertyName(plainName))
@@ -120,7 +120,7 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
             currentNode = currentNode.GetParent();
 
         var indexed = currentNode is ASTProperty astProperty &&
-            astProperty.isIndexedAccess() &&
+            astProperty.IndexedAccess &&
             OgnlRuntime.HasSetIndexer(context, target, target.GetType(), 1);
 
         if (indexed)

@@ -3,49 +3,21 @@
 namespace OGNL.Parser;
 
 internal abstract class ParserConstants {
-    public const int EOF = 0;
+    protected const int Ident = 64;
 
-    public const int IDENT = 64;
+    protected const int DynamicSubscript = 67;
 
-    public const int LETTER = 65;
+    protected const int CharLiteral = 73;
 
-    public const int DIGIT = 66;
+    protected const int BackCharLiteral = 76;
 
-    public const int DYNAMIC_SUBSCRIPT = 67;
+    protected const int StringLiteral = 79;
 
-    public const int ESC = 71;
+    protected const int IntLiteral = 80;
 
-    public const int CHAR_LITERAL = 73;
+    protected const int FltLiteral = 81;
 
-    public const int BACK_CHAR_ESC = 74;
-
-    public const int BACK_CHAR_LITERAL = 76;
-
-    public const int STRING_ESC = 77;
-
-    public const int STRING_LITERAL = 79;
-
-    public const int INT_LITERAL = 80;
-
-    public const int FLT_LITERAL = 81;
-
-    public const int DEC_FLT = 82;
-
-    public const int DEC_DIGITS = 83;
-
-    public const int EXPONENT = 84;
-
-    public const int FLT_SUFF = 85;
-
-    public const int DEFAULT = 0;
-
-    public const int WithinCharLiteral = 1;
-
-    public const int WithinBackCharLiteral = 2;
-
-    public const int WithinStringLiteral = 3;
-
-    public static string[] tokenImage = [
+    protected static readonly string[] TokenImage = [
         "<EOF>",
         "\",\"",
         "\"=\"",

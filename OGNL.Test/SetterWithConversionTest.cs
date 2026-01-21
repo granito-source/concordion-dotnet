@@ -1,6 +1,3 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,28 +28,28 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
+
 namespace OGNL.Test;
 
-public class SetterWithConversionTest : OgnlTestCase
-{
-    private static Root             ROOT = new();
+public class SetterWithConversionTest : OgnlTestCase {
+    private static readonly Root Root = new();
 
-    private static object[][]       TESTS = [
+    private static readonly object?[][] Tests = [
         // Property set with conversion
-        [ROOT, "IntValue", 0, (double)6.5, 6],
+        [Root, "IntValue", 0, 6.5, 6],
+
         // C# use ODD round, so value is 1026
-        [ROOT, "IntValue", 6, (double)1025.87645, 1026],
-        [ROOT, "IntValue", 1026, "654", 654],
-        [ROOT, "StringValue", null, 25, "25"],
-        [ROOT, "StringValue", "25",100.25f, "100.25"],
-        [ROOT, "anotherStringValue", "foo", 0, "0"],
-        [ROOT, "anotherStringValue", "0", (double)0.5, "0.5"],
-        [ROOT, "anotherIntValue", 123, "5", 5],
-        [ROOT, "anotherIntValue", 5, (double)100.25, 100]
-
-        //          { ROOT, "anotherIntValue", (100), new string[] { "55" }, (55)},
-        //          { ROOT, "yetAnotherIntValue", (46), new string[] { "55" }, (55)},
-
+        [Root, "IntValue", 6, 1025.87645, 1026],
+        [Root, "IntValue", 1026, "654", 654],
+        [Root, "StringValue", null, 25, "25"],
+        [Root, "StringValue", "25", 100.25f, "100.25"],
+        [Root, "anotherStringValue", "foo", 0, "0"],
+        [Root, "anotherStringValue", "0", 0.5, "0.5"],
+        [Root, "anotherIntValue", 123, "5", 5],
+        [Root, "anotherIntValue", 5, 100.25, 100]
     ];
 
     /*===================================================================
@@ -60,33 +57,27 @@ public class SetterWithConversionTest : OgnlTestCase
       ===================================================================*/
     public override TestSuite suite()
     {
-        var       result = new TestSuite();
+        var result = new TestSuite();
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new SetterWithConversionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new SetterWithConversionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new SetterWithConversionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
+        for (var i = 0; i < Tests.Length; i++) {
+            if (Tests[i].Length == 3) {
+                result.addTest(new SetterWithConversionTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                    Tests[i][2]));
+            } else {
+                if (Tests[i].Length == 4) {
+                    result.addTest(new SetterWithConversionTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                        Tests[i][2], Tests[i][3]));
+                } else {
+                    if (Tests[i].Length == 5) {
+                        result.addTest(new SetterWithConversionTest((string)Tests[i][1], Tests[i][0],
+                            (string)Tests[i][1], Tests[i][2], Tests[i][3], Tests[i][4]));
+                    } else {
                         throw new Exception("don't understand TEST format");
                     }
                 }
             }
         }
+
         return result;
     }
 
@@ -95,29 +86,28 @@ public class SetterWithConversionTest : OgnlTestCase
       ===================================================================*/
     public SetterWithConversionTest()
     {
-	   
     }
 
     public SetterWithConversionTest(string name) : base(name)
     {
-	    
     }
 
-    public SetterWithConversionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    public SetterWithConversionTest(string name, object root,
+        string expressionString, object expectedResult, object setValue,
+        object expectedAfterSetResult) : base(name, root,
+        expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        
     }
 
-    public SetterWithConversionTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
+    public SetterWithConversionTest(string name, object root,
+        string expressionString, object expectedResult, object setValue) :
+        base(name, root, expressionString, expectedResult, setValue)
     {
-        
     }
 
-    public SetterWithConversionTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
+    public SetterWithConversionTest(string name, object root,
+        string expressionString, object expectedResult) : base(name, root,
+        expressionString, expectedResult)
     {
-        
     }
 }

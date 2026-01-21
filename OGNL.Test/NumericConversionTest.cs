@@ -1,5 +1,3 @@
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,19 +28,22 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using OGNL.Test.Util;
+
 namespace OGNL.Test;
 
 [TestFixture]
 public class NumericConversionTest : OgnlTestCase {
-    private object value;
+    private readonly object value;
 
-    private Type toClass;
+    private readonly Type toClass;
 
-    private object expectedValue;
+    private readonly object expectedValue;
 
-    private int scale;
+    private readonly int scale;
 
-    private static object[][] TESTS = new object[][] {
+    private static readonly object[][] Tests = new object[][] {
         /* To typeof (int) */
         ["55", typeof(int), 55],
         [55, typeof(int), 55],
@@ -190,12 +191,9 @@ public class NumericConversionTest : OgnlTestCase {
     {
         var result = new TestSuite();
 
-        for (var i = 0; i < TESTS.Length; i++) {
-            result.addTest(new NumericConversionTest(TESTS[i][0],
-                (Type)TESTS[i][1],
-                TESTS[i][2],
-                TESTS[i].Length > 3 ? (int)TESTS[i][3] : -1));
-        }
+        foreach (var t in Tests)
+            result.addTest(new NumericConversionTest(t[0], (Type)t[1],
+                t[2], t.Length > 3 ? (int)t[3] : -1));
 
         return result;
     }
@@ -207,8 +205,9 @@ public class NumericConversionTest : OgnlTestCase {
     {
     }
 
-    public NumericConversionTest(object value, Type toClass, object expectedValue, int scale)
-        : base(value + " [" + value.GetType().Name + "] -> " + toClass.Name + " == " + expectedValue + " [" +
+    public NumericConversionTest(object value, Type toClass,
+        object expectedValue, int scale) :
+        base(value + " [" + value.GetType().Name + "] -> " + toClass.Name + " == " + expectedValue + " [" +
             expectedValue.GetType().Name + "]" + (scale >= 0 ? " (to within " + scale + " decimal places)" : ""))
     {
         this.value = value;
@@ -220,7 +219,7 @@ public class NumericConversionTest : OgnlTestCase {
     /*===================================================================
         Overridden methods
       ===================================================================*/
-    protected internal override void runTest() // throws OgnlException
+    protected internal override void RunTest() // throws OgnlException
     {
         object result;
 

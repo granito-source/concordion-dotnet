@@ -1,5 +1,3 @@
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,12 +28,13 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using OGNL.Test.Util;
+
 namespace OGNL.Test;
 
-public class QuotingTest : OgnlTestCase
-{
-    private static object[][]       TESTS = [
-        // Quoting
+public class QuotingTest : OgnlTestCase {
+    private static readonly object?[][] Tests = [
         [null, "`c`", 'c'],
         [null, "'s'", 's'],
         [null, "'string'", "string"],
@@ -47,33 +46,26 @@ public class QuotingTest : OgnlTestCase
       ===================================================================*/
     public override TestSuite suite()
     {
-        var       result = new TestSuite();
+        var result = new TestSuite();
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new QuotingTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new QuotingTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new QuotingTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
+        for (var i = 0; i < Tests.Length; i++) {
+            if (Tests[i].Length == 3) {
+                result.addTest(new QuotingTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1], Tests[i][2]));
+            } else {
+                if (Tests[i].Length == 4) {
+                    result.addTest(new QuotingTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1], Tests[i][2],
+                        Tests[i][3]));
+                } else {
+                    if (Tests[i].Length == 5) {
+                        result.addTest(new QuotingTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                            Tests[i][2], Tests[i][3], Tests[i][4]));
+                    } else {
                         throw new Exception("don't understand TEST format");
                     }
                 }
             }
         }
+
         return result;
     }
 
@@ -82,29 +74,28 @@ public class QuotingTest : OgnlTestCase
       ===================================================================*/
     public QuotingTest()
     {
-	    
     }
 
     public QuotingTest(string name) : base(name)
     {
-			
     }
 
-    public QuotingTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    public QuotingTest(string name, object root, string expressionString,
+        object expectedResult, object setValue,
+        object expectedAfterSetResult) : base(name, root,
+        expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        
     }
 
-    public QuotingTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
+    public QuotingTest(string name, object root, string expressionString,
+        object expectedResult, object setValue) : base(name, root,
+        expressionString, expectedResult, setValue)
     {
-        
     }
 
-    public QuotingTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
+    public QuotingTest(string name, object root, string expressionString,
+        object expectedResult) : base(name, root, expressionString,
+        expectedResult)
     {
-        
     }
 }

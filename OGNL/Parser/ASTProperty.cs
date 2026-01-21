@@ -36,41 +36,32 @@ namespace OGNL.Parser;
  * @author Drew Davidson (drew@ognl.org)
  */
 internal class ASTProperty(int id) : SimpleNode(id) {
-    private bool indexedAccess = false;
-
-    public void setIndexedAccess(bool value)
-    {
-        indexedAccess = value;
-    }
+    /**
+     * True iff this property is itself an index reference.
+     */
+    public bool IndexedAccess { get; set; }
 
     /**
-        Returns true iff this property is itself an index reference.
+     * Returns true if this property is described by an
+     * IndexedPropertyDescriptor and that if followed by an index
+     * specifier it will call the index get/set methods rather than
+     * go through property accessors.
      */
-    public bool isIndexedAccess()
+    public int GetIndexedPropertyType(OgnlContext context, object source)
     {
-        return indexedAccess;
-    }
+        if (!IndexedAccess) {
+            var property = GetProperty(context);
 
-    /**
-        Returns true if this property is described by an IndexedPropertyDescriptor
-        and that if followed by an index specifier it will call the index get/set
-        methods rather than go through property accessors.
-     */
-    public int getIndexedPropertyType(OgnlContext context, object source)
-    {
-        if (!isIndexedAccess()) {
-            var property = getProperty(context, source);
-
-            if (property is string) {
-                return OgnlRuntime.GetIndexedPropertyType(context, source == null ? null : source.GetType(),
-                    (string)property);
-            }
+            if (property is string stringProperty)
+                return OgnlRuntime.GetIndexedPropertyType(context,
+                    source == null ? null : source.GetType(),
+                    stringProperty);
         }
 
         return OgnlRuntime.IndexedPropertyNone;
     }
 
-    public object getProperty(OgnlContext context, object source)
+    public object GetProperty(OgnlContext context)
     {
         return Children[0].GetValue(context, context.Root);
     }
@@ -78,63 +69,51 @@ internal class ASTProperty(int id) : SimpleNode(id) {
     protected override object? GetValueBody(OgnlContext context,
         object source)
     {
-        if (indexedAccess && Children[0] is ASTSequence) {
+        if (IndexedAccess && Children[0] is ASTSequence) {
             // As property [index1, index2]...
             // Use Indexer.
-            var indexParameters = ((ASTSequence)Children[0]).getValues(context, context.Root);
+            var indexParameters = ((ASTSequence)Children[0])
+                .getValues(context, context.Root);
 
-            /* return IndexerAccessor.getIndexerValue (source, indexParameters) ; */
-            return OgnlRuntime.GetIndexerValue(context, source, "Indexer", indexParameters);
+            return OgnlRuntime.GetIndexerValue(context, source, "Indexer",
+                indexParameters);
         }
 
-        object? result;
+        var property = GetProperty(context);
 
-        var property = getProperty(context, source);
-        Node indexSibling;
-
-        result = OgnlRuntime.GetProperty(context, source, property);
-
-        if (result == null) {
-            result = OgnlRuntime.GetNullHandler(OgnlRuntime.GetTargetClass(source))
+        return OgnlRuntime.GetProperty(context, source, property) ??
+            OgnlRuntime
+                .GetNullHandler(OgnlRuntime.GetTargetClass(source))
                 .nullPropertyValue(context, source, property);
-        }
-
-        return result;
     }
 
     protected override void SetValueBody(OgnlContext context,
         object target, object? value)
     {
-        if (indexedAccess && Children[0] is ASTSequence) {
+        if (IndexedAccess && Children[0] is ASTSequence) {
             // As property [index1, index2]...
             // Use Indexer.
-            var indexParameters = ((ASTSequence)Children[0]).getValues(context, context.Root);
+            var indexParameters = ((ASTSequence)Children[0])
+                .getValues(context, context.Root);
 
-            /*IndexerAccessor.setIndexerValue (target, value ,indexParameters) ;*/
-            OgnlRuntime.SetIndexerValue(context, target, "Indexer", value, indexParameters);
+            OgnlRuntime.SetIndexerValue(context, target, "Indexer",
+                value, indexParameters);
 
             return;
         }
 
-        OgnlRuntime.SetProperty(context, target, getProperty(context, target), value);
+        OgnlRuntime.SetProperty(context, target, GetProperty(context), value);
     }
 
     protected override bool IsNodeSimpleProperty(OgnlContext context)
     {
-        return Children != null && Children.Length == 1 &&
+        return Children.Length == 1 &&
             ((SimpleNode)Children[0]).IsConstant(context);
     }
 
     public override string ToString()
     {
-        string result;
-
-        if (isIndexedAccess()) {
-            result = "[" + Children[0] + "]";
-        } else {
-            result = ((ASTConst)Children[0]).getValue().ToString();
-        }
-
-        return result;
+        return IndexedAccess ? "[" + Children[0] + "]" :
+            ((ASTConst)Children[0]).Value.ToString();
     }
 }

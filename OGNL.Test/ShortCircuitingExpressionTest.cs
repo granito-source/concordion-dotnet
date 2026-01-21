@@ -61,7 +61,7 @@ public class ShortCircuitingExpressionTest : OgnlTestCase
     [Test]
     public void Test2 ()
     {
-        suite () [2].runTest ();
+        suite () [2].RunTest ();
     }
 
     /*===================================================================

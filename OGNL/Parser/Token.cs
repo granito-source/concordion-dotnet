@@ -57,10 +57,8 @@ public class Token {
      */
     public static Token NewToken(int ofKind)
     {
-        return ofKind switch {
-            _ => new Token {
-                Kind = ofKind
-            }
+        return new Token {
+            Kind = ofKind
         };
     }
 }

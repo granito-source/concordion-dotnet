@@ -91,6 +91,6 @@ public class IndexAccessTest : OgnlTestCase
     [Test]
     public void Test1 ()
     {
-        suite () [1].runTest ();
+        suite () [1].RunTest ();
     }
 }

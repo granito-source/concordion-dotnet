@@ -38,78 +38,14 @@ namespace OGNL;
 ///@author Drew Davidson (drew@ognl.org)
 ///
 public class OgnlException : Exception {
-    ///
-    ///The root evaluation of the expression when the exception was thrown
-    ///
-    Evaluation? evaluation;
-
-    ////
-    ////Why this exception was thrown.
-    ////@serial
-    ////
-    Exception? reason;
-
-    /// <summary>
-    /// Constructs an OgnlException with no message or encapsulated exception.
-    /// </summary>
-    public OgnlException() : this(null, null)
-    {
-    }
-
-    ///<summary>
-    ///Constructs an OgnlException with the given message but no encapsulated exception.
-    ///</summary>
-    ///<param name="msg">the exception's detail message</param>
-    ///
-    public OgnlException(string msg) : this(msg, null)
-    {
-    }
-
     ///<summary>
     ///Constructs an OgnlException with the given message and encapsulated exception.
     ///</summary>
     ///<param name="msg"> the exception's detail message</param>
     ///<param name="reason">the encapsulated exception</param>
     ///
-    public OgnlException(string? msg, Exception? reason) : base(msg)
+    public OgnlException(string? msg, Exception? reason = null) :
+        base(msg, reason)
     {
-        this.reason = reason;
-    }
-
-    ///
-    ///Returns the encapsulated exception, or null if there is none.
-    ///@return the encapsulated exception
-    ///
-    public Exception? getReason()
-    {
-        return reason;
-    }
-
-    /// <summary>
-    /// Returns the Evaluation that was the root evaluation when the exception was
-    /// thrown.
-    ///</summary>
-    public Evaluation? getEvaluation()
-    {
-        return evaluation;
-    }
-
-    ///<summary>
-    /// Sets the Evaluation that was current when this exception was thrown.
-    ///</summary>
-    public void setEvaluation(Evaluation value)
-    {
-        evaluation = value;
-    }
-
-    ///<summary>
-    ///Returns a string representation of this exception.
-    ///</summary>
-    public override string ToString()
-    {
-        if (reason == null)
-            return base.ToString();
-
-        return base.ToString() + " [" + reason + "]";
     }
 }

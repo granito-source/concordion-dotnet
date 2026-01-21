@@ -1,6 +1,3 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,22 +28,28 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
+
 namespace OGNL.Test;
 
-public class ObjectIndexedPropertyTest : OgnlTestCase
-{
-    private static ObjectIndexed    OBJECT_INDEXED = new();
+public class ObjectIndexedPropertyTest : OgnlTestCase {
+    private static readonly ObjectIndexed ObjectIndexed = new();
 
-    private static object[][]       TESTS = [
+    private static readonly object[][] Tests = [
         // Arbitrary indexed properties
-        [OBJECT_INDEXED, "Item[\"bar\"]", "baz"],                                 /* get non-indexed property through attributes Map */
-        [OBJECT_INDEXED, "Item[\"foo\"]", "bar"],                                  /* get indexed property */
-        [OBJECT_INDEXED, "Item[\"bar\"]", "baz", "newValue", "newValue"],          /* set indexed property */
-        [OBJECT_INDEXED, "Item[\"bar\"]", "newValue"],                             /* get indexed property back to confirm */
-        [OBJECT_INDEXED, "Item[\"bar\"]", "newValue"],                            /* get property back through Map to confirm */
-        [OBJECT_INDEXED, "Item[\"other\"].Item[\"bar\"]", "baz"],             /* get indexed property from indexed, then through other */
-        [OBJECT_INDEXED, "Item[\"other\"].Item[\"bar\"]", "baz"],            /* get property back through Map to confirm */
-        [OBJECT_INDEXED, "Item[$]", typeof (OgnlException)
+        [ObjectIndexed, "Item[\"bar\"]", "baz"], /* get non-indexed property through attributes Map */
+        [ObjectIndexed, "Item[\"foo\"]", "bar"], /* get indexed property */
+        [ObjectIndexed, "Item[\"bar\"]", "baz", "newValue", "newValue"], /* set indexed property */
+        [ObjectIndexed, "Item[\"bar\"]", "newValue"], /* get indexed property back to confirm */
+        [ObjectIndexed, "Item[\"bar\"]", "newValue"], /* get property back through Map to confirm */
+        [
+            ObjectIndexed, "Item[\"other\"].Item[\"bar\"]", "baz"
+        ], /* get indexed property from indexed, then through other */
+        [ObjectIndexed, "Item[\"other\"].Item[\"bar\"]", "baz"], /* get property back through Map to confirm */
+        [
+            ObjectIndexed, "Item[$]", typeof(OgnlException)
         ] /* illegal DynamicSubscript access to object indexed property */
     ];
 
@@ -55,33 +58,27 @@ public class ObjectIndexedPropertyTest : OgnlTestCase
       ===================================================================*/
     public override TestSuite suite()
     {
-        var       result = new TestSuite();
+        var result = new TestSuite();
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new ObjectIndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new ObjectIndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new ObjectIndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
+        for (var i = 0; i < Tests.Length; i++) {
+            if (Tests[i].Length == 3) {
+                result.addTest(new ObjectIndexedPropertyTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                    Tests[i][2]));
+            } else {
+                if (Tests[i].Length == 4) {
+                    result.addTest(new ObjectIndexedPropertyTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                        Tests[i][2], Tests[i][3]));
+                } else {
+                    if (Tests[i].Length == 5) {
+                        result.addTest(new ObjectIndexedPropertyTest((string)Tests[i][1], Tests[i][0],
+                            (string)Tests[i][1], Tests[i][2], Tests[i][3], Tests[i][4]));
+                    } else {
                         throw new Exception("don't understand TEST format");
                     }
                 }
             }
         }
+
         return result;
     }
 
@@ -90,30 +87,28 @@ public class ObjectIndexedPropertyTest : OgnlTestCase
       ===================================================================*/
     public ObjectIndexedPropertyTest()
     {
-	    
     }
 
-    public ObjectIndexedPropertyTest(string name)
-        : base(name)
+    public ObjectIndexedPropertyTest(string name) : base(name)
     {
-	    
     }
 
-    public ObjectIndexedPropertyTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    public ObjectIndexedPropertyTest(string name, object root,
+        string expressionString, object expectedResult, object setValue,
+        object expectedAfterSetResult) : base(name, root,
+        expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        
     }
 
-    public ObjectIndexedPropertyTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
+    public ObjectIndexedPropertyTest(string name, object root,
+        string expressionString, object expectedResult, object setValue) :
+        base(name, root, expressionString, expectedResult, setValue)
     {
-        
     }
 
-    public ObjectIndexedPropertyTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
+    public ObjectIndexedPropertyTest(string name, object root,
+        string expressionString, object expectedResult) : base(name,
+        root, expressionString, expectedResult)
     {
-        
     }
 }

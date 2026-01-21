@@ -34,27 +34,23 @@ using System.Collections;
 namespace OGNL.Test.Objects;
 
 public class Root {
-    public const string SIZE_STRING = "size";
-
-    public const int STATIC_INT = 23;
+    private const int StaticInt = 23;
 
     private int[] array = [1, 2, 3, 4];
 
-    private IDictionary map = new Hashtable(23);
+    private readonly Hashtable map = new(23);
 
-    private MyMap myMap = new MyMapImpl();
+    private readonly MyMapImpl myMap = new();
 
-    private IList list;
+    private readonly IList list;
 
     private readonly IList settableList = new[] { "foo", "bar", "baz" };
 
-    private int index = 1;
+    private readonly int index = 1;
 
-    private int intValue = 0;
+    private int intValue;
 
     private string stringValue;
-
-    private int yetAnotherIntValue = 46;
 
     private bool privateAccessorBooleanValue = true;
 
@@ -68,11 +64,11 @@ public class Root {
 
     public int anotherIntValue = 123;
 
-    public int six = 6;
+    public readonly int six = 6;
 
     public static int getStaticInt()
     {
-        return STATIC_INT;
+        return StaticInt;
     }
 
     public Root()

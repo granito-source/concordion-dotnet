@@ -1,5 +1,3 @@
-using System.Text;
-
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -30,6 +28,9 @@ using System.Text;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Text;
+
 namespace OGNL.Parser;
 
 /**
@@ -37,23 +38,12 @@ namespace OGNL.Parser;
  * @author Drew Davidson (drew@ognl.org)
  */
 internal class ASTConst(int id) : SimpleNode(id) {
-    private object value;
-
-    /** Called from parser actions. */
-    internal void setValue(object value)
-    {
-        this.value = value;
-    }
-
-    public object getValue()
-    {
-        return value;
-    }
+    public object? Value { get; set; }
 
     protected override object? GetValueBody(OgnlContext context,
         object source)
     {
-        return value;
+        return Value;
     }
 
     protected override bool IsNodeConstant(OgnlContext context)
@@ -61,7 +51,7 @@ internal class ASTConst(int id) : SimpleNode(id) {
         return true;
     }
 
-    public string getEscapedChar(char ch)
+    private string GetEscapedChar(char ch)
     {
         string result;
 
@@ -101,27 +91,26 @@ internal class ASTConst(int id) : SimpleNode(id) {
             default:
                 // TODO: What's ISO Control.
                 if (Util.IsIsoControl(ch) || ch > 255) {
-                    var hc = ((int)ch).ToString("X"); // Integer.ToString((int)ch, 16);
+                    var hc = ((int)ch).ToString("X");
                     var hcl = hc.Length;
 
                     result = "\\u";
 
                     if (hcl < 4) {
                         if (hcl == 3) {
-                            result = result + "0";
+                            result += "0";
                         } else {
                             if (hcl == 2) {
-                                result = result + "00";
+                                result += "00";
                             } else {
-                                result = result + "000";
+                                result += "000";
                             }
                         }
                     }
 
-                    result = result + hc;
-                } else {
-                    result = new string(new char[] { ch }); // new string((char)ch + "");
-                }
+                    result += hc;
+                } else
+                    result = new string(new[] { ch });
 
                 break;
         }
@@ -129,51 +118,37 @@ internal class ASTConst(int id) : SimpleNode(id) {
         return result;
     }
 
-    public string getEscapedString(string value)
+    private string GetEscapedString(string value)
     {
         var result = new StringBuilder();
 
-        for (int i = 0, icount = value.Length; i < icount; i++) {
-            result.Append(getEscapedChar(value[i]));
-        }
+        for (int i = 0, icount = value.Length; i < icount; i++)
+            result.Append(GetEscapedChar(value[i]));
 
         return result.ToString();
     }
 
     public override string ToString()
     {
-        string result;
+        if (Value == null)
+            return "null";
 
-        if (value == null)
-            result = "null";
-        else {
-            if (value is string) {
-                result = '\"' + getEscapedString(value.ToString()) + '\"';
-            } else {
-                if (value is char) {
-                    result = '\'' + getEscapedChar((char)value) + '\'';
-                } else {
-                    result = value.ToString();
+        if (Value is string)
+            return '\"' + GetEscapedString(Value.ToString()) + '\"';
 
-                    if (value is long) {
-                        result = result + "L";
-                    } else {
-                        if (value is decimal) {
-                            result = result + "B";
-                        } else {
-                            // TODO: BigInteger, Ignore
-                            if (false /*value is BigInteger*/) {
-                                result = result + "H";
-                            } else {
-                                if (value is Node) {
-                                    result = ":[ " + result + " ]";
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        if (Value is char)
+            return '\'' + GetEscapedChar((char)Value) + '\'';
+
+        var result = Value.ToString() ?? "";
+
+        if (Value is long)
+            return result + "L";
+
+        if (Value is decimal)
+            return result + "B";
+
+        if (Value is Node)
+            return ":[ " + result + " ]";
 
         return result;
     }

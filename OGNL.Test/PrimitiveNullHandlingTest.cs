@@ -1,6 +1,3 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,24 +28,27 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using OGNL.Test.Objects;
+using OGNL.Test.Util;
+
 namespace OGNL.Test;
 
-public class PrimitiveNullHandlingTest : OgnlTestCase
-{
-    private static Simple           SIMPLE = new();
+public class PrimitiveNullHandlingTest : OgnlTestCase {
+    private static readonly Simple Simple = new();
 
-    static PrimitiveNullHandlingTest ()
+    static PrimitiveNullHandlingTest()
     {
-        SIMPLE.setFloatValue(10.56f);
-        SIMPLE.setIntValue(34);
+        Simple.setFloatValue(10.56f);
+        Simple.setIntValue(34);
     }
 
-    private static object[][]       TESTS = [
+    private static readonly object?[][] Tests = [
         // Primitive null handling
-        [SIMPLE, "FloatValue", 10.56f, null, 0f],           /* set float to null, should yield 0.0f */
-        [SIMPLE, "IntValue", 34, null, 0],              /* set int to null, should yield 0 */
-        [SIMPLE, "BooleanValue", false, true, true],      /* set bool to TRUE, should yield true */
-        [SIMPLE, "BooleanValue", true, null, false] /* set bool to null, should yield false */
+        [Simple, "FloatValue", 10.56f, null, 0f], /* set float to null, should yield 0.0f */
+        [Simple, "IntValue", 34, null, 0], /* set int to null, should yield 0 */
+        [Simple, "BooleanValue", false, true, true], /* set bool to TRUE, should yield true */
+        [Simple, "BooleanValue", true, null, false] /* set bool to null, should yield false */
         // new object [] { SIMPLE, "BigDecValue", (decimal) 10.0, null, (decimal) 0.0 },              /* set decimal to null, should yield 0.0 */
     ];
 
@@ -57,33 +57,27 @@ public class PrimitiveNullHandlingTest : OgnlTestCase
       ===================================================================*/
     public override TestSuite suite()
     {
-        var       result = new TestSuite();
+        var result = new TestSuite();
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new PrimitiveNullHandlingTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new PrimitiveNullHandlingTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new PrimitiveNullHandlingTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
+        for (var i = 0; i < Tests.Length; i++) {
+            if (Tests[i].Length == 3) {
+                result.addTest(new PrimitiveNullHandlingTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                    Tests[i][2]));
+            } else {
+                if (Tests[i].Length == 4) {
+                    result.addTest(new PrimitiveNullHandlingTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
+                        Tests[i][2], Tests[i][3]));
+                } else {
+                    if (Tests[i].Length == 5) {
+                        result.addTest(new PrimitiveNullHandlingTest((string)Tests[i][1], Tests[i][0],
+                            (string)Tests[i][1], Tests[i][2], Tests[i][3], Tests[i][4]));
+                    } else {
                         throw new Exception("don't understand TEST format");
                     }
                 }
             }
         }
+
         return result;
     }
 
@@ -92,31 +86,28 @@ public class PrimitiveNullHandlingTest : OgnlTestCase
       ===================================================================*/
     public PrimitiveNullHandlingTest()
     {
-	    
     }
 
     public PrimitiveNullHandlingTest(string name) : base(name)
     {
-	    
     }
 
-    public PrimitiveNullHandlingTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    public PrimitiveNullHandlingTest(string name, object root,
+        string expressionString, object expectedResult, object setValue,
+        object expectedAfterSetResult) : base(name, root,
+        expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
-        
     }
 
-    public PrimitiveNullHandlingTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
+    public PrimitiveNullHandlingTest(string name, object root,
+        string expressionString, object expectedResult, object setValue) :
+        base(name, root, expressionString, expectedResult, setValue)
     {
-        
     }
 
-    public PrimitiveNullHandlingTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
+    public PrimitiveNullHandlingTest(string name, object root,
+        string expressionString, object expectedResult) : base(name, root,
+        expressionString, expectedResult)
     {
-        
     }
-
-		
 }

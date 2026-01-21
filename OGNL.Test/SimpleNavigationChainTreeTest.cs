@@ -34,7 +34,7 @@ using OGNL.Test.Util;
 namespace OGNL.Test;
 
 public class SimpleNavigationChainTreeTest : OgnlTestCase {
-    private static object[][] TESTS = new object[][] {
+    private static readonly object[][] Tests = new object[][] {
         ["name", true],
         ["name[i]", false],
         ["name + foo", false],
@@ -45,10 +45,9 @@ public class SimpleNavigationChainTreeTest : OgnlTestCase {
     {
         var result = new TestSuite();
 
-        for (var i = 0; i < TESTS.Length; i++) {
-            result.addTest(new SimpleNavigationChainTreeTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null,
-                (string)TESTS[i][0], TESTS[i][1]));
-        }
+        foreach (var t in Tests)
+            result.addTest(new SimpleNavigationChainTreeTest(
+                (string)t[0] + " (" + t[1] + ")", null, (string)t[0], t[1]));
 
         return result;
     }
@@ -57,32 +56,32 @@ public class SimpleNavigationChainTreeTest : OgnlTestCase {
     {
     }
 
-    public SimpleNavigationChainTreeTest(string name)
-        : base(name)
+    public SimpleNavigationChainTreeTest(string name) : base(name)
     {
     }
 
-    public SimpleNavigationChainTreeTest(string name, object root, string expressionString, object expectedResult,
-        object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    public SimpleNavigationChainTreeTest(string name, object root,
+        string expressionString, object expectedResult, object setValue,
+        object expectedAfterSetResult) : base(name, root,
+        expressionString, expectedResult, setValue, expectedAfterSetResult)
     {
     }
 
-    public SimpleNavigationChainTreeTest(string name, object root, string expressionString, object expectedResult,
-        object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
+    public SimpleNavigationChainTreeTest(string name, object root,
+        string expressionString, object expectedResult, object setValue) :
+        base(name, root, expressionString, expectedResult, setValue)
     {
     }
 
-    public SimpleNavigationChainTreeTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
+    public SimpleNavigationChainTreeTest(string name, object? root,
+        string expressionString, object expectedResult) : base(name, root,
+        expressionString, expectedResult)
     {
     }
 
-    protected internal override void runTest()
+    protected internal override void RunTest()
     {
-        Assert.That(
-            Ognl.isSimpleNavigationChain(getExpression(), context) == (bool)getExpectedResult(),
-            Is.True);
+        Assert.That(Ognl.isSimpleNavigationChain(GetExpression(), Context) ==
+            (bool)GetExpectedResult(), Is.True);
     }
 }

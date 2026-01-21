@@ -46,15 +46,8 @@ public class ObjectElementsAccessor : ElementsAccessor {
         return new ObjectEnumerator(target);
     }
 
-    class ObjectEnumerator : IEnumerator {
-        bool seen = false;
-
-        object obj;
-
-        public ObjectEnumerator(object obj)
-        {
-            this.obj = obj;
-        }
+    private class ObjectEnumerator(object obj) : IEnumerator {
+        private bool seen;
 
         public void Reset()
         {

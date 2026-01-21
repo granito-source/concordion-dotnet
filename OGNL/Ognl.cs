@@ -115,7 +115,7 @@ public static class Ognl {
     {
         try {
             return new Parser.Parser(new StringReader(expression))
-                .topLevelExpression();
+                .TopLevelExpression();
         } catch (ParseException e) {
             throw new ExpressionSyntaxException(expression, e);
         } catch (TokenMgrError e) {

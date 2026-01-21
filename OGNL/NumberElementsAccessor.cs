@@ -34,8 +34,8 @@ using System.Collections;
 namespace OGNL;
 
 /// <summary>
-///Implementation of IElementsAccessor that returns an IEnumerator over integers from 0 up to
-///the given target.
+/// Implementation of IElementsAccessor that returns an IEnumerator over
+/// integers from 0 up to the given target.
 ///</summary>
 ///@author Luke Blanshard (blanshlu@netscape.net)
 ///@author Drew Davidson (drew@ognl.org)
@@ -46,18 +46,12 @@ public class NumberElementsAccessor : NumericTypes, ElementsAccessor {
         return new NumberEnumerator(target);
     }
 
-    class NumberEnumerator : IEnumerator {
-        int type;
+    private class NumberEnumerator(object target) : IEnumerator {
+        private readonly int type = OgnlOps.GetNumericType(target);
 
-        long next = 0;
+        private readonly long finish = OgnlOps.LongValue(target);
 
-        long finish;
-
-        public NumberEnumerator(object target)
-        {
-            type = OgnlOps.GetNumericType(target);
-            finish = OgnlOps.LongValue(target);
-        }
+        private long next;
 
         public bool MoveNext()
         {
@@ -69,13 +63,8 @@ public class NumberElementsAccessor : NumericTypes, ElementsAccessor {
             next = 0;
         }
 
-        public object Current {
-            get {
-                if (next >= finish)
-                    throw new ArgumentOutOfRangeException();
-
-                return OgnlOps.NewInteger(type, next++);
-            }
-        }
+        public object Current =>
+            next >= finish ? throw new ArgumentOutOfRangeException() :
+                OgnlOps.NewInteger(type, next++);
     }
 }
