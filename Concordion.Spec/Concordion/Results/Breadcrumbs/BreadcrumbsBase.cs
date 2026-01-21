@@ -5,7 +5,7 @@ using Concordion.Spec.Support;
 namespace Concordion.Spec.Concordion.Results.Breadcrumbs;
 
 public abstract class BreadcrumbsBase {
-    private TestRig testRig = new();
+    private readonly TestRig testRig = new();
 
     public virtual void setUpResource(string resourceName, string content)
     {

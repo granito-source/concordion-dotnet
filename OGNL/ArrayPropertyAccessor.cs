@@ -48,9 +48,8 @@ public class ArrayPropertyAccessor : ObjectPropertyAccessor {
         if (value == null)
             return null;
 
-        return context
-            .getTypeConverter()
-            .convertValue(context, target, null, name.ToString(), value,
+        return context.TypeConverter
+            .ConvertValue(context, target, null, name.ToString(), value,
                 target.GetType().GetElementType()!);
     }
 
@@ -66,19 +65,19 @@ public class ArrayPropertyAccessor : ObjectPropertyAccessor {
             case DynamicSubscript dynamic:
                 var len = array.GetLength(0);
 
-                switch (dynamic.getFlag()) {
-                    case DynamicSubscript.ALL:
+                switch (dynamic.GetFlag()) {
+                    case DynamicSubscript.AllElements:
                         var copy = Array.CreateInstance(
                             array.GetType().GetElementType()!, len);
 
                         Array.Copy(array, 0, copy, 0, len);
 
                         return copy;
-                    case DynamicSubscript.FIRST:
+                    case DynamicSubscript.FirstElement:
                         return array.GetValue(len > 0 ? 0 : -1);
-                    case DynamicSubscript.MID:
+                    case DynamicSubscript.MidElement:
                         return array.GetValue(len > 0 ? len / 2 : -1);
-                    case DynamicSubscript.LAST:
+                    case DynamicSubscript.LastElement:
                         return array.GetValue(len > 0 ? len - 1 : -1);
                 }
 
@@ -103,8 +102,8 @@ public class ArrayPropertyAccessor : ObjectPropertyAccessor {
             case DynamicSubscript dynamic:
                 var len = array.GetLength(0);
 
-                switch (dynamic.getFlag()) {
-                    case DynamicSubscript.ALL:
+                switch (dynamic.GetFlag()) {
+                    case DynamicSubscript.AllElements:
                         if (value is not Array source)
                             throw new OgnlException("value is not an array");
 
@@ -112,19 +111,19 @@ public class ArrayPropertyAccessor : ObjectPropertyAccessor {
                             int.Min(len, source.GetLength(0)));
 
                         break;
-                    case DynamicSubscript.FIRST:
+                    case DynamicSubscript.FirstElement:
                         array.SetValue(
                             Convert(context, array, name, value),
                             len > 0 ? 0 : -1);
 
                         break;
-                    case DynamicSubscript.MID:
+                    case DynamicSubscript.MidElement:
                         array.SetValue(
                             Convert(context, array, name, value),
                             len > 0 ? len / 2 : -1);
 
                         break;
-                    case DynamicSubscript.LAST:
+                    case DynamicSubscript.LastElement:
                         array.SetValue(
                             Convert(context, array, name, value),
                             len > 0 ? len - 1 : -1);

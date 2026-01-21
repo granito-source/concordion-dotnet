@@ -8,7 +8,7 @@ namespace Concordion.Spec.Concordion.Results.Exception;
 
 [ConcordionFixture]
 public class ExceptionTest {
-    private List<string> stackTraceElements = [];
+    private readonly List<string> stackTraceElements = [];
 
     public void addStackTraceElement(string declaringClassName,
         string methodName, string filename, int lineNumber)

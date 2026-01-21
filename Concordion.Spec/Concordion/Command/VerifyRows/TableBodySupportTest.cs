@@ -5,7 +5,7 @@ namespace Concordion.Spec.Concordion.Command.VerifyRows;
 
 [ConcordionFixture]
 public class TableBodySupportTest {
-    private List<string> names = [];
+    private readonly List<string> names = [];
 
     public void setUpNames(string namesAsCSV)
     {

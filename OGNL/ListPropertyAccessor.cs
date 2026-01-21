@@ -67,14 +67,14 @@ public class ListPropertyAccessor : ObjectPropertyAccessor {
         if (name is DynamicSubscript dynamic) {
             var len = list.Count;
 
-            switch (dynamic.getFlag()) {
-                case DynamicSubscript.FIRST:
+            switch (dynamic.GetFlag()) {
+                case DynamicSubscript.FirstElement:
                     return len > 0 ? list[0] : null;
-                case DynamicSubscript.MID:
+                case DynamicSubscript.MidElement:
                     return len > 0 ? list[len / 2] : null;
-                case DynamicSubscript.LAST:
+                case DynamicSubscript.LastElement:
                     return len > 0 ? list[len - 1] : null;
-                case DynamicSubscript.ALL:
+                case DynamicSubscript.AllElements:
                     return new ArrayList(list);
             }
         }
@@ -102,20 +102,20 @@ public class ListPropertyAccessor : ObjectPropertyAccessor {
         if (name is DynamicSubscript) {
             var len = list.Count;
 
-            switch (((DynamicSubscript)name).getFlag()) {
-                case DynamicSubscript.FIRST:
+            switch (((DynamicSubscript)name).GetFlag()) {
+                case DynamicSubscript.FirstElement:
                     if (len > 0) list[0] = value;
 
                     return;
-                case DynamicSubscript.MID:
+                case DynamicSubscript.MidElement:
                     if (len > 0) list[len / 2] = value;
 
                     return;
-                case DynamicSubscript.LAST:
+                case DynamicSubscript.LastElement:
                     if (len > 0) list[len - 1] = value;
 
                     return;
-                case DynamicSubscript.ALL: {
+                case DynamicSubscript.AllElements: {
                     if (!(value is IEnumerable) &&
                         !(value is IEnumerator))
                         throw new OgnlException("Value must be a collection");

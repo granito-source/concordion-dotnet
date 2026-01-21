@@ -29,7 +29,7 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using OGNL.JccGen;
+using OGNL.Parser;
 
 namespace OGNL;
 

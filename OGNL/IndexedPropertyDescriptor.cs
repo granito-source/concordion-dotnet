@@ -7,13 +7,13 @@ namespace OGNL;
 /// </summary>
 public class IndexedPropertyDescriptor(PropertyInfo propertyInfo) :
     PropertyDescriptor(propertyInfo) {
-    public MethodInfo? getIndexedReadMethod()
+    public MethodInfo? GetIndexedReadMethod()
     {
-        return propertyInfo?.GetGetMethod(false);
+        return PropertyInfo.GetGetMethod(false);
     }
 
-    public MethodInfo? getIndexedWriteMethod()
+    public MethodInfo? GetIndexedWriteMethod()
     {
-        return propertyInfo?.GetSetMethod(false);
+        return PropertyInfo.GetSetMethod(false);
     }
 }

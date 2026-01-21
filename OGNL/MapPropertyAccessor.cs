@@ -30,7 +30,7 @@
 //--------------------------------------------------------------------------
 
 using System.Collections;
-using OGNL.JccGen;
+using OGNL.Parser;
 
 namespace OGNL;
 
@@ -46,7 +46,7 @@ public class MapPropertyAccessor : PropertyAccessor {
     {
         object? result;
         var map = (IDictionary)target;
-        var currentNode = context.getCurrentNode().jjtGetParent();
+        var currentNode = context.CurrentNode.GetParent();
         var indexedAccess = false;
 
         if (currentNode == null) {
@@ -54,14 +54,14 @@ public class MapPropertyAccessor : PropertyAccessor {
         }
 
         if (!(currentNode is ASTProperty)) {
-            currentNode = currentNode.jjtGetParent();
+            currentNode = currentNode.GetParent();
         }
 
         if (currentNode is ASTProperty) {
             indexedAccess = ((ASTProperty)currentNode).isIndexedAccess();
         }
 
-        if ((name is string) && !indexedAccess) {
+        if (name is string && !indexedAccess) {
             if (name.Equals("size")) {
                 result = map.Count;
             } else if (name.Equals("keys")) {

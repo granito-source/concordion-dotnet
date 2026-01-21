@@ -64,16 +64,12 @@ public static class Util {
     {
         var d = 0;
 
-        if (radix <= 10)
+        if (radix <= 10 || ch >= '0' && ch <= '9')
             d = ch - '0';
-        else {
-            if (ch >= '0' && ch <= '9')
-                d = ch - '0';
-            else if (ch >= 'a' && ch <= 'z')
-                d = ch - 'a' + 10;
-            else if (ch >= 'A' && ch <= 'Z')
-                d = ch - 'A' + 10;
-        }
+        else if (ch >= 'a' && ch <= 'z')
+            d = ch - 'a' + 10;
+        else if (ch >= 'A' && ch <= 'Z')
+            d = ch - 'A' + 10;
 
         if (d >= radix)
             throw new ArgumentOutOfRangeException(nameof(ch), ch,
@@ -82,7 +78,7 @@ public static class Util {
         return d;
     }
 
-    public static bool IsISOControl(char ch)
+    public static bool IsIsoControl(char ch)
     {
         return ch <= 0x009F && (ch <= 0x001F || ch >= 0x007F);
     }
@@ -90,23 +86,5 @@ public static class Util {
     public static IList<T> NCopies<T>(int n, T o)
     {
         return new List<T>(Enumerable.Repeat(o, n));
-    }
-
-    public static bool Eq(object? o1, object? o2)
-    {
-        return o1?.Equals(o2) ?? o2 == null;
-    }
-
-    public static void putAll(IDictionary? source, IDictionary? target)
-    {
-        if (source == null || target == null)
-            return;
-
-        foreach (DictionaryEntry entry in source) {
-            var key = entry.Key;
-            var value = entry.Value;
-
-            target[key] = value;
-        }
     }
 }

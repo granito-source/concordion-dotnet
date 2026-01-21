@@ -82,7 +82,7 @@ public class Root {
         map.Add("array", array);
         map.Add("list", list);
         map.Add("size", 5000);
-        map.Add(DynamicSubscript.first, 99);
+        map.Add(DynamicSubscript.First, 99);
 
         /* make myMap identical */
         foreach (var k in map.Keys)

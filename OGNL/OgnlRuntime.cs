@@ -107,16 +107,11 @@ public static class OgnlRuntime {
 
     private static readonly Hashtable CtorParameterTypesCache = new(101);
 
-    public static V? SafeGet<K, V>(this IDictionary<K, V> dictionary, K key)
-    {
-        dictionary.TryGetValue(key, out var value);
-
-        return value;
-    }
-
-    public static void Append<K, V>(this IDictionary<K, IList<V>> dictionary,
+    private static void Append<K, V>(this IDictionary<K, IList<V>> dictionary,
         K key, V value)
     {
+        ArgumentNullException.ThrowIfNull(dictionary);
+
         if (!dictionary.TryGetValue(key, out var list))
             dictionary[key] = list = new List<V>();
 
@@ -157,9 +152,8 @@ public static class OgnlRuntime {
             return result;
         }
 
-        public object? Put(Type key, object value)
+        public void Put(Type key, object value)
         {
-            object? result = null;
             var i = key.GetHashCode() & TableSizeMask;
             var entry = table[i];
 
@@ -167,13 +161,11 @@ public static class OgnlRuntime {
                 table[i] = new Entry(key, value);
             } else {
                 if (entry.Key == key) {
-                    result = entry.Value;
                     entry.Value = value;
                 } else {
                     while (true) {
                         if (entry.Key == key) {
                             /* replace value */
-                            result = entry.Value;
                             entry.Value = value;
 
                             break;
@@ -190,8 +182,6 @@ public static class OgnlRuntime {
                     }
                 }
             }
-
-            return result;
         }
     }
 
@@ -264,7 +254,7 @@ public static class OgnlRuntime {
         PrimitiveTypes["float"] = typeof(float);
         PrimitiveTypes["double"] = typeof(double);
 
-        // Add String as primitive
+        // Add string as primitive
         PrimitiveTypes["string"] = typeof(string);
 
         // Add object as primitive
@@ -299,29 +289,6 @@ public static class OgnlRuntime {
     public static Type? GetTargetClass(object? o)
     {
         return o == null ? null : o as Type ?? o.GetType();
-    }
-
-    /**
-     * Utility to convert a List into an object[] array. If the list
-     * is zero elements this will return a constant array; ToArray()
-     * on List always returns a new object and this is wasteful for
-     * our purposes.
-     */
-    public static object[] ToArray(IList list)
-    {
-        object[] result;
-        var size = list.Count;
-
-        if (size == 0)
-            result = NoArguments;
-        else {
-            result = ObjectArrayPool.Create(list.Count);
-
-            for (var i = 0; i < size; i++)
-                result[i] = list[i];
-        }
-
-        return result;
     }
 
     private static Type[] GetParameterTypes(MethodInfo m)
@@ -429,14 +396,15 @@ public static class OgnlRuntime {
     {
         var result = (Type)PrimitiveTypes[className];
 
-        if (result == null) {
-            ClassResolver resolver;
+        if (result != null)
+            return result;
 
-            if (context == null || (resolver = context.getClassResolver()) == null)
-                resolver = OgnlContext.DEFAULT_CLASS_RESOLVER;
+        TypeResolver resolver;
 
-            result = resolver.ClassForName(className);
-        }
+        if (context == null || (resolver = context.TypeResolver) == null)
+            resolver = OgnlContext.DefaultTypeResolver;
+
+        result = resolver.TypeForName(className);
 
         return result;
     }
@@ -464,7 +432,7 @@ public static class OgnlRuntime {
         object target, MemberInfo member, string propertyName,
         object? value, Type type)
     {
-        return context.getTypeConverter().convertValue(context, target,
+        return context.TypeConverter.ConvertValue(context, target,
             member, propertyName, value, type);
     }
 
@@ -502,7 +470,7 @@ public static class OgnlRuntime {
         OgnlContext context, object target, string propertyName,
         IList<MethodInfo> methods, object[] args, object[] newArgs)
     {
-        var converter = context.getTypeConverter();
+        var converter = context.TypeConverter;
 
         if (converter == null)
             return null;
@@ -525,7 +493,7 @@ public static class OgnlRuntime {
         object[] args, object[] newArgs)
     {
         ConstructorInfo result = null;
-        var converter = context.getTypeConverter();
+        var converter = context.TypeConverter;
 
         if (converter != null && constructors != null) {
             for (int i = 0, icount = constructors.Count; result == null && i < icount; i++) {
@@ -762,7 +730,7 @@ public static class OgnlRuntime {
         var cache = staticMethods ? StaticMethodCache : InstanceMethodCache;
 
         lock (cache) {
-            var cached = cache.SafeGet(targetClass);
+            cache.TryGetValue(targetClass, out var cached);
 
             if (cached != null)
                 return cached;
@@ -792,7 +760,7 @@ public static class OgnlRuntime {
     private static FieldMap GetFields(Type targetClass)
     {
         lock (FieldCache) {
-            var cached = FieldCache.SafeGet(targetClass);
+            FieldCache.TryGetValue(targetClass, out var cached);
 
             if (cached != null)
                 return cached;
@@ -811,7 +779,9 @@ public static class OgnlRuntime {
 
     private static FieldInfo? GetField(Type inClass, string name)
     {
-        return GetFields(inClass).SafeGet(name);
+        GetFields(inClass).TryGetValue(name, out var value);
+
+        return value;
     }
 
     public static object? GetFieldValue(OgnlContext context,
@@ -823,13 +793,13 @@ public static class OgnlRuntime {
             throw new MissingFieldException(name);
 
         try {
-            var state = context.getMemberAccess()
+            var state = context.MemberAccess
                 .Setup(context, target, field, name);
 
             try {
                 return field.GetValue(target);
             } finally {
-                context.getMemberAccess()
+                context.MemberAccess
                     .Restore(context, target, field, name, state);
             }
         } catch (MemberAccessException ex) {
@@ -846,7 +816,7 @@ public static class OgnlRuntime {
             throw new MissingFieldException(name);
 
         try {
-            var state = context.getMemberAccess()
+            var state = context.MemberAccess
                 .Setup(context, target, field, name);
 
             try {
@@ -859,7 +829,7 @@ public static class OgnlRuntime {
 
                 return true;
             } finally {
-                context.getMemberAccess()
+                context.MemberAccess
                     .Restore(context, target, field, name, state);
             }
         } catch (MemberAccessException ex) {
@@ -919,7 +889,8 @@ public static class OgnlRuntime {
         throw new OgnlException("Could not get static field " + fieldName + " from class " + className, reason);
     }
 
-    private static IList GetDeclaredMethods(Type targetClass, string propertyName, bool findSets)
+    private static IList GetDeclaredMethods(Type targetClass,
+        string propertyName, bool findSets)
     {
         IList? result = null;
         var cache = DeclaredMethods[findSets ? 0 : 1];
@@ -997,7 +968,7 @@ public static class OgnlRuntime {
         object target, MethodInfo? method, string? propertyName)
     {
         return method == null ? false :
-            context.getMemberAccess().IsAccessible(context, target, method, propertyName);
+            context.MemberAccess.IsAccessible(context, target, method, propertyName);
     }
 
     private static MethodInfo GetSetMethod(Type targetClass,
@@ -1041,9 +1012,8 @@ public static class OgnlRuntime {
 
                 result = new Hashtable(101);
 
-                for (int i = 0, icount = pda.Length; i < icount; i++) {
+                for (int i = 0, icount = pda.Length; i < icount; i++)
                     result[pda[i].Name] = pda[i];
-                }
 
                 // findObjectIndexedPropertyDescriptors(targetClass, result);
                 FindBeanPropertyDescriptors(targetClass, result);
@@ -1081,9 +1051,8 @@ public static class OgnlRuntime {
                 if (isGet && parameterCount == 0 && m.ReturnType != typeof(void)) {
                     var pair = (IList)pairs[propertyName];
 
-                    if (pair == null) {
+                    if (pair == null)
                         pairs[propertyName] = pair = new ArrayList();
-                    }
 
                     pair.Add(m);
                 }
@@ -1091,9 +1060,8 @@ public static class OgnlRuntime {
                 if (isSet && parameterCount == 1 && m.ReturnType == typeof(void)) {
                     var pair = (IList)pairs[propertyName];
 
-                    if (pair == null) {
+                    if (pair == null)
                         pairs[propertyName] = pair = new ArrayList();
-                    }
 
                     pair.Add(m);
                 }
@@ -1113,7 +1081,7 @@ public static class OgnlRuntime {
                 var propertyType =
                     getMethod != null ? getMethod.ReturnType : setMethod.GetParameters()[0].ParameterType;
                 PropertyDescriptor propertyDescriptor =
-                    new BeanPropertyDescriptor(propertyName, propertyType, getMethod, setMethod);
+                    new BeanPropertyDescriptor(propertyName, getMethod, setMethod);
                 map[propertyName] = propertyDescriptor;
             }
 
@@ -1128,7 +1096,7 @@ public static class OgnlRuntime {
 
                 if (propertyType == setMethod.GetParameters()[0].ParameterType) {
                     PropertyDescriptor propertyDescriptor =
-                        new BeanPropertyDescriptor(propertyName, propertyType, getMethod, setMethod);
+                        new BeanPropertyDescriptor(propertyName, getMethod, setMethod);
                     map[propertyName] = propertyDescriptor;
                 }
             }
@@ -1331,9 +1299,9 @@ public static class OgnlRuntime {
             MethodInfo m;
 
             if (pd is IndexedPropertyDescriptor indexedPropertyDescriptor)
-                m = indexedPropertyDescriptor.getIndexedReadMethod();
+                m = indexedPropertyDescriptor.GetIndexedReadMethod();
             else if (pd is ObjectIndexedPropertyDescriptor objectIndexedPropertyDescriptor)
-                m = objectIndexedPropertyDescriptor.getIndexedReadMethod();
+                m = objectIndexedPropertyDescriptor.GetIndexedReadMethod();
             else
                 throw new OgnlException($"property '{name}' is not an indexed property");
 
@@ -1358,9 +1326,9 @@ public static class OgnlRuntime {
             MethodInfo m;
 
             if (pd is IndexedPropertyDescriptor indexedPropertyDescriptor)
-                m = indexedPropertyDescriptor.getIndexedWriteMethod();
+                m = indexedPropertyDescriptor.GetIndexedWriteMethod();
             else if (pd is ObjectIndexedPropertyDescriptor objectIndexedPropertyDescriptor)
-                m = objectIndexedPropertyDescriptor.getIndexedWriteMethod();
+                m = objectIndexedPropertyDescriptor.GetIndexedWriteMethod();
             else
                 throw new OgnlException($"property '{name}' is not an indexed property");
 

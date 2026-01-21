@@ -31,7 +31,7 @@
 
 using System.Collections;
 using System.Text;
-using OGNL.JccGen;
+using OGNL.Parser;
 using OGNL.Test.Util;
 
 namespace OGNL.Test;
@@ -142,7 +142,7 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
     {
         var writer = new StringWriter();
 
-        node.dump(writer, "   ");
+        node.Dump(writer, "   ");
 
         return writer.ToString();
     }

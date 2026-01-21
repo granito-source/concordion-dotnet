@@ -30,7 +30,7 @@
 //--------------------------------------------------------------------------
 
 using System.Collections;
-using OGNL.JccGen;
+using OGNL.Parser;
 
 namespace OGNL;
 

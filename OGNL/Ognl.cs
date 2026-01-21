@@ -30,7 +30,7 @@
 //--------------------------------------------------------------------------
 
 using System.Collections;
-using OGNL.JccGen;
+using OGNL.Parser;
 
 namespace OGNL;
 
@@ -114,7 +114,7 @@ public static class Ognl {
     public static Node parseExpression(string expression)
     {
         try {
-            return new OgnlParser(new StringReader(expression))
+            return new Parser.Parser(new StringReader(expression))
                 .topLevelExpression();
         } catch (ParseException e) {
             throw new ExpressionSyntaxException(expression, e);
@@ -142,16 +142,16 @@ public static class Ognl {
     /// expression.
     /// </summary>
     /// <param name="root">the root of the object graph</param>
-    /// <param name="classResolver"></param>
+    /// <param name="typeResolver"></param>
     /// <returns>
     /// a new IDictionary with the keys <c>root</c> and <c>context</c>
     /// set appropriately
     /// </returns>
     ///
     public static OgnlContext createDefaultContext(object? root,
-        ClassResolver classResolver)
+        TypeResolver typeResolver)
     {
-        return addDefaultContext(root, classResolver, null, null,
+        return addDefaultContext(root, typeResolver, null, null,
             new OgnlContext());
     }
 
@@ -160,7 +160,7 @@ public static class Ognl {
     /// expression.
     /// </summary>
     /// <param name="root">the root of the object graph</param>
-    /// <param name="classResolver"></param>
+    /// <param name="typeResolver"></param>
     /// <param name="converter"></param>
     /// <returns>
     /// a new IDictionary with the keys <c>root</c> and <c>context</c>
@@ -168,9 +168,9 @@ public static class Ognl {
     /// </returns>
     ///
     public static OgnlContext createDefaultContext(object? root,
-        ClassResolver classResolver, TypeConverter converter)
+        TypeResolver typeResolver, TypeConverter converter)
     {
-        return addDefaultContext(root, classResolver, converter, null,
+        return addDefaultContext(root, typeResolver, converter, null,
             new OgnlContext());
     }
 
@@ -179,7 +179,7 @@ public static class Ognl {
     /// expression.
     /// </summary>
     /// <param name="root">the root of the object graph</param>
-    /// <param name="classResolver"></param>
+    /// <param name="typeResolver"></param>
     /// <param name="converter"></param>
     /// <param name="memberAccess"></param>
     /// <returns>
@@ -188,10 +188,10 @@ public static class Ognl {
     /// </returns>
     ///
     public static OgnlContext createDefaultContext(object? root,
-        ClassResolver classResolver, TypeConverter converter,
+        TypeResolver typeResolver, TypeConverter converter,
         MemberAccess memberAccess)
     {
-        return addDefaultContext(root, classResolver, converter,
+        return addDefaultContext(root, typeResolver, converter,
             memberAccess, new OgnlContext());
     }
 
@@ -216,16 +216,16 @@ public static class Ognl {
     /// into the context given so that cached maps can be used as a context.
     /// </summary>
     /// <param name="root"> the root of the object graph</param>
-    /// <param name="classResolver"></param>
+    /// <param name="typeResolver"></param>
     /// <param name="context"> the context to which OGNL context will be added.</param>
     /// <returns>
     /// a new IDictionary with the keys <c>root</c> and <c>context</c>
     /// set appropriately
     /// </returns>
     public static OgnlContext addDefaultContext(object? root,
-        ClassResolver classResolver, IDictionary context)
+        TypeResolver typeResolver, IDictionary context)
     {
-        return addDefaultContext(root, classResolver, null, null, context);
+        return addDefaultContext(root, typeResolver, null, null, context);
     }
 
     /// <summary>
@@ -235,16 +235,16 @@ public static class Ognl {
     /// <param name="root"> the root of the object graph</param>
     /// <param name="converter"></param>
     /// <param name="context"> the context to which OGNL context will be added.</param>
-    /// <param name="classResolver"></param>
+    /// <param name="typeResolver"></param>
     /// <returns>
     /// a new IDictionary with the keys <c>root</c> and <c>context</c>
     /// set appropriately
     /// </returns>
     public static OgnlContext addDefaultContext(object? root,
-        ClassResolver classResolver, TypeConverter converter,
+        TypeResolver typeResolver, TypeConverter converter,
         IDictionary context)
     {
-        return addDefaultContext(root, classResolver, converter, null,
+        return addDefaultContext(root, typeResolver, converter, null,
             context);
     }
 
@@ -255,14 +255,14 @@ public static class Ognl {
     /// <param name="root"> the root of the object graph</param>
     /// <param name="memberAccess"></param>
     /// <param name="context"> the context to which OGNL context will be added.</param>
-    /// <param name="classResolver"></param>
+    /// <param name="typeResolver"></param>
     /// <param name="converter"></param>
     /// <returns>
     /// a new IDictionary with the keys <c>root</c> and <c>context</c>
     /// set appropriately
     /// </returns>
     public static OgnlContext addDefaultContext(object? root,
-        ClassResolver? classResolver, TypeConverter? converter,
+        TypeResolver? typeResolver, TypeConverter? converter,
         MemberAccess? memberAccess, IDictionary context)
     {
         OgnlContext result;
@@ -271,69 +271,26 @@ public static class Ognl {
             result = ognlContext;
         else {
             result = new OgnlContext();
-            result.setValues(context);
+            result.SetAllValues(context);
         }
 
-        if (classResolver != null)
-            result.setClassResolver(classResolver);
+        if (typeResolver != null)
+            result.TypeResolver = typeResolver;
 
         if (converter != null)
-            result.setTypeConverter(converter);
+            result.TypeConverter = converter;
 
         if (memberAccess != null)
-            result.setMemberAccess(memberAccess);
+            result.MemberAccess = memberAccess;
 
-        result.setRoot(root);
+        result.Root = root;
 
         return result;
     }
 
-    public static void setClassResolver(IDictionary context,
-        ClassResolver classResolver)
+    private static TypeConverter? GetTypeConverter(IDictionary context)
     {
-        context[OgnlContext.CLASS_RESOLVER_CONTEXT_KEY] = classResolver;
-    }
-
-    public static ClassResolver? getClassResolver(IDictionary context)
-    {
-        return (ClassResolver?)context[OgnlContext.CLASS_RESOLVER_CONTEXT_KEY];
-    }
-
-    public static void setTypeConverter(IDictionary context,
-        TypeConverter converter)
-    {
-        context[OgnlContext.TYPE_CONVERTER_CONTEXT_KEY] = converter;
-    }
-
-    public static TypeConverter? getTypeConverter(IDictionary context)
-    {
-        return (TypeConverter?)context[OgnlContext.TYPE_CONVERTER_CONTEXT_KEY];
-    }
-
-    public static void setMemberAccess(IDictionary context,
-        MemberAccess memberAccess)
-    {
-        context[OgnlContext.MEMBER_ACCESS_CONTEXT_KEY] = memberAccess;
-    }
-
-    public static MemberAccess? getMemberAccess(IDictionary context)
-    {
-        return (MemberAccess?)context[OgnlContext.MEMBER_ACCESS_CONTEXT_KEY];
-    }
-
-    public static void setRoot(IDictionary context, object root)
-    {
-        context[OgnlContext.ROOT_CONTEXT_KEY] = root;
-    }
-
-    public static object? getRoot(IDictionary context)
-    {
-        return context[OgnlContext.ROOT_CONTEXT_KEY];
-    }
-
-    public static Evaluation? getLastEvaluation(IDictionary context)
-    {
-        return (Evaluation?)context[OgnlContext.LAST_EVALUATION_CONTEXT_KEY];
+        return (TypeConverter?)context[OgnlContext.TypeConverterKey];
     }
 
     ///<summary>
@@ -375,11 +332,11 @@ public static class Ognl {
         object root, Type? resultType)
     {
         var ognlContext = addDefaultContext(root, context);
-        var result = tree.getValue(ognlContext, root);
+        var result = tree.GetValue(ognlContext, root);
 
         if (resultType != null) {
-            result = getTypeConverter(context)?
-                .convertValue(context, root, null, null, result, resultType);
+            result = GetTypeConverter(context)?
+                .ConvertValue(context, root, null, null, result, resultType);
         }
 
         return result;
@@ -522,7 +479,7 @@ public static class Ognl {
     {
         var ognlContext = addDefaultContext(root, context);
 
-        tree.setValue(ognlContext, root, value);
+        tree.SetValue(ognlContext, root, value);
     }
 
     ///
@@ -584,7 +541,7 @@ public static class Ognl {
     public static bool isConstant(Node tree, OgnlContext context)
     {
         return ((SimpleNode)tree)
-            .isConstant(addDefaultContext(null, context));
+            .IsConstant(addDefaultContext(null, context));
     }
 
     public static bool isConstant(string expression, OgnlContext context)
@@ -606,7 +563,7 @@ public static class Ognl {
     public static bool isSimpleProperty(Node tree, OgnlContext context)
     {
         return ((SimpleNode)tree)
-            .isSimpleProperty(addDefaultContext(null, context));
+            .IsSimpleProperty(addDefaultContext(null, context));
     }
 
     public static bool isSimpleProperty(string expression,
@@ -630,7 +587,7 @@ public static class Ognl {
         OgnlContext context)
     {
         return ((SimpleNode)tree)
-            .isSimpleNavigationChain(addDefaultContext(null, context));
+            .IsSimpleNavigationChain(addDefaultContext(null, context));
     }
 
     public static bool isSimpleNavigationChain(string expression,

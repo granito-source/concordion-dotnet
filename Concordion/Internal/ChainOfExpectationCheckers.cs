@@ -1,7 +1,7 @@
 ﻿namespace Concordion.Internal;
 
 public class ChainOfExpectationCheckers : ExpectationChecker {
-    private List<ExpectationChecker> checkers = new();
+    private readonly List<ExpectationChecker> checkers = [];
 
     public ChainOfExpectationCheckers Add(ExpectationChecker checker)
     {

@@ -51,32 +51,32 @@ public class DynamicSubscript {
     /// <summary>
     /// First element: ^.
     /// </summary>
-    public const int FIRST = 0;
+    public const int FirstElement = 0;
 
     /// <summary>
     /// Middle element: |.
     /// </summary>
-    public const int MID = 1;
+    public const int MidElement = 1;
 
     /// <summary>
     /// Last element: $.
     /// </summary>
-    public const int LAST = 2;
+    public const int LastElement = 2;
 
     /// <summary>
     /// All Element: *.
     /// </summary>
-    public const int ALL = 3;
+    public const int AllElements = 3;
 
-    public static DynamicSubscript first = new(FIRST);
+    public static readonly DynamicSubscript First = new(FirstElement);
 
-    public static DynamicSubscript mid = new(MID);
+    public static readonly DynamicSubscript Mid = new(MidElement);
 
-    public static DynamicSubscript last = new(LAST);
+    public static readonly DynamicSubscript Last = new(LastElement);
 
-    public static DynamicSubscript all = new(ALL);
+    public static readonly DynamicSubscript All = new(AllElements);
 
-    int flag;
+    private readonly int flag;
 
     private DynamicSubscript(int flag)
     {
@@ -87,24 +87,19 @@ public class DynamicSubscript {
     /// Gets  dynamic subscript flag.
     /// </summary>
     /// <returns></returns>
-    public int getFlag()
+    public int GetFlag()
     {
         return flag;
     }
 
     public override string ToString()
     {
-        switch (flag) {
-            case FIRST:
-                return "^";
-            case MID:
-                return "|";
-            case LAST:
-                return "$";
-            case ALL:
-                return "*";
-            default:
-                return "?"; // Won't happen
-        }
+        return flag switch {
+            FirstElement => "^",
+            MidElement => "|",
+            LastElement => "$",
+            AllElements => "*",
+            _ => "?"
+        };
     }
 }

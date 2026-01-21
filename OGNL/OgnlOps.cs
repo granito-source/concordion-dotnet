@@ -53,12 +53,10 @@ public abstract class OgnlOps : NumericTypes {
                     result = BigIntValue(v1).CompareTo(BigIntValue(v2));
 
                     break;
-
                 case BIGDEC:
                     result = BigDecValue(v1).CompareTo(BigDecValue(v2));
 
                     break;
-
                 case NONNUMERIC:
                     if (t1 == NONNUMERIC && t2 == NONNUMERIC) {
                         if (v1 is IComparable && v1.GetType().IsAssignableFrom(v2.GetType())) {
@@ -151,12 +149,13 @@ public abstract class OgnlOps : NumericTypes {
         };
     }
 
-    ///<summary>
-    ///Evaluates the given object as a long integer.
-    ///</summary>
-    ///<param name="value">an object to interpret as a long integer</param>
-    ///<returns>the long integer value implied by the given object</returns>
-    ///<exception cref="FormatException"  > if the given object can't be understood as a long integer</exception>
+    /// <summary>
+    /// Evaluates the given object as a long integer.
+    /// </summary>
+    /// <param name="value">an object to interpret as a long integer</param>
+    /// <returns>the long integer value implied by the given object</returns>
+    /// <exception cref="FormatException"  > if the given object can't be
+    /// understood as a long integer</exception>
     ///
     public static long LongValue(object? value)
     {
@@ -248,52 +247,67 @@ public abstract class OgnlOps : NumericTypes {
     /// converts the components of one array to the type of the other.
     /// </remarks>
     /// <param name="value">an object to be converted to the given type</param>
-    ///<param name="toType">class type to be converted to</param>
+    /// <param name="toType">class type to be converted to</param>
     /// <returns>converted value of the type given, or value if the value
     ///                cannot be converted to the given type.</returns>
     ///
-    public static object ConvertValue(object? value, Type toType)
+    public static object? ConvertValue(object? value, Type toType)
     {
-        object? result = null;
-
         if (value != null) {
-            /* If array -> array then convert components of array individually */
             if (value.GetType().IsArray && toType.IsArray) {
+                var original = (Array)value;
                 var componentType = toType.GetElementType();
+                var copy = Array.CreateInstance(componentType!,
+                    original.Length);
 
-                result = Array.CreateInstance(componentType, ((Array)value).Length);
+                for (int i = 0, icount = original.Length; i < icount; i++)
+                    copy.SetValue(ConvertValue(original.GetValue(i),
+                        componentType!), i);
 
-                for (int i = 0, icount = ((Array)value).Length; i < icount; i++) {
-                    ((Array)result).SetValue(ConvertValue(((Array)value).GetValue(i), componentType), i);
-                }
-            } else {
-                if (toType == typeof(int) || toType == typeof(uint)) result = (int)LongValue(value);
-                if (toType == typeof(double) || toType == typeof(double)) result = DoubleValue(value);
-                if (toType == typeof(bool) || toType == typeof(bool))
-                    result = BooleanValue(value); // ? Boolean.TRUE : Boolean.FALSE;
-                if (toType == typeof(byte) || toType == typeof(byte)) result = (byte)LongValue(value);
-                if (toType == typeof(char) || toType == typeof(char)) result = (char)LongValue(value);
-                if (toType == typeof(short) || toType == typeof(ushort)) result = (short)LongValue(value);
-                if (toType == typeof(long) || toType == typeof(ulong)) result = LongValue(value);
-                if (toType == typeof(float) || toType == typeof(float)) result = (float)DoubleValue(value);
-
-                if (toType == typeof(decimal)) result = BigDecValue(value);
-                if (toType == typeof(string)) result = StringValue(value);
-                if (toType.IsEnum)
-                    result = EnumValue(value, toType);
+                return copy;
             }
+
+            if (toType == typeof(int) || toType == typeof(uint))
+                return (int)LongValue(value);
+
+            if (toType == typeof(double) || toType == typeof(double))
+                return DoubleValue(value);
+
+            if (toType == typeof(bool) || toType == typeof(bool))
+                return BooleanValue(value);
+
+            if (toType == typeof(byte) || toType == typeof(byte))
+                return (byte)LongValue(value);
+
+            if (toType == typeof(char) || toType == typeof(char))
+                return (char)LongValue(value);
+
+            if (toType == typeof(short) || toType == typeof(ushort))
+                return (short)LongValue(value);
+
+            if (toType == typeof(long) || toType == typeof(ulong))
+                return LongValue(value);
+
+            if (toType == typeof(float) || toType == typeof(float))
+                return (float)DoubleValue(value);
+
+            if (toType == typeof(decimal))
+                return BigDecValue(value);
+
+            if (toType == typeof(string))
+                return StringValue(value);
+
+            if (toType.IsEnum)
+                return EnumValue(value, toType);
         } else {
-            if (toType.IsPrimitive) {
-                result = OgnlRuntime.GetPrimitiveDefaultValue(toType);
-            } else
+            if (toType.IsPrimitive)
+                return OgnlRuntime.GetPrimitiveDefaultValue(toType);
 
-                // support Enum
-            if (toType.IsEnum) {
-                result = Enum.GetValues(toType).GetValue(0);
-            }
+            if (toType.IsEnum)
+                return Enum.GetValues(toType).GetValue(0);
         }
 
-        return result;
+        return null;
     }
 
     private static object EnumValue(object value, Type toType)
@@ -310,7 +324,8 @@ public abstract class OgnlOps : NumericTypes {
         if (t1 == t2)
             return t1;
 
-        if (canBeNonNumeric && (t1 == NONNUMERIC || t2 == NONNUMERIC || t1 == CHAR || t2 == CHAR))
+        if (canBeNonNumeric && (t1 == NONNUMERIC || t2 == NONNUMERIC ||
+            t1 == CHAR || t2 == CHAR))
             return NONNUMERIC;
 
         if (t1 == NONNUMERIC)
@@ -322,26 +337,34 @@ public abstract class OgnlOps : NumericTypes {
         if (t1 >= MIN_REAL_TYPE) {
             if (t2 >= MIN_REAL_TYPE)
                 return Math.Max(t1, t2);
+
             if (t2 < INT)
                 return t1;
+
             if (t2 == BIGINT)
                 return BIGDEC;
 
             return Math.Max(DOUBLE, t1);
-        } else if (t2 >= MIN_REAL_TYPE) {
+        }
+
+        if (t2 >= MIN_REAL_TYPE) {
             if (t1 < INT)
                 return t2;
+
             if (t1 == BIGINT)
                 return BIGDEC;
 
             return Math.Max(DOUBLE, t2);
-        } else
-            return Math.Max(t1, t2);
+        }
+
+        return Math.Max(t1, t2);
     }
 
-    private static int GetNumericType(object v1, object v2, bool canBeNonNumeric = false)
+    private static int GetNumericType(object v1, object v2,
+        bool canBeNonNumeric = false)
     {
-        return GetNumericType(GetNumericType(v1), GetNumericType(v2), canBeNonNumeric);
+        return GetNumericType(GetNumericType(v1), GetNumericType(v2),
+            canBeNonNumeric);
     }
 
     ///
@@ -366,40 +389,31 @@ public abstract class OgnlOps : NumericTypes {
 
     private static object NewReal(int type, double value)
     {
-        if (type == FLOAT)
-            return (float)value;
-
-        return value;
+        return type == FLOAT ? (float)value : value;
     }
 
     public static object BinaryOr(object v1, object v2)
     {
-        var type = GetNumericType(v1, v2);
-
-        if (type == BIGINT || type == BIGDEC)
-            return BigIntValue(v1) | BigIntValue(v2);
-
-        return NewInteger(type, LongValue(v1) | LongValue(v2));
+        return GetNumericType(v1, v2) switch {
+            BIGINT or BIGDEC => BigIntValue(v1) | BigIntValue(v2),
+            _ => NewInteger(GetNumericType(v1, v2), LongValue(v1) | LongValue(v2))
+        };
     }
 
     public static object BinaryXor(object v1, object v2)
     {
-        var type = GetNumericType(v1, v2);
-
-        if (type == BIGINT || type == BIGDEC)
-            return BigIntValue(v1) ^ BigIntValue(v2);
-
-        return NewInteger(type, LongValue(v1) ^ LongValue(v2));
+        return GetNumericType(v1, v2) switch {
+            BIGINT or BIGDEC => BigIntValue(v1) ^ BigIntValue(v2),
+            _ => NewInteger(GetNumericType(v1, v2), LongValue(v1) ^ LongValue(v2))
+        };
     }
 
     public static object BinaryAnd(object v1, object v2)
     {
-        var type = GetNumericType(v1, v2);
-
-        if (type == BIGINT || type == BIGDEC)
-            return BigIntValue(v1) & BigIntValue(v2);
-
-        return NewInteger(type, LongValue(v1) & LongValue(v2));
+        return GetNumericType(v1, v2) switch {
+            BIGINT or BIGDEC => BigIntValue(v1) & BigIntValue(v2),
+            _ => NewInteger(GetNumericType(v1, v2), LongValue(v1) & LongValue(v2))
+        };
     }
 
     public static bool Equal(object? v1, object? v2)
@@ -446,36 +460,28 @@ public abstract class OgnlOps : NumericTypes {
 
     public static object ShiftLeft(object v1, object v2)
     {
-        var type = GetNumericType(v1);
-
-        if (type == BIGINT || type == BIGDEC)
-            return BigIntValue(v1) << (int)LongValue(v2);
-
-        return NewInteger(type, LongValue(v1) << (int)LongValue(v2));
+        return GetNumericType(v1) switch {
+            BIGINT or BIGDEC => BigIntValue(v1) << (int)LongValue(v2),
+            _ => NewInteger(GetNumericType(v1), LongValue(v1) << (int)LongValue(v2))
+        };
     }
 
     public static object ShiftRight(object v1, object v2)
     {
-        var type = GetNumericType(v1);
-
-        if (type == BIGINT || type == BIGDEC)
-            return BigIntValue(v1) >> (int)LongValue(v2);
-
-        return NewInteger(type, LongValue(v1) >> (int)LongValue(v2));
+        return GetNumericType(v1) switch {
+            BIGINT or BIGDEC => BigIntValue(v1) >> (int)LongValue(v2),
+            _ => NewInteger(GetNumericType(v1), LongValue(v1) >> (int)LongValue(v2))
+        };
     }
 
     // TODO: This method not supported.
     public static object UnsignedShiftRight(object v1, object v2)
     {
-        var type = GetNumericType(v1);
-
-        if (type == BIGINT || type == BIGDEC)
-            return BigIntValue(v1) >> (int)LongValue(v2);
-
-        if (type <= INT)
-            return NewInteger(INT, (int)LongValue(v1) >> (int)LongValue(v2));
-
-        return NewInteger(type, LongValue(v1) >> (int)LongValue(v2));
+        return GetNumericType(v1) switch {
+            BIGINT or BIGDEC => BigIntValue(v1) >> (int)LongValue(v2),
+            <= INT => NewInteger(INT, (int)LongValue(v1) >> (int)LongValue(v2)),
+            _ => NewInteger(GetNumericType(v1), LongValue(v1) >> (int)LongValue(v2))
+        };
     }
 
     public static object Add(object v1, object v2)
@@ -494,9 +500,9 @@ public abstract class OgnlOps : NumericTypes {
                 int t1 = GetNumericType(v1),
                     t2 = GetNumericType(v2);
 
-                if ((t1 != NONNUMERIC && v2 == null) || (t2 != NONNUMERIC && v1 == null)) {
+                if ((t1 != NONNUMERIC && v2 == null) ||
+                    (t2 != NONNUMERIC && v1 == null))
                     throw new NullReferenceException();
-                }
 
                 return StringValue(v1) + StringValue(v2);
             default:
@@ -506,69 +512,57 @@ public abstract class OgnlOps : NumericTypes {
 
     public static object Subtract(object v1, object v2)
     {
-        var type = GetNumericType(v1, v2);
-
-        return type switch {
+        return GetNumericType(v1, v2) switch {
             BIGINT => BigIntValue(v1) - BigIntValue(v2),
             BIGDEC => BigDecValue(v1) - BigDecValue(v2),
-            FLOAT or DOUBLE => NewReal(type, DoubleValue(v1) - DoubleValue(v2)),
-            _ => NewInteger(type, LongValue(v1) - LongValue(v2))
+            FLOAT or DOUBLE => NewReal(GetNumericType(v1, v2), DoubleValue(v1) - DoubleValue(v2)),
+            _ => NewInteger(GetNumericType(v1, v2), LongValue(v1) - LongValue(v2))
         };
     }
 
     public static object Multiply(object v1, object v2)
     {
-        var type = GetNumericType(v1, v2);
-
-        return type switch {
+        return GetNumericType(v1, v2) switch {
             BIGINT => BigIntValue(v1) * BigIntValue(v2),
             BIGDEC => BigDecValue(v1) * BigDecValue(v2),
-            FLOAT or DOUBLE => NewReal(type, DoubleValue(v1) * DoubleValue(v2)),
-            _ => NewInteger(type, LongValue(v1) * LongValue(v2))
+            FLOAT or DOUBLE => NewReal(GetNumericType(v1, v2), DoubleValue(v1) * DoubleValue(v2)),
+            _ => NewInteger(GetNumericType(v1, v2), LongValue(v1) * LongValue(v2))
         };
     }
 
     public static object Divide(object v1, object v2)
     {
-        var type = GetNumericType(v1, v2);
-
-        return type switch {
+        return GetNumericType(v1, v2) switch {
             BIGINT => BigIntValue(v1) / BigIntValue(v2),
             BIGDEC => BigDecValue(v1) / BigDecValue(v2),
-            FLOAT or DOUBLE => NewReal(type, DoubleValue(v1) / DoubleValue(v2)),
-            _ => NewInteger(type, LongValue(v1) / LongValue(v2))
+            FLOAT or DOUBLE => NewReal(GetNumericType(v1, v2), DoubleValue(v1) / DoubleValue(v2)),
+            _ => NewInteger(GetNumericType(v1, v2), LongValue(v1) / LongValue(v2))
         };
     }
 
     public static object Remainder(object v1, object v2)
     {
-        var type = GetNumericType(v1, v2);
-
-        return type switch {
+        return GetNumericType(v1, v2) switch {
             BIGDEC or BIGINT => BigIntValue(v1) % BigIntValue(v2),
-            _ => NewInteger(type, LongValue(v1) % LongValue(v2))
+            _ => NewInteger(GetNumericType(v1, v2), LongValue(v1) % LongValue(v2))
         };
     }
 
     public static object Negate(object value)
     {
-        var type = GetNumericType(value);
-
-        return type switch {
+        return GetNumericType(value) switch {
             BIGINT => -BigIntValue(value),
             BIGDEC => -BigDecValue(value),
-            FLOAT or DOUBLE => NewReal(type, -DoubleValue(value)),
-            _ => NewInteger(type, -LongValue(value))
+            FLOAT or DOUBLE => NewReal(GetNumericType(value), -DoubleValue(value)),
+            _ => NewInteger(GetNumericType(value), -LongValue(value))
         };
     }
 
     public static object BitNegate(object value)
     {
-        var type = GetNumericType(value);
-
-        return type switch {
+        return GetNumericType(value) switch {
             BIGDEC or BIGINT => ~BigIntValue(value),
-            _ => NewInteger(type, ~LongValue(value))
+            _ => NewInteger(GetNumericType(value), ~LongValue(value))
         };
     }
 }

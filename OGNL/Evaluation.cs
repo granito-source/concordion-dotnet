@@ -29,7 +29,7 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using OGNL.JccGen;
+using OGNL.Parser;
 
 namespace OGNL;
 
@@ -310,8 +310,8 @@ public class Evaluation {
         if (compact) {
             stringResult = depth + "<" + node.GetType().Name + " " + GetHashCode() + ">";
         } else {
-            string ss = (source != null) ? source.GetType().Name : "null",
-                rs = (result != null) ? result.GetType().Name : "null";
+            string ss = source != null ? source.GetType().Name : "null",
+                rs = result != null ? result.GetType().Name : "null";
 
             stringResult = depth + "<" + node.GetType().Name + ": [" + (setOperation ? "set" : "get") + "] source = " +
                            ss + ", result = " + result + " [" + rs + "]>";

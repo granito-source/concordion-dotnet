@@ -70,7 +70,7 @@ public class ArrayElementsTest : OgnlFixture {
     [SetUp]
     public void SetUp()
     {
-        context.setTypeConverter(new ArrayDefaultTypeConverter());
+        context.TypeConverter = new ArrayDefaultTypeConverter();
     }
 
     [Test, TestCaseSource(nameof(EvaluationTests))]
@@ -94,14 +94,14 @@ public class ArrayElementsTest : OgnlFixture {
     }
 
     private class ArrayDefaultTypeConverter : DefaultTypeConverter {
-        public override object? convertValue(IDictionary context,
+        public override object? ConvertValue(IDictionary context,
             object target, MemberInfo? member, string? propertyName,
             object? value, Type toType)
         {
             if (value != null && value.GetType().IsArray && !toType.IsArray)
                 value = ((Array)value).GetValue(0);
 
-            return base.convertValue(context, target, member,
+            return base.ConvertValue(context, target, member,
                 propertyName, value, toType);
         }
     }

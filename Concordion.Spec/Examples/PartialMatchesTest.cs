@@ -4,7 +4,7 @@ namespace Concordion.Spec.Examples;
 
 [ConcordionFixture]
 public class PartialMatchesTest {
-    private List<string> usernamesInSystem = [];
+    private readonly List<string> usernamesInSystem = [];
 
     public void setUpUser(string username)
     {

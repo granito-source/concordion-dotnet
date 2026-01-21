@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Reflection;
-
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
 //  All rights reserved.
@@ -31,6 +28,10 @@ using System.Reflection;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Collections;
+using System.Reflection;
+
 namespace OGNL;
 
 ///
@@ -38,8 +39,7 @@ namespace OGNL;
 ///@author Luke Blanshard (blanshlu@netscape.net)
 ///@author Drew Davidson (drew@ognl.org)
 ///
-public interface TypeConverter
-{
+public interface TypeConverter {
     ///
     ///Converts the given value to a given type.  The OGNL context, target, member and
     ///name of property being set are given.  This method should be able to handle
@@ -53,7 +53,7 @@ public interface TypeConverter
     ///@return Converted value of type toType or TypeConverter.NoConversionPossible to indicate that the
     ///        conversion was not possible.
     ///
-    object? convertValue(IDictionary context, object target,
+    object? ConvertValue(IDictionary context, object target,
         MemberInfo? member, string? propertyName, object? value,
         Type toType);
 }

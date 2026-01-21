@@ -3,22 +3,20 @@ using System.Reflection;
 namespace OGNL;
 
 public class PropertyDescriptor {
-    private readonly PropertyInfo propertyInfo = null!;
+    protected readonly PropertyInfo PropertyInfo = null!;
 
     public PropertyDescriptor(PropertyInfo propertyInfo)
     {
-        this.propertyInfo = propertyInfo;
+        PropertyInfo = propertyInfo;
     }
 
     protected PropertyDescriptor()
     {
     }
 
-    public virtual string Name => propertyInfo.Name;
+    public virtual string Name => PropertyInfo.Name;
 
-    public virtual MethodInfo? ReadMethod => propertyInfo.GetGetMethod();
+    public virtual MethodInfo? ReadMethod => PropertyInfo.GetGetMethod();
 
-    public virtual MethodInfo? WriteMethod => propertyInfo.GetSetMethod();
-
-    public virtual Type PropertyType => propertyInfo.PropertyType;
+    public virtual MethodInfo? WriteMethod => PropertyInfo.GetSetMethod();
 }

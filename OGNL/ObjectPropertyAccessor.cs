@@ -31,7 +31,7 @@
 //--------------------------------------------------------------------------
 
 using System.Text.RegularExpressions;
-using OGNL.JccGen;
+using OGNL.Parser;
 
 namespace OGNL;
 
@@ -89,13 +89,13 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
     public virtual object? GetProperty(OgnlContext context, object target,
         object name)
     {
-        var currentNode = context.getCurrentNode();
+        var currentNode = context.CurrentNode;
 
         if (currentNode == null)
             throw new OgnlException("node is null for '" + name + "'");
 
         if (currentNode is not ASTProperty)
-            currentNode = currentNode.jjtGetParent();
+            currentNode = currentNode.GetParent();
 
         var indexed = currentNode is ASTProperty astProperty &&
             astProperty.isIndexedAccess() &&
@@ -111,13 +111,13 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
         object name, object? value)
     {
         var plainName = FromObjectName(name);
-        var currentNode = context.getCurrentNode();
+        var currentNode = context.CurrentNode;
 
         if (currentNode == null)
             throw new OgnlException("node is null for '" + name + "'");
 
         if (currentNode is not ASTProperty)
-            currentNode = currentNode.jjtGetParent();
+            currentNode = currentNode.GetParent();
 
         var indexed = currentNode is ASTProperty astProperty &&
             astProperty.isIndexedAccess() &&

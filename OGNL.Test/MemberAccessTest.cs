@@ -96,8 +96,9 @@ public class MemberAccessTest : OgnlTestCase {
     public override void setUp()
     {
         base.setUp();
+
         /* Should allow access at all to the Simple class except for the bigIntValue property */
-        context.setMemberAccess(new InnerDefaultMemberAccess());
+        context.MemberAccess = new InnerDefaultMemberAccess();
     }
 }
 

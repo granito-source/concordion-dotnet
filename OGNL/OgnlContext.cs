@@ -30,7 +30,7 @@
 //--------------------------------------------------------------------------
 
 using System.Collections;
-using OGNL.JccGen;
+using OGNL.Parser;
 
 namespace OGNL;
 
@@ -41,167 +41,137 @@ namespace OGNL;
 ///@author Drew Davidson (drew@ognl.org)
 ///
 public class OgnlContext : IDictionary {
-    public static string CONTEXT_CONTEXT_KEY = "context";
+    public const string TypeConverterKey = "_typeConverter";
 
-    public static string ROOT_CONTEXT_KEY = "root";
+    private const string RootKey = "root";
 
-    public static string THIS_CONTEXT_KEY = "this";
+    private const string ContextKey = "context";
 
-    public static string TRACE_EVALUATIONS_CONTEXT_KEY = "_traceEvaluations";
+    private const string ThisContextKey = "this";
 
-    public static string LAST_EVALUATION_CONTEXT_KEY = "_lastEvaluation";
+    private const string LastEvaluationKey = "_lastEvaluation";
 
-    public static string KEEP_LAST_EVALUATION_CONTEXT_KEY = "_keepLastEvaluation";
+    private const string TypeResolverKey = "_typeResolver";
 
-    public static string CLASS_RESOLVER_CONTEXT_KEY = "_classResolver";
+    private const string MemberAccessKey = "_memberAccess";
 
-    public static string TYPE_CONVERTER_CONTEXT_KEY = "_typeConverter";
+    private const string TraceEvaluationsKey = "_traceEvaluations";
 
-    public static string MEMBER_ACCESS_CONTEXT_KEY = "_memberAccess";
+    private const string KeepLastEvaluationKey = "_keepLastEvaluation";
 
-    static string PROPERTY_KEY_PREFIX = "ognl";
+    private const bool DefaultTraceEvaluations = false;
 
-    static bool DEFAULT_TRACE_EVALUATIONS = false;
+    private const bool DefaultKeepLastEvaluation = false;
 
-    static bool DEFAULT_KEEP_LAST_EVALUATION = false;
+    public static readonly TypeResolver DefaultTypeResolver =
+        new DefaultTypeResolver();
 
-    public static ClassResolver DEFAULT_CLASS_RESOLVER = new DefaultClassResolver();
+    private static readonly TypeConverter DefaultTypeConverter =
+        new DefaultTypeConverter();
 
-    public static TypeConverter DEFAULT_TYPE_CONVERTER = new DefaultTypeConverter();
+    private static readonly MemberAccess DefaultMemberAccess =
+        new DefaultMemberAccess(false);
 
-    public static MemberAccess DEFAULT_MEMBER_ACCESS = new DefaultMemberAccess(false);
+    public int Count => values.Count;
 
-    private object? root;
+    public object SyncRoot => values.SyncRoot;
 
-    private object? currentObject;
+    public bool IsSynchronized => values.IsSynchronized;
 
-    private Node? currentNode;
+    public ICollection Keys => values.Keys;
 
-    private bool traceEvaluations = DEFAULT_TRACE_EVALUATIONS;
+    public ICollection Values => values.Values;
 
-    private Evaluation? rootEvaluation;
+    public bool IsReadOnly => values.IsReadOnly;
+
+    public bool IsFixedSize => values.IsFixedSize;
+
+    public object? this[object key] {
+        get {
+            if (key.Equals(ThisContextKey))
+                return CurrentObject;
+
+            if (key.Equals(RootKey))
+                return Root;
+
+            if (key.Equals(ContextKey))
+                return this;
+
+            if (key.Equals(TraceEvaluationsKey))
+                return TraceEvaluations;
+
+            if (key.Equals(LastEvaluationKey))
+                return lastEvaluation;
+
+            if (key.Equals(KeepLastEvaluationKey))
+                return KeepLastEvaluation;
+
+            if (key.Equals(TypeResolverKey))
+                return TypeResolver;
+
+            if (key.Equals(TypeConverterKey))
+                return TypeConverter;
+
+            if (key.Equals(MemberAccessKey))
+                return MemberAccess;
+
+            return values[key];
+        }
+
+        set {
+            if (key.Equals(ContextKey))
+                throw new ArgumentException(
+                    $"can't change {ContextKey} in context");
+
+            if (key.Equals(ThisContextKey))
+                CurrentObject = value;
+            else if (key.Equals(RootKey))
+                Root = value;
+            else if (key.Equals(TraceEvaluationsKey))
+                TraceEvaluations = OgnlOps.BooleanValue(value);
+            else if (key.Equals(LastEvaluationKey))
+                lastEvaluation = (Evaluation?)value;
+            else if (key.Equals(KeepLastEvaluationKey))
+                KeepLastEvaluation = OgnlOps.BooleanValue(value);
+            else if (key.Equals(TypeResolverKey))
+                TypeResolver = (TypeResolver)(value ?? DefaultTypeResolver);
+            else if (key.Equals(TypeConverterKey))
+                TypeConverter = (TypeConverter)(value ?? DefaultTypeConverter);
+            else if (key.Equals(MemberAccessKey))
+                MemberAccess = (MemberAccess)(value ?? DefaultMemberAccess);
+            else
+                values[key] = value;
+        }
+    }
+
+    public object? Root { get; set; }
+
+    public object? CurrentObject { get; set; }
+
+    public Node? CurrentNode { get; set; }
+
+    public Evaluation? RootEvaluation { get; private set; }
+
+    public TypeResolver TypeResolver { get; set; } = DefaultTypeResolver;
+
+    public TypeConverter TypeConverter { get; set; } = DefaultTypeConverter;
+
+    public MemberAccess MemberAccess { get; set; } = DefaultMemberAccess;
+
+    public bool TraceEvaluations { get; private set; } = DefaultTraceEvaluations;
+
+    public bool KeepLastEvaluation { get; private set; } = DefaultKeepLastEvaluation;
+
+    private readonly Hashtable values = new(23);
 
     private Evaluation? currentEvaluation;
 
     private Evaluation? lastEvaluation;
 
-    private bool keepLastEvaluation = DEFAULT_KEEP_LAST_EVALUATION;
-
-    private readonly IDictionary values = new Hashtable(23);
-
-    private ClassResolver classResolver = DEFAULT_CLASS_RESOLVER;
-
-    private TypeConverter typeConverter = DEFAULT_TYPE_CONVERTER;
-
-    private MemberAccess memberAccess = DEFAULT_MEMBER_ACCESS;
-
-    ///
-    ///Constructs a new OgnlContext with the default class resolver, type converter and
-    ///member access.
-    ///
-    public OgnlContext()
+    public void SetAllValues(IDictionary dictionary)
     {
-    }
-
-    ///<summary>
-    /// Constructs a new OgnlContext with the given class resolver, type converter and
-    /// member access.  If any of these parameters is null the default will be used.
-    /// </summary>
-    ///
-    public OgnlContext(ClassResolver? classResolver,
-        TypeConverter? typeConverter, MemberAccess? memberAccess)
-    {
-        if (classResolver != null)
-            this.classResolver = classResolver;
-
-        if (typeConverter != null)
-            this.typeConverter = typeConverter;
-
-        if (memberAccess != null)
-            this.memberAccess = memberAccess;
-    }
-
-    public OgnlContext(IDictionary values)
-    {
-        this.values = values;
-    }
-
-    public OgnlContext(ClassResolver? classResolver,
-        TypeConverter? typeConverter, MemberAccess? memberAccess,
-        IDictionary values) :
-        this(classResolver, typeConverter, memberAccess)
-    {
-        this.values = values;
-    }
-
-    public void setValues(IDictionary value)
-    {
-        Util.putAll(value, values);
-    }
-
-    public IDictionary getValues()
-    {
-        return values;
-    }
-
-    public void setClassResolver(ClassResolver value)
-    {
-        classResolver = value;
-    }
-
-    public ClassResolver getClassResolver()
-    {
-        return classResolver;
-    }
-
-    public void setTypeConverter(TypeConverter value)
-    {
-        typeConverter = value;
-    }
-
-    public TypeConverter getTypeConverter()
-    {
-        return typeConverter;
-    }
-
-    public void setMemberAccess(MemberAccess value)
-    {
-        memberAccess = value;
-    }
-
-    public MemberAccess getMemberAccess()
-    {
-        return memberAccess;
-    }
-
-    public void setRoot(object? value)
-    {
-        root = value;
-    }
-
-    public object? getRoot()
-    {
-        return root;
-    }
-
-    public bool getTraceEvaluations()
-    {
-        return traceEvaluations;
-    }
-
-    public void setTraceEvaluations(bool value)
-    {
-        traceEvaluations = value;
-    }
-
-    public Evaluation? getLastEvaluation()
-    {
-        return lastEvaluation;
-    }
-
-    public void setLastEvaluation(Evaluation? value)
-    {
-        lastEvaluation = value;
+        foreach (DictionaryEntry entry in dictionary)
+            values[entry.Key] = entry.Value;
     }
 
     ///<summary>
@@ -211,99 +181,10 @@ public class OgnlContext : IDictionary {
     /// memory usage down.  This will recycle the last evaluation and then
     /// set the last evaluation to null.
     ///</summary>
-    public void recycleLastEvaluation()
+    public void RecycleLastEvaluation()
     {
         OgnlRuntime.EvaluationPool.recycleAll(lastEvaluation);
         lastEvaluation = null;
-    }
-
-    ///<summary>
-    /// Returns true if the last evaluation that was done on this
-    /// context is retained and available through <code>getLastEvaluation()</code>.
-    /// The default is true.
-    ///</summary>
-    public bool getKeepLastEvaluation()
-    {
-        return keepLastEvaluation;
-    }
-
-    ///<summary>
-    /// Sets whether the last evaluation that was done on this
-    /// context is retained and available through <code>getLastEvaluation()</code>.
-    /// The default is true.
-    ///</summary>
-    public void setKeepLastEvaluation(bool value)
-    {
-        keepLastEvaluation = value;
-    }
-
-    public void setCurrentObject(object? value)
-    {
-        currentObject = value;
-    }
-
-    public object? getCurrentObject()
-    {
-        return currentObject;
-    }
-
-    public void setCurrentNode(Node? value)
-    {
-        currentNode = value;
-    }
-
-    public Node? getCurrentNode()
-    {
-        return currentNode;
-    }
-
-    ///
-    /// Gets the current Evaluation from the top of the stack.
-    /// This is the Evaluation that is in process of evaluating.
-    ///
-    public Evaluation? getCurrentEvaluation()
-    {
-        return currentEvaluation;
-    }
-
-    public void setCurrentEvaluation(Evaluation? value)
-    {
-        currentEvaluation = value;
-    }
-
-    ///<summary>
-    /// Gets the root of the evaluation stack.
-    /// This Evaluation contains the node representing
-    /// the root expression and the source is the root
-    /// source object.
-    ///</summary>
-    public Evaluation? getRootEvaluation()
-    {
-        return rootEvaluation;
-    }
-
-    public void setRootEvaluation(Evaluation? value)
-    {
-        rootEvaluation = value;
-    }
-
-    ///<summary>
-    /// Returns the Evaluation at the relative index given.  This should be
-    /// zero or a negative number as a relative reference back up the evaluation
-    /// stack.  Therefore getEvaluation(0) returns the current Evaluation.
-    ///</summary>
-    public Evaluation? getEvaluation(int relativeIndex)
-    {
-        Evaluation? result = null;
-
-        if (relativeIndex <= 0) {
-            result = currentEvaluation;
-
-            while (++relativeIndex < 0 && result != null)
-                result = result.getParent();
-        }
-
-        return result;
     }
 
     ///<summary>
@@ -311,30 +192,30 @@ public class OgnlContext : IDictionary {
     /// before a node evaluates.  When evaluation is complete
     /// it should be popped from the stack via <code>popEvaluation()</code>.
     ///</summary>
-    public void pushEvaluation(Evaluation value)
+    public void PushEvaluation(Evaluation value)
     {
         if (currentEvaluation != null)
             currentEvaluation.addChild(value);
         else
-            setRootEvaluation(value);
+            RootEvaluation = value;
 
-        setCurrentEvaluation(value);
+        currentEvaluation = value;
     }
 
     ///<summary>
     /// Pops the current Evaluation off of the top of the stack.
     /// This is done after a node has completed its evaluation.
     ///</summary>
-    public Evaluation? popEvaluation()
+    public Evaluation? PopEvaluation()
     {
         var result = currentEvaluation;
 
-        setCurrentEvaluation(result?.getParent());
+        currentEvaluation = result?.getParent();
 
         if (currentEvaluation == null) {
-            setLastEvaluation(getKeepLastEvaluation() ? result : null);
-            setRootEvaluation(null);
-            setCurrentNode(null);
+            lastEvaluation = KeepLastEvaluation ? result : null;
+            RootEvaluation = null;
+            CurrentNode = null;
         }
 
         return result;
@@ -355,12 +236,6 @@ public class OgnlContext : IDictionary {
         values.CopyTo(array, index);
     }
 
-    public int Count => values.Count;
-
-    public object SyncRoot => values.SyncRoot;
-
-    public bool IsSynchronized => values.IsSynchronized;
-
     public bool Contains(object key)
     {
         return values.Contains(key);
@@ -374,15 +249,15 @@ public class OgnlContext : IDictionary {
     public void Clear()
     {
         values.Clear();
-        setRoot(null);
-        setCurrentObject(null);
-        setRootEvaluation(null);
-        setCurrentEvaluation(null);
-        setLastEvaluation(null);
-        setCurrentNode(null);
-        setClassResolver(DEFAULT_CLASS_RESOLVER);
-        setTypeConverter(DEFAULT_TYPE_CONVERTER);
-        setMemberAccess(DEFAULT_MEMBER_ACCESS);
+        Root = null;
+        CurrentObject = null;
+        RootEvaluation = null;
+        currentEvaluation = null;
+        lastEvaluation = null;
+        CurrentNode = null;
+        TypeResolver = DefaultTypeResolver;
+        TypeConverter = DefaultTypeConverter;
+        MemberAccess = DefaultMemberAccess;
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -397,97 +272,31 @@ public class OgnlContext : IDictionary {
 
     public void Remove(object key)
     {
-        if (key.Equals(CONTEXT_CONTEXT_KEY))
+        if (key.Equals(ContextKey))
             throw new ArgumentException("can't remove " +
-                CONTEXT_CONTEXT_KEY + " from context");
+                ContextKey + " from context");
 
-        if (key.Equals(TRACE_EVALUATIONS_CONTEXT_KEY))
+        if (key.Equals(TraceEvaluationsKey))
             throw new ArgumentException("can't remove " +
-                TRACE_EVALUATIONS_CONTEXT_KEY + " from context");
+                TraceEvaluationsKey + " from context");
 
-        if (key.Equals(KEEP_LAST_EVALUATION_CONTEXT_KEY))
+        if (key.Equals(KeepLastEvaluationKey))
             throw new ArgumentException("can't remove " +
-                KEEP_LAST_EVALUATION_CONTEXT_KEY + " from context");
+                KeepLastEvaluationKey + " from context");
 
-        if (key.Equals(THIS_CONTEXT_KEY))
-            setCurrentObject(null);
-        else if (key.Equals(ROOT_CONTEXT_KEY))
-            setRoot(null);
-        else if (key.Equals(LAST_EVALUATION_CONTEXT_KEY))
-            setLastEvaluation(null);
-        else if (key.Equals(CLASS_RESOLVER_CONTEXT_KEY))
-            setClassResolver(null);
-        else if (key.Equals(TYPE_CONVERTER_CONTEXT_KEY))
-            setTypeConverter(null);
-        else if (key.Equals(MEMBER_ACCESS_CONTEXT_KEY))
-            setMemberAccess(null);
+        if (key.Equals(ThisContextKey))
+            CurrentObject = null;
+        else if (key.Equals(RootKey))
+            Root = null;
+        else if (key.Equals(LastEvaluationKey))
+            lastEvaluation = null;
+        else if (key.Equals(TypeResolverKey))
+            TypeResolver = DefaultTypeResolver;
+        else if (key.Equals(TypeConverterKey))
+            TypeConverter = DefaultTypeConverter;
+        else if (key.Equals(MemberAccessKey))
+            MemberAccess = DefaultMemberAccess;
         else
             values.Remove(key);
-    }
-
-    public ICollection Keys => values.Keys;
-
-    public ICollection Values => values.Values;
-
-    public bool IsReadOnly => values.IsReadOnly;
-
-    public bool IsFixedSize => values.IsFixedSize;
-
-    public object? this[object key] {
-        get {
-            if (key.Equals(THIS_CONTEXT_KEY))
-                return getCurrentObject();
-
-            if (key.Equals(ROOT_CONTEXT_KEY))
-                return getRoot();
-
-            if (key.Equals(CONTEXT_CONTEXT_KEY))
-                return this;
-
-            if (key.Equals(TRACE_EVALUATIONS_CONTEXT_KEY))
-                return getTraceEvaluations();
-
-            if (key.Equals(LAST_EVALUATION_CONTEXT_KEY))
-                return getLastEvaluation();
-
-            if (key.Equals(KEEP_LAST_EVALUATION_CONTEXT_KEY))
-                return getKeepLastEvaluation();
-
-            if (key.Equals(CLASS_RESOLVER_CONTEXT_KEY))
-                return getClassResolver();
-
-            if (key.Equals(TYPE_CONVERTER_CONTEXT_KEY))
-                return getTypeConverter();
-
-            if (key.Equals(MEMBER_ACCESS_CONTEXT_KEY))
-                return getMemberAccess();
-
-            return values[key];
-        }
-
-        set {
-            if (key.Equals(CONTEXT_CONTEXT_KEY))
-                throw new ArgumentException(
-                    $"can't change {CONTEXT_CONTEXT_KEY} in context");
-
-            if (key.Equals(THIS_CONTEXT_KEY))
-                setCurrentObject(value);
-            else if (key.Equals(ROOT_CONTEXT_KEY))
-                setRoot(value);
-            else if (key.Equals(TRACE_EVALUATIONS_CONTEXT_KEY))
-                setTraceEvaluations(OgnlOps.BooleanValue(value));
-            else if (key.Equals(LAST_EVALUATION_CONTEXT_KEY))
-                setLastEvaluation((Evaluation?)value);
-            else if (key.Equals(KEEP_LAST_EVALUATION_CONTEXT_KEY))
-                setKeepLastEvaluation(OgnlOps.BooleanValue(value));
-            else if (key.Equals(CLASS_RESOLVER_CONTEXT_KEY))
-                setClassResolver((ClassResolver)value);
-            else if (key.Equals(TYPE_CONVERTER_CONTEXT_KEY))
-                setTypeConverter((TypeConverter)value);
-            else if (key.Equals(MEMBER_ACCESS_CONTEXT_KEY))
-                setMemberAccess((MemberAccess)value);
-            else
-                values[key] = value;
-        }
     }
 }

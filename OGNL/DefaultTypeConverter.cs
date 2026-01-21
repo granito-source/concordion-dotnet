@@ -64,7 +64,7 @@ public class DefaultTypeConverter : TypeConverter {
     /// <param name="value"></param>
     /// <param name="toType"></param>
     /// <returns></returns>
-    public virtual object? convertValue(IDictionary context, object target,
+    public virtual object? ConvertValue(IDictionary context, object target,
         MemberInfo? member, string? propertyName, object? value, Type toType)
     {
         return convertValue(context, value, toType);
