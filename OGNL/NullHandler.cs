@@ -45,13 +45,13 @@ public interface NullHandler {
     /// <summary>
     /// Method called on target returned null.
     /// </summary>
-    object? nullMethodResult(IDictionary context, object target,
-        string methodName, object[] args);
+    object? NullMethodResult(IDictionary context, object target,
+        string methodName, object?[] args);
 
     /// <summary>
     /// Property in target evaluated to null.  Property can be a constant
     /// string property name or a DynamicSubscript.
     /// </summary>
-    object? nullPropertyValue(IDictionary context, object target,
+    object? NullPropertyValue(IDictionary context, object target,
         object property);
 }

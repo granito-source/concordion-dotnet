@@ -6,13 +6,13 @@ namespace OGNL.Parser;
 
 internal class ParserTokenManager(JavaCharStream stream) : ParserConstants {
     /** Holds the last value computed by a constant token. */
-    internal object literalValue;
+    internal object? LiteralValue;
 
     /** Holds the last character escaped or in a character literal. */
     private char charValue;
 
     /** Holds the last string literal parsed. */
-    private StringBuilder stringBuffer;
+    private StringBuilder? stringBuffer;
 
     /** Converts an escape sequence into a character value. */
     private char EscapeChar()
@@ -87,13 +87,14 @@ internal class ParserTokenManager(JavaCharStream stream) : ParserConstants {
             case 'd':
             case 'D':
                 s = s.Substring(0, s.Length - 1);
+
                 goto default;
             default:
                 // s = s.ToUpper () ;
                 if (s.IndexOf('E') > 0 || s.IndexOf('e') > 0)
                     return double.Parse(s, NumberStyles.AllowExponent);
-                else
-                    return double.Parse(s);
+
+                return double.Parse(s);
         }
     }
 
@@ -109,8 +110,10 @@ internal class ParserTokenManager(JavaCharStream stream) : ParserConstants {
 
                 if ((active0 & 0x400000000000000L) != 0L)
                     return 1;
+
                 if ((active0 & 0x10000000000000L) != 0L)
                     return 3;
+
                 if ((active0 & 0x80000000000L) != 0L)
                     return 9;
 
@@ -1535,7 +1538,7 @@ internal class ParserTokenManager(JavaCharStream stream) : ParserConstants {
         return t;
     }
 
-    private int curLexState = 0;
+    private int curLexState;
 
     private readonly int defaultLexState = 0;
 
@@ -1748,12 +1751,12 @@ internal class ParserTokenManager(JavaCharStream stream) : ParserConstants {
                 else
                     image.Append(inputStream.GetSuffix(jjimageLen + jjmatchedPos + 1));
 
-                literalValue = image[1] switch {
+                LiteralValue = image[1] switch {
                     '^' => OGNL.DynamicSubscript.First,
                     '|' => OGNL.DynamicSubscript.Mid,
                     '$' => OGNL.DynamicSubscript.Last,
                     '*' => OGNL.DynamicSubscript.All,
-                    _ => literalValue
+                    _ => LiteralValue
                 };
 
                 break;
@@ -1765,9 +1768,9 @@ internal class ParserTokenManager(JavaCharStream stream) : ParserConstants {
                     image.Append(inputStream.GetSuffix(jjimageLen + jjmatchedPos + 1));
 
                 if (stringBuffer.Length == 1) {
-                    literalValue = charValue;
+                    LiteralValue = charValue;
                 } else {
-                    literalValue = stringBuffer.ToString();
+                    LiteralValue = stringBuffer.ToString();
                 }
 
                 break;
@@ -1777,7 +1780,7 @@ internal class ParserTokenManager(JavaCharStream stream) : ParserConstants {
                         new string(inputStream.GetSuffix(jjimageLen + jjmatchedPos + 1)));
                 else
                     image.Append(inputStream.GetSuffix(jjimageLen + jjmatchedPos + 1));
-                literalValue = charValue;
+                LiteralValue = charValue;
 
                 break;
             case 79:
@@ -1786,7 +1789,7 @@ internal class ParserTokenManager(JavaCharStream stream) : ParserConstants {
                         new string(inputStream.GetSuffix(jjimageLen + jjmatchedPos + 1)));
                 else
                     image.Append(inputStream.GetSuffix(jjimageLen + jjmatchedPos + 1));
-                literalValue = stringBuffer.ToString();
+                LiteralValue = stringBuffer.ToString();
 
                 break;
             case 80:
@@ -1795,7 +1798,7 @@ internal class ParserTokenManager(JavaCharStream stream) : ParserConstants {
                         new string(inputStream.GetSuffix(jjimageLen + jjmatchedPos + 1)));
                 else
                     image.Append(inputStream.GetSuffix(jjimageLen + jjmatchedPos + 1));
-                literalValue =
+                LiteralValue =
                     MakeInt();
 
                 break;
@@ -1805,7 +1808,7 @@ internal class ParserTokenManager(JavaCharStream stream) : ParserConstants {
                         new string(inputStream.GetSuffix(jjimageLen + jjmatchedPos + 1)));
                 else
                     image.Append(inputStream.GetSuffix(jjimageLen + jjmatchedPos + 1));
-                literalValue = MakeFloat();
+                LiteralValue = MakeFloat();
 
                 break;
         }

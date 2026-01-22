@@ -85,7 +85,7 @@ public class SimplePropertyTreeTest : OgnlTestCase {
     protected internal override void RunTest()
     {
         Assert.That(
-            Ognl.isSimpleProperty(GetExpression(), Context) == (bool)GetExpectedResult(),
+            Ognl.IsSimpleProperty(GetExpression(), Context) == (bool)GetExpectedResult(),
             Is.True);
     }
 }

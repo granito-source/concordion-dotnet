@@ -1,7 +1,7 @@
 namespace OGNL.Test;
 
 public abstract class OgnlFixture {
-    protected readonly OgnlContext context = Ognl.createDefaultContext(null);
+    protected readonly OgnlContext context = Ognl.CreateDefaultContext(null);
 
     private object root;
 
@@ -17,11 +17,11 @@ public abstract class OgnlFixture {
 
     protected object? Get(string expression)
     {
-        return Ognl.getValue(expression, context, root);
+        return Ognl.GetValue(expression, context, root);
     }
 
     protected void Set(string expression, object? value)
     {
-        Ognl.setValue(expression, context, root, value);
+        Ognl.SetValue(expression, context, root, value);
     }
 }

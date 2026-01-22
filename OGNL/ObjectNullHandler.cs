@@ -41,13 +41,13 @@ namespace OGNL;
 ///@author Drew Davidson (drew@ognl.org)
 ///
 public class ObjectNullHandler : NullHandler {
-    public object? nullMethodResult(IDictionary context, object target,
-        string methodName, object[] args)
+    public object? NullMethodResult(IDictionary context, object target,
+        string methodName, object?[] args)
     {
         return null;
     }
 
-    public object? nullPropertyValue(IDictionary context, object target,
+    public object? NullPropertyValue(IDictionary context, object target,
         object property)
     {
         return null;

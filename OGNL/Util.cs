@@ -1,5 +1,3 @@
-using System.Collections;
-
 namespace OGNL;
 
 public static class Util {

@@ -60,7 +60,7 @@ namespace OGNL;
 ///
 ///<para>Other more sophisticated uses of Ognl can pre-parse expressions.  This
 ///provides two advantages: in the case of user-supplied expressions it
-///allows you to catch parse errors before evaluation and it allows you to
+///allows you to catch parse errors before evaluation, and it allows you to
 ///cache parsed expressions into an AST for better speed during repeated use.
 ///The pre-parsed expression is always returned as an <c>object</c>
 ///to simplify use for programs that just wish to store the value for
@@ -111,7 +111,7 @@ public static class Ognl {
     ///<exception cref="ExpressionSyntaxException">if the expression is malformed</exception>
     ///<exception cref="OgnlException"> if there is a pathological environmental problem</exception>
     ///
-    public static Node parseExpression(string expression)
+    public static Node ParseExpression(string expression)
     {
         try {
             return new Parser.Parser(new StringReader(expression))
@@ -132,67 +132,9 @@ public static class Ognl {
     ///a new IDictionary with the keys <c>root</c> and <c>context</c>
     ///set appropriately</returns>
     ///
-    public static OgnlContext createDefaultContext(object? root)
+    public static OgnlContext CreateDefaultContext(object root)
     {
-        return addDefaultContext(root, null, null, null, new OgnlContext());
-    }
-
-    /// <summary>
-    /// Creates and returns a new standard naming context for evaluating an OGNL
-    /// expression.
-    /// </summary>
-    /// <param name="root">the root of the object graph</param>
-    /// <param name="typeResolver"></param>
-    /// <returns>
-    /// a new IDictionary with the keys <c>root</c> and <c>context</c>
-    /// set appropriately
-    /// </returns>
-    ///
-    public static OgnlContext createDefaultContext(object? root,
-        TypeResolver typeResolver)
-    {
-        return addDefaultContext(root, typeResolver, null, null,
-            new OgnlContext());
-    }
-
-    /// <summary>
-    /// Creates and returns a new standard naming context for evaluating an OGNL
-    /// expression.
-    /// </summary>
-    /// <param name="root">the root of the object graph</param>
-    /// <param name="typeResolver"></param>
-    /// <param name="converter"></param>
-    /// <returns>
-    /// a new IDictionary with the keys <c>root</c> and <c>context</c>
-    /// set appropriately
-    /// </returns>
-    ///
-    public static OgnlContext createDefaultContext(object? root,
-        TypeResolver typeResolver, TypeConverter converter)
-    {
-        return addDefaultContext(root, typeResolver, converter, null,
-            new OgnlContext());
-    }
-
-    /// <summary>
-    /// Creates and returns a new standard naming context for evaluating an OGNL
-    /// expression.
-    /// </summary>
-    /// <param name="root">the root of the object graph</param>
-    /// <param name="typeResolver"></param>
-    /// <param name="converter"></param>
-    /// <param name="memberAccess"></param>
-    /// <returns>
-    /// a new IDictionary with the keys <c>root</c> and <c>context</c>
-    /// set appropriately
-    /// </returns>
-    ///
-    public static OgnlContext createDefaultContext(object? root,
-        TypeResolver typeResolver, TypeConverter converter,
-        MemberAccess memberAccess)
-    {
-        return addDefaultContext(root, typeResolver, converter,
-            memberAccess, new OgnlContext());
+        return AddDefaultContext(root, null, null, null, new OgnlContext());
     }
 
     ///<summary>
@@ -205,47 +147,10 @@ public static class Ognl {
     ///a new IDictionary with the keys <c>root</c> and <c>context</c>
     ///set appropriately
     ///</returns>
-    public static OgnlContext addDefaultContext(object? root,
+    private static OgnlContext AddDefaultContext(object root,
         IDictionary context)
     {
-        return addDefaultContext(root, null, null, null, context);
-    }
-
-    /// <summary>
-    /// Appends the standard naming context for evaluating an OGNL expression
-    /// into the context given so that cached maps can be used as a context.
-    /// </summary>
-    /// <param name="root"> the root of the object graph</param>
-    /// <param name="typeResolver"></param>
-    /// <param name="context"> the context to which OGNL context will be added.</param>
-    /// <returns>
-    /// a new IDictionary with the keys <c>root</c> and <c>context</c>
-    /// set appropriately
-    /// </returns>
-    public static OgnlContext addDefaultContext(object? root,
-        TypeResolver typeResolver, IDictionary context)
-    {
-        return addDefaultContext(root, typeResolver, null, null, context);
-    }
-
-    /// <summary>
-    /// Appends the standard naming context for evaluating an OGNL expression
-    /// into the context given so that cached maps can be used as a context.
-    /// </summary>
-    /// <param name="root"> the root of the object graph</param>
-    /// <param name="converter"></param>
-    /// <param name="context"> the context to which OGNL context will be added.</param>
-    /// <param name="typeResolver"></param>
-    /// <returns>
-    /// a new IDictionary with the keys <c>root</c> and <c>context</c>
-    /// set appropriately
-    /// </returns>
-    public static OgnlContext addDefaultContext(object? root,
-        TypeResolver typeResolver, TypeConverter converter,
-        IDictionary context)
-    {
-        return addDefaultContext(root, typeResolver, converter, null,
-            context);
+        return AddDefaultContext(root, null, null, null, context);
     }
 
     /// <summary>
@@ -261,7 +166,7 @@ public static class Ognl {
     /// a new IDictionary with the keys <c>root</c> and <c>context</c>
     /// set appropriately
     /// </returns>
-    public static OgnlContext addDefaultContext(object? root,
+    private static OgnlContext AddDefaultContext(object root,
         TypeResolver? typeResolver, TypeConverter? converter,
         MemberAccess? memberAccess, IDictionary context)
     {
@@ -307,10 +212,10 @@ public static class Ognl {
     ///<exception cref="InappropriateExpressionException"> if the expression can't be used in this context</exception>
     ///<exception cref="OgnlException"> if there is a pathological environmental problem</exception>
     ///
-    public static object? getValue(Node tree, IDictionary context,
+    public static object? GetValue(Node tree, IDictionary context,
         object root)
     {
-        return getValue(tree, context, root, null);
+        return GetValue(tree, context, root, null);
     }
 
     ///<summary>
@@ -328,18 +233,16 @@ public static class Ognl {
     ///<exception cref="InappropriateExpressionException"> if the expression can't be used in this context</exception>
     ///<exception cref="OgnlException"> if there is a pathological environmental problem</exception>
     ///
-    public static object? getValue(Node tree, IDictionary context,
+    private static object? GetValue(Node tree, IDictionary context,
         object root, Type? resultType)
     {
-        var ognlContext = addDefaultContext(root, context);
+        var ognlContext = AddDefaultContext(root, context);
         var result = tree.GetValue(ognlContext, root);
 
-        if (resultType != null) {
-            result = GetTypeConverter(context)?
-                .ConvertValue(context, root, null, null, result, resultType);
-        }
-
-        return result;
+        return resultType != null ?
+            GetTypeConverter(context)?.ConvertValue(context, root, null,
+                null, result, resultType) :
+            result;
     }
 
     ///<summary>
@@ -355,10 +258,10 @@ public static class Ognl {
     ///<exception cref="InappropriateExpressionException"> if the expression can't be used in this context</exception>
     ///<exception cref="OgnlException"> if there is a pathological environmental problem</exception>
     ///
-    public static object? getValue(string expression, IDictionary context,
+    public static object? GetValue(string expression, IDictionary context,
         object root)
     {
-        return getValue(expression, context, root, null);
+        return GetValue(expression, context, root, null);
     }
 
     /// <summary>
@@ -375,89 +278,11 @@ public static class Ognl {
     /// <exception cref="InappropriateExpressionException"> if the expression can't be used in this context</exception>
     /// <exception cref="OgnlException"> if there is a pathological environmental problem</exception>
     ///
-    public static object? getValue(string expression, IDictionary context,
+    private static object? GetValue(string expression, IDictionary context,
         object root, Type? resultType)
     {
-        return getValue(parseExpression(expression), context, root,
+        return GetValue(ParseExpression(expression), context, root,
             resultType);
-    }
-
-    ///<summary>
-    ///Evaluates the given OGNL expression to extract a value from the given root
-    ///object in a given context
-    ///</summary>
-    ///<param name="tree">  the OGNL expression tree to evaluate</param>
-    ///<param name="root"> the root object for the OGNL expression</param>
-    ///<returns>the result of evaluating the expression</returns>
-    ///<exception cref="MethodFailedException"> if the expression called a method which failed</exception>
-    ///<exception cref="NoSuchPropertyException"> if the expression referred to a nonexistent property</exception>
-    ///<exception cref="InappropriateExpressionException"> if the expression can't be used in this context</exception>
-    ///<exception cref="OgnlException"> if there is a pathological environmental problem</exception>
-    ///
-    public static object? getValue(Node tree, object root)
-    {
-        return getValue(tree, root, null);
-    }
-
-    /// <summary>
-    /// Evaluates the given OGNL expression to extract a value from the given root
-    /// object in a given context
-    /// </summary>
-    /// <param name="tree">  the OGNL expression tree to evaluate</param>
-    /// <param name="root"> the root object for the OGNL expression</param>
-    /// <param name="resultType"></param>
-    /// <returns>the result of evaluating the expression</returns>
-    /// <exception cref="MethodFailedException"> if the expression called a method which failed</exception>
-    /// <exception cref="NoSuchPropertyException"> if the expression referred to a nonexistent property</exception>
-    /// <exception cref="InappropriateExpressionException"> if the expression can't be used in this context</exception>
-    /// <exception cref="OgnlException"> if there is a pathological environmental problem</exception>
-    ///
-    public static object? getValue(Node tree, object root,
-        Type? resultType)
-    {
-        return getValue(tree, createDefaultContext(root), root, resultType);
-    }
-
-    ///
-    ///Convenience method that combines calls to <code> parseExpression </code> and
-    ///<code> getValue</code>.
-    ///
-    ///@see #parseExpression(string)
-    ///@see #getValue(object,object)
-    ///@param expression the OGNL expression to be parsed
-    ///@param root the root object for the OGNL expression
-    ///@return the result of evaluating the expression
-    ///@// throws ExpressionSyntaxException if the expression is malformed
-    ///@// throws MethodFailedException if the expression called a method which failed
-    ///@// throws NoSuchPropertyException if the expression referred to a nonexistent property
-    ///@// throws InappropriateExpressionException if the expression can't be used in this context
-    ///@// throws OgnlException if there is a pathological environmental problem
-    ///
-    public static object? getValue(string expression, object root)
-    {
-        return getValue(expression, root, null);
-    }
-
-    ///
-    ///Convenience method that combines calls to <code> parseExpression </code> and
-    ///<code> getValue</code>.
-    ///
-    ///@see #parseExpression(string)
-    ///@see #getValue(object,object)
-    ///@param expression the OGNL expression to be parsed
-    ///@param root the root object for the OGNL expression
-    ///@param resultType the converted type of the resultant object, using the context's type converter
-    ///@return the result of evaluating the expression
-    ///@// throws ExpressionSyntaxException if the expression is malformed
-    ///@// throws MethodFailedException if the expression called a method which failed
-    ///@// throws NoSuchPropertyException if the expression referred to a nonexistent property
-    ///@// throws InappropriateExpressionException if the expression can't be used in this context
-    ///@// throws OgnlException if there is a pathological environmental problem
-    ///
-    public static object? getValue(string expression, object root,
-        Type? resultType)
-    {
-        return getValue(parseExpression(expression), root, resultType);
     }
 
     ///
@@ -474,10 +299,10 @@ public static class Ognl {
     ///@// throws InappropriateExpressionException if the expression can't be used in this context
     ///@// throws OgnlException if there is a pathological environmental problem
     ///
-    public static void setValue(Node tree, IDictionary context,
+    public static void SetValue(Node tree, IDictionary context,
         object root, object? value)
     {
-        var ognlContext = addDefaultContext(root, context);
+        var ognlContext = AddDefaultContext(root, context);
 
         tree.SetValue(ognlContext, root, value);
     }
@@ -495,116 +320,33 @@ public static class Ognl {
     ///@// throws InappropriateExpressionException if the expression can't be used in this context
     ///@// throws OgnlException if there is a pathological environmental problem
     ///
-    public static void setValue(string expression, IDictionary context,
+    public static void SetValue(string expression, IDictionary context,
         object root, object? value)
     {
-        setValue(parseExpression(expression), context, root, value);
+        SetValue(ParseExpression(expression), context, root, value);
     }
 
-    ///
-    ///Evaluates the given OGNL expression tree to insert a value into the object graph
-    ///rooted at the given root object.
-    ///
-    ///@param tree the OGNL expression tree to evaluate, as returned by parseExpression()
-    ///@param root the root object for the OGNL expression
-    ///@param value the value to insert into the object graph
-    ///@// throws MethodFailedException if the expression called a method which failed
-    ///@// throws NoSuchPropertyException if the expression referred to a nonexistent property
-    ///@// throws InappropriateExpressionException if the expression can't be used in this context
-    ///@// throws OgnlException if there is a pathological environmental problem
-    ///
-    public static void setValue(Node tree, object root, object? value)
-    {
-        setValue(tree, createDefaultContext(root), root, value);
-    }
-
-    ///
-    ///Convenience method that combines calls to <code>parseExpression</code> and
-    ///<code>setValue</code>.
-    ///
-    ///@see #parseExpression(string)
-    ///@see #setValue(object,object,object)
-    ///@param expression the OGNL expression to be parsed
-    ///@param root the root object for the OGNL expression
-    ///@param value the value to insert into the object graph
-    ///@// throws ExpressionSyntaxException if the expression is malformed
-    ///@// throws MethodFailedException if the expression called a method which failed
-    ///@// throws NoSuchPropertyException if the expression referred to a nonexistent property
-    ///@// throws InappropriateExpressionException if the expression can't be used in this context
-    ///@// throws OgnlException if there is a pathological environmental problem
-    ///
-    public static void setValue(string expression, object root, object? value)
-    {
-        setValue(parseExpression(expression), root, value);
-    }
-
-    public static bool isConstant(Node tree, OgnlContext context)
+    private static bool IsConstant(Node tree, OgnlContext context)
     {
         return ((SimpleNode)tree)
-            .IsConstant(addDefaultContext(null, context));
+            .IsConstant(AddDefaultContext(string.Empty, context));
     }
 
-    public static bool isConstant(string expression, OgnlContext context)
+    public static bool IsConstant(Node tree)
     {
-        return isConstant(parseExpression(expression), context);
+        return IsConstant(tree, CreateDefaultContext(string.Empty));
     }
 
-    public static bool isConstant(Node tree)
-    {
-        return isConstant(tree, createDefaultContext(null));
-    }
-
-    public static bool isConstant(string expression)
-    {
-        return isConstant(parseExpression(expression),
-            createDefaultContext(null));
-    }
-
-    public static bool isSimpleProperty(Node tree, OgnlContext context)
+    public static bool IsSimpleProperty(Node tree, OgnlContext context)
     {
         return ((SimpleNode)tree)
-            .IsSimpleProperty(addDefaultContext(null, context));
+            .IsSimpleProperty(AddDefaultContext(string.Empty, context));
     }
 
-    public static bool isSimpleProperty(string expression,
-        OgnlContext context)
-    {
-        return isSimpleProperty(parseExpression(expression), context);
-    }
-
-    public static bool isSimpleProperty(Node tree)
-    {
-        return isSimpleProperty(tree, createDefaultContext(null));
-    }
-
-    public static bool isSimpleProperty(string expression)
-    {
-        return isSimpleProperty(parseExpression(expression),
-            createDefaultContext(null));
-    }
-
-    public static bool isSimpleNavigationChain(Node tree,
+    public static bool IsSimpleNavigationChain(Node tree,
         OgnlContext context)
     {
         return ((SimpleNode)tree)
-            .IsSimpleNavigationChain(addDefaultContext(null, context));
-    }
-
-    public static bool isSimpleNavigationChain(string expression,
-        OgnlContext context)
-    {
-        return isSimpleNavigationChain(parseExpression(expression),
-            context);
-    }
-
-    public static bool isSimpleNavigationChain(Node tree)
-    {
-        return isSimpleNavigationChain(tree, createDefaultContext(null));
-    }
-
-    public static bool isSimpleNavigationChain(string expression)
-    {
-        return isSimpleNavigationChain(parseExpression(expression),
-            createDefaultContext(null));
+            .IsSimpleNavigationChain(AddDefaultContext(string.Empty, context));
     }
 }

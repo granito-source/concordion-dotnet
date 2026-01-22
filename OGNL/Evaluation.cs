@@ -149,7 +149,7 @@ public class Evaluation {
     /// Sets the result of the Evaluation.  This method is normally only used
     /// interally and should not be set without knowledge of what you are doing.
     ///</summary>
-    public void setResult(object value)
+    public void setResult(object? value)
     {
         result = value;
     }

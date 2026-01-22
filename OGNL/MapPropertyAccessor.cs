@@ -53,12 +53,12 @@ public class MapPropertyAccessor : PropertyAccessor {
             throw new OgnlException("node is null for '" + name + "'");
         }
 
-        if (!(currentNode is ASTProperty)) {
+        if (!(currentNode is AstProperty)) {
             currentNode = currentNode.GetParent();
         }
 
-        if (currentNode is ASTProperty) {
-            indexedAccess = ((ASTProperty)currentNode).IndexedAccess;
+        if (currentNode is AstProperty) {
+            indexedAccess = ((AstProperty)currentNode).IndexedAccess;
         }
 
         if (name is string && !indexedAccess) {

@@ -31,18 +31,12 @@
 
 namespace OGNL.Parser;
 
-/**
- * @author Luke Blanshard (blanshlu@netscape.net)
- * @author Drew Davidson (drew@ognl.org)
- */
-internal class ASTShiftLeft(int id) : ExpressionNode(id) {
-    protected override object? GetValueBody(OgnlContext context,
+internal class AstShiftLeft(int id) : ExpressionNode(id) {
+    protected override object GetValueBody(OgnlContext context,
         object source)
     {
-        var v1 = Children[0].GetValue(context, source);
-        var v2 = Children[1].GetValue(context, source);
-
-        return OgnlOps.ShiftLeft(v1, v2);
+        return OgnlOps.ShiftLeft(Children[0].GetValue(context, source),
+            Children[1].GetValue(context, source));
     }
 
     protected override string GetExpressionOperator(int index)

@@ -9,23 +9,12 @@ public class ParserState {
 
     private readonly Stack marks = new();
 
-    private int sp = 0; // number of nodes on stack
+    private int sp; // number of nodes on stack
 
-    private int mk = 0; // current mark
-
-    /* Call this to reinitialize the node stack.  It is called
-       automatically by the parser's ReInit() method. */
-    internal void Reset()
-    {
-        nodes.Clear();
-        marks.Clear();
-        sp = 0;
-        mk = 0;
-    }
+    private int mk; // current mark
 
     /* Returns the root node of the AST.  It only makes sense to call
        this after a successful parse. */
-
     public Node RootNode()
     {
         return (Node)nodes.Peek();
@@ -42,9 +31,8 @@ public class ParserState {
        stack.  */
     internal Node PopNode()
     {
-        if (--sp < mk) {
+        if (--sp < mk)
             mk = (int)marks.Pop();
-        }
 
         return (Node)nodes.Pop();
     }

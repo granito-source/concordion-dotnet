@@ -63,7 +63,7 @@ public class OgnlContext : IDictionary {
 
     private const bool DefaultKeepLastEvaluation = false;
 
-    public static readonly TypeResolver DefaultTypeResolver =
+    private static readonly TypeResolver DefaultTypeResolver =
         new DefaultTypeResolver();
 
     private static readonly TypeConverter DefaultTypeConverter =
@@ -126,7 +126,7 @@ public class OgnlContext : IDictionary {
             if (key.Equals(ThisContextKey))
                 CurrentObject = value;
             else if (key.Equals(RootKey))
-                Root = value;
+                Root = value ?? string.Empty;
             else if (key.Equals(TraceEvaluationsKey))
                 TraceEvaluations = OgnlOps.BooleanValue(value);
             else if (key.Equals(LastEvaluationKey))
@@ -144,7 +144,7 @@ public class OgnlContext : IDictionary {
         }
     }
 
-    public object? Root { get; set; }
+    public object Root { get; set; } = string.Empty;
 
     public object? CurrentObject { get; set; }
 
@@ -249,7 +249,7 @@ public class OgnlContext : IDictionary {
     public void Clear()
     {
         values.Clear();
-        Root = null;
+        Root = string.Empty;
         CurrentObject = null;
         RootEvaluation = null;
         currentEvaluation = null;
@@ -287,7 +287,7 @@ public class OgnlContext : IDictionary {
         if (key.Equals(ThisContextKey))
             CurrentObject = null;
         else if (key.Equals(RootKey))
-            Root = null;
+            Root = string.Empty;
         else if (key.Equals(LastEvaluationKey))
             lastEvaluation = null;
         else if (key.Equals(TypeResolverKey))

@@ -42,19 +42,6 @@ namespace OGNL;
 ///
 public class DefaultTypeConverter : TypeConverter {
     /// <summary>
-    /// Use <see cref="OgnlOps.ConvertValue"/>.
-    /// </summary>
-    /// <param name="context"></param>
-    /// <param name="value"></param>
-    /// <param name="toType"></param>
-    /// <returns></returns>
-    public virtual object convertValue(IDictionary context, object value,
-        Type toType)
-    {
-        return OgnlOps.ConvertValue(value, toType);
-    }
-
-    /// <summary>
     /// A overload version.
     /// </summary>
     /// <param name="context"></param>
@@ -64,9 +51,10 @@ public class DefaultTypeConverter : TypeConverter {
     /// <param name="value"></param>
     /// <param name="toType"></param>
     /// <returns></returns>
-    public virtual object? ConvertValue(IDictionary context, object target,
-        MemberInfo? member, string? propertyName, object? value, Type toType)
+    public virtual object? ConvertValue(IDictionary context,
+        object? target, MemberInfo? member, string? propertyName,
+        object? value, Type toType)
     {
-        return convertValue(context, value, toType);
+        return OgnlOps.ConvertValue(value, toType);
     }
 }

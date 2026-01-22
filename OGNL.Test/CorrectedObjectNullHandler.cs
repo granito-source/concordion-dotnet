@@ -48,7 +48,7 @@ public class CorrectedObjectNullHandler : NullHandler
     /*===================================================================
         TypeConverter interface (overridden)
       ===================================================================*/
-    public object nullMethodResult(IDictionary context, object target, string methodName, object[] args)
+    public object? NullMethodResult(IDictionary context, object target, string methodName, object?[] args)
     {
         if (methodName.Equals("getStringValue")) 
         {
@@ -57,7 +57,7 @@ public class CorrectedObjectNullHandler : NullHandler
         return null;
     }
 
-    public object nullPropertyValue(IDictionary context, object target, object property)
+    public object? NullPropertyValue(IDictionary context, object target, object property)
     {
         object      result = null;
 

@@ -31,10 +31,6 @@
 
 namespace OGNL.Parser;
 
-/**
- * @author Luke Blanshard (blanshlu@netscape.net)
- * @author Drew Davidson (drew@ognl.org)
- */
 public abstract class SimpleNode(int id) : Node {
     protected Node[] Children = [];
 
@@ -78,7 +74,7 @@ public abstract class SimpleNode(int id) : Node {
         Children[i] = node;
     }
 
-    public Node? GetChild(int i)
+    public Node GetChild(int i)
     {
         return Children[i];
     }
@@ -98,26 +94,7 @@ public abstract class SimpleNode(int id) : Node {
         return ParserTreeConstants.JjtNodeName[Id];
     }
 
-    // OGNL additions
-
-    private string ToString(string prefix)
-    {
-        return prefix + ParserTreeConstants.JjtNodeName[Id] + " " +
-            ToString();
-    }
-
-    /* Override this method if you want to customize how the node dumps
-       out its children. */
-    public void Dump(TextWriter writer, string prefix)
-    {
-        writer.WriteLine(ToString(prefix));
-
-        foreach (var child in Children)
-            if (child is SimpleNode simpleNode)
-                simpleNode.Dump(writer, prefix + "  ");
-    }
-
-    private object EvaluateGetValueBody(OgnlContext context, object source)
+    private object? EvaluateGetValueBody(OgnlContext context, object source)
     {
         context.CurrentObject = source;
         context.CurrentNode = this;
@@ -134,7 +111,7 @@ public abstract class SimpleNode(int id) : Node {
     }
 
     private void EvaluateSetValueBody(OgnlContext context, object target,
-        object value)
+        object? value)
     {
         context.CurrentObject = target;
         context.CurrentNode = this;
@@ -184,7 +161,7 @@ public abstract class SimpleNode(int id) : Node {
     {
         if (context.TraceEvaluations) {
             var pool = OgnlRuntime.EvaluationPool;
-            Exception evalException = null;
+            Exception? evalException = null;
             var evaluation = pool.create(this, target, true);
 
             context.PushEvaluation(evaluation);
@@ -198,9 +175,8 @@ public abstract class SimpleNode(int id) : Node {
             } finally {
                 var eval = context.PopEvaluation();
 
-                if (evalException != null) {
+                if (evalException != null)
                     eval.setException(evalException);
-                }
 
                 if (evalException == null && context.RootEvaluation == null &&
                     !context.KeepLastEvaluation) {
@@ -260,31 +236,30 @@ public abstract class SimpleNode(int id) : Node {
         var shouldFlatten = false;
         var newSize = 0;
 
-        for (var i = 0; i < Children.Length; ++i)
-            if (Children[i].GetType() == GetType()) {
+        foreach (var node in Children)
+            if (node.GetType() == GetType()) {
                 shouldFlatten = true;
-                newSize += Children[i].GetNumChildren();
+                newSize += node.GetNumChildren();
             } else
                 ++newSize;
 
-        if (shouldFlatten) {
-            var newChildren = new Node[newSize];
-            var j = 0;
+        if (!shouldFlatten)
+            return;
 
-            for (var i = 0; i < Children.Length; ++i) {
-                var c = Children[i];
+        var newChildren = new Node[newSize];
+        var j = 0;
 
-                if (c.GetType() == GetType())
-                    for (var k = 0; k < c.GetNumChildren(); ++k)
-                        newChildren[j++] = c.GetChild(k);
-                else
-                    newChildren[j++] = c;
-            }
-
-            if (j != newSize)
-                throw new Exception("Assertion error: " + j + " != " + newSize);
-
-            Children = newChildren;
+        foreach (var node in Children) {
+            if (node.GetType() == GetType())
+                for (var k = 0; k < node.GetNumChildren(); ++k)
+                    newChildren[j++] = node.GetChild(k);
+            else
+                newChildren[j++] = node;
         }
+
+        if (j != newSize)
+            throw new Exception("Assertion error: " + j + " != " + newSize);
+
+        Children = newChildren;
     }
 }

@@ -37,72 +37,52 @@ namespace OGNL;
 ///@author Drew Davidson (drew@ognl.org)
 ///
 public abstract class OgnlOps : NumericTypes {
-    private static int CompareWithConversion(object v1, object v2)
+    private static int CompareWithConversion(object? v1, object? v2)
     {
-        int result;
+        if (v1 == v2)
+            return 0;
 
-        if (v1 == v2) {
-            result = 0;
-        } else {
-            int t1 = GetNumericType(v1),
-                t2 = GetNumericType(v2),
-                type = GetNumericType(t1, t2, true);
+        var t1 = GetNumericType(v1);
+        var t2 = GetNumericType(v2);
+        var type = GetNumericType(t1, t2, true);
 
-            switch (type) {
-                case BIGINT:
-                    result = BigIntValue(v1).CompareTo(BigIntValue(v2));
+        switch (type) {
+            case BIGINT:
+                return BigIntValue(v1).CompareTo(BigIntValue(v2));
+            case BIGDEC:
+                return BigDecValue(v1).CompareTo(BigDecValue(v2));
+            case NONNUMERIC:
+                if (t1 != NONNUMERIC || t2 != NONNUMERIC)
+                    return DoubleValue(v1).CompareTo(DoubleValue(v2));
 
-                    break;
-                case BIGDEC:
-                    result = BigDecValue(v1).CompareTo(BigDecValue(v2));
+                if (v1 is IComparable comparable &&
+                    v1.GetType().IsInstanceOfType(v2))
+                    return comparable.CompareTo(v2);
 
-                    break;
-                case NONNUMERIC:
-                    if (t1 == NONNUMERIC && t2 == NONNUMERIC) {
-                        if (v1 is IComparable && v1.GetType().IsAssignableFrom(v2.GetType())) {
-                            result = ((IComparable)v1).CompareTo(v2);
+                if (v1.GetType().IsEnum && v2.GetType().IsEnum)
+                    return LongValue(v1).CompareTo(LongValue(v2));
 
-                            break;
-                        } else if (v1.GetType().IsEnum && v2.GetType().IsEnum) {
-                            result = LongValue(v1).CompareTo(LongValue(v2));
-                        } else if (v1.GetType().IsEnum || v2.GetType().IsEnum) {
-                            var enumType = v1.GetType();
+                if (v1.GetType().IsEnum || v2.GetType().IsEnum) {
+                    var enumType = v1.GetType();
 
-                            if (!enumType.IsEnum) {
-                                enumType = v2.GetType();
-                                v1 = EnumValue(v1, enumType);
-                            } else {
-                                v2 = EnumValue(v2, enumType);
-                            }
+                    if (!enumType.IsEnum) {
+                        enumType = v2.GetType();
+                        v1 = EnumValue(v1, enumType);
+                    } else
+                        v2 = EnumValue(v2, enumType);
 
-                            result = LongValue(v1).CompareTo(LongValue(v2));
-                        } else {
-                            throw new ArgumentException("invalid comparison: " + v1.GetType().Name + " and " +
-                                v2.GetType().Name);
-                        }
-                    }
+                    return LongValue(v1).CompareTo(LongValue(v2));
+                }
 
-                    // else fall through
-                    double dvv1 = DoubleValue(v1),
-                        dvv2 = DoubleValue(v2);
+                throw new ArgumentException(
+                    $"invalid comparison: {v1.GetType().Name} and {v2.GetType().Name}");
 
-                    return dvv1 == dvv2 ? 0 : dvv1 < dvv2 ? -1 : 1;
-                case FLOAT:
-                case DOUBLE:
-                    double dv1 = DoubleValue(v1),
-                        dv2 = DoubleValue(v2);
-
-                    return dv1 == dv2 ? 0 : dv1 < dv2 ? -1 : 1;
-
-                default:
-                    long lv1 = LongValue(v1),
-                        lv2 = LongValue(v2);
-
-                    return lv1 == lv2 ? 0 : lv1 < lv2 ? -1 : 1;
-            }
+            case FLOAT:
+            case DOUBLE:
+                return DoubleValue(v1).CompareTo(DoubleValue(v2));
+            default:
+                return LongValue(v1).CompareTo(LongValue(v2));
         }
-
-        return result;
     }
 
     private static bool IsEqual(object? object1, object? object2)
@@ -233,10 +213,7 @@ public abstract class OgnlOps : NumericTypes {
         if (c == typeof(float))
             return FLOAT;
 
-        if (c == typeof(decimal))
-            return BIGDEC;
-
-        return NONNUMERIC;
+        return c == typeof(decimal) ? BIGDEC : NONNUMERIC;
     }
 
     /// <summary>
@@ -313,7 +290,7 @@ public abstract class OgnlOps : NumericTypes {
     private static object EnumValue(object value, Type toType)
     {
         try {
-            return Enum.Parse(toType, value.ToString(), true);
+            return Enum.Parse(toType, value.ToString() ?? string.Empty, true);
         } catch (Exception) {
             return Enum.ToObject(toType, (int)LongValue(value));
         }
@@ -360,7 +337,7 @@ public abstract class OgnlOps : NumericTypes {
         return Math.Max(t1, t2);
     }
 
-    private static int GetNumericType(object v1, object v2,
+    private static int GetNumericType(object? v1, object? v2,
         bool canBeNonNumeric = false)
     {
         return GetNumericType(GetNumericType(v1), GetNumericType(v2),
@@ -392,27 +369,30 @@ public abstract class OgnlOps : NumericTypes {
         return type == FLOAT ? (float)value : value;
     }
 
-    public static object BinaryOr(object v1, object v2)
+    public static object BinaryOr(object? v1, object? v2)
     {
         return GetNumericType(v1, v2) switch {
             BIGINT or BIGDEC => BigIntValue(v1) | BigIntValue(v2),
-            _ => NewInteger(GetNumericType(v1, v2), LongValue(v1) | LongValue(v2))
+            _ => NewInteger(GetNumericType(v1, v2),
+                LongValue(v1) | LongValue(v2))
         };
     }
 
-    public static object BinaryXor(object v1, object v2)
+    public static object BinaryXor(object? v1, object? v2)
     {
         return GetNumericType(v1, v2) switch {
             BIGINT or BIGDEC => BigIntValue(v1) ^ BigIntValue(v2),
-            _ => NewInteger(GetNumericType(v1, v2), LongValue(v1) ^ LongValue(v2))
+            _ => NewInteger(GetNumericType(v1, v2),
+                LongValue(v1) ^ LongValue(v2))
         };
     }
 
-    public static object BinaryAnd(object v1, object v2)
+    public static object BinaryAnd(object? v1, object? v2)
     {
         return GetNumericType(v1, v2) switch {
             BIGINT or BIGDEC => BigIntValue(v1) & BigIntValue(v2),
-            _ => NewInteger(GetNumericType(v1, v2), LongValue(v1) & LongValue(v2))
+            _ => NewInteger(GetNumericType(v1, v2),
+                LongValue(v1) & LongValue(v2))
         };
     }
 
@@ -425,17 +405,17 @@ public abstract class OgnlOps : NumericTypes {
             return true;
 
         if (v1 is ValueType && v2 is ValueType)
-            return Convert.ToDouble(v1) == Convert.ToDouble(v2);
+            return Convert.ToDouble(v1).Equals(v2);
 
         return false;
     }
 
-    public static bool Less(object v1, object v2)
+    public static bool Less(object? v1, object? v2)
     {
         return CompareWithConversion(v1, v2) < 0;
     }
 
-    public static bool Greater(object v1, object v2)
+    public static bool Greater(object? v1, object? v2)
     {
         return CompareWithConversion(v1, v2) > 0;
     }
@@ -446,7 +426,7 @@ public abstract class OgnlOps : NumericTypes {
             return false;
 
         var elementsAccessor = OgnlRuntime
-            .GetElementsAccessor(OgnlRuntime.GetTargetClass(v2));
+            .GetElementsAccessor(OgnlRuntime.GetTargetType(v2));
 
         for (var e = elementsAccessor.GetElements(v2); e.MoveNext();) {
             var o = e.Current;
@@ -458,33 +438,37 @@ public abstract class OgnlOps : NumericTypes {
         return false;
     }
 
-    public static object ShiftLeft(object v1, object v2)
+    public static object ShiftLeft(object? v1, object? v2)
     {
         return GetNumericType(v1) switch {
             BIGINT or BIGDEC => BigIntValue(v1) << (int)LongValue(v2),
-            _ => NewInteger(GetNumericType(v1), LongValue(v1) << (int)LongValue(v2))
+            _ => NewInteger(GetNumericType(v1),
+                LongValue(v1) << (int)LongValue(v2))
         };
     }
 
-    public static object ShiftRight(object v1, object v2)
+    public static object ShiftRight(object? v1, object? v2)
     {
         return GetNumericType(v1) switch {
             BIGINT or BIGDEC => BigIntValue(v1) >> (int)LongValue(v2),
-            _ => NewInteger(GetNumericType(v1), LongValue(v1) >> (int)LongValue(v2))
+            _ => NewInteger(GetNumericType(v1),
+                LongValue(v1) >> (int)LongValue(v2))
         };
     }
 
     // TODO: This method not supported.
-    public static object UnsignedShiftRight(object v1, object v2)
+    public static object UnsignedShiftRight(object? v1, object? v2)
     {
         return GetNumericType(v1) switch {
             BIGINT or BIGDEC => BigIntValue(v1) >> (int)LongValue(v2),
-            <= INT => NewInteger(INT, (int)LongValue(v1) >> (int)LongValue(v2)),
-            _ => NewInteger(GetNumericType(v1), LongValue(v1) >> (int)LongValue(v2))
+            <= INT => NewInteger(INT,
+                (int)LongValue(v1) >> (int)LongValue(v2)),
+            _ => NewInteger(GetNumericType(v1),
+                LongValue(v1) >> (int)LongValue(v2))
         };
     }
 
-    public static object Add(object v1, object v2)
+    public static object Add(object? v1, object? v2)
     {
         var type = GetNumericType(v1, v2, true);
 
@@ -510,55 +494,63 @@ public abstract class OgnlOps : NumericTypes {
         }
     }
 
-    public static object Subtract(object v1, object v2)
+    public static object Subtract(object? v1, object? v2)
     {
         return GetNumericType(v1, v2) switch {
             BIGINT => BigIntValue(v1) - BigIntValue(v2),
             BIGDEC => BigDecValue(v1) - BigDecValue(v2),
-            FLOAT or DOUBLE => NewReal(GetNumericType(v1, v2), DoubleValue(v1) - DoubleValue(v2)),
-            _ => NewInteger(GetNumericType(v1, v2), LongValue(v1) - LongValue(v2))
+            FLOAT or DOUBLE => NewReal(GetNumericType(v1, v2),
+                DoubleValue(v1) - DoubleValue(v2)),
+            _ => NewInteger(GetNumericType(v1, v2),
+                LongValue(v1) - LongValue(v2))
         };
     }
 
-    public static object Multiply(object v1, object v2)
+    public static object Multiply(object? v1, object? v2)
     {
         return GetNumericType(v1, v2) switch {
             BIGINT => BigIntValue(v1) * BigIntValue(v2),
             BIGDEC => BigDecValue(v1) * BigDecValue(v2),
-            FLOAT or DOUBLE => NewReal(GetNumericType(v1, v2), DoubleValue(v1) * DoubleValue(v2)),
-            _ => NewInteger(GetNumericType(v1, v2), LongValue(v1) * LongValue(v2))
+            FLOAT or DOUBLE => NewReal(GetNumericType(v1, v2),
+                DoubleValue(v1) * DoubleValue(v2)),
+            _ => NewInteger(GetNumericType(v1, v2),
+                LongValue(v1) * LongValue(v2))
         };
     }
 
-    public static object Divide(object v1, object v2)
+    public static object Divide(object? v1, object? v2)
     {
         return GetNumericType(v1, v2) switch {
             BIGINT => BigIntValue(v1) / BigIntValue(v2),
             BIGDEC => BigDecValue(v1) / BigDecValue(v2),
-            FLOAT or DOUBLE => NewReal(GetNumericType(v1, v2), DoubleValue(v1) / DoubleValue(v2)),
-            _ => NewInteger(GetNumericType(v1, v2), LongValue(v1) / LongValue(v2))
+            FLOAT or DOUBLE => NewReal(GetNumericType(v1, v2),
+                DoubleValue(v1) / DoubleValue(v2)),
+            _ => NewInteger(GetNumericType(v1, v2),
+                LongValue(v1) / LongValue(v2))
         };
     }
 
-    public static object Remainder(object v1, object v2)
+    public static object Remainder(object? v1, object? v2)
     {
         return GetNumericType(v1, v2) switch {
             BIGDEC or BIGINT => BigIntValue(v1) % BigIntValue(v2),
-            _ => NewInteger(GetNumericType(v1, v2), LongValue(v1) % LongValue(v2))
+            _ => NewInteger(GetNumericType(v1, v2),
+                LongValue(v1) % LongValue(v2))
         };
     }
 
-    public static object Negate(object value)
+    public static object Negate(object? value)
     {
         return GetNumericType(value) switch {
             BIGINT => -BigIntValue(value),
             BIGDEC => -BigDecValue(value),
-            FLOAT or DOUBLE => NewReal(GetNumericType(value), -DoubleValue(value)),
+            FLOAT or DOUBLE => NewReal(GetNumericType(value),
+                -DoubleValue(value)),
             _ => NewInteger(GetNumericType(value), -LongValue(value))
         };
     }
 
-    public static object BitNegate(object value)
+    public static object BitNegate(object? value)
     {
         return GetNumericType(value) switch {
             BIGDEC or BIGINT => ~BigIntValue(value),

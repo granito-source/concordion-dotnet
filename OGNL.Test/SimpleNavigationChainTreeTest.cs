@@ -81,7 +81,7 @@ public class SimpleNavigationChainTreeTest : OgnlTestCase {
 
     protected internal override void RunTest()
     {
-        Assert.That(Ognl.isSimpleNavigationChain(GetExpression(), Context) ==
+        Assert.That(Ognl.IsSimpleNavigationChain(GetExpression(), Context) ==
             (bool)GetExpectedResult(), Is.True);
     }
 }

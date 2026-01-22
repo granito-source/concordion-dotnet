@@ -143,7 +143,7 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
     protected SimpleNode GetExpression()
     {
         if (expression == null)
-            expression = (SimpleNode)Ognl.parseExpression(expressionString);
+            expression = (SimpleNode)Ognl.ParseExpression(expressionString);
 
         return expression;
     }
@@ -166,14 +166,14 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
             expr = GetExpression();
 
             Assert.That(
-                isEqual(Ognl.getValue(expr, Context, root), expectedResult),
+                isEqual(Ognl.GetValue(expr, Context, root), expectedResult),
                 Is.True);
 
             if (hasSetValue) {
                 testedResult = hasExpectedAfterSetResult ? expectedAfterSetResult : setValue;
-                Ognl.setValue(expr, Context, root, setValue);
+                Ognl.SetValue(expr, Context, root, setValue);
                 Assert.That(
-                    isEqual(Ognl.getValue(expr, Context, root), testedResult),
+                    isEqual(Ognl.GetValue(expr, Context, root), testedResult),
                     Is.True);
             }
         } catch (Exception ex) {
@@ -192,7 +192,7 @@ public abstract class OgnlTestCase : ITestSuiteProvider {
     [SetUp]
     public virtual void setUp()
     {
-        Context = Ognl.createDefaultContext(null);
+        Context = Ognl.CreateDefaultContext(null);
     }
 
     public abstract TestSuite suite();

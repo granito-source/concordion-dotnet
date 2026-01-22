@@ -34,24 +34,11 @@ public class OgnlEvaluator(object fixture) : Evaluator {
 
     private readonly OgnlContext ognlContext = new();
 
-    private void PutVariable(string rawVariableName, object? value)
-    {
-        Check.IsFalse(rawVariableName.StartsWith('#'),
-            "Variable name passed to evaluator should not start with #");
-        Check.IsTrue(!rawVariableName.Equals("in"),
-            "'%s' is a reserved word and cannot be used for variables names",
-            rawVariableName);
-
-        ognlContext[rawVariableName] = value;
-    }
-
     public object? GetVariable(string expression)
     {
         AssertStartsWithHash(expression);
 
-        var rawVariable = expression[1..];
-
-        return ognlContext[rawVariable];
+        return ognlContext[expression[1..]];
     }
 
     public virtual void SetVariable(string expression, object? value)
@@ -60,15 +47,23 @@ public class OgnlEvaluator(object fixture) : Evaluator {
 
         if (expression.Contains('='))
             Evaluate(expression);
-        else {
-            var rawVariable = expression[1..];
-
-            PutVariable(rawVariable, value);
-        }
+        else
+            PutVariable(expression[1..], value);
     }
 
     public virtual object? Evaluate(string expression)
     {
-        return Ognl.getValue(expression, ognlContext, Fixture);
+        return Ognl.GetValue(expression, ognlContext, Fixture);
+    }
+
+    private void PutVariable(string variable, object? value)
+    {
+        Check.IsFalse(variable.StartsWith('#'),
+            "Variable name passed to evaluator should not start with #");
+        Check.IsTrue(!variable.Equals("in"),
+            "'%s' is a reserved word and cannot be used for variables names",
+            variable);
+
+        ognlContext[variable] = value;
     }
 }

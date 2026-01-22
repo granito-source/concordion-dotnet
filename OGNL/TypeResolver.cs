@@ -45,7 +45,7 @@ public interface TypeResolver {
     /// <summary>
     /// Resolve Class Type by class name.
     /// </summary>
-    /// <param name="className"></param>
+    /// <param name="typeName"></param>
     /// <returns></returns>
     Type TypeForName(string typeName);
 }

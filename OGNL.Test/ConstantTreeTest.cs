@@ -57,8 +57,8 @@ public class ConstantTreeTest : OgnlFixture {
     [Test, TestCaseSource(nameof(Tests))]
     public void EvaluatesForConstant(string expression, bool expected)
     {
-        var tree = Ognl.parseExpression(expression);
+        var tree = Ognl.ParseExpression(expression);
 
-        Assert.That(Ognl.isConstant(tree), Is.EqualTo(expected));
+        Assert.That(Ognl.IsConstant(tree), Is.EqualTo(expected));
     }
 }

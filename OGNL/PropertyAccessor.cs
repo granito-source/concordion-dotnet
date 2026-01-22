@@ -29,8 +29,6 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using System.Collections;
-
 namespace OGNL;
 
 ///<summary>

@@ -94,10 +94,10 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
         if (currentNode == null)
             throw new OgnlException("node is null for '" + name + "'");
 
-        if (currentNode is not ASTProperty)
+        if (currentNode is not AstProperty)
             currentNode = currentNode.GetParent();
 
-        var indexed = currentNode is ASTProperty astProperty &&
+        var indexed = currentNode is AstProperty astProperty &&
             astProperty.IndexedAccess &&
             OgnlRuntime.HasGetIndexer(context, target, target.GetType(), 1);
 
@@ -116,10 +116,10 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
         if (currentNode == null)
             throw new OgnlException("node is null for '" + name + "'");
 
-        if (currentNode is not ASTProperty)
+        if (currentNode is not AstProperty)
             currentNode = currentNode.GetParent();
 
-        var indexed = currentNode is ASTProperty astProperty &&
+        var indexed = currentNode is AstProperty astProperty &&
             astProperty.IndexedAccess &&
             OgnlRuntime.HasSetIndexer(context, target, target.GetType(), 1);
 

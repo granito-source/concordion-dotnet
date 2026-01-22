@@ -86,16 +86,12 @@ internal class TokenMgrError : Exception {
             "after : \"" + AddEscapes(errorAfter) + "\"";
     }
 
-    /*
-     * Constructors of various flavors follow.
-     */
-
     private TokenMgrError(string message) : base(message)
     {
     }
 
-    public TokenMgrError(bool EOFSeen, int errorLine, int errorColumn,
-        string errorAfter, char curChar) : this(LexicalError(EOFSeen,
+    public TokenMgrError(bool eofSeen, int errorLine, int errorColumn,
+        string errorAfter, char curChar) : this(LexicalError(eofSeen,
         errorLine, errorColumn, errorAfter, curChar))
     {
     }
