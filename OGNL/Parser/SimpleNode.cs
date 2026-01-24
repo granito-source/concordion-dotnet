@@ -84,70 +84,39 @@ public abstract class SimpleNode(int id) : Node {
         return Children.Length;
     }
 
-    /* You can override these two methods in subclasses of SimpleNode to
-       customize the way the node appears when the tree is dumped.  If
-       your output uses more than one line you should override
-       ToString(string), otherwise overriding ToString() is probably all
-       you need to do. */
+    public object? GetValue(OgnlContext context, object source)
+    {
+        return Evaluate(context, source,
+            () => EvaluateGetValueBody(context, source));
+    }
+
+    public void SetValue(OgnlContext context, object target, object? value)
+    {
+        Evaluate(context, target, () => {
+            EvaluateSetValueBody(context, target, value);
+
+            return null;
+        });
+    }
+
     public override string ToString()
     {
         return ParserTreeConstants.JjtNodeName[Id];
     }
 
-    private object? EvaluateGetValueBody(OgnlContext context, object source)
+    public virtual bool IsConstant(OgnlContext context)
     {
-        context.CurrentObject = source;
-        context.CurrentNode = this;
-
-        if (!constantValueCalculated) {
-            constantValueCalculated = true;
-            hasConstantValue = IsConstant(context);
-
-            if (hasConstantValue)
-                constantValue = GetValueBody(context, source);
-        }
-
-        return hasConstantValue ? constantValue : GetValueBody(context, source);
+        return IsNodeConstant(context);
     }
 
-    private void EvaluateSetValueBody(OgnlContext context, object target,
-        object? value)
+    public virtual bool IsSimpleNavigationChain(OgnlContext context)
     {
-        context.CurrentObject = target;
-        context.CurrentNode = this;
-        SetValueBody(context, target, value);
+        return IsSimpleProperty(context);
     }
 
-    public object? GetValue(OgnlContext context, object source)
+    public bool IsSimpleProperty(OgnlContext context)
     {
-        if (!context.TraceEvaluations)
-            return EvaluateGetValueBody(context, source);
-
-        var pool = OgnlRuntime.EvaluationPool;
-        object? result = null;
-        Exception? evalException = null;
-        var evaluation = pool.create(this, source);
-
-        context.PushEvaluation(evaluation);
-
-        try {
-            return EvaluateGetValueBody(context, source);
-        } catch (Exception ex) {
-            evalException = ex;
-
-            throw;
-        } finally {
-            var eval = context.PopEvaluation();
-
-            eval.setResult(result);
-
-            if (evalException != null)
-                eval.setException(evalException);
-
-            if (evalException == null && context.RootEvaluation == null &&
-                !context.KeepLastEvaluation)
-                pool.recycleAll(eval);
-        }
+        return IsNodeSimpleProperty(context);
     }
 
     /**
@@ -157,41 +126,12 @@ public abstract class SimpleNode(int id) : Node {
     protected abstract object? GetValueBody(OgnlContext context,
         object source);
 
-    public void SetValue(OgnlContext context, object target, object? value)
-    {
-        if (context.TraceEvaluations) {
-            var pool = OgnlRuntime.EvaluationPool;
-            Exception? evalException = null;
-            var evaluation = pool.create(this, target, true);
-
-            context.PushEvaluation(evaluation);
-
-            try {
-                EvaluateSetValueBody(context, target, value);
-            } catch (Exception ex) {
-                evalException = ex;
-
-                throw;
-            } finally {
-                var eval = context.PopEvaluation();
-
-                if (evalException != null)
-                    eval.setException(evalException);
-
-                if (evalException == null && context.RootEvaluation == null &&
-                    !context.KeepLastEvaluation) {
-                    pool.recycleAll(eval);
-                }
-            }
-        } else {
-            EvaluateSetValueBody(context, target, value);
-        }
-    }
-
-    /** Subclasses implement this method to do the actual work of setting the
-        appropriate value in the target object.  The default implementation
-        // throws an <code>InappropriateExpressionException</code>, meaning that it
-        cannot be a set expression.
+    /**
+     * Subclasses implement this method to do the actual work of setting
+     * the appropriate value in the target object. The default
+     * implementation throws an
+     * <code>InappropriateExpressionException</code>, meaning that it
+     * cannot be a set expression.
      */
     protected virtual void SetValueBody(OgnlContext context,
         object target, object? value)
@@ -208,29 +148,17 @@ public abstract class SimpleNode(int id) : Node {
         return false;
     }
 
-    public virtual bool IsConstant(OgnlContext context)
-    {
-        return IsNodeConstant(context);
-    }
-
     protected virtual bool IsNodeSimpleProperty(OgnlContext context)
     {
         return false;
     }
 
-    public bool IsSimpleProperty(OgnlContext context)
-    {
-        return IsNodeSimpleProperty(context);
-    }
-
-    public virtual bool IsSimpleNavigationChain(OgnlContext context)
-    {
-        return IsSimpleProperty(context);
-    }
-
-    /** This method may be called from subclasses' jjtClose methods.  It flattens the
-        tree under this node by eliminating any children that are of the same class as
-        this node and copying their children to this node. */
+    /**
+     * This method may be called from subclasses' jjtClose methods.
+     * It flattens the tree under this node by eliminating any children
+     * that are of the same class as this node and copying their children
+     * to this node.
+     * */
     protected void FlattenTree()
     {
         var shouldFlatten = false;
@@ -261,5 +189,54 @@ public abstract class SimpleNode(int id) : Node {
             throw new Exception("Assertion error: " + j + " != " + newSize);
 
         Children = newChildren;
+    }
+
+    private object? EvaluateGetValueBody(OgnlContext context, object source)
+    {
+        context.CurrentObject = source;
+        context.CurrentNode = this;
+
+        if (!constantValueCalculated) {
+            constantValueCalculated = true;
+            hasConstantValue = IsConstant(context);
+
+            if (hasConstantValue)
+                constantValue = GetValueBody(context, source);
+        }
+
+        return hasConstantValue ? constantValue : GetValueBody(context, source);
+    }
+
+    private void EvaluateSetValueBody(OgnlContext context, object target,
+        object? value)
+    {
+        context.CurrentObject = target;
+        context.CurrentNode = this;
+        SetValueBody(context, target, value);
+    }
+
+    private object? Evaluate(OgnlContext context, object obj,
+        Func<object?> func)
+    {
+        if (!context.TraceEvaluations)
+            return func();
+
+        context.PushEvaluation(new Evaluation(this, obj));
+
+        object? result = null;
+        Exception? exception = null;
+
+        try {
+            result = func();
+        } catch (Exception ex) {
+            exception = ex;
+        } finally {
+            var evaluation = context.PopEvaluation();
+
+            evaluation.Result = result;
+            evaluation.Exception = exception;
+        }
+
+        return result;
     }
 }

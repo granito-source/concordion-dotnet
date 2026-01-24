@@ -174,43 +174,34 @@ public class OgnlContext : IDictionary {
             values[entry.Key] = entry.Value;
     }
 
-    ///<summary>
-    /// This method can be called when the last evaluation has been used
-    /// and can be returned for reuse in the free pool maintained by the
-    /// runtime.  This is not a necessary step, but is useful for keeping
-    /// memory usage down.  This will recycle the last evaluation and then
-    /// set the last evaluation to null.
-    ///</summary>
-    public void RecycleLastEvaluation()
-    {
-        OgnlRuntime.EvaluationPool.recycleAll(lastEvaluation);
-        lastEvaluation = null;
-    }
-
-    ///<summary>
+    /// <summary>
     /// Pushes a new Evaluation onto the stack.  This is done
     /// before a node evaluates.  When evaluation is complete
     /// it should be popped from the stack via <code>popEvaluation()</code>.
-    ///</summary>
+    /// </summary>
     public void PushEvaluation(Evaluation value)
     {
         if (currentEvaluation != null)
-            currentEvaluation.addChild(value);
+            currentEvaluation.AddChild(value);
         else
             RootEvaluation = value;
 
         currentEvaluation = value;
     }
 
-    ///<summary>
+    /// <summary>
     /// Pops the current Evaluation off of the top of the stack.
     /// This is done after a node has completed its evaluation.
-    ///</summary>
-    public Evaluation? PopEvaluation()
+    /// </summary>
+    public Evaluation PopEvaluation()
     {
         var result = currentEvaluation;
 
-        currentEvaluation = result?.getParent();
+        if (result == null)
+            throw new InvalidOperationException(
+                "popping from empty evaluation stack");
+
+        currentEvaluation = result.Parent;
 
         if (currentEvaluation == null) {
             lastEvaluation = KeepLastEvaluation ? result : null;

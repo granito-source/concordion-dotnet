@@ -60,8 +60,6 @@ public static class OgnlRuntime {
 
     public static readonly object NotFound = new();
 
-    public static readonly EvaluationPool EvaluationPool = new();
-
     public static readonly ObjectArrayPool ObjectArrayPool = new();
 
     private const string NoConversionPossible = "ognl.NoConversionPossible";

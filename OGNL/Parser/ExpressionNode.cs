@@ -31,10 +31,6 @@
 
 namespace OGNL.Parser;
 
-/**
- * @author Luke Blanshard (blanshlu@netscape.net)
- * @author Drew Davidson (drew@ognl.org)
- */
 internal abstract class ExpressionNode(int i) : SimpleNode(i) {
     public override bool IsConstant(OgnlContext context)
     {
@@ -54,27 +50,26 @@ internal abstract class ExpressionNode(int i) : SimpleNode(i) {
         return result;
     }
 
-    protected virtual string GetExpressionOperator(int index)
-    {
-        throw new Exception("unknown operator for " +
-            ParserTreeConstants.JjtNodeName[Id]);
-    }
-
     public override string ToString()
     {
         var result = Parent == null ? "" : "(";
 
-        if (Children.Length > 0)
-            for (var i = 0; i < Children.Length; ++i) {
-                if (i > 0)
-                    result += " " + GetExpressionOperator(i) + " ";
+        for (var i = 0; i < Children.Length; ++i) {
+            if (i > 0)
+                result += " " + GetExpressionOperator(i) + " ";
 
-                result += Children[i].ToString();
-            }
+            result += Children[i].ToString();
+        }
 
         if (Parent != null)
             result += ")";
 
         return result;
+    }
+
+    protected virtual string GetExpressionOperator(int index)
+    {
+        throw new Exception("unknown operator for " +
+            ParserTreeConstants.JjtNodeName[Id]);
     }
 }

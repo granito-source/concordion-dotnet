@@ -38,7 +38,7 @@ internal class AstMap(int id) : SimpleNode(id) {
 
     public string? TypeName { private get; set; }
 
-    protected override object? GetValueBody(OgnlContext context,
+    protected override object GetValueBody(OgnlContext context,
         object source)
     {
         IDictionary answer;

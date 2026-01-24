@@ -3140,8 +3140,6 @@ internal class Parser /*@bgen(jjtree)*/ : ParserTreeConstants { /*@bgen(jjtree)*
 
     private int jjLa;
 
-    private const bool LookingAhead = false;
-
     private int jjGen;
 
     private readonly int[] jjLa1 = new int[64];
