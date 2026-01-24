@@ -1,8 +1,6 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -31,84 +29,73 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Diagnostics.CodeAnalysis;
+
 namespace OGNL.Test;
 
-public class MethodWithConversionTest : OgnlTestCase
-{
-    private static Simple           SIMPLE = new();
-
-    private static object[][]       TESTS = [
-        // Method call with conversion
-        [SIMPLE, "setValues(10, \"10.56\", 34.225)", null],
-        [SIMPLE, "StringValue", "10"],
-        [SIMPLE, "StringValue", "10", 'x', "x"],       /* set through setValue() */
-        [SIMPLE, "setStringValue('x')", null],                        /* set by calling setStringValue() directly */
-        [SIMPLE, "FloatValue", 10.56f]
+[TestFixture]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("Structure", "NUnit1028:The non-test method is public")]
+[SuppressMessage("Performance", "CA1822")]
+public class MethodWithConversionTest : OgnlFixture {
+    private static readonly object[][] Tests = [
+        ["Int('300')", 300],
+        ["Int(300L)", 300],
+        ["Int(300.5f)", 300],
+        ["Int(300.5d)", 300],
+        ["Long('300')", 300],
+        ["Long(300)", 300],
+        ["Long(300.5f)", 300],
+        ["Long(300.5d)", 300],
+        ["Float('300.5')", 300.5f],
+        ["Float(300)", 300f],
+        ["Float(300L)", 300f],
+        ["Float(300.5d)", 300.5f],
+        ["Double('300.5')", 300.5d],
+        ["Double(300)", 300d],
+        ["Double(300L)", 300d],
+        ["Double(300.5f)", 300.5d],
+        ["String(300)", "300"],
+        ["String(300L)", "300"],
+        ["String(300.5f)", "300.5"],
+        ["String(300.5d)", "300.5"],
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
+    public int Int(int x)
     {
-        var       result = new TestSuite();
-
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new MethodWithConversionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new MethodWithConversionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new MethodWithConversionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
-                        throw new Exception("don't understand TEST format");
-                    }
-                }
-            }
-        }
-        return result;
+        return x;
     }
 
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public MethodWithConversionTest()
+    public long Long(long x)
     {
-	    
+        return x;
     }
 
-    public MethodWithConversionTest(string name): base(name)
+    public float Float(float x)
     {
-	    
+        return x;
     }
 
-    public MethodWithConversionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    public double Double(double x)
     {
-        
+        return x;
     }
 
-    public MethodWithConversionTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
+    public string String(string x)
     {
-        
+        return x;
     }
 
-    public MethodWithConversionTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
+    [Test, TestCaseSource(nameof(Tests))]
+    public void Evaluates(string expression, object? expected)
     {
-        
+        Assert.That(Get(expression), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void ThrowsExceptionWhenConversionIsNotPossible()
+    {
+        Assert.Throws<MethodFailedException>(() => Get("Int('300.5')"));
     }
 }

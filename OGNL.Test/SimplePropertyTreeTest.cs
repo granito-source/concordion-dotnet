@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -29,63 +30,49 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using OGNL.Test.Util;
-
 namespace OGNL.Test;
 
-public class SimplePropertyTreeTest : OgnlTestCase {
-    private static readonly object[][] Tests = [
-        ["name", true],
-        ["foo", true],
-        ["name[i]", false],
-        ["name + foo", false],
-        ["name.foo", false],
-        ["name.foo.bar", false],
-        ["name.{? foo }", false],
-        ["name.( foo )", false]
-    ];
-
-    public override TestSuite suite()
+[TestFixture]
+public class SimplePropertyTreeTest : OgnlFixture {
+    [Test]
+    public void ConsidersSingleNameSimpleProperty()
     {
-        var result = new TestSuite();
-
-        for (var i = 0; i < Tests.Length; i++) {
-            result.addTest(new SimplePropertyTreeTest((string)Tests[i][0] + " (" + Tests[i][1] + ")", null,
-                (string)Tests[i][0], Tests[i][1]));
-        }
-
-        return result;
+        Assert.That(IsSimpleProperty("name"), Is.True);
     }
 
-    public SimplePropertyTreeTest()
+    [Test]
+    public void DoesNotConsiderIndexAccessSimpleProperty()
     {
+        Assert.That(IsSimpleProperty("name[foo]"), Is.False);
     }
 
-    public SimplePropertyTreeTest(string name) : base(name)
+    [Test]
+    public void DoesNotConsiderExpressionSimpleProperty()
     {
+        Assert.That(IsSimpleProperty("name + foo"), Is.False);
     }
 
-    public SimplePropertyTreeTest(string name, object root, string expressionString, object expectedResult,
-        object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    [Test]
+    public void DoesNotConsiderDotSeparatedNamesSimpleProperty()
     {
+        Assert.That(IsSimpleProperty("name.foo"), Is.False);
     }
 
-    public SimplePropertyTreeTest(string name, object root, string expressionString, object expectedResult,
-        object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
+    [Test]
+    public void DoesNotConsiderSelectionSimpleProperty()
     {
+        Assert.That(IsSimpleProperty("name.{? foo }"), Is.False);
     }
 
-    public SimplePropertyTreeTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
+    [Test]
+    public void DoesNotConsiderSubexpressionSimpleProperty()
     {
+        Assert.That(IsSimpleProperty("name.( foo )"), Is.False);
     }
 
-    protected internal override void RunTest()
+    private bool IsSimpleProperty(string expression)
     {
-        Assert.That(
-            Ognl.IsSimpleProperty(GetExpression(), Context) == (bool)GetExpectedResult(),
-            Is.True);
+        return Ognl.IsSimpleProperty(
+            Ognl.ParseExpression(expression), Context);
     }
 }

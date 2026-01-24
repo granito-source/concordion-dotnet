@@ -36,6 +36,7 @@ namespace OGNL.Test;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("Performance", "CA1822")]
 public class PropertyTest : OgnlFixture {
     public static readonly string Size = "size";
 
@@ -78,15 +79,27 @@ public class PropertyTest : OgnlFixture {
         ["Dictionary[\"missing\"].(#this == null ? 'empty' : #this)", "empty"]
     ];
 
-    public string[] Array { get; } = TestArray;
+    public string[] Array => TestArray;
 
-    public List<string> List { get; } = TestList;
+    public List<string> List => TestList;
 
-    public Dictionary<string, object> Dictionary { get; } = TestMap;
+    public Dictionary<string, object> Dictionary => TestMap;
 
     [Test, TestCaseSource(nameof(Tests))]
     public void Evaluates(string expression, object expected)
     {
         Assert.That(Get(expression), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void ThrowsExceptionWhenMissingProperty()
+    {
+        Assert.Throws<OgnlException>(() => Get("Missing"));
+    }
+
+    [Test]
+    public void ThrowsExceptionWhenMissingPropertyViaIndexedAccess()
+    {
+        Assert.Throws<OgnlException>(() => Get("['Missing']"));
     }
 }

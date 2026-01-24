@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -29,64 +30,28 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
+using System.Diagnostics.CodeAnalysis;
 
 namespace OGNL.Test;
 
-public class ClassMethodTest : OgnlTestCase {
-    private static readonly CorrectedObject Corrected = new();
-
+[TestFixture]
+public class ClassMethodTest: OgnlFixture, IComparable {
     private static readonly object[][] Tests = [
-        // Methods on Class
-        [Corrected, "GetType().Name", Corrected.GetType().Name],
-        [Corrected, "GetType().GetInterfaces()", Corrected.GetType().GetInterfaces()],
-        [Corrected, "GetType().GetInterfaces().length", Corrected.GetType().GetInterfaces().Length],
-        [
-            null, "@System.AppDomain@CurrentDomain.Type.GetInterfaces()",
-            AppDomain.CurrentDomain.GetType().GetInterfaces()
-        ],
-        [null, "@System.AppDomain@CurrentDomain.Type.Type.Name", AppDomain.CurrentDomain.GetType().GetType().Name]
+        ["GetType().Name", "ClassMethodTest"],
+        ["GetType().GetInterfaces()", new[] { typeof(IComparable) }],
+        ["GetType().GetInterfaces().length", 1],
+        ["@OGNL.Test.ClassMethodTest@class.Name", "ClassMethodTest"]
     ];
 
-    public override TestSuite suite()
+    [Test, TestCaseSource(nameof(Tests))]
+    public void Evaluates(string expression, object expected)
     {
-        var result = new TestSuite();
-
-        for (var i = 0; i < Tests.Length; i++) {
-            result.addTest(new ClassMethodTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1], Tests[i][2]));
-        }
-
-        return result;
+        Assert.That(Get(expression), Is.EqualTo(expected));
     }
 
-    public ClassMethodTest()
+    [SuppressMessage("Structure", "NUnit1028:The non-test method is public")]
+    public int CompareTo(object? obj)
     {
-    }
-
-    public ClassMethodTest(string name) : base(name)
-    {
-    }
-
-    public ClassMethodTest(string name, object root, string expressionString, object expectedResult, object setValue,
-        object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-    }
-
-    public ClassMethodTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-    }
-
-    public ClassMethodTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
-    }
-
-    [Test]
-    public void Test4()
-    {
-        suite()[4].RunTest();
+        throw new NotImplementedException();
     }
 }

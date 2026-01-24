@@ -74,13 +74,6 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
         }
     }
 
-    private static string FromObjectName(object name)
-    {
-        var plainName = name.ToString();
-
-        return plainName ?? throw new OgnlException("property name is null");
-    }
-
     private static bool IsPropertyName(string? name)
     {
         return name != null && NameRegex().IsMatch(name);
@@ -92,7 +85,7 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
         var currentNode = context.CurrentNode;
 
         if (currentNode == null)
-            throw new OgnlException("node is null for '" + name + "'");
+            throw new OgnlException($"node is null for '{name}'");
 
         if (currentNode is not AstProperty)
             currentNode = currentNode.GetParent();
@@ -110,11 +103,14 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
     public virtual void SetProperty(OgnlContext context, object target,
         object name, object? value)
     {
-        var plainName = FromObjectName(name);
+        // XXX: something strange is happening here for indexer access
+        // when the index is also a property, e.g. set "[Index]" to "x":
+        // the current node seems to point to Index and not to the
+        // indexed object. Need to investigate further.
         var currentNode = context.CurrentNode;
 
         if (currentNode == null)
-            throw new OgnlException("node is null for '" + name + "'");
+            throw new OgnlException($"node is null for '{name}'");
 
         if (currentNode is not AstProperty)
             currentNode = currentNode.GetParent();
@@ -123,9 +119,9 @@ public partial class ObjectPropertyAccessor : PropertyAccessor {
             astProperty.IndexedAccess &&
             OgnlRuntime.HasSetIndexer(context, target, target.GetType(), 1);
 
-        if (indexed)
-            OgnlRuntime.SetIndexerValue(context, target, name, value, [name]);
-        else
+        if (!indexed && name is string plainName && IsPropertyName(plainName))
             TrySettingProperty(context, target, plainName, value);
+        else
+            OgnlRuntime.SetIndexerValue(context, target, name, value, [name]);
     }
 }

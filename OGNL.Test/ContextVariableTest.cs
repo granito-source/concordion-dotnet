@@ -32,6 +32,7 @@
 
 namespace OGNL.Test;
 
+[TestFixture]
 public class ContextVariableTest : OgnlFixture {
     [Test]
     public void HasSpecialRootVariable()

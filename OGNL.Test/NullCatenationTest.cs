@@ -1,6 +1,5 @@
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
-//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -36,42 +35,43 @@ namespace OGNL.Test;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-public class CollectionPropertyTest : OgnlFixture {
-    private static readonly object?[][] Tests = [
-        ["EmptyList.isEmpty", true],
-        ["List.isEmpty", false],
-        ["EmptyList.size", 0],
-        ["List.size", 2],
-        ["List.iterator.hasNext", true],
-        ["List.iterator.next", "one"],
-        ["#it = List.iterator, #it.next, #it.next, #it.hasNext", false],
-        ["#it = List.iterator, #it.next, #it.next", "two"],
-        ["Dictionary['answer']", 42],
-        ["Dictionary.isEmpty", false],
-        ["EmptyDictionary.isEmpty", true],
-        ["EmptyDictionary['isEmpty']", null],
-        ["Dictionary.size", 3],
-        ["Dictionary['size']", 42],
-        ["Dictionary.keys", (string[])["answer", "temperature", "size"]],
-        ["Dictionary.values", (int[])[42, 451, 42]]
-    ];
+[SuppressMessage("Performance", "CA1822")]
+public class NullCatenationTest : OgnlFixture {
+    public object? Null => null;
 
-    public Dictionary<string, int> EmptyDictionary = new();
-
-    public Dictionary<string, int> Dictionary = new()
+    [Test]
+    public void TreatsNullAsEmptyWhenAppendingNullToString()
     {
-        ["answer"] = 42,
-        ["temperature"] = 451,
-        ["size"] = 42
-    };
+        Assert.That(Get("'bar' + null"), Is.EqualTo("bar"));
+    }
 
-    public List<string> EmptyList = [];
-
-    public List<string> List = ["one", "two"];
-
-    [Test, TestCaseSource(nameof(Tests))]
-    public void Evaluates(string expression, object? expected)
+    [Test]
+    public void TreatsNullAsEmptyWhenAppendingStringToNull()
     {
-        Assert.That(Get(expression), Is.EqualTo(expected));
+        Assert.That(Get("null + 'bar'"), Is.EqualTo("bar"));
+    }
+
+    [Test]
+    public void TreatsNullAsEmptyWhenAppendingNullValueToString()
+    {
+        Assert.That(Get("'bar' + Null"), Is.EqualTo("bar"));
+    }
+
+    [Test]
+    public void TreatsNullAsEmptyWhenAppendingStringToNullValue()
+    {
+        Assert.That(Get("Null + 'bar'"), Is.EqualTo("bar"));
+    }
+
+    [Test]
+    public void ThrowsExceptionWhenAppendingNullToNonString()
+    {
+        Assert.Throws<NullReferenceException>(() => Get("42 + null"));
+    }
+
+    [Test]
+    public void ThrowsExceptionWhenAppendingNonStringToNull()
+    {
+        Assert.Throws<NullReferenceException>(() => Get("null + 42"));
     }
 }

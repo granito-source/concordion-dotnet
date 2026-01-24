@@ -38,9 +38,9 @@ namespace OGNL.Test;
 [TestFixture]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class MutationTest : OgnlFixture {
-    public readonly IDictionary dictionary = new Hashtable();
+    public readonly Hashtable Dictionary = new();
 
-    public readonly IList array = new[] { "foo", "bar", "baz" };
+    public readonly string[] Array = ["foo", "bar", "baz"];
 
     [Test]
     public void ThrowsExceptionWhenNotAProperty()
@@ -51,92 +51,92 @@ public class MutationTest : OgnlFixture {
     [Test]
     public void AllowsSettingDictionaryValues()
     {
-        Set("dictionary.key", 42);
+        Set("Dictionary.key", 42);
 
-        Assert.That(Get("dictionary.key"), Is.EqualTo(42));
+        Assert.That(Get("Dictionary.key"), Is.EqualTo(42));
     }
 
     [Test]
     public void AllowsSettingDictionaryValuesWithFallbackKey()
     {
-        Set("dictionary.key", 42);
-        Set("dictionary.(missing || key)", 212);
+        Set("Dictionary.key", 42);
+        Set("Dictionary.(missing || key)", 212);
 
         using (Assert.EnterMultipleScope()) {
-            Assert.That(Get("dictionary.key"), Is.EqualTo(212));
-            Assert.That(Get("dictionary.missing"), Is.Null);
+            Assert.That(Get("Dictionary.key"), Is.EqualTo(212));
+            Assert.That(Get("Dictionary.missing"), Is.Null);
         }
     }
 
     [Test]
     public void DoesNotChangeDictionaryWhenFallbackKeyIsMissing()
     {
-        Set("dictionary.key", 42);
-        Set("dictionary.(key || missing)", 212);
+        Set("Dictionary.key", 42);
+        Set("Dictionary.(key || missing)", 212);
 
         using (Assert.EnterMultipleScope()) {
-            Assert.That(Get("dictionary.key"), Is.EqualTo(42));
-            Assert.That(Get("dictionary.missing"), Is.Null);
+            Assert.That(Get("Dictionary.key"), Is.EqualTo(42));
+            Assert.That(Get("Dictionary.missing"), Is.Null);
         }
     }
 
     [Test]
     public void AllowsSettingDictionaryValuesConditionally()
     {
-        Set("dictionary.key", 42);
-        Set("dictionary.(key && conditional)", 212);
+        Set("Dictionary.key", 42);
+        Set("Dictionary.(key && conditional)", 212);
 
         using (Assert.EnterMultipleScope()) {
-            Assert.That(Get("dictionary.key"), Is.EqualTo(42));
-            Assert.That(Get("dictionary.conditional"), Is.EqualTo(212));
+            Assert.That(Get("Dictionary.key"), Is.EqualTo(42));
+            Assert.That(Get("Dictionary.conditional"), Is.EqualTo(212));
         }
     }
 
     [Test]
     public void DoesNotSetConditionalPropertyWhenMissingKey()
     {
-        Set("dictionary.(missing && conditional)", 42);
+        Set("Dictionary.(missing && conditional)", 42);
 
         using (Assert.EnterMultipleScope()) {
-            Assert.That(Get("dictionary.missing"), Is.Null);
-            Assert.That(Get("dictionary.conditional"), Is.Null);
+            Assert.That(Get("Dictionary.missing"), Is.Null);
+            Assert.That(Get("Dictionary.conditional"), Is.Null);
         }
     }
 
     [Test]
     public void AllowsCallingDictionaryMethodsInKeyExpression()
     {
-        Set("dictionary.(key || Add(\"key\", 451), key)", 42);
+        Set("Dictionary.(key || Add(\"key\", 451), key)", 42);
 
-        Assert.That(Get("dictionary.key"), Is.EqualTo(42));
+        Assert.That(Get("Dictionary.key"), Is.EqualTo(42));
     }
 
     [Test]
     public void AllowsUsingThisInDictionaryKeyExpressions()
     {
-        Set("dictionary.key", 42);
-        Set("dictionary[0]=\"dictionary.key\", dictionary[0](#this)", 212);
+        Set("Dictionary.key", 42);
+        Set("Dictionary[0]=\"Dictionary.key\", Dictionary[0](#this)", 212);
 
-        Assert.That(Get("dictionary.key"), Is.EqualTo(212));
+        Assert.That(Get("Dictionary.key"), Is.EqualTo(212));
     }
 
     [Test]
     public void ThrowsExceptionWhenNoDictionaryKey()
     {
-        Assert.Throws<NoSuchPropertyException>(() => Set("dictionary", 42));
+        Assert.Throws<NoSuchPropertyException>(() => Set("Dictionary", 42));
     }
 
     [Test]
     public void AllowsSettingArrayValuesUsingIntegerIndexes()
     {
-        Set("array[0]", "42");
-        Set("array[1]", "451");
-        Set("array[2]", "1984");
+        Set("Array[0]", "42");
+        Set("Array[1]", "451");
+        Set("Array[2]", "1984");
 
         using (Assert.EnterMultipleScope()) {
-            Assert.That(Get("array[0]"), Is.EqualTo("42"));
-            Assert.That(Get("array[1]"), Is.EqualTo("451"));
-            Assert.That(Get("array[2]"), Is.EqualTo("1984"));
+            Assert.That(Get("Array[0]"), Is.EqualTo("42"));
+            Assert.That(Get("Array[1]"), Is.EqualTo("451"));
+            Assert.That(Get("Array[2]"), Is.EqualTo("1984"));
         }
     }
 
@@ -144,63 +144,63 @@ public class MutationTest : OgnlFixture {
     public void ThrowsExceptionWhenArrayIndexIsNegative()
     {
         Assert.Throws<IndexOutOfRangeException>(() =>
-            Set("array[-1]", "negative"));
+            Set("Array[-1]", "negative"));
     }
 
     [Test]
     public void ThrowsExceptionWhenArrayIndexIsOutOfBounds()
     {
         Assert.Throws<IndexOutOfRangeException>(() =>
-            Set("array[3]", "out of bounds"));
+            Set("Array[3]", "out of bounds"));
     }
 
     [Test]
     public void AllowsSettingArrayValuesUsingSpecialIndexes()
     {
-        Set("array[^]", "42");
-        Set("array[|]", "451");
-        Set("array[$]", "1984");
+        Set("Array[^]", "42");
+        Set("Array[|]", "451");
+        Set("Array[$]", "1984");
 
         using (Assert.EnterMultipleScope()) {
-            Assert.That(Get("array[0]"), Is.EqualTo("42"));
-            Assert.That(Get("array[1]"), Is.EqualTo("451"));
-            Assert.That(Get("array[2]"), Is.EqualTo("1984"));
+            Assert.That(Get("Array[0]"), Is.EqualTo("42"));
+            Assert.That(Get("Array[1]"), Is.EqualTo("451"));
+            Assert.That(Get("Array[2]"), Is.EqualTo("1984"));
         }
     }
 
     [Test]
     public void AllowsSettingWholeArray()
     {
-        Set("array[*]", new[] { "42", "451", "1984" });
+        Set("Array[*]", new[] { "42", "451", "1984" });
 
         using (Assert.EnterMultipleScope()) {
-            Assert.That(Get("array[0]"), Is.EqualTo("42"));
-            Assert.That(Get("array[1]"), Is.EqualTo("451"));
-            Assert.That(Get("array[2]"), Is.EqualTo("1984"));
+            Assert.That(Get("Array[0]"), Is.EqualTo("42"));
+            Assert.That(Get("Array[1]"), Is.EqualTo("451"));
+            Assert.That(Get("Array[2]"), Is.EqualTo("1984"));
         }
     }
 
     [Test]
     public void AllowsSourceArrayToBeShorter()
     {
-        Set("array[*]", new[] { "42", "451" });
+        Set("Array[*]", new[] { "42", "451" });
 
         using (Assert.EnterMultipleScope()) {
-            Assert.That(Get("array[0]"), Is.EqualTo("42"));
-            Assert.That(Get("array[1]"), Is.EqualTo("451"));
-            Assert.That(Get("array[2]"), Is.EqualTo("baz"));
+            Assert.That(Get("Array[0]"), Is.EqualTo("42"));
+            Assert.That(Get("Array[1]"), Is.EqualTo("451"));
+            Assert.That(Get("Array[2]"), Is.EqualTo("baz"));
         }
     }
 
     [Test]
     public void AllowsSourceArrayToBeLonger()
     {
-        Set("array[*]", new[] { "42", "451", "1984", "90210" });
+        Set("Array[*]", new[] { "42", "451", "1984", "90210" });
 
         using (Assert.EnterMultipleScope()) {
-            Assert.That(Get("array[0]"), Is.EqualTo("42"));
-            Assert.That(Get("array[1]"), Is.EqualTo("451"));
-            Assert.That(Get("array[2]"), Is.EqualTo("1984"));
+            Assert.That(Get("Array[0]"), Is.EqualTo("42"));
+            Assert.That(Get("Array[1]"), Is.EqualTo("451"));
+            Assert.That(Get("Array[2]"), Is.EqualTo("1984"));
         }
     }
 }

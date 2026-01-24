@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -35,6 +36,7 @@ using System.Reflection;
 
 namespace OGNL.Test;
 
+[TestFixture]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class ArrayElementsTest : OgnlFixture {
     private static readonly string[] StringArray = ["hello", "world"];
@@ -70,7 +72,7 @@ public class ArrayElementsTest : OgnlFixture {
     [SetUp]
     public void SetUp()
     {
-        context.TypeConverter = new ArrayDefaultTypeConverter();
+        Context.TypeConverter = new ArrayDefaultTypeConverter();
     }
 
     [Test, TestCaseSource(nameof(EvaluationTests))]
@@ -95,7 +97,7 @@ public class ArrayElementsTest : OgnlFixture {
 
     private class ArrayDefaultTypeConverter : DefaultTypeConverter {
         public override object? ConvertValue(IDictionary context,
-            object target, MemberInfo? member, string? propertyName,
+            object? target, MemberInfo? member, string? propertyName,
             object? value, Type toType)
         {
             if (value != null && value.GetType().IsArray && !toType.IsArray)

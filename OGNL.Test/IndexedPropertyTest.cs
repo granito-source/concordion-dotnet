@@ -1,8 +1,6 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson ,  Luke Blanshard and Foxcoming
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -31,97 +29,51 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Diagnostics.CodeAnalysis;
+
 namespace OGNL.Test;
 
-public class IndexedPropertyTest : OgnlTestCase
-{
-    private static Indexed          INDEXED = new();
+[TestFixture]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("Performance", "CA1822")]
+public class IndexedPropertyTest : OgnlFixture {
+    private readonly string[] values = ["one", "two", "three"];
 
-    private static object[][]       TESTS = [
-        // Indexed properties
-        [INDEXED, "Values", INDEXED.getValues()],                                 /* gets string[] */
-        [INDEXED, "[\"Values\"]", typeof (MethodFailedException)],                           /* COnflict with this ["string"], Exception */
-        [INDEXED.getValues(), "[0]", INDEXED.getValues()[0]],                     /* "foo" */
-        [INDEXED, "getValues()[0]", INDEXED.getValues()[0]],                      /* "foo" directly from array */
-        [INDEXED, "Item[0]", INDEXED[0]],                             /* "foo" + "xxx" */
-        [INDEXED, "[0]", INDEXED [0]],                             /* "foo" + "xxx" */
-        // Index property can't getLength.
-        [INDEXED, "Values[^]", INDEXED.getValues () [0]],                             /* "foo" + "xxx" */
-        [INDEXED, "Values[|]", INDEXED.getValues ()[1]],                             /* "bar" + "xxx" */
-        [INDEXED, "Values[$]", INDEXED.getValues ()[2]],                             /* "baz" + "xxx" */
-        // Try to use this, If There is a Property Named Item to. chould use this.
-        // No used....
-        // new object [] { INDEXED, "Item[^]", INDEXED.getValues (0) },                             /* "foo" + "xxx" */
+    public int Index => 1;
 
-        [INDEXED, "[0]", "fooxxx" , "xxxx" + "xxx", "xxxx" + "xxx"],    /* set through setValues(int, string) */
-        [INDEXED, "Item[1]", "bar" + "xxx", "xxxx" + "xxx", "xxxx" + "xxx"],    /* set through setValues(int, string) */
-        [INDEXED, "Item[1]", "xxxx" + "xxx"],                                   /* getValues(int) again to check if setValues(int, string) was called */
-        [INDEXED, "setValues(2, \"xxxx\")", null] /* was "baz" -> "xxxx" */
+    public string this[int index] {
+        get => values[index] + "X";
+
+        set => values[index] = value.EndsWith('X') ? value[..^1] : value;
+    }
+
+    private static readonly object[][] GetTests = [
+        ["[0]", "oneX"],
+        ["[Index]", "twoX"],
+        ["Item[0]", "oneX"],
+        ["Item[Index]", "twoX"],
+
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
-    {
-        var       result = new TestSuite();
+    private static readonly object[][] SetTests = [
+        ["[0]", "unoX", "unoX"],
+        ["[Index]", "dosX", "dosX"],
+        ["Item[0]", "unoX", "unoX"],
+        ["Item[Index]", "dosX", "dosX"]
+    ];
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new IndexedPropertyTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
-                        throw new Exception("don't understand TEST format");
-                    }
-                }
-            }
-        }
-        return result;
+    [Test, TestCaseSource(nameof(GetTests))]
+    public void Evaluates(string expression, object? expected)
+    {
+        Assert.That(Get(expression), Is.EqualTo(expected));
     }
 
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public IndexedPropertyTest()
+    [Test, TestCaseSource(nameof(SetTests))]
+    public void Mutates(string expression, object value, object? expected)
     {
-	   
-    }
+        Set(expression, value);
 
-    public IndexedPropertyTest(string name) : base(name)
-    {
-	    
-    }
-
-    public IndexedPropertyTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-        
-    }
-
-    public IndexedPropertyTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-        
-    }
-
-    public IndexedPropertyTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
-        
+        Assert.That(Get(expression), Is.EqualTo(expected));
     }
 }

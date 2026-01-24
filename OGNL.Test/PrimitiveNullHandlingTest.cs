@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -29,85 +30,40 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
+using System.Diagnostics.CodeAnalysis;
 
 namespace OGNL.Test;
 
-public class PrimitiveNullHandlingTest : OgnlTestCase {
-    private static readonly Simple Simple = new();
+[TestFixture]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+public class PrimitiveNullHandlingTest : OgnlFixture {
+    public bool BoolValue { get; set; } = true;
 
-    static PrimitiveNullHandlingTest()
-    {
-        Simple.setFloatValue(10.56f);
-        Simple.setIntValue(34);
-    }
+    public int IntValue { get; set; } = 1;
 
-    private static readonly object?[][] Tests = [
-        // Primitive null handling
-        [Simple, "FloatValue", 10.56f, null, 0f], /* set float to null, should yield 0.0f */
-        [Simple, "IntValue", 34, null, 0], /* set int to null, should yield 0 */
-        [Simple, "BooleanValue", false, true, true], /* set bool to TRUE, should yield true */
-        [Simple, "BooleanValue", true, null, false] /* set bool to null, should yield false */
-        // new object [] { SIMPLE, "BigDecValue", (decimal) 10.0, null, (decimal) 0.0 },              /* set decimal to null, should yield 0.0 */
+    public long LongValue { get; set; } = 1L;
+
+    public float FloatValue { get; set; } = 1f;
+
+    public double DoubleValue { get; set; } = 1d;
+
+    public decimal DecimalValue { get; set; } = 1m;
+
+    private static readonly object[][] Tests = [
+        ["BoolValue", false],
+        ["IntValue", 0],
+        ["LongValue", 0L],
+        ["FloatValue", 0f],
+        ["DoubleValue", 0d],
+        ["DecimalValue", 0m]
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
+    [Test, TestCaseSource(nameof(Tests))]
+    public void ReplacesNullWithPrimitiveValue(string expression,
+        object expected)
     {
-        var result = new TestSuite();
+        Set(expression, null);
 
-        for (var i = 0; i < Tests.Length; i++) {
-            if (Tests[i].Length == 3) {
-                result.addTest(new PrimitiveNullHandlingTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
-                    Tests[i][2]));
-            } else {
-                if (Tests[i].Length == 4) {
-                    result.addTest(new PrimitiveNullHandlingTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
-                        Tests[i][2], Tests[i][3]));
-                } else {
-                    if (Tests[i].Length == 5) {
-                        result.addTest(new PrimitiveNullHandlingTest((string)Tests[i][1], Tests[i][0],
-                            (string)Tests[i][1], Tests[i][2], Tests[i][3], Tests[i][4]));
-                    } else {
-                        throw new Exception("don't understand TEST format");
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public PrimitiveNullHandlingTest()
-    {
-    }
-
-    public PrimitiveNullHandlingTest(string name) : base(name)
-    {
-    }
-
-    public PrimitiveNullHandlingTest(string name, object root,
-        string expressionString, object expectedResult, object setValue,
-        object expectedAfterSetResult) : base(name, root,
-        expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-    }
-
-    public PrimitiveNullHandlingTest(string name, object root,
-        string expressionString, object expectedResult, object setValue) :
-        base(name, root, expressionString, expectedResult, setValue)
-    {
-    }
-
-    public PrimitiveNullHandlingTest(string name, object root,
-        string expressionString, object expectedResult) : base(name, root,
-        expressionString, expectedResult)
-    {
+        Assert.That(Get(expression), Is.EqualTo(expected));
     }
 }

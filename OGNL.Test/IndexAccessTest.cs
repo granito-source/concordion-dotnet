@@ -1,8 +1,6 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -31,66 +29,41 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Diagnostics.CodeAnalysis;
+
 namespace OGNL.Test;
 
-public class IndexAccessTest : OgnlTestCase
-{
-    private static Root             ROOT = new();
+[TestFixture]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("Performance", "CA1822")]
+[SuppressMessage("Structure", "NUnit1028:The non-test method is public")]
+public class IndexAccessTest : OgnlFixture {
+    public List<string> List { get; } = ["one", "two", "three"];
 
-    private static object[][]       TESTS = [
-        // indexed access of with navigation chain (should start back at root)
-        [ROOT, "List[Index]", ROOT.getList() [ROOT.getIndex()]],
-        [ROOT, "List[size() - 1]", typeof (MethodFailedException)]
-    ];
+    public int Index => 1;
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
+    public int Size()
     {
-        var       result = new TestSuite();
-
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            result.addTest(new IndexAccessTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-        }
-        return result;
-    }
-
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public IndexAccessTest()
-    {
-	    
-    }
-
-    public IndexAccessTest(string name) : base(name)
-    {
-	    
-    }
-
-    public IndexAccessTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        :base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-        
-    }
-
-    public IndexAccessTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-        
-    }
-
-    public IndexAccessTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
-			
+        return List.Count;
     }
 
     [Test]
-    public void Test1 ()
+    public void CanAccessListByIndexProperty()
     {
-        suite () [1].RunTest ();
+        Assert.That(Get("List[Index]"), Is.EqualTo("two"));
+    }
+
+    [Test]
+    public void CanAccessListByIndexExpression()
+    {
+        Assert.That(Get("List[Size() - 1]"), Is.EqualTo("three"));
+    }
+
+    [Test]
+    public void PropagatesEvaluationException()
+    {
+        Assert.Throws<MethodFailedException>(() => Get("List[Missing()]"));
     }
 }

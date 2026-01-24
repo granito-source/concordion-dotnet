@@ -1,7 +1,6 @@
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -30,69 +29,34 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
 namespace OGNL.Test;
 
-public class ShortCircuitingExpressionTest : OgnlTestCase
-{
-    private static object[][]       TESTS = [
-        ["#root ? someProperty : 99", 99],
-        ["#root ? 99 : someProperty", typeof (OgnlException)],
-        ["(#x=99)? #x.someProperty : #x", typeof (OgnlException)],
-        ["#xyzzy.doubleValue()", typeof (NullReferenceException)],
+[TestFixture]
+public class ShortCircuitingExpressionTest : OgnlFixture {
+    private static readonly object?[][] Tests = [
+        ["#root ? SomeProperty : 99", 99],
+        ["#root ? 99 : SomeProperty", typeof(OgnlException)],
+        ["(#x = 99) ? #x.someProperty : #x", typeof(OgnlException)],
+        ["#xyzzy.doubleValue()", typeof(NullReferenceException)],
         ["#xyzzy && #xyzzy.doubleValue()", null],
-        ["(#x=99) && #x", 99],
+        ["(#x = 99) && #x", 99],
         ["#xyzzy || 101", 101],
-        ["99 || 101",99]
+        ["99 || 101", 99]
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
+    [SetUp]
+    public void SetUp()
     {
-        var       result = new TestSuite();
-
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            result.addTest(new ShortCircuitingExpressionTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", null, (string)TESTS[i][0], TESTS[i][1]));
-        }
-        return result;
-    }
-    [Test]
-    public void Test2 ()
-    {
-        suite () [2].RunTest ();
+        WithRoot(0);
     }
 
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public ShortCircuitingExpressionTest()
+    [Test, TestCaseSource(nameof(Tests))]
+    public void Evaluates(string expression, object? expected)
     {
-	    
-    }
-
-    public ShortCircuitingExpressionTest(string name)
-        : base(name)
-    {
-	    
-    }
-
-    public ShortCircuitingExpressionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-        
-    }
-
-    public ShortCircuitingExpressionTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-        
-    }
-
-    public ShortCircuitingExpressionTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
-        
+        if (expected is Type ex)
+            Assert.Throws(ex, () => Get(expression));
+        else
+            Assert.That(Get(expression), Is.EqualTo(expected));
     }
 }

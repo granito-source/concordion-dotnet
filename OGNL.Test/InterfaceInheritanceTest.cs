@@ -1,8 +1,6 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -31,96 +29,106 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+
 namespace OGNL.Test;
 
-public class InterfaceInheritanceTest : OgnlTestCase
-{
-    private static Root             ROOT = new();
+[TestFixture]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+public class InterfaceInheritanceTest : OgnlFixture {
+    public TestMapImpl Map { get; } = new() {
+        ["one"] = "uno",
+        ["two"] = "dos",
+        ["three"] = "tres"
+    };
 
-    private static object[][]       TESTS = [
-        // Interface inheritence test
-        [ROOT, "MyMap", ROOT.getMyMap()],
-        [ROOT, "MyMap.test", ROOT],
-        [ROOT.getMyMap(), "list", ROOT.getList()],
-        [ROOT, "MyMap.array[0]", ROOT.getArray()[0]],
-        [ROOT, "MyMap.list[1]", ROOT.getList() [1]],
-        [ROOT, "MyMap[^]", 99],
-        [ROOT, "MyMap[$]", null],
-        [ROOT.getMyMap(), "array[$]", ROOT.getArray()[ROOT.getArray().Length-1]],
-        [ROOT, "[\"MyMap\"]", ROOT.getMyMap()],
-        [ROOT, "MyMap[null]", null],
-        [ROOT, "MyMap[#x = null]", null],
-        [ROOT, "MyMap.(null,test)", ROOT],
-        /* // Key null is Not allowed in .Net.
-        new object [] { ROOT, "MyMap[null] = 25", (25) },
-        new object [] { ROOT, "MyMap[null]", (25), (50), (50) },*/
-        [ROOT, "MyMap[0] = 25", 25],
-        [ROOT, "MyMap[0]", 25, 50, 50]
+    private static readonly object?[][] Tests = [
+        ["Map[null]", null],
+        ["Map['one']", "uno"],
+        ["Map.two", "dos"],
+        ["Map.three.Length", 4],
+        ["Map.(null, one)", "uno"],
+        ["Map[0] = 25", 25]
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
+    [Test, TestCaseSource(nameof(Tests))]
+    public void Evaluates(string expression, object? expected)
     {
-        var       result = new TestSuite();
+        Assert.That(Get(expression), Is.EqualTo(expected));
+    }
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new InterfaceInheritanceTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new InterfaceInheritanceTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new InterfaceInheritanceTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
-                        throw new Exception("don't understand TEST format");
-                    }
-                }
-            }
+    [Test]
+    public void CanSetValue()
+    {
+        Set("Map['tres']", "trois");
+        Set("Map.four", "quatre");
+
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(Get("Map['tres']"), Is.EqualTo("trois"));
+            Assert.That(Get("Map['four']"), Is.EqualTo("quatre"));
         }
-        return result;
     }
 
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public InterfaceInheritanceTest()
-    {
-	    
-    }
+    private interface TestMap : IDictionary;
 
-    public InterfaceInheritanceTest(string name) : base(name)
-    {
-	    
-    }
+    public class TestMapImpl : TestMap {
+        private readonly Hashtable map = new();
 
-    public InterfaceInheritanceTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-        
-    }
+        public void Add(object key, object? value)
+        {
+            map.Add(key, value);
+        }
 
-    public InterfaceInheritanceTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-        
-    }
+        public void Clear()
+        {
+            map.Clear();
+        }
 
-    public InterfaceInheritanceTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
-        
+        public bool Contains(object key)
+        {
+            return map.Contains(key);
+        }
+
+        public IDictionaryEnumerator GetEnumerator()
+        {
+            return map.GetEnumerator();
+        }
+
+        public void Remove(object key)
+        {
+            map.Remove(key);
+        }
+
+        public bool IsFixedSize => map.IsFixedSize;
+
+        public bool IsReadOnly => map.IsReadOnly;
+
+        public object? this[object key] {
+            get => map[key];
+
+            set => map[key] = value;
+        }
+
+        public ICollection Keys => map.Keys;
+
+        public ICollection Values => map.Values;
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)map).GetEnumerator();
+        }
+
+        public void CopyTo(Array array, int index)
+        {
+            map.CopyTo(array, index);
+        }
+
+        public int Count => map.Count;
+
+        public bool IsSynchronized => map.IsSynchronized;
+
+        public object SyncRoot => map.SyncRoot;
     }
 }

@@ -1,8 +1,6 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -31,57 +29,39 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Diagnostics.CodeAnalysis;
+
 namespace OGNL.Test;
 
-public class MethodTest : OgnlTestCase
-{
-    private static object           ROOT = new Simple();
-    private static object[][]       TESTS = [
-        ["GetHashCode().ToString ()", ROOT.GetHashCode().ToString ()]
-    ];
-
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
+[TestFixture]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("Performance", "CA1822")]
+[SuppressMessage("Structure", "NUnit1028:The non-test method is public")]
+public class MethodTest : OgnlFixture {
+    public long Hundred()
     {
-        var       result = new TestSuite();
+        return 100L;
+    }
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            result.addTest(new MethodTest((string)TESTS[i][0] + " (" + TESTS[i][1] + ")", ROOT, (string)TESTS[i][0], TESTS[i][1]));
+    public long Negate(long a)
+    {
+        return -a;
+    }
+
+    public long Add(long a, long b)
+    {
+        return a + b;
+    }
+
+    [Test]
+    public void CanEvaluateMethodCalls()
+    {
+        using (Assert.EnterMultipleScope()) {
+            Assert.That(Get("Hundred()"), Is.EqualTo(100L));
+            Assert.That(Get("Hundred().GetType()"), Is.EqualTo(typeof(long)));
+            Assert.That(Get("Negate(Hundred())"), Is.EqualTo(-100L));
+            Assert.That(Get("Add(100L, Negate(Hundred()))"), Is.Zero);
         }
-        return result;
-    }
-
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public MethodTest()
-    {
-	   
-    }
-
-    public MethodTest(string name) : base(name)
-    {
-	   
-    }
-
-    public MethodTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-        
-    }
-
-    public MethodTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-        
-    }
-
-    public MethodTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
-        
     }
 }

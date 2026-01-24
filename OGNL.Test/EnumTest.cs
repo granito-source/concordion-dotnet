@@ -1,8 +1,6 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -31,98 +29,49 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Diagnostics.CodeAnalysis;
+
 namespace OGNL.Test;
 
-public class EnumTest : OgnlTestCase
-{
-    private static EnumBean             ROOT = new();
+[TestFixture]
+[SuppressMessage("Performance", "CA1822")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+public class EnumTest : OgnlFixture {
+    public TestEnum EnumValue { get; set; } = TestEnum.Item1;
 
-    private static object[][]       TESTS = [
-        // indexed access of with navigation chain (should start back at root)
-        [ROOT, "ItemValue", ROOT.ItemValue],
-        [ROOT, "ItemValue == 0 ", true],
-        // new object [] { ROOT, "ItemValue == '0' ", true },
-        [ROOT, "ItemValue == \"0\" ", true],
-        [ROOT, "ItemValue == 'Item1' ", true],
-        [ROOT, "ItemValue == 'item1' ", true],
-        [ROOT, "ItemValue", SomeEnum.Item1],
-        [ROOT, "ItemValue = 'Item2'", "Item2"],
-        [ROOT, "ItemValue", SomeEnum.Item2 , "Item1" , SomeEnum.Item1],
-        [ROOT, "ItemValue = 2", 2],
-        [ROOT, "ItemValue", SomeEnum.Item3 , "Item1" , SomeEnum.Item1],
-        [ROOT, "ItemValue", SomeEnum.Item1 , "item2" , SomeEnum.Item2],
-        [ROOT, "ItemValue", SomeEnum.Item2 , "2" , SomeEnum.Item3]
-
+    private static readonly object[][] GetTests = [
+        ["EnumValue", TestEnum.Item1],
+        ["EnumValue == 0", true],
+        ["EnumValue == \"0\"", true],
+        ["EnumValue == 'Item1'", true],
+        ["EnumValue == 'item1'", true],
+        ["EnumValue = 'Item2'", "Item2"],
+        ["EnumValue = 2", 2]
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
-    {
-        var       result = new TestSuite();
+    private static readonly object[][] SetTests = [
+        ["EnumValue", "Item2", TestEnum.Item2],
+        ["EnumValue", "2", TestEnum.Item3]
+    ];
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 2) 
-            {
-                result.addTest(new EnumTest(TESTS [i][0] + "(" + TESTS [i][1] + ")" , null , (string) TESTS [i][0] , TESTS [i][1]));
-            } 
-            else 
-            {
-                if (TESTS [i].Length == 3)
-                {
-                    result.addTest(new EnumTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-                }
-                else
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new EnumTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new EnumTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
-                        throw new Exception("don't understand TEST format");
-                    }
-                }
-            }
-        }
-        return result;
+    [Test, TestCaseSource(nameof(GetTests))]
+    public void Evaluates(string expression, object? expected)
+    {
+        Assert.That(Get(expression), Is.EqualTo(expected));
     }
 
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public EnumTest()
+    [Test, TestCaseSource(nameof(SetTests))]
+    public void Mutates(string expression, object value, object expected)
     {
-	    
+        Set(expression, value);
+
+        Assert.That(Get(expression), Is.EqualTo(expected));
     }
 
-    public EnumTest(string name) : base(name)
-    {
-	    
-    }
-
-    public EnumTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        :base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-        
-    }
-
-    public EnumTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-        
-    }
-
-    public EnumTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
-			
+    public enum TestEnum {
+        Item1,
+        Item2,
+        Item3
     }
 }

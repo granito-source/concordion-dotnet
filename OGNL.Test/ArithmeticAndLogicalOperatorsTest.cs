@@ -160,8 +160,8 @@ public class ArithmeticAndLogicalOperatorsTest : OgnlFixture {
     [SetUp]
     public void SetUp()
     {
-        context.Add("x", "1");
-        context.Add("y", (decimal)1);
+        Context.Add("x", "1");
+        Context.Add("y", (decimal)1);
     }
 
     [Test, TestCaseSource(nameof(Tests))]

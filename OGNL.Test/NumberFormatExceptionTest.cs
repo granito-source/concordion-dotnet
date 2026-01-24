@@ -1,8 +1,6 @@
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
-
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -31,97 +29,126 @@ using OGNL.Test.Util;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Diagnostics.CodeAnalysis;
+
 namespace OGNL.Test;
 
-public class NumberFormatExceptionTest : OgnlTestCase
-{
-    private static Simple           SIMPLE = new();
+[TestFixture]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+public class NumberFormatExceptionTest : OgnlFixture {
+    public int IntValue { get; set; }
 
-    private static object[][]       TESTS = [
-        // NumberFormatException handling (default is to throw NumberFormatException on bad string conversions)
-        [SIMPLE, "FloatValue", 0f, 10f, 10f],    /* set float to 10.0f */
-        [SIMPLE, "FloatValue", 10f, "x10x", typeof (OgnlException)],      /* set float to invalid format string, should yield OgnlException */
+    public long LongValue { get; set; }
 
-        [SIMPLE, "IntValue", 0, 34, 34],   /* set int to 34 */
-        [SIMPLE, "IntValue", 34, "foobar", typeof (OgnlException)],     /* set int to invalid format string, should yield OgnlException */
-        [SIMPLE, "IntValue", 34, "", typeof (OgnlException)],           /* set int to empty string, should yield 0gnlException */
-        [SIMPLE, "IntValue", 34, "       \t", typeof (OgnlException)],  /* set int to whitespace-only string, should yield 0gnlException */
-        [SIMPLE, "IntValue", 34, "       \t1234\t\t", 1234],    /* set int to whitespace-laden valid string, should yield 1234 */
+    public float FloatValue { get; set; }
 
-        //										{ SIMPLE, "bigIntValue", BigInteger.valueOf(0), BigInteger.valueOf(34), BigInteger.valueOf(34) },   /* set bigint to 34 */
-        //										{ SIMPLE, "bigIntValue", BigInteger.valueOf(34), null, null },              /* set bigint to null string, should yield 0 */
-        // new object [] { SIMPLE, "BigIntValue", null, "", typeof (OgnlException) },                   /* set bigint to empty string, should yield 0gnlException */
-        // new object [] { SIMPLE, "BigIntValue", null, "foobar", typeof (OgnlException) },             /* set bigint to invalid format string, should yield OgnlException */
+    public double DoubleValue { get; set; }
 
-        [SIMPLE, "BigDecValue", (decimal)0.0, (decimal)34.55, (decimal)34.55] /* set bigdec to 34.55 */
-        // new object [] { SIMPLE, "BigDecValue", (decimal)(34.55), null, null },               /* set bigdec to null string, should yield 0.0 */
-        // new object [] { SIMPLE, "BigDecValue", null, "", null} ,// typeof (OgnlException) },                   /* set bigdec to empty string, should yield 0gnlException */
-        // new object [] { SIMPLE, "BigDecValue", null, "foobar", null} , // typeof (OgnlException) },             /* set bigdec to invalid format string, should yield OgnlException */
-    ];
+    public decimal DecimalValue { get; set; }
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
+    [Test]
+    public void StripsWhitespaceWhenParsingInt()
     {
-        var       result = new TestSuite();
+        Set("IntValue", "\t 42\t\n");
 
-        for (var i = 0; i < TESTS.Length; i++) 
-        {
-            if (TESTS[i].Length == 3) 
-            {
-                result.addTest(new NumberFormatExceptionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2]));
-            } 
-            else 
-            {
-                if (TESTS[i].Length == 4) 
-                {
-                    result.addTest(new NumberFormatExceptionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3]));
-                } 
-                else 
-                {
-                    if (TESTS[i].Length == 5) 
-                    {
-                        result.addTest(new NumberFormatExceptionTest((string)TESTS[i][1], TESTS[i][0], (string)TESTS[i][1], TESTS[i][2], TESTS[i][3], TESTS[i][4]));
-                    } 
-                    else 
-                    {
-                        throw new Exception("don't understand TEST format");
-                    }
-                }
-            }
+        Assert.That(IntValue, Is.EqualTo(42));
+    }
+
+    [Test]
+    public void ThrowsExceptionWhenCannotParseInt()
+    {
+        using (Assert.EnterMultipleScope()) {
+            Assert.Throws<MethodFailedException>(() =>
+                Set("IntValue", ""));
+            Assert.Throws<MethodFailedException>(() =>
+                Set("IntValue", " \t"));
+            Assert.Throws<MethodFailedException>(() =>
+                Set("IntValue", "x10x"));
         }
-        return result;
     }
 
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public NumberFormatExceptionTest()
+    [Test]
+    public void StripsWhitespaceWhenParsingLong()
     {
-	
+        Set("LongValue", "\t 42\t\n");
+
+        Assert.That(LongValue, Is.EqualTo(42L));
     }
 
-    public NumberFormatExceptionTest(string name): base(name)
+    [Test]
+    public void ThrowsExceptionWhenCannotParseLong()
     {
-	    
+        using (Assert.EnterMultipleScope()) {
+            Assert.Throws<MethodFailedException>(() =>
+                Set("LongValue", ""));
+            Assert.Throws<MethodFailedException>(() =>
+                Set("LongValue", " \t"));
+            Assert.Throws<MethodFailedException>(() =>
+                Set("LongValue", "x10x"));
+        }
     }
 
-    public NumberFormatExceptionTest(string name, object root, string expressionString, object expectedResult, object setValue, object expectedAfterSetResult)
-        :base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
+    [Test]
+    public void StripsWhitespaceWhenParsingFloat()
     {
-        
+        Set("FloatValue", "\t 42.001\t\n");
+
+        Assert.That(FloatValue, Is.EqualTo(42.001f));
     }
 
-    public NumberFormatExceptionTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
+    [Test]
+    public void ThrowsExceptionWhenCannotParseFloat()
     {
-        
+        using (Assert.EnterMultipleScope()) {
+            Assert.Throws<MethodFailedException>(() =>
+                Set("FloatValue", ""));
+            Assert.Throws<MethodFailedException>(() =>
+                Set("FloatValue", " \t"));
+            Assert.Throws<MethodFailedException>(() =>
+                Set("FloatValue", "x10x"));
+        }
     }
 
-    public NumberFormatExceptionTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
+    [Test]
+    public void StripsWhitespaceWhenParsingDouble()
     {
-        
+        Set("DoubleValue", "\t 42.001\t\n");
+
+        Assert.That(DoubleValue, Is.EqualTo(42.001d));
+    }
+
+    [Test]
+    public void ThrowsExceptionWhenCannotParseDouble()
+    {
+        using (Assert.EnterMultipleScope()) {
+            Assert.Throws<MethodFailedException>(() =>
+                Set("DoubleValue", ""));
+            Assert.Throws<MethodFailedException>(() =>
+                Set("DoubleValue", " \t"));
+            Assert.Throws<MethodFailedException>(() =>
+                Set("DoubleValue", "x10x"));
+        }
+    }
+
+    [Test]
+    public void StripsWhitespaceWhenParsingDecimal()
+    {
+        Set("DecimalValue", "\t 42.001\t\n");
+
+        Assert.That(DecimalValue, Is.EqualTo(42.001m));
+    }
+
+    [Test]
+    public void ThrowsExceptionWhenCannotParseDecimal()
+    {
+        using (Assert.EnterMultipleScope()) {
+            Assert.Throws<MethodFailedException>(() =>
+                Set("DecimalValue", ""));
+            Assert.Throws<MethodFailedException>(() =>
+                Set("DecimalValue", " \t"));
+            Assert.Throws<MethodFailedException>(() =>
+                Set("DecimalValue", "x10x"));
+        }
     }
 }

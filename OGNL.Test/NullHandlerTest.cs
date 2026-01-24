@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -29,75 +30,54 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace OGNL.Test;
 
-public class NullHandlerTest : OgnlTestCase {
-    private static readonly CorrectedObject Corrected = new();
+[TestFixture]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("Performance", "CA1822")]
+public class NullHandlerTest : OgnlFixture {
+    public string? StringValue => null;
 
     private static readonly object[][] Tests = [
-        // NullHandler
-        [Corrected, "StringValue", "corrected"],
-        [Corrected, "getStringValue()", "corrected"],
-        [Corrected, "#root.StringValue", "corrected"],
-        [Corrected, "#root.getStringValue()", "corrected"]
+        ["StringValue", "default"],
+        ["GetStringValue()", "default"],
+        ["#root.StringValue", "default"],
+        ["#root.GetStringValue()", "default"]
     ];
 
-    public override TestSuite suite()
+    [SuppressMessage("Structure", "NUnit1028:The non-test method is public")]
+    public string? GetStringValue()
     {
-        var result = new TestSuite();
-
-        for (var i = 0; i < Tests.Length; i++) {
-            if (Tests[i].Length == 3) {
-                result.addTest(new NullHandlerTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1], Tests[i][2]));
-            } else {
-                if (Tests[i].Length == 4) {
-                    result.addTest(new NullHandlerTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
-                        Tests[i][2], Tests[i][3]));
-                } else {
-                    if (Tests[i].Length == 5) {
-                        result.addTest(new NullHandlerTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
-                            Tests[i][2], Tests[i][3], Tests[i][4]));
-                    } else {
-                        throw new Exception("don't understand TEST format");
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    public NullHandlerTest()
-    {
-    }
-
-    public NullHandlerTest(string name) : base(name)
-    {
-    }
-
-    public NullHandlerTest(string name, object root, string expressionString, object expectedResult, object setValue,
-        object expectedAfterSetResult)
-        : base(name, root, expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-    }
-
-    public NullHandlerTest(string name, object root, string expressionString, object expectedResult, object setValue)
-        : base(name, root, expressionString, expectedResult, setValue)
-    {
-    }
-
-    public NullHandlerTest(string name, object root, string expressionString, object expectedResult)
-        : base(name, root, expressionString, expectedResult)
-    {
+        return null;
     }
 
     [SetUp]
-    public override void setUp()
+    public void SetUp()
     {
-        base.setUp();
-        OgnlRuntime.SetNullHandler(typeof(CorrectedObject), new CorrectedObjectNullHandler("corrected"));
+        OgnlRuntime.SetNullHandler(typeof(NullHandlerTest),
+            new TestNullHandler());
+    }
+
+    [Test, TestCaseSource(nameof(Tests))]
+    public void Evaluates(string expression, object? expected)
+    {
+        Assert.That(Get(expression), Is.EqualTo(expected));
+    }
+
+    private class TestNullHandler : NullHandler {
+        public object? NullMethodResult(IDictionary context,
+            object target, string methodName, object?[] args)
+        {
+            return methodName.Equals("GetStringValue") ? "default" : null;
+        }
+
+        public object? NullPropertyValue(IDictionary context,
+            object target, object property)
+        {
+            return property.Equals("StringValue") ? "default" : null;
+        }
     }
 }

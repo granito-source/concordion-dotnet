@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -29,59 +30,37 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using OGNL.Test.Util;
-
 namespace OGNL.Test;
 
-public class SimpleNavigationChainTreeTest : OgnlTestCase {
-    private static readonly object[][] Tests = new object[][] {
-        ["name", true],
-        ["name[i]", false],
-        ["name + foo", false],
-        ["name.foo", true]
-    };
-
-    public override TestSuite suite()
+[TestFixture]
+public class SimpleNavigationChainTreeTest : OgnlFixture {
+    [Test]
+    public void ConsidersSingeNameSimpleNavigationChain()
     {
-        var result = new TestSuite();
-
-        foreach (var t in Tests)
-            result.addTest(new SimpleNavigationChainTreeTest(
-                (string)t[0] + " (" + t[1] + ")", null, (string)t[0], t[1]));
-
-        return result;
+        Assert.That(IsSimpleNavigationChain("name"), Is.True);
     }
 
-    public SimpleNavigationChainTreeTest()
+    [Test]
+    public void ConsidersDotSeparatedNamesSimpleNavigationChain()
     {
+        Assert.That(IsSimpleNavigationChain("name.foo"), Is.True);
     }
 
-    public SimpleNavigationChainTreeTest(string name) : base(name)
+    [Test]
+    public void DoesNotConsiderIndexAccessSimpleNavigationChain()
     {
+        Assert.That(IsSimpleNavigationChain("name[foo]"), Is.False);
     }
 
-    public SimpleNavigationChainTreeTest(string name, object root,
-        string expressionString, object expectedResult, object setValue,
-        object expectedAfterSetResult) : base(name, root,
-        expressionString, expectedResult, setValue, expectedAfterSetResult)
+    [Test]
+    public void DoesNotConsiderExpressionAccessSimpleNavigationChain()
     {
+        Assert.That(IsSimpleNavigationChain("name + foo"), Is.False);
     }
 
-    public SimpleNavigationChainTreeTest(string name, object root,
-        string expressionString, object expectedResult, object setValue) :
-        base(name, root, expressionString, expectedResult, setValue)
+    private bool IsSimpleNavigationChain(string expression)
     {
-    }
-
-    public SimpleNavigationChainTreeTest(string name, object? root,
-        string expressionString, object expectedResult) : base(name, root,
-        expressionString, expectedResult)
-    {
-    }
-
-    protected internal override void RunTest()
-    {
-        Assert.That(Ognl.IsSimpleNavigationChain(GetExpression(), Context) ==
-            (bool)GetExpectedResult(), Is.True);
+        return Ognl.IsSimpleNavigationChain(
+            Ognl.ParseExpression(expression), Context);
     }
 }

@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -29,73 +30,21 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using OGNL.Test.Util;
-
 namespace OGNL.Test;
 
-public class QuotingTest : OgnlTestCase {
-    private static readonly object?[][] Tests = [
-        [null, "`c`", 'c'],
-        [null, "'s'", 's'],
-        [null, "'string'", "string"],
-        [null, "\"string\"", "string"]
+[TestFixture]
+public class QuotingTest : OgnlFixture {
+    private static readonly object[][] Tests = [
+        ["'c'", 'c'],
+        ["`c`", 'c'],
+        ["\"s\"", "s"],
+        ["'string'", "string"],
+        ["\"string\"", "string"]
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
+    [Test, TestCaseSource(nameof(Tests))]
+    public void Evaluates(string expression, object expected)
     {
-        var result = new TestSuite();
-
-        for (var i = 0; i < Tests.Length; i++) {
-            if (Tests[i].Length == 3) {
-                result.addTest(new QuotingTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1], Tests[i][2]));
-            } else {
-                if (Tests[i].Length == 4) {
-                    result.addTest(new QuotingTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1], Tests[i][2],
-                        Tests[i][3]));
-                } else {
-                    if (Tests[i].Length == 5) {
-                        result.addTest(new QuotingTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
-                            Tests[i][2], Tests[i][3], Tests[i][4]));
-                    } else {
-                        throw new Exception("don't understand TEST format");
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public QuotingTest()
-    {
-    }
-
-    public QuotingTest(string name) : base(name)
-    {
-    }
-
-    public QuotingTest(string name, object root, string expressionString,
-        object expectedResult, object setValue,
-        object expectedAfterSetResult) : base(name, root,
-        expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-    }
-
-    public QuotingTest(string name, object root, string expressionString,
-        object expectedResult, object setValue) : base(name, root,
-        expressionString, expectedResult, setValue)
-    {
-    }
-
-    public QuotingTest(string name, object root, string expressionString,
-        object expectedResult) : base(name, root, expressionString,
-        expectedResult)
-    {
+        Assert.That(Get(expression), Is.EqualTo(expected));
     }
 }

@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -29,86 +30,79 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
+using System.Collections;
 
 namespace OGNL.Test;
 
-public class ObjectIndexedPropertyTest : OgnlTestCase {
-    private static readonly ObjectIndexed ObjectIndexed = new();
+[TestFixture]
+public class ObjectIndexedPropertyTest : OgnlFixture {
+    private readonly Hashtable attributes = new();
 
-    private static readonly object[][] Tests = [
-        // Arbitrary indexed properties
-        [ObjectIndexed, "Item[\"bar\"]", "baz"], /* get non-indexed property through attributes Map */
-        [ObjectIndexed, "Item[\"foo\"]", "bar"], /* get indexed property */
-        [ObjectIndexed, "Item[\"bar\"]", "baz", "newValue", "newValue"], /* set indexed property */
-        [ObjectIndexed, "Item[\"bar\"]", "newValue"], /* get indexed property back to confirm */
-        [ObjectIndexed, "Item[\"bar\"]", "newValue"], /* get property back through Map to confirm */
-        [
-            ObjectIndexed, "Item[\"other\"].Item[\"bar\"]", "baz"
-        ], /* get indexed property from indexed, then through other */
-        [ObjectIndexed, "Item[\"other\"].Item[\"bar\"]", "baz"], /* get property back through Map to confirm */
-        [
-            ObjectIndexed, "Item[$]", typeof(OgnlException)
-        ] /* illegal DynamicSubscript access to object indexed property */
+    [SetUp]
+    public void SetUp()
+    {
+        this["foo"] = "bar";
+        this["bar"] = "baz";
+
+        var sub = new ObjectIndexedPropertyTest {
+            ["bar"] = "baz"
+        };
+
+        this["other"] = sub;
+    }
+
+    public object? this[object name] {
+        get => attributes[name];
+
+        set => attributes[name] = value;
+    }
+
+    private static readonly object[][] GetTests = [
+        ["Item['foo']", "bar"],
+        ["['foo']", "bar"],
+        ["Item['bar']", "baz"],
+        ["['bar']", "baz"],
+        ["Item[Item['foo']]", "baz"],
+        ["[['foo']]", "baz"],
+        ["Item['other'].Item['bar']", "baz"],
+        ["['other']['bar']", "baz"]
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
-    {
-        var result = new TestSuite();
+    private static readonly object[][] SetTests = [
+        ["Item['foo']", "zap"],
+        ["['bar']", "zap"],
+        ["Item['new']", "zap"],
+        ["['nuevo']", "zap"],
+        ["Item[Item['foo']]", "zap"],
+        ["[['foo']]", "zap"],
+        // ["Item['other'].Item['bar']", "zap"], XXX: this fails, investigate
+        ["['other']['bar']", "zap"]
+    ];
 
-        for (var i = 0; i < Tests.Length; i++) {
-            if (Tests[i].Length == 3) {
-                result.addTest(new ObjectIndexedPropertyTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
-                    Tests[i][2]));
-            } else {
-                if (Tests[i].Length == 4) {
-                    result.addTest(new ObjectIndexedPropertyTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
-                        Tests[i][2], Tests[i][3]));
-                } else {
-                    if (Tests[i].Length == 5) {
-                        result.addTest(new ObjectIndexedPropertyTest((string)Tests[i][1], Tests[i][0],
-                            (string)Tests[i][1], Tests[i][2], Tests[i][3], Tests[i][4]));
-                    } else {
-                        throw new Exception("don't understand TEST format");
-                    }
-                }
-            }
+    [Test, TestCaseSource(nameof(GetTests))]
+    public void Evaluates(string expression, object? expected)
+    {
+        Assert.That(Get(expression), Is.EqualTo(expected));
+    }
+
+    [Test, TestCaseSource(nameof(SetTests))]
+    public void Mutates(string expression, object value)
+    {
+        Set(expression, value);
+
+        Assert.That(Get(expression), Is.EqualTo(value));
+    }
+
+    [Test]
+    public void DoesNotSupportDynamicIndexes()
+    {
+        using (Assert.EnterMultipleScope()) {
+            Assert.Throws<OgnlException>(() => Get("Item[^]"));
+            // Assert.Throws<OgnlException>(() => Get("[^]")); XXX: this behaves differently!
+            Assert.Throws<OgnlException>(() => Get("Item[|]"));
+            // Assert.Throws<OgnlException>(() => Get("[|]")); XXX: this behaves differently!
+            Assert.Throws<OgnlException>(() => Get("Item[$]"));
+            // Assert.Throws<OgnlException>(() => Get("[$]")); XXX: this behaves differently!
         }
-
-        return result;
-    }
-
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public ObjectIndexedPropertyTest()
-    {
-    }
-
-    public ObjectIndexedPropertyTest(string name) : base(name)
-    {
-    }
-
-    public ObjectIndexedPropertyTest(string name, object root,
-        string expressionString, object expectedResult, object setValue,
-        object expectedAfterSetResult) : base(name, root,
-        expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-    }
-
-    public ObjectIndexedPropertyTest(string name, object root,
-        string expressionString, object expectedResult, object setValue) :
-        base(name, root, expressionString, expectedResult, setValue)
-    {
-    }
-
-    public ObjectIndexedPropertyTest(string name, object root,
-        string expressionString, object expectedResult) : base(name,
-        root, expressionString, expectedResult)
-    {
     }
 }

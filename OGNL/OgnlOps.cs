@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //	Redistribution and use in source and binary forms, with or without
@@ -142,12 +143,26 @@ public abstract class OgnlOps : NumericTypes {
         return value == null ? 0L : Convert.ToInt64(value);
     }
 
+    public static ulong UlongValue(object? value)
+    {
+        return value == null ? 0L : Convert.ToUInt64(value);
+    }
+
     private static double DoubleValue(object? value)
     {
         return value switch {
-            null => 0.0,
+            null => 0.0d,
             char c => c,
             _ => Convert.ToDouble(value)
+        };
+    }
+
+    private static float FloatValue(object? value)
+    {
+        return value switch {
+            null => 0.0f,
+            char c => c,
+            _ => Convert.ToSingle(value)
         };
     }
 
@@ -231,6 +246,9 @@ public abstract class OgnlOps : NumericTypes {
     public static object? ConvertValue(object? value, Type toType)
     {
         if (value != null) {
+            if (value.GetType() == toType)
+                return value;
+
             if (value.GetType().IsArray && toType.IsArray) {
                 var original = (Array)value;
                 var componentType = toType.GetElementType();
@@ -244,29 +262,38 @@ public abstract class OgnlOps : NumericTypes {
                 return copy;
             }
 
-            if (toType == typeof(int) || toType == typeof(uint))
+            if (toType == typeof(int))
                 return (int)LongValue(value);
 
-            if (toType == typeof(double) || toType == typeof(double))
+            if (toType == typeof(uint))
+                return (uint)UlongValue(value);
+
+            if (toType == typeof(double))
                 return DoubleValue(value);
 
-            if (toType == typeof(bool) || toType == typeof(bool))
+            if (toType == typeof(bool))
                 return BooleanValue(value);
 
-            if (toType == typeof(byte) || toType == typeof(byte))
-                return (byte)LongValue(value);
+            if (toType == typeof(byte))
+                return (byte)UlongValue(value);
 
-            if (toType == typeof(char) || toType == typeof(char))
-                return (char)LongValue(value);
+            if (toType == typeof(char))
+                return (char)UlongValue(value);
 
-            if (toType == typeof(short) || toType == typeof(ushort))
+            if (toType == typeof(short))
                 return (short)LongValue(value);
 
-            if (toType == typeof(long) || toType == typeof(ulong))
+            if (toType == typeof(ushort))
+                return (ushort)UlongValue(value);
+
+            if (toType == typeof(long))
                 return LongValue(value);
 
-            if (toType == typeof(float) || toType == typeof(float))
-                return (float)DoubleValue(value);
+            if (toType == typeof(ulong))
+                return UlongValue(value);
+
+            if (toType == typeof(float))
+                return FloatValue(value);
 
             if (toType == typeof(decimal))
                 return BigDecValue(value);

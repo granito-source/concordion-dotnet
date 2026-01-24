@@ -37,7 +37,7 @@ namespace OGNL.Test;
 [TestFixture]
 public class StaticsAndConstructorsTest : OgnlFixture {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    [SuppressMessage("Structure", "NUnit1028")]
+    [SuppressMessage("Structure", "NUnit1028:The non-test method is public")]
     public static int StaticInt()
     {
         return 42;

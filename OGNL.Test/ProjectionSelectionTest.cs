@@ -37,23 +37,23 @@ namespace OGNL.Test;
 [TestFixture]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class ProjectionSelectionTest : OgnlFixture {
+    public readonly int[] Array = [0, 1, 2, 3];
+
+    public readonly List<string> List = ["zero", "one", "two"];
+
     private static readonly object[][] Tests = [
-        ["array.{ Type }",
+        ["Array.{ Type }",
             new[] { typeof(int), typeof(int), typeof(int), typeof(int) }],
-        ["array.{? #this > 1 }", new[] { 2, 3 }],
-        ["array.{^ #this > 1 }", new[] { 2 }],
-        ["array.{$ #this > 1 }", new[] { 3 }],
-        ["array[*].{? true } instanceof System.Collections.IList", true],
-        ["list.{ Type }",
+        ["Array.{? #this > 1 }", new[] { 2, 3 }],
+        ["Array.{^ #this > 1 }", new[] { 2 }],
+        ["Array.{$ #this > 1 }", new[] { 3 }],
+        ["Array[*].{? true } instanceof System.Collections.IList", true],
+        ["List.{ Type }",
             new[] { typeof(string), typeof(string), typeof(string) }],
-        ["list.{? #this.Length < 4 }", new[] { "one", "two" }],
-        ["list.{^ #this.Length < 4 }", new[] { "one" }],
-        ["list.{$ #this.Length < 4 }", new[] { "two" }]
+        ["List.{? #this.Length < 4 }", new[] { "one", "two" }],
+        ["List.{^ #this.Length < 4 }", new[] { "one" }],
+        ["List.{$ #this.Length < 4 }", new[] { "two" }]
     ];
-
-    public readonly int[] array = [0, 1, 2, 3];
-
-    public readonly List<string> list = ["zero", "one", "two"];
 
     [Test, TestCaseSource(nameof(Tests))]
     public void Evaluates(string expression, object expected)

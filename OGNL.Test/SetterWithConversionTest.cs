@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //  Copyright (c) 2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -29,85 +30,43 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using OGNL.Test.Objects;
-using OGNL.Test.Util;
+using System.Diagnostics.CodeAnalysis;
 
 namespace OGNL.Test;
 
-public class SetterWithConversionTest : OgnlTestCase {
-    private static readonly Root Root = new();
+[TestFixture]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+public class SetterWithConversionTest : OgnlFixture {
+    public bool BoolValue { get; set; }
 
-    private static readonly object?[][] Tests = [
-        // Property set with conversion
-        [Root, "IntValue", 0, 6.5, 6],
+    public int IntValue { get; set; }
 
-        // C# use ODD round, so value is 1026
-        [Root, "IntValue", 6, 1025.87645, 1026],
-        [Root, "IntValue", 1026, "654", 654],
-        [Root, "StringValue", null, 25, "25"],
-        [Root, "StringValue", "25", 100.25f, "100.25"],
-        [Root, "anotherStringValue", "foo", 0, "0"],
-        [Root, "anotherStringValue", "0", 0.5, "0.5"],
-        [Root, "anotherIntValue", 123, "5", 5],
-        [Root, "anotherIntValue", 5, 100.25, 100]
+    public long LongValue { get; set; }
+
+    public string? StringValue { get; set; }
+
+    private static readonly object[][] Tests = [
+        ["BoolValue", 6.5, true],
+        ["BoolValue", 0, false],
+        ["BoolValue", "true", true],
+        ["BoolValue", "false", false],
+        ["IntValue", 6.5, 6],
+        ["IntValue", 1025.87645, 1026], // C# use ODD rounding
+        ["IntValue", "654", 654],
+        ["LongValue", 6.5, 6L],
+        ["LongValue", 1025.87645, 1026L], // C# use ODD rounding
+        ["LongValue", "654", 654L],
+        ["StringValue", int.MaxValue, "2147483647"],
+        ["StringValue", long.MinValue, "-9223372036854775808"],
+        ["StringValue", 100.1f, "100.1"],
+        ["StringValue", 100.1d, "100.1"]
     ];
 
-    /*===================================================================
-        Public static methods
-      ===================================================================*/
-    public override TestSuite suite()
+    [Test, TestCaseSource(nameof(Tests))]
+    public void Mutates(string expression, object value, object expected)
     {
-        var result = new TestSuite();
+        Set(expression, value);
 
-        for (var i = 0; i < Tests.Length; i++) {
-            if (Tests[i].Length == 3) {
-                result.addTest(new SetterWithConversionTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
-                    Tests[i][2]));
-            } else {
-                if (Tests[i].Length == 4) {
-                    result.addTest(new SetterWithConversionTest((string)Tests[i][1], Tests[i][0], (string)Tests[i][1],
-                        Tests[i][2], Tests[i][3]));
-                } else {
-                    if (Tests[i].Length == 5) {
-                        result.addTest(new SetterWithConversionTest((string)Tests[i][1], Tests[i][0],
-                            (string)Tests[i][1], Tests[i][2], Tests[i][3], Tests[i][4]));
-                    } else {
-                        throw new Exception("don't understand TEST format");
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /*===================================================================
-        Constructors
-      ===================================================================*/
-    public SetterWithConversionTest()
-    {
-    }
-
-    public SetterWithConversionTest(string name) : base(name)
-    {
-    }
-
-    public SetterWithConversionTest(string name, object root,
-        string expressionString, object expectedResult, object setValue,
-        object expectedAfterSetResult) : base(name, root,
-        expressionString, expectedResult, setValue, expectedAfterSetResult)
-    {
-    }
-
-    public SetterWithConversionTest(string name, object root,
-        string expressionString, object expectedResult, object setValue) :
-        base(name, root, expressionString, expectedResult, setValue)
-    {
-    }
-
-    public SetterWithConversionTest(string name, object root,
-        string expressionString, object expectedResult) : base(name, root,
-        expressionString, expectedResult)
-    {
+        Assert.That(Get(expression), Is.EqualTo(expected));
     }
 }
