@@ -3,11 +3,12 @@
 namespace OGNL.Parser;
 
 /**
- * An implementation of interface CharStream, where the stream is assumed to
- * contain only ASCII characters (with java-like unicode escape processing).
+ * An implementation of interface CharStream, where the stream is assumed
+ * to contain only ASCII characters (with java-like Unicode escape
+ * processing).
  */
 public class JavaCharStream {
-    private static int Hexval(char c) // throws java.io.IOException
+    private static int HexVal(char c)
     {
         return c switch {
             '0' => 0,
@@ -30,92 +31,92 @@ public class JavaCharStream {
         };
     }
 
-    private int bufpos = -1;
+    private readonly TextReader inputStream;
 
-    private int bufsize;
+    private readonly char[] nextCharBuf;
+
+    private int bufPos = -1;
+
+    private int bufSize;
 
     private int available;
 
     private int tokenBegin;
 
-    private int[] bufline;
+    private int[] bufLine;
 
-    private int[] bufcolumn;
+    private int[] bufColumn;
 
-    private int column = 0;
+    private int column;
 
-    private int line = 1;
+    private int line;
 
-    private bool prevCharIsCr = false;
+    private bool prevCharIsCr;
 
-    private bool prevCharIsLf = false;
-
-    private TextReader inputStream;
-
-    private char[] nextCharBuf;
+    private bool prevCharIsLf;
 
     private char[] buffer;
 
-    private int maxNextCharInd = 0;
+    private int maxNextCharInd;
 
     private int nextCharInd = -1;
 
-    private int inBuf = 0;
+    private int inBuf;
 
     private void ExpandBuff(bool wrapAround)
     {
-        var newbuffer = new char[bufsize + 2048];
-        var newbufline = new int[bufsize + 2048];
-        var newbufcolumn = new int[bufsize + 2048];
+        var newBuffer = new char[bufSize + 2048];
+        var newBufLine = new int[bufSize + 2048];
+        var newBufColumn = new int[bufSize + 2048];
 
         try {
             if (wrapAround) {
-                Array.Copy(buffer, tokenBegin, newbuffer, 0, bufsize - tokenBegin);
-                Array.Copy(buffer, 0, newbuffer,
-                    bufsize - tokenBegin, bufpos);
-                buffer = newbuffer;
+                Array.Copy(buffer, tokenBegin, newBuffer, 0, bufSize - tokenBegin);
+                Array.Copy(buffer, 0, newBuffer,
+                    bufSize - tokenBegin, bufPos);
+                buffer = newBuffer;
 
-                Array.Copy(bufline, tokenBegin, newbufline, 0, bufsize - tokenBegin);
-                Array.Copy(bufline, 0, newbufline, bufsize - tokenBegin, bufpos);
-                bufline = newbufline;
+                Array.Copy(bufLine, tokenBegin, newBufLine, 0, bufSize - tokenBegin);
+                Array.Copy(bufLine, 0, newBufLine, bufSize - tokenBegin, bufPos);
+                bufLine = newBufLine;
 
-                Array.Copy(bufcolumn, tokenBegin, newbufcolumn, 0, bufsize - tokenBegin);
-                Array.Copy(bufcolumn, 0, newbufcolumn, bufsize - tokenBegin, bufpos);
-                bufcolumn = newbufcolumn;
+                Array.Copy(bufColumn, tokenBegin, newBufColumn, 0, bufSize - tokenBegin);
+                Array.Copy(bufColumn, 0, newBufColumn, bufSize - tokenBegin, bufPos);
+                bufColumn = newBufColumn;
 
-                bufpos += bufsize - tokenBegin;
+                bufPos += bufSize - tokenBegin;
             } else {
-                Array.Copy(buffer, tokenBegin, newbuffer, 0, bufsize - tokenBegin);
-                buffer = newbuffer;
+                Array.Copy(buffer, tokenBegin, newBuffer, 0, bufSize - tokenBegin);
+                buffer = newBuffer;
 
-                Array.Copy(bufline, tokenBegin, newbufline, 0, bufsize - tokenBegin);
-                bufline = newbufline;
+                Array.Copy(bufLine, tokenBegin, newBufLine, 0, bufSize - tokenBegin);
+                bufLine = newBufLine;
 
-                Array.Copy(bufcolumn, tokenBegin, newbufcolumn, 0, bufsize - tokenBegin);
-                bufcolumn = newbufcolumn;
+                Array.Copy(bufColumn, tokenBegin, newBufColumn, 0, bufSize - tokenBegin);
+                bufColumn = newBufColumn;
 
-                bufpos -= tokenBegin;
+                bufPos -= tokenBegin;
             }
         } catch (Exception t) {
             throw new Exception(t.Message);
         }
 
-        available = bufsize += 2048;
+        available = bufSize += 2048;
         tokenBegin = 0;
     }
 
     private void FillBuff()
     {
-        int i;
-
         if (maxNextCharInd == 4096)
             maxNextCharInd = nextCharInd = 0;
 
         try {
             try {
-                // .Net will return 0 instead of 1 in java.
-                if ((i = inputStream.Read(nextCharBuf, maxNextCharInd,
-                        4096 - maxNextCharInd)) <= 0 /* == -1 */) {
+                // .NET will return 0 instead of 1 in java.
+                var i = inputStream.Read(nextCharBuf, maxNextCharInd,
+                    4096 - maxNextCharInd);
+
+                if (i <= 0 /* == -1 */) {
                     inputStream.Close();
 
                     throw new IOException();
@@ -126,12 +127,12 @@ public class JavaCharStream {
                 throw new IOException("Stream Closed!");
             }
         } catch (IOException) {
-            if (bufpos != 0) {
-                --bufpos;
+            if (bufPos != 0) {
+                --bufPos;
                 Backup(0);
             } else {
-                bufline[bufpos] = line;
-                bufcolumn[bufpos] = column;
+                bufLine[bufPos] = line;
+                bufColumn[bufPos] = column;
             }
 
             throw;
@@ -151,30 +152,30 @@ public class JavaCharStream {
         if (inBuf > 0) {
             --inBuf;
 
-            if (++bufpos == bufsize)
-                bufpos = 0;
+            if (++bufPos == bufSize)
+                bufPos = 0;
 
-            tokenBegin = bufpos;
+            tokenBegin = bufPos;
 
-            return buffer[bufpos];
+            return buffer[bufPos];
         }
 
         tokenBegin = 0;
-        bufpos = -1;
+        bufPos = -1;
 
         return ReadChar();
     }
 
     private void AdjustBuffSize()
     {
-        if (available == bufsize) {
+        if (available == bufSize) {
             if (tokenBegin > 2048) {
-                bufpos = 0;
+                bufPos = 0;
                 available = tokenBegin;
             } else
                 ExpandBuff(false);
         } else if (available > tokenBegin)
-            available = bufsize;
+            available = bufSize;
         else if (tokenBegin - available < 2048)
             ExpandBuff(true);
         else
@@ -191,9 +192,9 @@ public class JavaCharStream {
         } else if (prevCharIsCr) {
             prevCharIsCr = false;
 
-            if (c == '\n') {
+            if (c == '\n')
                 prevCharIsLf = true;
-            } else
+            else
                 line += column = 1;
         }
 
@@ -213,8 +214,8 @@ public class JavaCharStream {
                 break;
         }
 
-        bufline[bufpos] = line;
-        bufcolumn[bufpos] = column;
+        bufLine[bufPos] = line;
+        bufColumn[bufPos] = column;
     }
 
     public char ReadChar()
@@ -222,35 +223,35 @@ public class JavaCharStream {
         if (inBuf > 0) {
             --inBuf;
 
-            if (++bufpos == bufsize)
-                bufpos = 0;
+            if (++bufPos == bufSize)
+                bufPos = 0;
 
-            return buffer[bufpos];
+            return buffer[bufPos];
         }
 
         char c;
 
-        if (++bufpos == available)
+        if (++bufPos == available)
             AdjustBuffSize();
 
-        if ((buffer[bufpos] = c = ReadByte()) == '\\') {
+        if ((buffer[bufPos] = c = ReadByte()) == '\\') {
             UpdateLineColumn(c);
 
             var backSlashCnt = 1;
 
             // Read all the backslashes
             for (;;) {
-                if (++bufpos == available)
+                if (++bufPos == available)
                     AdjustBuffSize();
 
                 try {
-                    if ((buffer[bufpos] = c = ReadByte()) != '\\') {
+                    if ((buffer[bufPos] = c = ReadByte()) != '\\') {
                         UpdateLineColumn(c);
 
                         // found a non-backslash char.
                         if (c == 'u' && (backSlashCnt & 1) == 1) {
-                            if (--bufpos < 0)
-                                bufpos = bufsize - 1;
+                            if (--bufPos < 0)
+                                bufPos = bufSize - 1;
 
                             break;
                         }
@@ -275,15 +276,15 @@ public class JavaCharStream {
                 while ((c = ReadByte()) == 'u')
                     ++column;
 
-                buffer[bufpos] = c = (char)(Hexval(c) << 12 |
-                    Hexval(ReadByte()) << 8 |
-                    Hexval(ReadByte()) << 4 |
-                    Hexval(ReadByte()));
+                buffer[bufPos] = c = (char)(HexVal(c) << 12 |
+                    HexVal(ReadByte()) << 8 |
+                    HexVal(ReadByte()) << 4 |
+                    HexVal(ReadByte()));
 
                 column += 4;
-            } catch (IOException e) {
-                throw new Exception("Invalid escape character at line " + line +
-                    " column " + column + ".");
+            } catch (IOException) {
+                throw new Exception(
+                    $"Invalid escape character at line {line} column {column}.");
             }
 
             if (backSlashCnt == 1)
@@ -301,120 +302,69 @@ public class JavaCharStream {
 
     public int GetEndColumn()
     {
-        return bufcolumn[bufpos];
+        return bufColumn[bufPos];
     }
 
     public int GetEndLine()
     {
-        return bufline[bufpos];
+        return bufLine[bufPos];
     }
 
     public int GetBeginColumn()
     {
-        return bufcolumn[tokenBegin];
+        return bufColumn[tokenBegin];
     }
 
     public int GetBeginLine()
     {
-        return bufline[tokenBegin];
+        return bufLine[tokenBegin];
     }
 
     public void Backup(int amount)
     {
         inBuf += amount;
-        if ((bufpos -= amount) < 0)
-            bufpos += bufsize;
+        if ((bufPos -= amount) < 0)
+            bufPos += bufSize;
     }
 
-    private JavaCharStream(TextReader dstream,
-        int startline, int startcolumn, int buffersize)
+    private JavaCharStream(TextReader dStream, int startLine,
+        int startColumn, int bufferSize)
     {
-        inputStream = dstream;
-        line = startline;
-        column = startcolumn - 1;
+        inputStream = dStream;
+        line = startLine;
+        column = startColumn - 1;
 
-        available = bufsize = buffersize;
-        buffer = new char[buffersize];
-        bufline = new int[buffersize];
-        bufcolumn = new int[buffersize];
+        available = bufSize = bufferSize;
+        buffer = new char[bufferSize];
+        bufLine = new int[bufferSize];
+        bufColumn = new int[bufferSize];
         nextCharBuf = new char[4096];
     }
 
-    public JavaCharStream(TextReader dstream,
-        int startline, int startcolumn)
-        : this(dstream, startline, startcolumn, 4096)
+    public JavaCharStream(TextReader dStream, int startLine,
+        int startColumn) : this(dStream, startLine, startColumn, 4096)
     {
-    }
-
-    private void ReInit(TextReader dstream,
-        int startline, int startcolumn, int buffersize)
-    {
-        inputStream = dstream;
-        line = startline;
-        column = startcolumn - 1;
-
-        if (buffer == null || buffersize != buffer.Length) {
-            available = bufsize = buffersize;
-            buffer = new char[buffersize];
-            bufline = new int[buffersize];
-            bufcolumn = new int[buffersize];
-            nextCharBuf = new char[4096];
-        }
-
-        prevCharIsLf = prevCharIsCr = false;
-        tokenBegin = inBuf = maxNextCharInd = 0;
-        nextCharInd = bufpos = -1;
-    }
-
-    public void ReInit(TextReader dstream,
-        int startline, int startcolumn)
-    {
-        ReInit(dstream, startline, startcolumn, 4096);
-    }
-
-    private JavaCharStream(Stream dstream, int startline,
-        int startcolumn, int buffersize) :
-        this(new StreamReader(dstream), startline, startcolumn, 4096)
-    {
-    }
-
-    public JavaCharStream(Stream dstream, int startline,
-        int startcolumn)
-        : this(dstream, startline, startcolumn, 4096)
-    {
-    }
-
-    private void ReInit(Stream dstream, int startline,
-        int startcolumn, int buffersize)
-    {
-        ReInit(new StreamReader(dstream), startline, startcolumn, 4096);
-    }
-
-    public void ReInit(Stream dstream, int startline,
-        int startcolumn)
-    {
-        ReInit(dstream, startline, startcolumn, 4096);
     }
 
     public string GetImage()
     {
-        if (bufpos >= tokenBegin)
-            return new string(buffer, tokenBegin, bufpos - tokenBegin + 1);
+        if (bufPos >= tokenBegin)
+            return new string(buffer, tokenBegin, bufPos - tokenBegin + 1);
 
-        return new string(buffer, tokenBegin, bufsize - tokenBegin) +
-            new string(buffer, 0, bufpos + 1);
+        return new string(buffer, tokenBegin, bufSize - tokenBegin) +
+            new string(buffer, 0, bufPos + 1);
     }
 
     public char[] GetSuffix(int len)
     {
         var ret = new char[len];
 
-        if (bufpos + 1 >= len)
-            Array.Copy(buffer, bufpos - len + 1, ret, 0, len);
+        if (bufPos + 1 >= len)
+            Array.Copy(buffer, bufPos - len + 1, ret, 0, len);
         else {
-            Array.Copy(buffer, bufsize - (len - bufpos - 1), ret, 0,
-                len - bufpos - 1);
-            Array.Copy(buffer, 0, ret, len - bufpos - 1, bufpos + 1);
+            Array.Copy(buffer, bufSize - (len - bufPos - 1), ret, 0,
+                len - bufPos - 1);
+            Array.Copy(buffer, 0, ret, len - bufPos - 1, bufPos + 1);
         }
 
         return ret;

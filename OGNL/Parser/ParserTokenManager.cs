@@ -30,9 +30,8 @@ internal class ParserTokenManager(JavaCharStream stream) : ParserConstants {
             case '\"': return '\"';
         }
 
-        // Otherwise, it's an octal number.  Find the backslash and convert.
-        while (image[--ofs] != '\\') {
-        }
+        // Otherwise, it's an octal number. Find the backslash and convert.
+        while (image[--ofs] != '\\');
 
         var value = 0;
 
@@ -1662,7 +1661,8 @@ internal class ParserTokenManager(JavaCharStream stream) : ParserConstants {
                     errorAfter = curPos <= 1 ? "" : inputStream.GetImage();
                 }
 
-                throw new TokenMgrError(eofSeen, errorLine, errorColumn, errorAfter, curChar);
+                throw new TokenMgrError(eofSeen, errorLine, errorColumn,
+                    errorAfter, curChar);
             }
         }
     }
