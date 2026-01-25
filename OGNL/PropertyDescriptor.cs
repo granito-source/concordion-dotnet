@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace OGNL;
 
-public class PropertyDescriptor {
+internal class PropertyDescriptor {
     protected readonly PropertyInfo PropertyInfo = null!;
 
     public PropertyDescriptor(PropertyInfo propertyInfo)

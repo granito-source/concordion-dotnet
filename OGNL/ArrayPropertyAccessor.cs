@@ -38,9 +38,7 @@ namespace OGNL;
 /// Implementation of PropertyAccessor that uses numbers and dynamic
 /// subscripts as properties to index into arrays.
 /// </summary>
-/// @author Luke Blanshard (blanshlu@netscape.net)
-/// @author Drew Davidson (drew@ognl.org)
-public class ArrayPropertyAccessor : ObjectPropertyAccessor {
+internal class ArrayPropertyAccessor : ObjectPropertyAccessor {
     [return: NotNullIfNotNull("value")]
     private static object? Convert(OgnlContext context, Array target,
         object name, object? value)

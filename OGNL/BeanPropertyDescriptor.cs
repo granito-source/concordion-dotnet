@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace OGNL;
 
-public class BeanPropertyDescriptor(string name, MethodInfo reader,
+internal class BeanPropertyDescriptor(string name, MethodInfo reader,
     MethodInfo writer) : PropertyDescriptor {
     public override string Name => name;
 

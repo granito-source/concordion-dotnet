@@ -33,13 +33,10 @@ using System.Collections;
 
 namespace OGNL;
 
-///<summary>
-///Implementation of ElementsAccessor that returns a collection's iterator.
-///</summary>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///
-public class CollectionElementsAccessor : ElementsAccessor {
+/// <summary>
+/// Implementation of ElementsAccessor that returns a collection's iterator.
+/// </summary>
+internal class CollectionElementsAccessor : ElementsAccessor {
     /// <summary>
     /// Just return ICollection.GetEnumerator().
     /// </summary>

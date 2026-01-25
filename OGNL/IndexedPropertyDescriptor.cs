@@ -5,7 +5,7 @@ namespace OGNL;
 /// <summary>
 /// IndexedPropertyDescriptor
 /// </summary>
-public class IndexedPropertyDescriptor(PropertyInfo propertyInfo) :
+internal class IndexedPropertyDescriptor(PropertyInfo propertyInfo) :
     PropertyDescriptor(propertyInfo) {
     public MethodInfo? GetIndexedReadMethod()
     {

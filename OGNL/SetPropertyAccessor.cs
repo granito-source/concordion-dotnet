@@ -33,14 +33,11 @@ using System.Collections;
 
 namespace OGNL;
 
-///<summary>
-///Implementation of <see href="PropertyAccessor"/> that uses numbers and dynamic subscripts as
-///properties to index into ICollection.
-///</summary>
-/// <remarks></remarks>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-public class SetPropertyAccessor : ObjectPropertyAccessor {
+/// <summary>
+/// Implementation of <see href="PropertyAccessor"/> that uses numbers
+/// and dynamic subscripts as properties to index into ICollection.
+/// </summary>
+internal class SetPropertyAccessor : ObjectPropertyAccessor {
     public override object? GetProperty(OgnlContext context,
         object target, object name)
     {

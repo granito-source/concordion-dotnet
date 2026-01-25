@@ -33,14 +33,11 @@ using System.Collections;
 
 namespace OGNL;
 
-///<summary>
-///Implementation of ElementsAccessor that returns a single-element iterator, containing
-///the original target object.
-///</summary>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///
-public class ObjectElementsAccessor : ElementsAccessor {
+/// <summary>
+/// Implementation of ElementsAccessor that returns a single-element
+/// iterator, containing the original target object.
+/// </summary>
+internal class ObjectElementsAccessor : ElementsAccessor {
     public IEnumerator GetElements(object target)
     {
         return new ObjectEnumerator(target);

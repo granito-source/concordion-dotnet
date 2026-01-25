@@ -32,7 +32,7 @@
 
 namespace OGNL.Parser;
 
-public abstract class SimpleNode(int id) : Node {
+internal abstract class SimpleNode(int id) : Node {
     protected Node[] Children = [];
 
     protected readonly int Id = id;

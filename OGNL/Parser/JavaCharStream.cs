@@ -7,7 +7,7 @@ namespace OGNL.Parser;
  * to contain only ASCII characters (with java-like Unicode escape
  * processing).
  */
-public class JavaCharStream {
+internal class JavaCharStream {
     private static int HexVal(char c)
     {
         return c switch {

@@ -32,22 +32,20 @@
 namespace OGNL;
 
 /// <summary>
-///This class has predefined instances that stand for OGNL's special "dynamic subscripts"
-///for getting at the first, middle, or last elements of a list.
-///</summary>
-///<remarks>In OGNL expressions,
-///these subscripts look like special kinds of array indexes:
-///<list type="">
-///<item><term>[^]</term><description>means the first element</description></item>
-///<item><term>[$]</term><description>means the last</description></item>
-///<item><term>[|]</term><description>means the middle</description></item>
-///<item><term>[*]</term><description>means the whole list</description></item>
-///</list>
-///</remarks>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///
-public class DynamicSubscript {
+/// This class has predefined instances that stand for OGNL's special
+/// "dynamic subscripts" for getting at the first, middle, or last
+/// elements of a list.
+/// </summary>
+/// <remarks>In OGNL expressions,
+/// these subscripts look like special kinds of array indexes:
+/// <list type="">
+/// <item><term>[^]</term><description>means the first element</description></item>
+/// <item><term>[$]</term><description>means the last</description></item>
+/// <item><term>[|]</term><description>means the middle</description></item>
+/// <item><term>[*]</term><description>means the whole list</description></item>
+/// </list>
+/// </remarks>
+internal class DynamicSubscript {
     /// <summary>
     /// First element: ^.
     /// </summary>

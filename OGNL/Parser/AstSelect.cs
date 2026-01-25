@@ -1,5 +1,3 @@
-using System.Collections;
-
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson ,  Luke Blanshard and Foxcoming
 //  All rights reserved.
@@ -30,6 +28,9 @@ using System.Collections;
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 //  DAMAGE.
 //--------------------------------------------------------------------------
+
+using System.Collections;
+
 namespace OGNL.Parser;
 
 internal class AstSelect(int id) : SimpleNode(id) {

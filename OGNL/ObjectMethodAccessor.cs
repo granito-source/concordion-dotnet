@@ -32,13 +32,11 @@
 namespace OGNL;
 
 /// <summary>
-///Implementation of PropertyAccessor that uses reflection on the target object's class to
-///find a field or a pair of set/get methods with the given property name.
+/// Implementation of PropertyAccessor that uses reflection on the target
+/// object's class to find a field or a pair of set/get methods with
+/// the given property name.
 ///</summary>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///
-public class ObjectMethodAccessor : MethodAccessor {
+internal class ObjectMethodAccessor : MethodAccessor {
     public object? callStaticMethod(OgnlContext context, Type targetClass,
         string methodName, object?[] args)
     {

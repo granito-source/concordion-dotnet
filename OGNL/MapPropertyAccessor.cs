@@ -38,7 +38,7 @@ namespace OGNL;
 /// Implementation of PropertyAccessor that sets and gets properties by
 /// storing and looking up values in Maps.
 ///
-public class MapPropertyAccessor : PropertyAccessor {
+internal class MapPropertyAccessor : PropertyAccessor {
     public object? GetProperty(OgnlContext context, object target,
         object name)
     {

@@ -38,10 +38,8 @@ namespace OGNL;
 /// to "nextElement" (aliases to "next" also) and "hasMoreElements" (also
 /// aliased to "hasNext").
 /// </summary>
-/// @author Luke Blanshard (blanshlu@netscape.net)
-/// @author Drew Davidson (drew@ognl.org)
 ///
-public class EnumerationPropertyAccessor : ObjectPropertyAccessor {
+internal class EnumerationPropertyAccessor : ObjectPropertyAccessor {
     /// <summary>
     /// When you call to "next" or "nextElement",
     /// a MoveNext () will be call first to avoid Execption.

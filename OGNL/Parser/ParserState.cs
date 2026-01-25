@@ -2,7 +2,7 @@
 
 namespace OGNL.Parser;
 
-public class ParserState {
+internal class ParserState {
     private readonly Stack<Node> nodes = new();
 
     private readonly Stack<int> marks = new();

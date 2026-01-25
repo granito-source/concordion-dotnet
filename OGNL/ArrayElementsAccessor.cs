@@ -33,13 +33,11 @@ using System.Collections;
 
 namespace OGNL;
 
-///<summary>
-///Implementation of IElementsAccessor that returns an iterator over a Array.
-///</summary>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///
-public class ArrayElementsAccessor : ElementsAccessor {
+/// <summary>
+/// Implementation of IElementsAccessor that returns an iterator over
+/// an Array.
+/// </summary>
+internal class ArrayElementsAccessor : ElementsAccessor {
     /// <summary>
     /// Just return Array.GetEnumerator.
     /// </summary>

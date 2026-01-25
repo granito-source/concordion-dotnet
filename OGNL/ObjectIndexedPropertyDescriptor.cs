@@ -90,8 +90,5 @@ namespace OGNL;
 /// </tr>
 ///</table>
 ///</remarks>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///
-public class ObjectIndexedPropertyDescriptor(PropertyInfo propertyInfo) :
+internal class ObjectIndexedPropertyDescriptor(PropertyInfo propertyInfo) :
     IndexedPropertyDescriptor(propertyInfo);

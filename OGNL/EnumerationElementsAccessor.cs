@@ -33,14 +33,11 @@ using System.Collections;
 
 namespace OGNL;
 
-///<summary>
-///Implementation of the IElementsAccessor interface for Enumerators, which returns an
-///iterator that passes its calls through to the target IEnumerator.
-///</summary>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///
-public class EnumerationElementsAccessor : ElementsAccessor {
+/// <summary>
+/// Implementation of the IElementsAccessor interface for Enumerators, which returns an
+/// iterator that passes its calls through to the target IEnumerator.
+/// </summary>
+internal class EnumerationElementsAccessor : ElementsAccessor {
     /// <summary>
     /// Just cast as an IEnumerator.
     /// </summary>

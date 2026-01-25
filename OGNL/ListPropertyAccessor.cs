@@ -33,13 +33,11 @@ using System.Collections;
 
 namespace OGNL;
 
-///<summary>
-///Implementation of PropertyAccessor that uses numbers and dynamic subscripts as
-///properties to index into Lists.
-///</summary>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-public class ListPropertyAccessor : ObjectPropertyAccessor {
+/// <summary>
+/// Implementation of PropertyAccessor that uses numbers and dynamic
+/// subscripts as properties to index into Lists.
+/// </summary>
+internal class ListPropertyAccessor : ObjectPropertyAccessor {
     public override object? GetProperty(OgnlContext context,
         object target, object name)
     {

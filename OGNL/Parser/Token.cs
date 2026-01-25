@@ -5,7 +5,7 @@ namespace OGNL.Parser;
 /**
  * Describes the input token stream.
  */
-public class Token {
+internal class Token {
     /**
      * An integer that describes the kind of this token.  This numbering
      * system is determined by JavaCCParser, and a table of these numbers is

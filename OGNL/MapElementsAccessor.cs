@@ -33,13 +33,11 @@ using System.Collections;
 
 namespace OGNL;
 
-///<summary>
-///Implementation of ElementsAccessor that returns an iterator over the map's values.
-///</summary>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///
-public class MapElementsAccessor : ElementsAccessor {
+/// <summary>
+/// Implementation of ElementsAccessor that returns an iterator over
+/// the map's values.
+/// </summary>
+internal class MapElementsAccessor : ElementsAccessor {
     /// <summary>
     /// Just return IDictionary.Values.GetEnumerator.
     /// </summary>

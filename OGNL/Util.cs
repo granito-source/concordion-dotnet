@@ -1,6 +1,6 @@
 namespace OGNL;
 
-public static class Util {
+internal static class Util {
     public static long ParseLong(string s, int radix = 10)
     {
         if (s == null)

@@ -35,7 +35,7 @@ using OGNL.Parser;
 
 namespace OGNL;
 
-public partial class ObjectPropertyAccessor : PropertyAccessor {
+internal partial class ObjectPropertyAccessor : PropertyAccessor {
     [GeneratedRegex("^[a-zA-Z_][a-zA-Z0-9_]*$")]
     private static partial Regex NameRegex();
 

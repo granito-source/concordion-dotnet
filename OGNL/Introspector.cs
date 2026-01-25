@@ -3,7 +3,7 @@ namespace OGNL;
 /// <summary>
 /// Introspector
 /// </summary>
-public static class Introspector {
+internal static class Introspector {
     /// <summary>
     /// Include int indexer.
     /// </summary>

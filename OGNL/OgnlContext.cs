@@ -179,7 +179,7 @@ public class OgnlContext : IDictionary {
     /// before a node evaluates.  When evaluation is complete
     /// it should be popped from the stack via <code>popEvaluation()</code>.
     /// </summary>
-    public void PushEvaluation(Evaluation value)
+    internal void PushEvaluation(Evaluation value)
     {
         if (currentEvaluation != null)
             currentEvaluation.AddChild(value);
@@ -193,7 +193,7 @@ public class OgnlContext : IDictionary {
     /// Pops the current Evaluation off of the top of the stack.
     /// This is done after a node has completed its evaluation.
     /// </summary>
-    public Evaluation PopEvaluation()
+    internal Evaluation PopEvaluation()
     {
         var result = currentEvaluation;
 
