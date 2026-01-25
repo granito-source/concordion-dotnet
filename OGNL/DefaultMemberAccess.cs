@@ -34,39 +34,24 @@ using System.Reflection;
 
 namespace OGNL;
 
-///<summary>
-///This class provides methods for setting up and restoring
-///access in a Field.  Java 2 provides access utilities for setting
-///and getting fields that are non-public.  This object provides
-///coarse-grained access controls to allow access to private, protected
-///and package protected members.  This will apply to all classes
-///and members.
-///</summary>
-///<remarks>
-///Dynamic member access permission is not a part of plan.
-///</remarks>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///@version 15 October 1999
+/// <summary>
+/// This class provides methods for setting up and restoring
+/// access in a Field.  Java 2 provides access utilities for setting
+/// and getting fields that are non-public.  This object provides
+/// coarse-grained access controls to allow access to private, protected
+/// and package protected members.  This will apply to all classes
+/// and members.
+/// </summary>
+/// <remarks>
+/// Dynamic member access permission is not a part of plan.
+/// </remarks>
 ///
-public class DefaultMemberAccess : MemberAccess {
-    public bool AllowPrivateAccess { get; set; } = false;
-
-    public bool AllowProtectedAccess { get; set; } = false;
-
-    public bool AllowPackageProtectedAccess { get; set; } = false;
-
+public class DefaultMemberAccess(bool allowPrivateAccess,
+    bool allowProtectedAccess,
+    bool allowPackageProtectedAccess) : MemberAccess {
     public DefaultMemberAccess(bool allowAllAccess) :
         this(allowAllAccess, allowAllAccess, allowAllAccess)
     {
-    }
-
-    public DefaultMemberAccess(bool allowPrivateAccess,
-        bool allowProtectedAccess, bool allowPackageProtectedAccess)
-    {
-        AllowPrivateAccess = allowPrivateAccess;
-        AllowProtectedAccess = allowProtectedAccess;
-        AllowPackageProtectedAccess = allowPackageProtectedAccess;
     }
 
     public object? Setup(IDictionary context, object target,

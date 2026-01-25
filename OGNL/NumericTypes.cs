@@ -32,56 +32,53 @@
 namespace OGNL;
 
 /// <summary>
-///This interface defines some useful constants for describing the various possible
-///numeric types of OGNL.
-///</summary>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///
-public abstract class NumericTypes {
+/// This interface defines some useful constants for describing the various possible
+/// numeric types of OGNL.
+/// </summary>
+internal static class NumericTypes {
     // Order does matter here... see the getNumericType methods in ognl.g.
 
+    /// <summary>Type tag meaning bool.</summary>
+    public const int Bool = 0;
+
+    /// <summary>Type tag meaning byte.</summary>
+    public const int Byte = 1;
+
+    /// <summary>Type tag meaning char.</summary>
+    public const int Char = 2;
+
+    /// <summary>Type tag meaning short.</summary>
+    public const int Short = 3;
+
+    /// <summary>Type tag meaning int.</summary>
+    public const int Int = 4;
+
+    /// <summary>Type tag meaning long.</summary>
+    public const int Long = 5;
+
+    /// <summary>Type tag meaning java.math.BigInteger.</summary>
+    public const int BigInt = 6;
+
+    /// <summary>Type tag meaning float.</summary>
+    public const int Float = 7;
+
+    /// <summary>Type tag meaning double.</summary>
+    public const int Double = 8;
+
+    /// <summary>Type tag meaning java.math.BigDecimal.</summary>
+    public const int BigDec = 9;
+
+    /// <summary>Type tag meaning something other than a number.</summary>
+    public const int NonNumeric = 10;
+
     /// <summary>
-    /// Type tag meaning bool
+    /// The smallest type tag that represents reals as opposed to
+    /// integers. You can see whether a type tag represents reals or
+    /// integers by comparing the tag to this constant: all tags less
+    /// than this constant represent integers, and all tags greater
+    /// than or equal to this constant represent reals. Of course, you
+    /// must also check for <c>NonNumeric</c>, which means it is not
+    /// a number at all.
     /// </summary>
-    public const int BOOL = 0;
-
-    /// <summary>Type tag meaning byte. </summary>
-    public const int BYTE = 1;
-
-    /// <summary>Type tag meaning char. </summary>
-    public const int CHAR = 2;
-
-    /// <summary>Type tag meaning short. </summary>
-    public const int SHORT = 3;
-
-    /// <summary>Type tag meaning int. </summary>
-    public const int INT = 4;
-
-    /// <summary>Type tag meaning long. </summary>
-    public const int LONG = 5;
-
-    /// <summary>Type tag meaning java.math.BigInteger. </summary>
-    public const int BIGINT = 6;
-
-    /// <summary>Type tag meaning float. </summary>
-    public const int FLOAT = 7;
-
-    /// <summary>Type tag meaning double. </summary>
-    public const int DOUBLE = 8;
-
-    /// <summary>Type tag meaning java.math.BigDecimal. </summary>
-    public const int BIGDEC = 9;
-
-    /// <summary>Type tag meaning something other than a number. </summary>
-    public const int NONNUMERIC = 10;
-
-    ///<summary>
-    ///The smallest type tag that represents reals as opposed to integers.  You can see
-    ///whether a type tag represents reals or integers by comparing the tag to this
-    ///constant: all tags less than this constant represent integers, and all tags
-    ///greater than or equal to this constant represent reals.  Of course, you must also
-    ///check for NONNUMERIC, which means it is not a number at all.
-    ///</summary>
-    public const int MIN_REAL_TYPE = FLOAT;
+    public const int MinRealType = Float;
 }

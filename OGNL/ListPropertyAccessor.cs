@@ -99,34 +99,36 @@ public class ListPropertyAccessor : ObjectPropertyAccessor {
             return;
         }
 
-        if (name is DynamicSubscript) {
+        if (name is DynamicSubscript dynamicSubscript) {
             var len = list.Count;
 
-            switch (((DynamicSubscript)name).GetFlag()) {
+            switch (dynamicSubscript.GetFlag()) {
                 case DynamicSubscript.FirstElement:
-                    if (len > 0) list[0] = value;
+                    if (len > 0)
+                        list[0] = value;
 
                     return;
                 case DynamicSubscript.MidElement:
-                    if (len > 0) list[len / 2] = value;
+                    if (len > 0)
+                        list[len / 2] = value;
 
                     return;
                 case DynamicSubscript.LastElement:
-                    if (len > 0) list[len - 1] = value;
+                    if (len > 0)
+                        list[len - 1] = value;
 
                     return;
                 case DynamicSubscript.AllElements: {
-                    if (!(value is IEnumerable) &&
-                        !(value is IEnumerator))
+                    if (value is not IEnumerable && value is not IEnumerator)
                         throw new OgnlException("Value must be a collection");
+
+                    var enumerator = value as IEnumerator ??
+                        ((IEnumerable)value).GetEnumerator();
 
                     list.Clear();
 
-                    var e = value is IEnumerator ? (IEnumerator)value :
-                        ((IEnumerable)value).GetEnumerator();
-
-                    while (e.MoveNext())
-                        list.Add(e.Current);
+                    while (enumerator.MoveNext())
+                        list.Add(enumerator.Current);
 
                     return;
                 }

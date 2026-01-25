@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //	Redistribution and use in source and binary forms, with or without
@@ -34,20 +35,8 @@ namespace OGNL.Parser;
 internal abstract class ExpressionNode(int i) : SimpleNode(i) {
     public override bool IsConstant(OgnlContext context)
     {
-        var result = IsNodeConstant(context);
-
-        if (Children.Length <= 0)
-            return result;
-
-        result = true;
-
-        for (var i = 0; result && i < Children.Length; i++)
-            if (Children[i] is SimpleNode simpleNode)
-                result = simpleNode.IsConstant(context);
-            else
-                result = false;
-
-        return result;
+        return Children.Length <= 0 ? IsNodeConstant(context) :
+            Children.All(node => node.IsConstant(context));
     }
 
     public override string ToString()

@@ -30,6 +30,7 @@
 //--------------------------------------------------------------------------
 
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace OGNL;
@@ -54,6 +55,7 @@ public interface TypeConverter {
     /// TypeConverter.NoConversionPossible to indicate that the
     /// conversion was not possible.
     ///
+    [return: NotNullIfNotNull("value")]
     object? ConvertValue(IDictionary context, object? target,
         MemberInfo? member, string? propertyName, object? value,
         Type toType);

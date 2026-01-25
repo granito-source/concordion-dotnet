@@ -14,13 +14,6 @@ public class Token {
     public int Kind;
 
     /**
-     * beginLine and beginColumn describe the position of the first character
-     * of this token; endLine and endColumn describe the position of the
-     * last character of this token.
-     */
-    public int BeginLine, BeginColumn;
-
-    /**
      * The string image of the token.
      */
     public string? Image;

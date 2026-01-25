@@ -41,7 +41,7 @@ namespace OGNL;
 /// <remarks>It refers to child evaluations that occur as
 /// a result of the nodes' evaluation.
 /// </remarks>
-public class Evaluation(SimpleNode node, object source,
+public class Evaluation(Node node, object source,
     bool setOperation = false) {
     /** The result of the evaluation. */
     public object? Result { private get; set; }

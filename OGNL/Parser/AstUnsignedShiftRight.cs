@@ -32,7 +32,7 @@
 namespace OGNL.Parser;
 
 internal class AstUnsignedShiftRight(int id) : ExpressionNode(id) {
-    protected override object? GetValueBody(OgnlContext context,
+    protected override object GetValueBody(OgnlContext context,
         object source)
     {
         return OgnlOps.UnsignedShiftRight(

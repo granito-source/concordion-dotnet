@@ -328,8 +328,7 @@ public static class Ognl {
 
     private static bool IsConstant(Node tree, OgnlContext context)
     {
-        return ((SimpleNode)tree)
-            .IsConstant(AddDefaultContext(string.Empty, context));
+        return tree.IsConstant(AddDefaultContext(string.Empty, context));
     }
 
     public static bool IsConstant(Node tree)
@@ -339,14 +338,14 @@ public static class Ognl {
 
     public static bool IsSimpleProperty(Node tree, OgnlContext context)
     {
-        return ((SimpleNode)tree)
+        return tree
             .IsSimpleProperty(AddDefaultContext(string.Empty, context));
     }
 
     public static bool IsSimpleNavigationChain(Node tree,
         OgnlContext context)
     {
-        return ((SimpleNode)tree)
-            .IsSimpleNavigationChain(AddDefaultContext(string.Empty, context));
+        return tree.IsSimpleNavigationChain(
+            AddDefaultContext(string.Empty, context));
     }
 }

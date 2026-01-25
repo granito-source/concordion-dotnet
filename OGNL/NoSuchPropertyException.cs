@@ -31,25 +31,19 @@
 
 namespace OGNL;
 
-///<summary>
-///Exception thrown if a property is attempted to be extracted from an object that does
-///not have such a property.
-///</summary>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///
-public class NoSuchPropertyException(object target, object name, Exception? reason) :
-    OgnlException((target is Type ? target.ToString() : target.GetType().Name) + "." + name, reason) {
-    public NoSuchPropertyException(object target, object name) : this(target, name, null)
-    {
-    }
-
-    public object getTarget()
+/// <summary>
+/// Exception thrown if a property is attempted to be extracted from an object that does
+/// not have such a property.
+/// </summary>
+public class NoSuchPropertyException(object target, object name,
+    Exception? reason = null) : OgnlException((target is Type ?
+    target.ToString() : target.GetType().Name) + "." + name, reason) {
+    public object GetTarget()
     {
         return target;
     }
 
-    public object getName()
+    public object GetName()
     {
         return name;
     }

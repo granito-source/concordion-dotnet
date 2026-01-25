@@ -181,16 +181,8 @@ internal class AstChain(int id) : SimpleNode(id) {
 
     public override bool IsSimpleNavigationChain(OgnlContext context)
     {
-        if (Children.Length <= 0)
-            return false;
-
-        var result = true;
-
-        for (var i = 0; result && i < Children.Length; i++)
-            result = Children[i] is SimpleNode simpleNode &&
-                simpleNode.IsSimpleProperty(context);
-
-        return result;
+        return Children.Length > 0 &&
+            Children.All(node => node.IsSimpleProperty(context));
     }
 
     public override string ToString()

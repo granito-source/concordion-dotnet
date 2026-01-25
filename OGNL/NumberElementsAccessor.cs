@@ -36,11 +36,9 @@ namespace OGNL;
 /// <summary>
 /// Implementation of IElementsAccessor that returns an IEnumerator over
 /// integers from 0 up to the given target.
-///</summary>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
+/// </summary>
 ///
-public class NumberElementsAccessor : NumericTypes, ElementsAccessor {
+internal class NumberElementsAccessor : ElementsAccessor {
     public IEnumerator GetElements(object target)
     {
         return new NumberEnumerator(target);

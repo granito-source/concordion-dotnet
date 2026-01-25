@@ -412,6 +412,7 @@ public static class OgnlRuntime {
         return PrimitiveDefaults.Get(forClass);
     }
 
+    [return: NotNullIfNotNull("value")]
     private static object? GetConvertedType(OgnlContext context,
         object target, MemberInfo member, string propertyName,
         object? value, Type type)

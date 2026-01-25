@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
-//	Copyright (c) 1998-2004, Drew Davidson ,  Luke Blanshard and Foxcoming
+//	Copyright (c) 1998-2004, Drew Davidson, Luke Blanshard and Foxcoming
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //	Redistribution and use in source and binary forms, with or without
@@ -180,7 +181,7 @@ public abstract class SimpleNode(int id) : Node {
         foreach (var node in Children) {
             if (node.GetType() == GetType())
                 for (var k = 0; k < node.GetNumChildren(); ++k)
-                    newChildren[j++] = node.GetChild(k);
+                    newChildren[j++] = node.GetChild(k)!;
             else
                 newChildren[j++] = node;
         }

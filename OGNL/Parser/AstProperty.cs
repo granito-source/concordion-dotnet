@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------
-//	Copyright (c) 1998-2004, Drew Davidson ,  Luke Blanshard and Foxcoming
+//	Copyright (c) 1998-2004, Drew Davidson, Luke Blanshard and Foxcoming
 //  All rights reserved.
 //
 //	Redistribution and use in source and binary forms, with or without
@@ -103,8 +103,7 @@ internal class AstProperty(int id) : SimpleNode(id) {
 
     protected override bool IsNodeSimpleProperty(OgnlContext context)
     {
-        return Children.Length == 1 &&
-            ((SimpleNode)Children[0]).IsConstant(context);
+        return Children.Length == 1 && Children[0].IsConstant(context);
     }
 
     public override string ToString()

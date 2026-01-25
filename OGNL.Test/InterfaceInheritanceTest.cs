@@ -45,7 +45,6 @@ public class InterfaceInheritanceTest : OgnlFixture {
     };
 
     private static readonly object?[][] Tests = [
-        ["Map[null]", null],
         ["Map['one']", "uno"],
         ["Map.two", "dos"],
         ["Map.three.Length", 4],

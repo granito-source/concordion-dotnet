@@ -2,107 +2,18 @@
 
 namespace OGNL.Parser;
 
-internal abstract class ParserConstants {
-    protected const int Ident = 64;
+internal static class ParserConstants {
+    public const int Ident = 64;
 
-    protected const int DynamicSubscript = 67;
+    public const int DynamicSub = 67;
 
-    protected const int CharLiteral = 73;
+    public const int CharLiteral = 73;
 
-    protected const int BackCharLiteral = 76;
+    public const int BackCharLiteral = 76;
 
-    protected const int StringLiteral = 79;
+    public const int StringLiteral = 79;
 
-    protected const int IntLiteral = 80;
+    public const int IntLiteral = 80;
 
-    protected const int FltLiteral = 81;
-
-    protected static readonly string[] TokenImage = [
-        "<EOF>",
-        "\",\"",
-        "\"=\"",
-        "\"?\"",
-        "\":\"",
-        "\"||\"",
-        "\"or\"",
-        "\"&&\"",
-        "\"and\"",
-        "\"|\"",
-        "\"bor\"",
-        "\"^\"",
-        "\"xor\"",
-        "\"&\"",
-        "\"band\"",
-        "\"==\"",
-        "\"eq\"",
-        "\"!=\"",
-        "\"neq\"",
-        "\"<\"",
-        "\"lt\"",
-        "\">\"",
-        "\"gt\"",
-        "\"<=\"",
-        "\"lte\"",
-        "\">=\"",
-        "\"gte\"",
-        "\"in\"",
-        "\"not\"",
-        "\"<<\"",
-        "\"shl\"",
-        "\">>\"",
-        "\"shr\"",
-        "\">>>\"",
-        "\"ushr\"",
-        "\"+\"",
-        "\"-\"",
-        "\"*\"",
-        "\"/\"",
-        "\"%\"",
-        "\"~\"",
-        "\"!\"",
-        "\"is\"",
-        "\".\"",
-        "\"(\"",
-        "\")\"",
-        "\"true\"",
-        "\"false\"",
-        "\"null\"",
-        "\"#this\"",
-        "\"#root\"",
-        "\"#\"",
-        "\"[\"",
-        "\"]\"",
-        "\"{\"",
-        "\"}\"",
-        "\"@\"",
-        "\"new\"",
-        "\"$\"",
-        "\" \"",
-        "\"\\t\"",
-        "\"\\f\"",
-        "\"\\r\"",
-        "\"\\n\"",
-        "<IDENT>",
-        "<LETTER>",
-        "<DIGIT>",
-        "<DYNAMIC_SUBSCRIPT>",
-        "\"`\"",
-        "\"\\\'\"",
-        "\"\\\"\"",
-        "<ESC>",
-        "<token of kind 72>",
-        "\"\\\'\"",
-        "<BACK_CHAR_ESC>",
-        "<token of kind 75>",
-        "\"`\"",
-        "<STRING_ESC>",
-        "<token of kind 78>",
-        "\"\\\"\"",
-        "<INT_LITERAL>",
-        "<FLT_LITERAL>",
-        "<DEC_FLT>",
-        "<DEC_DIGITS>",
-        "<EXPONENT>",
-        "<FLT_SUFF>"
-    ];
+    public const int FltLiteral = 81;
 }

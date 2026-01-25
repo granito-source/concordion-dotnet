@@ -91,4 +91,10 @@ public interface Node {
      * given context.
      */
     void SetValue(OgnlContext context, object target, object? value);
+
+    bool IsConstant(OgnlContext context);
+
+    bool IsSimpleNavigationChain(OgnlContext context);
+
+    bool IsSimpleProperty(OgnlContext context);
 }

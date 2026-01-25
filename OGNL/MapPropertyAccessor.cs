@@ -35,57 +35,45 @@ using OGNL.Parser;
 namespace OGNL;
 
 ///
-///Implementation of PropertyAccessor that sets and gets properties by storing and looking
-///up values in Maps.
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
+/// Implementation of PropertyAccessor that sets and gets properties by
+/// storing and looking up values in Maps.
 ///
 public class MapPropertyAccessor : PropertyAccessor {
     public object? GetProperty(OgnlContext context, object target,
         object name)
     {
-        object? result;
         var map = (IDictionary)target;
         var currentNode = context.CurrentNode.GetParent();
         var indexedAccess = false;
 
-        if (currentNode == null) {
+        if (currentNode == null)
             throw new OgnlException("node is null for '" + name + "'");
-        }
 
-        if (!(currentNode is AstProperty)) {
+        if (currentNode is not AstProperty)
             currentNode = currentNode.GetParent();
-        }
 
-        if (currentNode is AstProperty) {
-            indexedAccess = ((AstProperty)currentNode).IndexedAccess;
-        }
+        if (currentNode is AstProperty astProperty)
+            indexedAccess = astProperty.IndexedAccess;
 
         if (name is string && !indexedAccess) {
-            if (name.Equals("size")) {
-                result = map.Count;
-            } else if (name.Equals("keys")) {
-                result = map.Keys;
-            } else if (name.Equals("values")) {
-                result = map.Values;
-            } else if (name.Equals("isEmpty")) {
-                result = map.Count == 0; //  ? Boolean.TRUE : Boolean.FALSE;
-            } else {
-                // TODO: Map.property is map [property]?
-                result = map[name];
-            }
-        } else {
-            // return null for key null.
-            if (name == null)
-                return null;
+            if (name.Equals("size"))
+                return map.Count;
 
-            result = map[name];
+            if (name.Equals("keys"))
+                return map.Keys;
+
+            if (name.Equals("values"))
+                return map.Values;
+
+            if (name.Equals("isEmpty"))
+                return map.Count == 0;
         }
 
-        return result;
+        return map[name];
     }
 
-    public void SetProperty(OgnlContext context, object target, object name, object? value)
+    public void SetProperty(OgnlContext context, object target,
+        object name, object? value)
     {
         var map = (IDictionary)target;
 

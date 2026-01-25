@@ -2,98 +2,98 @@
 
 namespace OGNL.Parser;
 
-internal abstract class ParserTreeConstants : ParserConstants {
-    protected const int JJTSEQUENCE = 1;
+internal static class ParserTreeConstants {
+    public const int JjtSequence = 1;
 
-    protected const int JJTASSIGN = 2;
+    public const int JjtAssign = 2;
 
-    protected const int JJTTEST = 3;
+    public const int JjtTest = 3;
 
-    protected const int JJTOR = 4;
+    public const int JjtOr = 4;
 
-    protected const int JJTAND = 5;
+    public const int JjtAnd = 5;
 
-    protected const int JJTBITOR = 6;
+    public const int JjtBitOr = 6;
 
-    protected const int JJTXOR = 7;
+    public const int JjtXor = 7;
 
-    protected const int JJTBITAND = 8;
+    public const int JjtBitAnd = 8;
 
-    protected const int JJTEQ = 9;
+    public const int JjtEq = 9;
 
-    protected const int JJTNOTEQ = 10;
+    public const int JjtNotEq = 10;
 
-    protected const int JJTLESS = 11;
+    public const int JjtLess = 11;
 
-    protected const int JJTGREATER = 12;
+    public const int JjtGreater = 12;
 
-    protected const int JJTLESSEQ = 13;
+    public const int JjtLessEq = 13;
 
-    protected const int JJTGREATEREQ = 14;
+    public const int JjtGreaterEq = 14;
 
-    protected const int JJTIN = 15;
+    public const int JjtIn = 15;
 
-    protected const int JJTNOTIN = 16;
+    public const int JjtNotIn = 16;
 
-    protected const int JJTSHIFTLEFT = 17;
+    public const int JjtShiftLeft = 17;
 
-    protected const int JJTSHIFTRIGHT = 18;
+    public const int JjtShiftRight = 18;
 
-    protected const int JJTUNSIGNEDSHIFTRIGHT = 19;
+    public const int JjtUnsignedShiftRight = 19;
 
-    protected const int JJTADD = 20;
+    public const int JjtAdd = 20;
 
-    protected const int JJTSUBTRACT = 21;
+    public const int JjtSubtract = 21;
 
-    protected const int JJTMULTIPLY = 22;
+    public const int JjtMultiply = 22;
 
-    protected const int JJTDIVIDE = 23;
+    public const int JjtDivide = 23;
 
-    protected const int JJTREMAINDER = 24;
+    public const int JjtRemainder = 24;
 
-    protected const int JJTNEGATE = 25;
+    public const int JjtNegate = 25;
 
-    protected const int JJTBITNEGATE = 26;
+    public const int JjtBitNegate = 26;
 
-    protected const int JJTNOT = 27;
+    public const int JjtNot = 27;
 
-    protected const int JJTINSTANCEOF = 28;
+    public const int JjtInstanceOf = 28;
 
-    protected const int JJTCHAIN = 29;
+    public const int JjtChain = 29;
 
-    protected const int JJTEVAL = 30;
+    public const int JjtEval = 30;
 
-    protected const int JJTCONST = 31;
+    public const int JjtConst = 31;
 
-    protected const int JJTTHISVARREF = 32;
+    public const int JjtThisVarRef = 32;
 
-    protected const int JJTROOTVARREF = 33;
+    public const int JjtRootVarRef = 33;
 
-    protected const int JJTVARREF = 34;
+    public const int JjtVarRef = 34;
 
-    protected const int JJTLIST = 35;
+    public const int JjtList = 35;
 
-    protected const int JJTMAP = 36;
+    public const int JjtMap = 36;
 
-    protected const int JJTKEYVALUE = 37;
+    public const int JjtKeyValue = 37;
 
-    protected const int JJTSTATICFIELD = 38;
+    public const int JjtStaticField = 38;
 
-    protected const int JJTCTOR = 39;
+    public const int JjtCtor = 39;
 
-    protected const int JJTPROPERTY = 40;
+    public const int JjtProperty = 40;
 
-    protected const int JJTSTATICMETHOD = 41;
+    public const int JjtStaticMethod = 41;
 
-    protected const int JJTMETHOD = 42;
+    public const int JjtMethod = 42;
 
-    protected const int JJTPROJECT = 43;
+    public const int JjtProject = 43;
 
-    protected const int JJTSELECT = 44;
+    public const int JjtSelect = 44;
 
-    protected const int JJTSELECTFIRST = 45;
+    public const int JjtSelectFirst = 45;
 
-    protected const int JJTSELECTLAST = 46;
+    public const int JjtSelectLast = 46;
 
     public static readonly string[] JjtNodeName = [
         "void",
