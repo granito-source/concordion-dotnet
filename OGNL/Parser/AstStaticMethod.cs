@@ -44,18 +44,14 @@ internal class AstStaticMethod(int id) : SimpleNode(id) {
         Debug.Assert(TypeName != null, nameof(TypeName) + " != null");
         Debug.Assert(MethodName != null, nameof(MethodName) + " != null");
 
-        var args = OgnlRuntime.ObjectArrayPool.Create(GetNumChildren());
+        var args = new object?[GetNumChildren()];
         var root = context.Root;
 
-        try {
-            for (int i = 0, icount = args.Length; i < icount; ++i)
-                args[i] = Children[i].GetValue(context, root);
+        for (int i = 0, icount = args.Length; i < icount; ++i)
+            args[i] = Children[i].GetValue(context, root);
 
-            return OgnlRuntime.CallStaticMethod(context, TypeName,
-                MethodName, args);
-        } finally {
-            OgnlRuntime.ObjectArrayPool.Recycle(args);
-        }
+        return OgnlRuntime.CallStaticMethod(context, TypeName, MethodName,
+            args);
     }
 
     public override string ToString()

@@ -60,8 +60,6 @@ public static class OgnlRuntime {
 
     public static readonly object NotFound = new();
 
-    public static readonly ObjectArrayPool ObjectArrayPool = new();
-
     private const string NoConversionPossible = "ognl.NoConversionPossible";
 
     private const string SetPrefix = "Set";
@@ -424,7 +422,7 @@ public static class OgnlRuntime {
 
     private static bool GetConvertedTypes(OgnlContext context,
         object target, MemberInfo member, string? propertyName,
-        Type[] parameterTypes, object[] args, object[] newArgs)
+        Type[] parameterTypes, object[] args, object?[] newArgs)
     {
         var result = false;
 
@@ -472,7 +470,7 @@ public static class OgnlRuntime {
 
     private static ConstructorInfo? GetConvertedConstructorAndArgs(
         OgnlContext context, object target, IList constructors,
-        object[] args, object[] newArgs)
+        object[] args, object?[] newArgs)
     {
         ConstructorInfo? result = null;
 
@@ -526,11 +524,12 @@ public static class OgnlRuntime {
         object source, object? target, string? methodName,
         string? propertyName, IList<MethodInfo> methods, object?[] args)
     {
-        var actualArgs = ObjectArrayPool.Create(args.Length);
+        var actualArgs = new object[args.Length];
         Exception? reason;
 
         try {
-            var method = GetAppropriateMethod(context, source, target, propertyName, methods, args, actualArgs);
+            var method = GetAppropriateMethod(context, source, target,
+                propertyName, methods, args, actualArgs);
 
             if (method == null || !IsMethodAccessible(context, source, method, propertyName)) {
                 var buffer = new StringBuilder();
@@ -541,9 +540,8 @@ public static class OgnlRuntime {
 
                         buffer.Append(arg == null ? NullString : arg.GetType().Name);
 
-                        if (i < ilast) {
+                        if (i < ilast)
                             buffer.Append(", ");
-                        }
                     }
                 }
 
@@ -555,8 +553,6 @@ public static class OgnlRuntime {
             reason = e.InnerException;
         } catch (Exception e) {
             reason = e;
-        } finally {
-            ObjectArrayPool.Recycle(actualArgs);
         }
 
         throw new MethodFailedException(source, methodName, reason);
@@ -606,7 +602,7 @@ public static class OgnlRuntime {
             }
 
             if (ctor == null) {
-                actualArgs = ObjectArrayPool.Create(args.Length);
+                actualArgs = new object[args.Length];
 
                 if ((ctor = GetConvertedConstructorAndArgs(context, target, constructors, args, actualArgs)) == null)
                     throw new MissingMethodException();
@@ -623,9 +619,6 @@ public static class OgnlRuntime {
             reason = e.InnerException;
         } catch (TypeInitializationException e) {
             reason = e;
-        } finally {
-            if (actualArgs != args)
-                ObjectArrayPool.Recycle(actualArgs);
         }
 
         throw new MethodFailedException(typeName, "new", reason);
@@ -666,15 +659,10 @@ public static class OgnlRuntime {
         var m = GetSetMethod(target == null ? null : target.GetType(), propertyName);
 
         if (result)
-            if (m != null) {
-                var args = ObjectArrayPool.Create(value);
-
-                try {
-                    CallAppropriateMethod(context, target, target, m.Name, propertyName, Util.NCopies(1, m), args);
-                } finally {
-                    ObjectArrayPool.Recycle(args);
-                }
-            } else
+            if (m != null)
+                CallAppropriateMethod(context, target, target, m.Name,
+                    propertyName, Util.NCopies(1, m), [value]);
+            else
                 result = false;
 
         return result;
@@ -1252,8 +1240,6 @@ public static class OgnlRuntime {
     public static object GetIndexedProperty(OgnlContext context,
         object source, string name, object index)
     {
-        var args = ObjectArrayPool.Create(index);
-
         try {
             var pd = GetPropertyDescriptor(source == null ? null : source.GetType(), name);
             MethodInfo m;
@@ -1265,13 +1251,11 @@ public static class OgnlRuntime {
             else
                 throw new OgnlException($"property '{name}' is not an indexed property");
 
-            return CallMethod(context, source, m.Name, name, args);
+            return CallMethod(context, source, m.Name, name, [index]);
         } catch (OgnlException) {
             throw;
         } catch (Exception ex) {
             throw new OgnlException($"getting indexed property descriptor for '{name}'", ex);
-        } finally {
-            ObjectArrayPool.Recycle(args);
         }
     }
 
@@ -1279,7 +1263,7 @@ public static class OgnlRuntime {
         object source, string name, object index, object value)
     {
         Exception? reason = null;
-        var args = ObjectArrayPool.Create(index, value);
+        var args = new[] { index, value };
 
         try {
             var pd = GetPropertyDescriptor(source == null ? null : source.GetType(), name);
@@ -1297,8 +1281,6 @@ public static class OgnlRuntime {
             throw;
         } catch (Exception ex) {
             throw new OgnlException($"getting indexed property descriptor for '{name}'", ex);
-        } finally {
-            ObjectArrayPool.Recycle(args);
         }
     }
 
@@ -1332,19 +1314,15 @@ public static class OgnlRuntime {
         if (methods.Count == 0)
             return false;
 
-        var actualArgs = ObjectArrayPool.Create(args.Length + 1);
+        var actualArgs = new object?[args.Length + 1];
 
         Array.Copy(args, 0, actualArgs, 0, args.Length);
         actualArgs[args.Length] = value;
 
-        try {
-            CallAppropriateMethod(context, target, target, null, null,
-                methods, actualArgs);
+        CallAppropriateMethod(context, target, target, null, null,
+            methods, actualArgs);
 
-            return true;
-        } finally {
-            ObjectArrayPool.Recycle(actualArgs);
-        }
+        return true;
     }
 
     public static object? GetIndexerValue(OgnlContext context,

@@ -37,5 +37,6 @@ namespace OGNL;
 ///@author Luke Blanshard (blanshlu@netscape.net)
 ///@author Drew Davidson (drew@ognl.org)
 ///
-public class MethodFailedException(object source, string name, Exception reason) :
-    OgnlException("Method \"" + name + "\" failed for object " + source, reason);
+public class MethodFailedException(object source, string name,
+    Exception? reason) :
+    OgnlException($"Method \"{name}\" failed for object {source}", reason);

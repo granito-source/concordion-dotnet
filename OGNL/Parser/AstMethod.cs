@@ -41,20 +41,15 @@ internal class AstMethod(int id) : SimpleNode(id) {
     {
         Debug.Assert(MethodName != null, nameof(MethodName) + " != null");
 
-        var args = OgnlRuntime.ObjectArrayPool.Create(GetNumChildren());
+        var args = new object?[GetNumChildren()];
+        var root = context.Root;
 
-        try {
-            var root = context.Root;
+        for (var i = 0; i < args.Length; ++i)
+            args[i] = Children[i].GetValue(context, root);
 
-            for (var i = 0; i < args.Length; ++i)
-                args[i] = Children[i].GetValue(context, root);
-
-            return OgnlRuntime.CallMethod(context, source, MethodName, null, args) ??
-                OgnlRuntime.GetNullHandler(OgnlRuntime.GetTargetType(source))
-                    .NullMethodResult(context, source, MethodName, args);
-        } finally {
-            OgnlRuntime.ObjectArrayPool.Recycle(args);
-        }
+        return OgnlRuntime.CallMethod(context, source, MethodName, null, args) ??
+            OgnlRuntime.GetNullHandler(OgnlRuntime.GetTargetType(source))
+                .NullMethodResult(context, source, MethodName, args);
     }
 
     public override string ToString()

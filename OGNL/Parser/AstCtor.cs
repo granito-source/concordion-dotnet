@@ -46,56 +46,52 @@ internal class AstCtor(int id) : SimpleNode(id) {
 
         var root = context.Root;
         var count = GetNumChildren();
-        var args = OgnlRuntime.ObjectArrayPool.Create(count);
+        var args = new object?[count];
+
+        for (var i = 0; i < count; ++i)
+            args[i] = Children[i].GetValue(context, root);
+
+        if (!IsArray)
+            return OgnlRuntime.CallConstructor(context, TypeName, args);
+
+        if (args.Length != 1)
+            throw new OgnlException(
+                "only expect array size or fixed initializer list");
 
         try {
-            for (var i = 0; i < count; ++i)
-                args[i] = Children[i].GetValue(context, root);
+            var elementType = OgnlRuntime.TypeForName(context, TypeName);
+            IList? sourceList = null;
+            int size;
 
-            if (!IsArray)
-                return OgnlRuntime.CallConstructor(context, TypeName, args);
+            if (args[0] is IList list) {
+                sourceList = list;
+                size = sourceList.Count;
+            } else
+                size = (int)OgnlOps.LongValue(args[0]);
 
-            if (args.Length != 1)
-                throw new OgnlException(
-                    "only expect array size or fixed initializer list");
+            object result = Array.CreateInstance(elementType, size);
 
-            try {
-                var elementType = OgnlRuntime.TypeForName(context, TypeName);
-                IList? sourceList = null;
-                int size;
-
-                if (args[0] is IList list) {
-                    sourceList = list;
-                    size = sourceList.Count;
-                } else
-                    size = (int)OgnlOps.LongValue(args[0]);
-
-                object result = Array.CreateInstance(elementType, size);
-
-                if (sourceList == null)
-                    return result;
-
-                var converter = context.TypeConverter;
-
-                for (var i = 0; i < sourceList.Count; i++) {
-                    var o = sourceList[i];
-
-                    if (o == null || elementType.IsInstanceOfType(o))
-                        ((Array)result).SetValue(o, i);
-                    else
-                        ((Array)result).SetValue(
-                            converter.ConvertValue(context, null, null,
-                                null, o, elementType),
-                            i);
-                }
-
+            if (sourceList == null)
                 return result;
-            } catch (TypeLoadException ex) {
-                throw new OgnlException(
-                    "array component class '{TypeName}' not found", ex);
+
+            var converter = context.TypeConverter;
+
+            for (var i = 0; i < sourceList.Count; i++) {
+                var o = sourceList[i];
+
+                if (o == null || elementType.IsInstanceOfType(o))
+                    ((Array)result).SetValue(o, i);
+                else
+                    ((Array)result).SetValue(
+                        converter.ConvertValue(context, null, null,
+                            null, o, elementType),
+                        i);
             }
-        } finally {
-            OgnlRuntime.ObjectArrayPool.Recycle(args);
+
+            return result;
+        } catch (TypeLoadException ex) {
+            throw new OgnlException(
+                "array component class '{TypeName}' not found", ex);
         }
     }
 
