@@ -1721,12 +1721,8 @@ internal class ParserTokenManager(JavaCharStream inputStream) {
                 break;
             case 73:
                 image.Append(inputStream.GetSuffix(jjImageLen + jjMatchedPos + 1));
-
-                if (stringBuffer.Length == 1) {
-                    LiteralValue = charValue;
-                } else {
-                    LiteralValue = stringBuffer.ToString();
-                }
+                LiteralValue = stringBuffer.Length == 1 ? charValue :
+                    stringBuffer.ToString();
 
                 break;
             case 76:

@@ -922,8 +922,8 @@ public static class OgnlRuntime {
     private static bool IsMethodAccessible(OgnlContext context,
         object target, MethodInfo? method, string? propertyName)
     {
-        return method == null ? false :
-            context.MemberAccess.IsAccessible(context, target, method, propertyName);
+        return method != null && context.MemberAccess.IsAccessible(context,
+            target, method, propertyName);
     }
 
     private static MethodInfo GetSetMethod(Type targetClass,

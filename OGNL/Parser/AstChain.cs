@@ -55,12 +55,12 @@ internal class AstChain(int id) : SimpleNode(id) {
                     if (indexNode.IndexedAccess) {
                         var index = indexNode.GetProperty(context);
 
-                        if (index is DynamicSubscript) {
+                        if (index is DynamicSubscript dynamicSubscript) {
                             if (indexType == OgnlRuntime.IndexedPropertyInt) {
                                 var array = propertyNode.GetValue(context, result);
                                 var len = ((Array)array).Length;
 
-                                switch (((DynamicSubscript)index).GetFlag()) {
+                                switch (dynamicSubscript.GetFlag()) {
                                     case DynamicSubscript.AllElements:
                                         result = Array.CreateInstance(array.GetType().GetElementType(), len);
                                         Array.Copy((Array)array, 0, (Array)result, 0, len);
@@ -81,13 +81,9 @@ internal class AstChain(int id) : SimpleNode(id) {
 
                                         break;
                                 }
-                            } else {
-                                if (indexType == OgnlRuntime.IndexedPropertyObject) {
-                                    throw new OgnlException("DynamicSubscript '" + indexNode +
-                                        "' not allowed for object indexed property '" +
-                                        propertyNode + "'");
-                                }
-                            }
+                            } else if (indexType == OgnlRuntime.IndexedPropertyObject)
+                                throw new OgnlException(
+                                    $"{nameof(DynamicSubscript)} '{indexNode}' not allowed for object indexed property '{propertyNode}'");
                         }
 
                         if (!handled) {
@@ -115,57 +111,51 @@ internal class AstChain(int id) : SimpleNode(id) {
         var handled = false;
 
         for (int i = 0, ilast = Children.Length - 2; i <= ilast; ++i) {
-            if (i == ilast) {
-                if (Children[i] is AstProperty) {
-                    var propertyNode = (AstProperty)Children[i];
-                    var indexType = propertyNode.GetIndexedPropertyType(context, target);
+            if (i == ilast && Children[i] is AstProperty) {
+                var propertyNode = (AstProperty)Children[i];
+                var indexType = propertyNode.GetIndexedPropertyType(context, target);
 
-                    if (indexType != OgnlRuntime.IndexedPropertyNone && Children[i + 1] is AstProperty) {
-                        var indexNode = (AstProperty)Children[i + 1];
+                if (indexType != OgnlRuntime.IndexedPropertyNone && Children[i + 1] is AstProperty) {
+                    var indexNode = (AstProperty)Children[i + 1];
 
-                        if (indexNode.IndexedAccess) {
-                            var index = indexNode.GetProperty(context);
+                    if (indexNode.IndexedAccess) {
+                        var index = indexNode.GetProperty(context);
 
-                            if (index is DynamicSubscript) {
-                                if (indexType == OgnlRuntime.IndexedPropertyInt) {
-                                    var array = propertyNode.GetValue(context, target);
-                                    var len = ((Array)array).Length;
+                        if (index is DynamicSubscript) {
+                            if (indexType == OgnlRuntime.IndexedPropertyInt) {
+                                var array = propertyNode.GetValue(context, target);
+                                var len = ((Array)array).Length;
 
-                                    switch (((DynamicSubscript)index).GetFlag()) {
-                                        case DynamicSubscript.AllElements:
-                                            Array.Copy((Array)target, 0, (Array)value, 0, len);
-                                            handled = true;
-                                            i++;
+                                switch (((DynamicSubscript)index).GetFlag()) {
+                                    case DynamicSubscript.AllElements:
+                                        Array.Copy((Array)target, 0, (Array)value, 0, len);
+                                        handled = true;
+                                        i++;
 
-                                            break;
-                                        case DynamicSubscript.FirstElement:
-                                            index = len > 0 ? 0 : -1;
+                                        break;
+                                    case DynamicSubscript.FirstElement:
+                                        index = len > 0 ? 0 : -1;
 
-                                            break;
-                                        case DynamicSubscript.MidElement:
-                                            index = len > 0 ? len / 2 : -1;
+                                        break;
+                                    case DynamicSubscript.MidElement:
+                                        index = len > 0 ? len / 2 : -1;
 
-                                            break;
-                                        case DynamicSubscript.LastElement:
-                                            index = len > 0 ? len - 1 : -1;
+                                        break;
+                                    case DynamicSubscript.LastElement:
+                                        index = len > 0 ? len - 1 : -1;
 
-                                            break;
-                                    }
-                                } else {
-                                    if (indexType == OgnlRuntime.IndexedPropertyObject) {
-                                        throw new OgnlException("DynamicSubscript '" + indexNode +
-                                            "' not allowed for object indexed property '" +
-                                            propertyNode + "'");
-                                    }
+                                        break;
                                 }
-                            }
+                            } else if (indexType == OgnlRuntime.IndexedPropertyObject)
+                                throw new OgnlException(
+                                    $"{nameof(DynamicSubscript)} '{indexNode}' not allowed for object indexed property '{propertyNode}'");
+                        }
 
-                            if (!handled) {
-                                OgnlRuntime.SetIndexedProperty(context, target,
-                                    propertyNode.GetProperty(context).ToString(), index, value);
-                                handled = true;
-                                i++;
-                            }
+                        if (!handled) {
+                            OgnlRuntime.SetIndexedProperty(context, target,
+                                propertyNode.GetProperty(context).ToString(), index, value);
+                            handled = true;
+                            i++;
                         }
                     }
                 }

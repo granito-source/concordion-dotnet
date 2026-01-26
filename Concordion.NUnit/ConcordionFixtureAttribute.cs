@@ -45,7 +45,7 @@ public class ConcordionFixtureAttribute : NUnitAttribute, IFixtureBuilder {
                 BindingFlags.Public |
                 BindingFlags.Instance);
 
-            foreach (var method in methods) {
+            foreach (var method in methods)
                 if (method.Name == nameof(ConcordionRunner.ConcordionTest) &&
                     method.ReturnType.Type == typeof(void) &&
                     method.GetParameters().Length == 0) {
@@ -53,7 +53,6 @@ public class ConcordionFixtureAttribute : NUnitAttribute, IFixtureBuilder {
 
                     return;
                 }
-            }
         }
     }
 

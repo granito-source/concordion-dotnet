@@ -73,10 +73,11 @@ internal class AstStaticField(int id) : SimpleNode(id) {
                     throw new MissingFieldException(
                         $"Field or Property {FieldName} of type {TypeName} is not found.");
 
-                return property.GetAccessors()[0].IsStatic
-                    ? false
-                    : throw new MissingFieldException(
-                        $"Property {FieldName} of type {TypeName} is not static.");
+                if (property.GetAccessors()[0].IsStatic)
+                    return false;
+
+                throw new MissingFieldException(
+                    $"Property {FieldName} of type {TypeName} is not static.");
             }
 
             if (!field.IsStatic)
