@@ -62,18 +62,6 @@ public static class OgnlRuntime {
 
     private const string NoConversionPossible = "ognl.NoConversionPossible";
 
-    private const string SetPrefix = "Set";
-
-    private const string SetPrefix2 = "set";
-
-    private const string GetPrefix = "Get";
-
-    private const string GetPrefix2 = "get";
-
-    private const string IsPrefix = "Is";
-
-    private static readonly ArrayList NotFoundList = new();
-
     private static readonly object[] NoArguments = [];
 
     private static readonly ClassCache MethodAccessors = new();
@@ -93,8 +81,6 @@ public static class OgnlRuntime {
     private static readonly MethodCache InstanceMethodCache = new();
 
     private static readonly FieldCache FieldCache = new();
-
-    private static readonly ClassCache[] DeclaredMethods = [new(), new()];
 
     private static readonly Hashtable PrimitiveTypes = new(101);
 
@@ -846,77 +832,10 @@ public static class OgnlRuntime {
         throw new OgnlException("Could not get static field " + fieldName + " from class " + className, reason);
     }
 
-    private static IList GetDeclaredMethods(Type targetClass,
-        string propertyName, bool findSets)
-    {
-        IList? result = null;
-        var cache = DeclaredMethods[findSets ? 0 : 1];
-
-        lock (cache) {
-            var propertyCache = (IDictionary)cache.Get(targetClass);
-
-            if (propertyCache == null || (result = (IList)propertyCache[propertyName]) == null) {
-                var baseName = propertyName.Substring(0, 1).ToUpper() + propertyName.Substring(1);
-                var c = targetClass;
-
-                // TODO: Get Declared Methods.
-
-                foreach (var method in c.GetMethods()) {
-                    var name = method.Name;
-
-                    if (name.EndsWith(baseName)) {
-                        var isSet = false;
-                        var isGet = false;
-                        var isIs = false;
-
-                        if ((isSet = name.StartsWith(SetPrefix)) || (isGet = name.StartsWith(GetPrefix)) ||
-                            (isIs = name.StartsWith(IsPrefix))) {
-                            var prefixLength = isIs ? 2 : 3;
-
-                            if (isSet == findSets &&
-                                baseName.Length == name.Length - prefixLength) {
-                                result ??= new ArrayList();
-                                result.Add(method);
-                            }
-                        }
-                    }
-                }
-
-                if (propertyCache == null)
-                    cache.Put(targetClass, propertyCache = new Hashtable(101));
-
-                propertyCache[propertyName] = result ?? NotFoundList;
-            }
-
-            return result == NotFoundList ? null : result;
-        }
-    }
-
     private static MethodInfo? GetGetMethod(Type targetClass,
         string propertyName)
     {
-        MethodInfo? result = null;
-        var pd = GetPropertyDescriptor(targetClass, propertyName);
-
-        if (pd == null) {
-            var methods = GetDeclaredMethods(targetClass, propertyName, false /* find 'get' methods */);
-
-            if (methods != null) {
-                for (int i = 0, icount = methods.Count; i < icount; i++) {
-                    var m = (MethodInfo)methods[i];
-                    var mParameterTypes = GetParameterTypes(m);
-
-                    if (mParameterTypes.Length == 0) {
-                        result = m;
-
-                        break;
-                    }
-                }
-            }
-        } else
-            result = pd.ReadMethod;
-
-        return result;
+        return GetPropertyDescriptor(targetClass, propertyName)?.ReadMethod;
     }
 
     private static bool IsMethodAccessible(OgnlContext context,
@@ -926,31 +845,10 @@ public static class OgnlRuntime {
             target, method, propertyName);
     }
 
-    private static MethodInfo GetSetMethod(Type targetClass,
+    private static MethodInfo? GetSetMethod(Type targetClass,
         string propertyName)
     {
-        MethodInfo result = null;
-        var pd = GetPropertyDescriptor(targetClass, propertyName);
-
-        if (pd == null) {
-            var methods = GetDeclaredMethods(targetClass, propertyName, true /* find 'set' methods */);
-
-            if (methods != null) {
-                for (int i = 0, icount = methods.Count; i < icount; i++) {
-                    var m = (MethodInfo)methods[i];
-                    var mParameterTypes = GetParameterTypes(m);
-
-                    if (mParameterTypes.Length == 1) {
-                        result = m;
-
-                        break;
-                    }
-                }
-            }
-        } else
-            result = pd.WriteMethod;
-
-        return result;
+        return GetPropertyDescriptor(targetClass, propertyName)?.WriteMethod;
     }
 
     private static IDictionary GetPropertyDescriptors(Type targetClass)
@@ -969,8 +867,6 @@ public static class OgnlRuntime {
                 for (int i = 0, icount = pda.Length; i < icount; i++)
                     result[pda[i].Name] = pda[i];
 
-                // findObjectIndexedPropertyDescriptors(targetClass, result);
-                FindBeanPropertyDescriptors(targetClass, result);
                 PropertyDescriptorCache.Put(targetClass, result);
             }
         }
@@ -978,91 +874,12 @@ public static class OgnlRuntime {
         return result;
     }
 
-    private static void FindBeanPropertyDescriptors(Type targetClass, IDictionary map)
-    {
-        var allMethods = GetMethods(targetClass, false);
-        IDictionary pairs = new Hashtable(101);
-
-        for (var it = allMethods.Keys.GetEnumerator(); it.MoveNext();) {
-            var methodName = it.Current;
-            var methods = (IList)allMethods[methodName];
-
-            var isGet = false;
-            var isSet = false;
-            var m = (MethodInfo)methods[0];
-
-            if (((isSet = methodName.StartsWith(SetPrefix) || methodName.StartsWith(SetPrefix2)) ||
-                    (isGet = methodName.StartsWith(GetPrefix) || methodName.StartsWith(GetPrefix2))) &&
-                methodName.Length > 3) {
-                var propertyName = /*Introspector.decapitalize*/methodName.Substring(3);
-                var parameterTypes = GetParameterTypes(m);
-                var parameterCount = parameterTypes.Length;
-
-                // Ignore property with same name.
-                if (map.Contains(propertyName))
-                    continue;
-
-                if (isGet && parameterCount == 0 && m.ReturnType != typeof(void)) {
-                    var pair = (IList)pairs[propertyName];
-
-                    if (pair == null)
-                        pairs[propertyName] = pair = new ArrayList();
-
-                    pair.Add(m);
-                }
-
-                if (isSet && parameterCount == 1 && m.ReturnType == typeof(void)) {
-                    var pair = (IList)pairs[propertyName];
-
-                    if (pair == null)
-                        pairs[propertyName] = pair = new ArrayList();
-
-                    pair.Add(m);
-                }
-            }
-        }
-
-        for (var it = pairs.Keys.GetEnumerator(); it.MoveNext();) {
-            var propertyName = (string)it.Current;
-            var methods = (IList)pairs[propertyName];
-
-            // Read/write only property is allowded .
-            if (methods.Count == 1) {
-                MethodInfo method = (MethodInfo)methods[0],
-                    setMethod = method.GetParameters().Length == 1 ? method : null,
-                    getMethod = setMethod == method ? null : method;
-
-                var propertyType =
-                    getMethod != null ? getMethod.ReturnType : setMethod.GetParameters()[0].ParameterType;
-                PropertyDescriptor propertyDescriptor =
-                    new BeanPropertyDescriptor(propertyName, getMethod, setMethod);
-                map[propertyName] = propertyDescriptor;
-            }
-
-            if (methods.Count == 2) {
-                MethodInfo method1 = (MethodInfo)methods[0],
-                    method2 = (MethodInfo)methods[1],
-                    setMethod = method1.GetParameters().Length == 1 ? method1 : method2,
-                    getMethod = setMethod == method1 ? method2 : method1;
-
-                // Type        keyType = getMethod.GetParameters()[0].ParameterType;
-                var propertyType = getMethod.ReturnType;
-
-                if (propertyType == setMethod.GetParameters()[0].ParameterType) {
-                    PropertyDescriptor propertyDescriptor =
-                        new BeanPropertyDescriptor(propertyName, getMethod, setMethod);
-                    map[propertyName] = propertyDescriptor;
-                }
-            }
-        }
-    }
-
     /**
      * TODO: About PropertyDescriptor
         This method returns a PropertyDescriptor for the given class and property name using
         a IDictionary lookup (using getPropertyDescriptorsMap()).
      */
-    private static PropertyDescriptor GetPropertyDescriptor(
+    private static PropertyDescriptor? GetPropertyDescriptor(
         Type targetClass, string propertyName)
     {
         return targetClass == null ? null :

@@ -42,13 +42,13 @@ public class ProjectionSelectionTest : OgnlFixture {
     public readonly List<string> List = ["zero", "one", "two"];
 
     private static readonly object[][] Tests = [
-        ["Array.{ Type }",
+        ["Array.{ GetType() }",
             new[] { typeof(int), typeof(int), typeof(int), typeof(int) }],
         ["Array.{? #this > 1 }", new[] { 2, 3 }],
         ["Array.{^ #this > 1 }", new[] { 2 }],
         ["Array.{$ #this > 1 }", new[] { 3 }],
         ["Array[*].{? true } instanceof System.Collections.IList", true],
-        ["List.{ Type }",
+        ["List.{ GetType() }",
             new[] { typeof(string), typeof(string), typeof(string) }],
         ["List.{? #this.Length < 4 }", new[] { "one", "two" }],
         ["List.{^ #this.Length < 4 }", new[] { "one" }],
