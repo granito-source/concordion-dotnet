@@ -60,8 +60,6 @@ public static class OgnlRuntime {
 
     public static readonly object NotFound = new();
 
-    private const string NoConversionPossible = "ognl.NoConversionPossible";
-
     private static readonly object[] NoArguments = [];
 
     private static readonly ClassCache MethodAccessors = new();
@@ -400,15 +398,12 @@ public static class OgnlRuntime {
 
     [return: NotNullIfNotNull("value")]
     private static object? GetConvertedType(OgnlContext context,
-        object target, MemberInfo member, string propertyName,
         object? value, Type type)
     {
-        return context.TypeConverter.ConvertValue(context, target,
-            member, propertyName, value, type);
+        return context.TypeConverter.ConvertValue(value, type);
     }
 
     private static bool GetConvertedTypes(OgnlContext context,
-        object target, MemberInfo member, string? propertyName,
         Type[] parameterTypes, object[] args, object?[] newArgs)
     {
         var result = false;
@@ -423,9 +418,9 @@ public static class OgnlRuntime {
                 if (IsTypeCompatible(arg, type))
                     newArgs[i] = arg;
                 else {
-                    var v = GetConvertedType(context, target, member, propertyName, arg, type);
+                    var v = GetConvertedType(context, arg, type);
 
-                    if (v == NoConversionPossible)
+                    if (ReferenceEquals(v, TypeConverter.NoConversionPossible))
                         result = false;
                     else
                         newArgs[i] = v;
@@ -437,8 +432,8 @@ public static class OgnlRuntime {
     }
 
     private static MethodInfo? GetConvertedMethodAndArgs(
-        OgnlContext context, object target, string propertyName,
-        IList<MethodInfo> methods, object[] args, object[] newArgs)
+        OgnlContext context, IList<MethodInfo> methods, object[] args,
+        object[] newArgs)
     {
         MethodInfo? result = null;
 
@@ -447,7 +442,7 @@ public static class OgnlRuntime {
             var m = methods[i];
             var parameterTypes = GetParameterTypes(m);
 
-            if (GetConvertedTypes(context, target, m, propertyName,
+            if (GetConvertedTypes(context,
                     parameterTypes, args, newArgs))
                 result = m;
         }
@@ -456,8 +451,8 @@ public static class OgnlRuntime {
     }
 
     private static ConstructorInfo? GetConvertedConstructorAndArgs(
-        OgnlContext context, object target, IList constructors,
-        object[] args, object?[] newArgs)
+        OgnlContext context, IList constructors, object[] args,
+        object?[] newArgs)
     {
         ConstructorInfo? result = null;
 
@@ -466,7 +461,7 @@ public static class OgnlRuntime {
             var ctor = (ConstructorInfo?)constructors[i];
             var parameterTypes = GetParameterTypes(ctor);
 
-            if (GetConvertedTypes(context, target, ctor, null,
+            if (GetConvertedTypes(context,
                     parameterTypes, args, newArgs))
                 result = ctor;
         }
@@ -475,7 +470,6 @@ public static class OgnlRuntime {
     }
 
     private static MethodInfo GetAppropriateMethod(OgnlContext context,
-        object source, object? target, string? propertyName,
         IList<MethodInfo> methods, object?[] args, object?[] actualArgs)
     {
         MethodInfo result = null;
@@ -485,24 +479,25 @@ public static class OgnlRuntime {
             var m = methods[i];
             var mParameterTypes = GetParameterTypes(m);
 
-            if (AreArgsCompatible(args, mParameterTypes) &&
-                (result == null || IsMoreSpecific(mParameterTypes, resultParameterTypes))) {
-                result = m;
-                resultParameterTypes = mParameterTypes;
-                Array.Copy(args, 0, actualArgs, 0, args.Length);
+            if (!AreArgsCompatible(args, mParameterTypes) ||
+                (result != null &&
+                    !IsMoreSpecific(mParameterTypes, resultParameterTypes)))
+                continue;
 
-                for (var j = 0; j < mParameterTypes.Length; j++) {
-                    var type = mParameterTypes[j];
+            result = m;
+            resultParameterTypes = mParameterTypes;
+            Array.Copy(args, 0, actualArgs, 0, args.Length);
 
-                    if (type.IsPrimitive && actualArgs[j] == null)
-                        actualArgs[j] = GetConvertedType(context, source, result, propertyName, null, type);
-                }
+            for (var j = 0; j < mParameterTypes.Length; j++) {
+                var type = mParameterTypes[j];
+
+                if (type.IsPrimitive && actualArgs[j] == null)
+                    actualArgs[j] = GetConvertedType(context, null, type);
             }
         }
 
         if (result == null)
-            result = GetConvertedMethodAndArgs(context, target,
-                propertyName, methods, args, actualArgs);
+            result = GetConvertedMethodAndArgs(context, methods, args, actualArgs);
 
         return result;
     }
@@ -515,8 +510,7 @@ public static class OgnlRuntime {
         Exception? reason;
 
         try {
-            var method = GetAppropriateMethod(context, source, target,
-                propertyName, methods, args, actualArgs);
+            var method = GetAppropriateMethod(context, methods, args, actualArgs);
 
             if (method == null || !IsMethodAccessible(context, source, method, propertyName)) {
                 var buffer = new StringBuilder();
@@ -591,7 +585,7 @@ public static class OgnlRuntime {
             if (ctor == null) {
                 actualArgs = new object[args.Length];
 
-                if ((ctor = GetConvertedConstructorAndArgs(context, target, constructors, args, actualArgs)) == null)
+                if ((ctor = GetConvertedConstructorAndArgs(context, constructors, args, actualArgs)) == null)
                     throw new MissingMethodException();
             }
 
@@ -660,10 +654,9 @@ public static class OgnlRuntime {
         IList result;
 
         lock (ConstructorCache) {
-            if ((result = (IList)ConstructorCache.Get(targetClass)) == null) {
+            if ((result = (IList)ConstructorCache.Get(targetClass)) == null)
                 // TODO: Get Constructors.
                 ConstructorCache.Put(targetClass, result = new ArrayList(targetClass.GetConstructors()));
-            }
         }
 
         return result;
@@ -765,8 +758,7 @@ public static class OgnlRuntime {
 
             try {
                 if (!IsTypeCompatible(value, field.FieldType) &&
-                    (value = GetConvertedType(context, target, field,
-                        name, value, field.FieldType)) == null)
+                    (value = GetConvertedType(context, value, field.FieldType)) == null)
                     return false;
 
                 field.SetValue(target, value);

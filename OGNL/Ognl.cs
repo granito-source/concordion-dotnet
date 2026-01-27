@@ -240,8 +240,7 @@ public static class Ognl {
         var result = tree.GetValue(ognlContext, root);
 
         return resultType != null ?
-            GetTypeConverter(context)?.ConvertValue(context, root, null,
-                null, result, resultType) :
+            GetTypeConverter(context)?.ConvertValue(result, resultType) :
             result;
     }
 

@@ -30,9 +30,7 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 
 namespace OGNL.Test;
 
@@ -96,15 +94,12 @@ public class ArrayElementsTest : OgnlFixture {
     }
 
     private class ArrayDefaultTypeConverter : DefaultTypeConverter {
-        public override object? ConvertValue(IDictionary context,
-            object? target, MemberInfo? member, string? propertyName,
-            object? value, Type toType)
+        public override object? ConvertValue(object? value, Type toType)
         {
             if (value != null && value.GetType().IsArray && !toType.IsArray)
                 value = ((Array)value).GetValue(0);
 
-            return base.ConvertValue(context, target, member,
-                propertyName, value, toType);
+            return base.ConvertValue(value, toType);
         }
     }
 }

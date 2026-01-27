@@ -46,8 +46,7 @@ internal class ArrayPropertyAccessor : ObjectPropertyAccessor {
         if (value == null)
             return null;
 
-        return context.TypeConverter.ConvertValue(context, target, null,
-            name.ToString(), value, target.GetType().GetElementType()!);
+        return context.TypeConverter.ConvertValue(value, target.GetType().GetElementType()!);
     }
 
     public override object? GetProperty(OgnlContext context,

@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------
 //	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
+//  Copyright (c) 2026, Alexei Yashkov
 //  All rights reserved.
 //
 //	Redistribution and use in source and binary forms, with or without
@@ -29,9 +30,7 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 
 namespace OGNL;
 
@@ -39,24 +38,14 @@ namespace OGNL;
 /// Interface for accessing the type conversion facilities within a context.
 ///
 public interface TypeConverter {
-    ///
-    /// Converts the given value to a given type.  The OGNL context,
-    /// target, member and name of property being set are given. This
-    /// method should be able to handle conversion in general without
-    /// any context, target, member or property name specified.
-    ///
-    /// @param context OGNL context under which the conversion is being done
-    /// @param target target object in which the property is being set
-    /// @param member member (Constructor, Method or Field) being set
-    /// @param propertyName property name being set
-    /// @param value value to be converted
-    /// @param toType type to which value is converted
-    /// @return Converted value of type toType or
-    /// TypeConverter.NoConversionPossible to indicate that the
-    /// conversion was not possible.
-    ///
+    public const string NoConversionPossible = "ognl.NoConversionPossible";
+
+    /// <summary>Converts the given value to a given type.</summary>
+    /// <param name="value">The value to convert.</param>
+    /// <param name="toType">The target type.</param>
+    /// <returns>The converted value or
+    /// <c>TypeConverter.NoConversionPossible</c> to indicate that the
+    /// conversion was not possible.</returns>
     [return: NotNullIfNotNull("value")]
-    object? ConvertValue(IDictionary context, object? target,
-        MemberInfo? member, string? propertyName, object? value,
-        Type toType);
+    object? ConvertValue(object? value, Type toType);
 }

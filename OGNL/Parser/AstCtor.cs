@@ -82,8 +82,7 @@ internal class AstCtor(int id) : SimpleNode(id) {
                 if (o == null || elementType.IsInstanceOfType(o))
                     ((Array)result).SetValue(o, i);
                 else
-                    ((Array)result).SetValue(converter.ConvertValue(
-                        context, null, null, null, o, elementType), i);
+                    ((Array)result).SetValue(converter.ConvertValue(o, elementType), i);
             }
 
             return result;

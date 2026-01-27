@@ -29,9 +29,6 @@
 //  DAMAGE.
 //--------------------------------------------------------------------------
 
-using System.Collections;
-using System.Reflection;
-
 namespace OGNL;
 
 ///<summary>
@@ -44,16 +41,10 @@ public class DefaultTypeConverter : TypeConverter {
     /// <summary>
     /// A overload version.
     /// </summary>
-    /// <param name="context"></param>
-    /// <param name="target"></param>
-    /// <param name="member"></param>
-    /// <param name="propertyName"></param>
     /// <param name="value"></param>
     /// <param name="toType"></param>
     /// <returns></returns>
-    public virtual object? ConvertValue(IDictionary context,
-        object? target, MemberInfo? member, string? propertyName,
-        object? value, Type toType)
+    public virtual object? ConvertValue(object? value, Type toType)
     {
         return OgnlOps.ConvertValue(value, toType);
     }
