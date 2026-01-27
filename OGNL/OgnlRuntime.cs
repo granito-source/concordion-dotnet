@@ -72,8 +72,6 @@ public static class OgnlRuntime {
 
     private static readonly ClassCache PropertyDescriptorCache = new();
 
-    private static readonly ClassCache ConstructorCache = new();
-
     private static readonly MethodCache StaticMethodCache = new();
 
     private static readonly MethodCache InstanceMethodCache = new();
@@ -451,14 +449,14 @@ public static class OgnlRuntime {
     }
 
     private static ConstructorInfo? GetConvertedConstructorAndArgs(
-        OgnlContext context, IList constructors, object[] args,
-        object?[] newArgs)
+        OgnlContext context, IList<ConstructorInfo> constructors,
+        object[] args, object?[] newArgs)
     {
         ConstructorInfo? result = null;
 
         for (int i = 0, icount = constructors.Count;
             result == null && i < icount; i++) {
-            var ctor = (ConstructorInfo?)constructors[i];
+            var ctor = constructors[i];
             var parameterTypes = GetParameterTypes(ctor);
 
             if (GetConvertedTypes(context,
@@ -567,12 +565,12 @@ public static class OgnlRuntime {
 
         try {
             var target = TypeForName(context, typeName);
-            var constructors = GetConstructors(target);
+            var constructors = target.GetConstructors();
             ConstructorInfo? ctor = null;
             Type[]? ctorParameterTypes = null;
 
-            for (int i = 0, icount = constructors.Count; i < icount; i++) {
-                var c = (ConstructorInfo)constructors[i];
+            for (int i = 0, icount = constructors.Length; i < icount; i++) {
+                var c = constructors[i];
                 var cParameterTypes = GetParameterTypes(c);
 
                 if (AreArgsCompatible(args, cParameterTypes) &&
@@ -645,19 +643,6 @@ public static class OgnlRuntime {
                     propertyName, Util.NCopies(1, m), [value]);
             else
                 result = false;
-
-        return result;
-    }
-
-    private static IList GetConstructors(Type targetClass)
-    {
-        IList result;
-
-        lock (ConstructorCache) {
-            if ((result = (IList)ConstructorCache.Get(targetClass)) == null)
-                // TODO: Get Constructors.
-                ConstructorCache.Put(targetClass, result = new ArrayList(targetClass.GetConstructors()));
-        }
 
         return result;
     }
