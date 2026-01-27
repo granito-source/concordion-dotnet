@@ -37,7 +37,7 @@ namespace OGNL;
 ///
 /// This is a class with static methods that define the operations of OGNL.
 ///
-public static class OgnlOps {
+internal static class OgnlOps {
     private static int CompareWithConversion(object? v1, object? v2)
     {
         if (v1 == v2)
@@ -143,12 +143,12 @@ public static class OgnlOps {
         return value == null ? 0L : Convert.ToInt64(value);
     }
 
-    private static ulong UlongValue(object? value)
+    public static ulong UlongValue(object? value)
     {
         return value == null ? 0L : Convert.ToUInt64(value);
     }
 
-    private static double DoubleValue(object? value)
+    public static double DoubleValue(object? value)
     {
         return value switch {
             null => 0.0d,
@@ -157,7 +157,7 @@ public static class OgnlOps {
         };
     }
 
-    private static float FloatValue(object? value)
+    public static float FloatValue(object? value)
     {
         return value switch {
             null => 0.0f,
@@ -171,7 +171,7 @@ public static class OgnlOps {
         return value == null ? 0L : Convert.ToInt64(value);
     }
 
-    private static decimal BigDecValue(object? value)
+    public static decimal BigDecValue(object? value)
     {
         return value switch {
             null => 0L,
@@ -180,7 +180,7 @@ public static class OgnlOps {
         };
     }
 
-    private static string StringValue(object? value, bool trim = false)
+    public static string StringValue(object? value, bool trim = false)
     {
         var result = value?.ToString();
 
@@ -231,90 +231,7 @@ public static class OgnlOps {
         return c == typeof(decimal) ? BigDec : NonNumeric;
     }
 
-    /// <summary>
-    /// Returns the value converted numerically to the given class type
-    /// </summary>
-    /// <remarks>
-    /// This method also detects when arrays are being converted and
-    /// converts the components of one array to the type of the other.
-    /// </remarks>
-    /// <param name="value">an object to be converted to the given type</param>
-    /// <param name="toType">class type to be converted to</param>
-    /// <returns>converted value of the type given, or value if the value
-    ///                cannot be converted to the given type.</returns>
-    ///
-    public static object? ConvertValue(object? value, Type toType)
-    {
-        if (value != null) {
-            if (value.GetType() == toType)
-                return value;
-
-            if (value.GetType().IsArray && toType.IsArray) {
-                var original = (Array)value;
-                var componentType = toType.GetElementType();
-                var copy = Array.CreateInstance(componentType!,
-                    original.Length);
-
-                for (int i = 0, icount = original.Length; i < icount; i++)
-                    copy.SetValue(ConvertValue(original.GetValue(i),
-                        componentType!), i);
-
-                return copy;
-            }
-
-            if (toType == typeof(int))
-                return (int)LongValue(value);
-
-            if (toType == typeof(uint))
-                return (uint)UlongValue(value);
-
-            if (toType == typeof(double))
-                return DoubleValue(value);
-
-            if (toType == typeof(bool))
-                return BooleanValue(value);
-
-            if (toType == typeof(byte))
-                return (byte)UlongValue(value);
-
-            if (toType == typeof(char))
-                return (char)UlongValue(value);
-
-            if (toType == typeof(short))
-                return (short)LongValue(value);
-
-            if (toType == typeof(ushort))
-                return (ushort)UlongValue(value);
-
-            if (toType == typeof(long))
-                return LongValue(value);
-
-            if (toType == typeof(ulong))
-                return UlongValue(value);
-
-            if (toType == typeof(float))
-                return FloatValue(value);
-
-            if (toType == typeof(decimal))
-                return BigDecValue(value);
-
-            if (toType == typeof(string))
-                return StringValue(value);
-
-            if (toType.IsEnum)
-                return EnumValue(value, toType);
-        } else {
-            if (toType.IsPrimitive)
-                return OgnlRuntime.GetPrimitiveDefaultValue(toType);
-
-            if (toType.IsEnum)
-                return Enum.GetValues(toType).GetValue(0);
-        }
-
-        return null;
-    }
-
-    private static object EnumValue(object value, Type toType)
+    public static object EnumValue(object value, Type toType)
     {
         try {
             return Enum.Parse(toType, value.ToString() ?? string.Empty, true);

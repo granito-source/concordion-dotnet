@@ -33,7 +33,7 @@
 namespace OGNL.Test;
 
 [TestFixture]
-public class NumericConversionTest {
+public class DefaultTypeConverterTest {
     private static readonly object[][] Tests = new object[][] {
         /* to bool */
         [true, typeof(bool), true],
@@ -182,10 +182,12 @@ public class NumericConversionTest {
         ["55", typeof(decimal), 55m]
     };
 
+    private readonly DefaultTypeConverter converter = new();
+
     [Test, TestCaseSource(nameof(Tests))]
     public void ConvertsValue(object value, Type type, object expected)
     {
-        var converted = OgnlOps.ConvertValue(value, type);
+        var converted = converter.ConvertValue(value, type);
 
         Assert.That(converted?.GetType(), Is.EqualTo(type));
         Assert.That(converted, Is.EqualTo(expected));

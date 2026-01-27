@@ -31,21 +31,78 @@
 
 namespace OGNL;
 
-///<summary>
-///Default type conversion. Converts among numeric types and also strings.
-///</summary>
-///@author Luke Blanshard (blanshlu@netscape.net)
-///@author Drew Davidson (drew@ognl.org)
-///
+/// <summary>
+/// Default type conversion. Converts among numeric types and also strings.
+/// </summary>
 public class DefaultTypeConverter : TypeConverter {
-    /// <summary>
-    /// A overload version.
-    /// </summary>
-    /// <param name="value"></param>
-    /// <param name="toType"></param>
-    /// <returns></returns>
-    public virtual object? ConvertValue(object? value, Type toType)
+    public object? ConvertValue(object? value, Type toType)
     {
-        return OgnlOps.ConvertValue(value, toType);
+        if (value != null) {
+            if (value.GetType() == toType)
+                return value;
+
+            if (value.GetType().IsArray && toType.IsArray) {
+                var original = (Array)value;
+                var componentType = toType.GetElementType();
+                var copy = Array.CreateInstance(componentType!,
+                    original.Length);
+
+                for (int i = 0, icount = original.Length; i < icount; i++)
+                    copy.SetValue(ConvertValue(original.GetValue(i),
+                        componentType!), i);
+
+                return copy;
+            }
+
+            if (toType == typeof(int))
+                return (int)OgnlOps.LongValue(value);
+
+            if (toType == typeof(uint))
+                return (uint)OgnlOps.UlongValue(value);
+
+            if (toType == typeof(double))
+                return OgnlOps.DoubleValue(value);
+
+            if (toType == typeof(bool))
+                return OgnlOps.BooleanValue(value);
+
+            if (toType == typeof(byte))
+                return (byte)OgnlOps.UlongValue(value);
+
+            if (toType == typeof(char))
+                return (char)OgnlOps.UlongValue(value);
+
+            if (toType == typeof(short))
+                return (short)OgnlOps.LongValue(value);
+
+            if (toType == typeof(ushort))
+                return (ushort)OgnlOps.UlongValue(value);
+
+            if (toType == typeof(long))
+                return OgnlOps.LongValue(value);
+
+            if (toType == typeof(ulong))
+                return OgnlOps.UlongValue(value);
+
+            if (toType == typeof(float))
+                return OgnlOps.FloatValue(value);
+
+            if (toType == typeof(decimal))
+                return OgnlOps.BigDecValue(value);
+
+            if (toType == typeof(string))
+                return OgnlOps.StringValue(value);
+
+            if (toType.IsEnum)
+                return OgnlOps.EnumValue(value, toType);
+        } else {
+            if (toType.IsPrimitive)
+                return OgnlRuntime.GetPrimitiveDefaultValue(toType);
+
+            if (toType.IsEnum)
+                return Enum.GetValues(toType).GetValue(0);
+        }
+
+        return null;
     }
 }
