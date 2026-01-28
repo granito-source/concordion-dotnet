@@ -11,35 +11,44 @@ internal static class Introspector {
     /// <returns></returns>
     public static PropertyDescriptor[] GetPropertyDescriptors(Type type)
     {
-        var ps = type.GetProperties();
-        var pda = new PropertyDescriptor[ps.Length];
-        var count = 0;
+        var properties = type.GetProperties();
+        var descriptors = new PropertyDescriptor[properties.Length];
+        var index = 0;
 
-        foreach (var p in ps) {
-            PropertyDescriptor pd;
+        foreach (var p in properties) {
             var ips = p.GetIndexParameters();
 
-            if (ips.Length <= 0)
-                pd = new PropertyDescriptor(p);
-            else if (ips.Length > 1)
-                // TODO: not support multidimensional indexer.
-                continue;
-            else if (ips[0].ParameterType != typeof(int))
-                pd = new ObjectIndexedPropertyDescriptor(p);
-            else
-                pd = new IndexedPropertyDescriptor(p);
+            PropertyDescriptor descriptor;
 
-            pda[count++] = pd;
+            switch (ips.Length) {
+                case 0:
+                    descriptor = new PropertyDescriptor(p);
+
+                    break;
+                case 1 when ips[0].ParameterType == typeof(int):
+                    descriptor = new IndexedPropertyDescriptor(p);
+
+                    break;
+                case 1:
+                    descriptor = new ObjectIndexedPropertyDescriptor(p);
+
+                    break;
+                default:
+                    // TODO: not support multidimensional indexer.
+                    continue;
+            }
+
+            descriptors[index++] = descriptor;
         }
 
-        if (count != pda.Length) {
+        if (index != descriptors.Length) {
             // do array copy ;
-            var tmp = new PropertyDescriptor[count];
+            var tmp = new PropertyDescriptor[index];
 
-            Array.Copy(pda, 0, tmp, 0, count);
-            pda = tmp;
+            Array.Copy(descriptors, 0, tmp, 0, index);
+            descriptors = tmp;
         }
 
-        return pda;
+        return descriptors;
     }
 }

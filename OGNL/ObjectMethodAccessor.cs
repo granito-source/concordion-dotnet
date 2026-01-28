@@ -37,7 +37,7 @@ namespace OGNL;
 /// the given property name.
 ///</summary>
 internal class ObjectMethodAccessor : MethodAccessor {
-    public object? callStaticMethod(OgnlContext context, Type targetClass,
+    public object? CallStaticMethod(OgnlContext context, Type targetClass,
         string methodName, object?[] args)
     {
         var methods = OgnlRuntime.GetMethods(targetClass, methodName, true);
@@ -46,7 +46,7 @@ internal class ObjectMethodAccessor : MethodAccessor {
             null, methodName, null, methods, args);
     }
 
-    public object? callMethod(OgnlContext context, object target,
+    public object? CallMethod(OgnlContext context, object target,
         string methodName, object?[] args)
     {
         var targetClass = target.GetType();

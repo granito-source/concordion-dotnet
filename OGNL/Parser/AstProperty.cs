@@ -45,14 +45,14 @@ internal class AstProperty(int id) : SimpleNode(id) {
      */
     public int GetIndexedPropertyType(OgnlContext context, object source)
     {
-        if (!IndexedAccess) {
-            var property = GetProperty(context);
+        if (IndexedAccess)
+            return OgnlRuntime.IndexedPropertyNone;
 
-            if (property is string stringProperty)
-                return OgnlRuntime.GetIndexedPropertyType(context,
-                    source == null ? null : source.GetType(),
-                    stringProperty);
-        }
+        var property = GetProperty(context);
+
+        if (property is string stringProperty)
+            return OgnlRuntime.GetIndexedPropertyType(context,
+                source.GetType(), stringProperty);
 
         return OgnlRuntime.IndexedPropertyNone;
     }

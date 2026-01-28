@@ -2,21 +2,10 @@ using System.Reflection;
 
 namespace OGNL;
 
-internal class PropertyDescriptor {
-    protected readonly PropertyInfo PropertyInfo = null!;
+internal class PropertyDescriptor(PropertyInfo propertyInfo) {
+    public string Name => propertyInfo.Name;
 
-    public PropertyDescriptor(PropertyInfo propertyInfo)
-    {
-        PropertyInfo = propertyInfo;
-    }
+    public MethodInfo? ReadMethod => propertyInfo.GetGetMethod();
 
-    protected PropertyDescriptor()
-    {
-    }
-
-    public virtual string Name => PropertyInfo.Name;
-
-    public virtual MethodInfo? ReadMethod => PropertyInfo.GetGetMethod();
-
-    public virtual MethodInfo? WriteMethod => PropertyInfo.GetSetMethod();
+    public MethodInfo? WriteMethod => propertyInfo.GetSetMethod();
 }

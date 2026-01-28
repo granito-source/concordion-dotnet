@@ -402,7 +402,7 @@ public static class OgnlRuntime {
     }
 
     private static bool GetConvertedTypes(OgnlContext context,
-        Type[] parameterTypes, object[] args, object?[] newArgs)
+        Type[] parameterTypes, object?[] args, object?[] newArgs)
     {
         var result = false;
 
@@ -449,18 +449,17 @@ public static class OgnlRuntime {
     }
 
     private static ConstructorInfo? GetConvertedConstructorAndArgs(
-        OgnlContext context, IList<ConstructorInfo> constructors,
-        object[] args, object?[] newArgs)
+        OgnlContext context, ConstructorInfo[] constructors,
+        object?[] args, object?[] newArgs)
     {
         ConstructorInfo? result = null;
 
-        for (int i = 0, icount = constructors.Count;
+        for (int i = 0, icount = constructors.Length;
             result == null && i < icount; i++) {
             var ctor = constructors[i];
             var parameterTypes = GetParameterTypes(ctor);
 
-            if (GetConvertedTypes(context,
-                    parameterTypes, args, newArgs))
+            if (GetConvertedTypes(context, parameterTypes, args, newArgs))
                 result = ctor;
         }
 
@@ -544,7 +543,7 @@ public static class OgnlRuntime {
             var targetClass = TypeForName(context, className);
 
             return GetMethodAccessor(targetClass)
-                .callStaticMethod(context, targetClass, methodName, args);
+                .CallStaticMethod(context, targetClass, methodName, args);
         } catch (TypeLoadException ex) {
             throw new MethodFailedException(className, methodName, ex);
         }
@@ -554,53 +553,43 @@ public static class OgnlRuntime {
         string methodName, string? propertyName, object?[] args)
     {
         return GetMethodAccessor(target.GetType())
-            .callMethod(context, target, methodName, args);
+            .CallMethod(context, target, methodName, args);
     }
 
     public static object CallConstructor(OgnlContext context,
         string typeName, object?[] args)
     {
-        Exception? reason;
         var actualArgs = args;
 
         try {
             var target = TypeForName(context, typeName);
             var constructors = target.GetConstructors();
-            ConstructorInfo? ctor = null;
+
             Type[]? ctorParameterTypes = null;
+            ConstructorInfo? ctor = null;
 
-            for (int i = 0, icount = constructors.Length; i < icount; i++) {
-                var c = constructors[i];
-                var cParameterTypes = GetParameterTypes(c);
+            foreach (var c in constructors) {
+                var parameterTypes = GetParameterTypes(c);
 
-                if (AreArgsCompatible(args, cParameterTypes) &&
-                    (ctor == null || IsMoreSpecific(cParameterTypes, ctorParameterTypes))) {
+                if (AreArgsCompatible(args, parameterTypes) &&
+                    (ctorParameterTypes == null || IsMoreSpecific(parameterTypes, ctorParameterTypes))) {
+                    ctorParameterTypes = parameterTypes;
                     ctor = c;
-                    ctorParameterTypes = cParameterTypes;
                 }
             }
 
             if (ctor == null) {
                 actualArgs = new object[args.Length];
 
-                if ((ctor = GetConvertedConstructorAndArgs(context, constructors, args, actualArgs)) == null)
+                if ((ctor = GetConvertedConstructorAndArgs(context,
+                        constructors, args, actualArgs)) == null)
                     throw new MissingMethodException();
             }
 
             return ctor.Invoke(actualArgs);
-        } catch (TypeLoadException e) {
-            reason = e;
-        } catch (MissingMethodException e) {
-            reason = e;
-        } catch (MethodAccessException e) {
-            reason = e;
-        } catch (TargetInvocationException e) {
-            reason = e.InnerException;
-        } catch (TypeInitializationException e) {
-            reason = e;
+        } catch (Exception ex) {
+            throw new MethodFailedException(typeName, "new", ex);
         }
-
-        throw new MethodFailedException(typeName, "new", reason);
     }
 
     /**
@@ -634,17 +623,15 @@ public static class OgnlRuntime {
     public static bool SetMethodValue(OgnlContext context, object target,
         string propertyName, object? value, bool checkAccessAndExistence)
     {
-        var result = true;
-        var m = GetSetMethod(target == null ? null : target.GetType(), propertyName);
+        var method = GetSetMethod(target.GetType(), propertyName);
 
-        if (result)
-            if (m != null)
-                CallAppropriateMethod(context, target, target, m.Name,
-                    propertyName, Util.NCopies(1, m), [value]);
-            else
-                result = false;
+        if (method == null)
+            return false;
 
-        return result;
+        CallAppropriateMethod(context, target, target, method.Name,
+            propertyName, [method], [value]);
+
+        return true;
     }
 
     private static MethodMap GetMethods(Type targetClass, bool staticMethods)
@@ -851,16 +838,10 @@ public static class OgnlRuntime {
         return result;
     }
 
-    /**
-     * TODO: About PropertyDescriptor
-        This method returns a PropertyDescriptor for the given class and property name using
-        a IDictionary lookup (using getPropertyDescriptorsMap()).
-     */
     private static PropertyDescriptor? GetPropertyDescriptor(
         Type targetClass, string propertyName)
     {
-        return targetClass == null ? null :
-            (PropertyDescriptor)GetPropertyDescriptors(targetClass)[propertyName];
+        return (PropertyDescriptor?)GetPropertyDescriptors(targetClass)[propertyName];
     }
 
     private static void SetMethodAccessor(Type cls, MethodAccessor accessor)
@@ -1005,77 +986,64 @@ public static class OgnlRuntime {
     }
 
     /**
-        Determines the index property type, if any.  Returns <code>INDEXED_PROPERTY_NONE</code> if the
-        property is not index-accessible as determined by OGNL or JavaBeans.  If it is indexable
-        then this will return whether it is a JavaBeans indexed property, conforming to the
-        indexed property patterns (returns <code>INDEXED_PROPERTY_INT</code>) or if it conforms
-        to the OGNL arbitrary object indexable (returns <code>INDEXED_PROPERTY_OBJECT</code>).
+     * <summary>Determines the index property type, if any.</summary>
+     * <returns>
+     * <c>IndexedPropertyNone</c> if the property is not index-accessible
+     * as determined by OGNL. If it is indexable then this will return
+     * whether it is a C# indexed property, conforming to the indexed
+     * property patterns (returns <c>IndexedPropertyInt</c>) or if it
+     * conforms to the OGNL arbitrary object indexable (returns
+     * <c>IndexedPropertyObject</c>).
+     * </returns>
      */
     public static int GetIndexedPropertyType(OgnlContext context,
         Type sourceClass, string name)
     {
-        var result = IndexedPropertyNone;
-
         try {
-            var pd = GetPropertyDescriptor(sourceClass, name);
-
-            if (pd != null) {
-                if (pd is IndexedPropertyDescriptor)
-                    result = IndexedPropertyInt;
-                else if (pd is ObjectIndexedPropertyDescriptor)
-                    result = IndexedPropertyObject;
-            }
+            return GetPropertyDescriptor(sourceClass, name) switch {
+                ObjectIndexedPropertyDescriptor => IndexedPropertyObject,
+                IndexedPropertyDescriptor => IndexedPropertyInt,
+                _ => IndexedPropertyNone
+            };
         } catch (Exception ex) {
-            throw new OgnlException($"problem determining if '{name}' is an indexed property", ex);
+            throw new OgnlException(
+                $"problem determining if '{name}' is an indexed property", ex);
         }
-
-        return result;
     }
 
-    public static object GetIndexedProperty(OgnlContext context,
+    public static object? GetIndexedProperty(OgnlContext context,
         object source, string name, object index)
     {
         try {
-            var pd = GetPropertyDescriptor(source == null ? null : source.GetType(), name);
-            MethodInfo m;
-
-            if (pd is IndexedPropertyDescriptor indexedPropertyDescriptor)
-                m = indexedPropertyDescriptor.GetIndexedReadMethod();
-            else if (pd is ObjectIndexedPropertyDescriptor objectIndexedPropertyDescriptor)
-                m = objectIndexedPropertyDescriptor.GetIndexedReadMethod();
-            else
-                throw new OgnlException($"property '{name}' is not an indexed property");
+            var m = GetPropertyDescriptor(source.GetType(), name) is
+                IndexedPropertyDescriptor indexed ? indexed.ReadMethod :
+                throw new OgnlException(
+                    $"property '{name}' is not an indexed property");
 
             return CallMethod(context, source, m.Name, name, [index]);
         } catch (OgnlException) {
             throw;
         } catch (Exception ex) {
-            throw new OgnlException($"getting indexed property descriptor for '{name}'", ex);
+            throw new OgnlException(
+                $"getting indexed property descriptor for '{name}'", ex);
         }
     }
 
     public static void SetIndexedProperty(OgnlContext context,
-        object source, string name, object index, object value)
+        object source, string name, object index, object? value)
     {
-        Exception? reason = null;
-        var args = new[] { index, value };
-
         try {
-            var pd = GetPropertyDescriptor(source == null ? null : source.GetType(), name);
-            MethodInfo m;
+            var m = GetPropertyDescriptor(source.GetType(), name) is
+                IndexedPropertyDescriptor indexed ? indexed.WriteMethod :
+                throw new OgnlException(
+                    $"property '{name}' is not an indexed property");
 
-            if (pd is IndexedPropertyDescriptor indexedPropertyDescriptor)
-                m = indexedPropertyDescriptor.GetIndexedWriteMethod();
-            else if (pd is ObjectIndexedPropertyDescriptor objectIndexedPropertyDescriptor)
-                m = objectIndexedPropertyDescriptor.GetIndexedWriteMethod();
-            else
-                throw new OgnlException($"property '{name}' is not an indexed property");
-
-            CallMethod(context, source, m.Name, name, args);
+            CallMethod(context, source, m.Name, name, [index, value]);
         } catch (OgnlException) {
             throw;
         } catch (Exception ex) {
-            throw new OgnlException($"getting indexed property descriptor for '{name}'", ex);
+            throw new OgnlException(
+                $"getting indexed property descriptor for '{name}'", ex);
         }
     }
 
